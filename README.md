@@ -1,0 +1,2 @@
+# nrchd.kz
+nrchd.kz
