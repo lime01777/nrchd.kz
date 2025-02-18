@@ -74,12 +74,6 @@ export default function SalidatKairbekova() {
                     
                     <br />
 
-                    <p className='tracking-wide leading-relaxed'>
-                    Важной вехой в карьере Салидат Зекеновны стала учёба по специальности «правоведение» в
-                        Карагандинском государственном университете имени Е. А. Букетова. Ещё одно высшее образование
-                        стало дополнительным активом в её профессиональном портфолио.
-                    </p>
-
                 </div>
 
                 <div className='flex flex-wrap px-12 text-justify my-4'>
