@@ -25,7 +25,7 @@ function Sponsors() {
                 <SponsorsChlank description="Национальный холдинг “Медицинский исследовательский институт”" />
                 <SponsorsChlank description="Национальный холдинг “Медицинский исследовательский институт”" />
                 <SponsorsChlank description="Казахстанский Национальный Университет Медицинских Исследований" />
-                <SponsorsChlank description="Ассоциация медицинских работников стран Евразии" />
+                <SponsorsChlank description="Мерзляков Владимир Денисович" />
             </div>
         </div>
     </section>
