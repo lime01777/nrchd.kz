@@ -55,7 +55,7 @@ const FooterLinks = () => {
                 <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
                     <p className="inline text-gray-500 md:text-sm text-xs text-center sm:text-left">Республиканское государственное
                         предприятие на праве хозяйственного ведения <br />
-                        «Национальный научный центр развития здравоохранения имени Салитат Каирбековой»</p>
+                        «Национальный научный центр развития здравоохранения имени Салитат Каирбековой» МЗ РК</p>
                     <span className="inline-flex sm:ml-auto sm:mt-0 mt-2 justify-center sm:justify-start">
                         <p className="text-gray-500 text-sm text-center sm:text-left">2025</p>
                     </span>

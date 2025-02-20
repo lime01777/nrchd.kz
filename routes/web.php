@@ -54,6 +54,34 @@ Route::get('/vacancy-jobs', function () {
     return Inertia::render('AboutCentre/Vacancy');
 })->name('vacancy.jobs');
 
+Route::get('/training', function () {
+    return Inertia::render('Services/Training');
+})->name('services.training');
+
+Route::get('/ads-evaluation', function () {
+    return Inertia::render('Services/AdsEvaluation');
+})->name('services.adsEvaluation');
+
+Route::get('/health-tech-assessment', function () {
+    return Inertia::render('Services/HealthTechAssessment');
+})->name('services.healthTechAssessment');
+
+Route::get('/drug-expertise', function () {
+    return Inertia::render('Services/DrugExpertise');
+})->name('services.drugExpertise');
+
+Route::get('/education-programs', function () {
+    return Inertia::render('Services/EducationPrograms');
+})->name('services.educationPrograms');
+
+Route::get('/medical-expertise', function () {
+    return Inertia::render('Services/MedicalExpertise');
+})->name('services.medicalExpertise');
+
+Route::get('/accreditation', function () {
+    return Inertia::render('Services/Accreditation');
+})->name('services.accreditation');
+
 
 
 Route::middleware('auth')->group(function () {
