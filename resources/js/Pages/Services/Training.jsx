@@ -7,7 +7,7 @@ import FileAccordTitle from '@/Components/FileAccordTitle';
 import FileAccordChlank from '@/Components/FileAccordChlank';
 import NameDoctor from '@/Components/NameDoctor';
 
-export default function Services() {
+export default function Training() {
   return (
     <>
     <Head title="NNCRZ"/>
@@ -77,4 +77,4 @@ export default function Services() {
   )
 }
 
-Services.layout = (page) => <LayoutDirection img="headcentre" h1="Обучающие циклы">{page}</LayoutDirection>
+Training.layout = (page) => <LayoutDirection img="headcentre" h1="Обучающие циклы">{page}</LayoutDirection>
