@@ -26,7 +26,19 @@ export default function Header() {
         { title: "О Центре", url: "about.centre"},
         { title: "Салидат Каирбекова", url: "salidat.kairbekova"},
         { title: "Вакансии", url: "vacancy.jobs"},
-        { title: "Электронное здравоохранение", url: "salidat.kairbekova"},
+        { title: "Вопросы и ответы", url: "salidat.kairbekova"},
+        { title: "Контактная информация", url: "salidat.kairbekova"},
+        
+    ];
+
+    const allServicesSubLinks = [
+        { title: "Обучающие циклы", url: "services.training" },
+        { title: "Оценка рекламных материалов", url: "services.adsEvaluation" },
+        { title: "Оценка технологий здравоохранения", url: "services.healthTechAssessment" },
+        { title: "Экспертиза лекарственных средств", url: "services.drugExpertise" },
+        { title: "Экспертиза образовательных программ", url: "services.educationPrograms" },
+        { title: "Научно-медицинская экспертиза", url: "services.medicalExpertise" },
+        { title: "Аккредитация медорганизаций", url: "services.accreditation" }
         
     ];
 
@@ -89,7 +101,32 @@ export default function Header() {
                     <div className="absolute inset-0 -top-8 -bottom-8 cursor-pointer"></div>
                 </div>
 
-                <a className="mr-8 hover:text-gray-900">Услуги</a>
+                <div className="relative group mr-8">
+                    <button className="group-hover:text-gray-900 focus:outline-none flex items-center cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            className="mr-2 h-4 w-4 transition-transform group-hover:rotate-180" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                        Услуги
+                    </button>
+
+                    {/* Контейнер для "Услуги" меню */}
+                    <div className="absolute left-1/2 transform -translate-x-1/2 mt-8 bg-white border border-gray-300 shadow-lg rounded-xl py-2 z-50 
+            transition-all duration-150 opacity-0 scale-95 invisible group-hover:opacity-100 group-hover:scale-100 group-hover:visible"
+                        style={{ transformOrigin: "top center" }}>
+                        {/* Меню */}
+                        <ul className="w-96 py-2">
+                            {allServicesSubLinks.map((centresublink, index) => (
+                            <DirectionsSubLinks key={index} title={centresublink.title} url={centresublink.url} />
+                            ))}
+                        </ul>
+                    </div>
+                    {/* Увеличенная зона интерактивности */}
+                    <div className="absolute inset-0 -top-8 -bottom-8 cursor-pointer"></div>
+
+                </div>
+
 
                 <div className="relative group mr-8">
                     <button className="group-hover:text-gray-900 focus:outline-none flex items-center cursor-pointer">
