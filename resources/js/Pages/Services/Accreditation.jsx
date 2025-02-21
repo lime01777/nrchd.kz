@@ -73,7 +73,7 @@ export default function Accreditation() {
               <input type="text" placeholder="Руководитель (ФИО)" className="p-2 border rounded-md w-full" />
             </div>
             <div className="mt-4">
-              <label className="block text-gray-700">Прикрепите документы (PDF)</label>
+              <label className="block text-gray-700">Прикрепите документы</label>
               <input type="file" className="mt-2 p-2 border rounded-md w-full" />
             </div>
             <div className="flex justify-center mt-4">
