@@ -6,6 +6,29 @@ export default function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    const branchesSubLinks = [
+        { title: "г. Астана", url: "branches.astana" },
+        { title: "г. Алматы", url: "branches.almaty" },
+        { title: "Акмолинская область", url: "branches.akmola" },
+        { title: "Актюбинская область", url: "branches.aktobe" },
+        { title: "Алматинская область", url: "branches.almatyregion" },
+        { title: "Атырауская область", url: "branches.atyrau" },
+        { title: "Восточно-Казахстанская область", url: "branches.east" },
+        { title: "Жамбылская область", url: "branches.zhambyl" },
+        { title: "Жетысуская область", url: "branches.zhetisu" },
+        { title: "Западно-Казахстанская область", url: "branches.west" },
+        { title: "Карагандинская область", url: "branches.karaganda" },
+        { title: "Костанайская область", url: "branches.kostanay" },
+        { title: "Кызылординская область", url: "branches.kyzylorda" },
+        { title: "Мангистауская область", url: "branches.mangistau" },
+        { title: "Павлодарская область", url: "branches.pavlodar" },
+        { title: "Северо-Казахстанская область", url: "branches.north" },
+        { title: "Туркестанская область", url: "branches.turkestan" },
+        { title: "Улытауская область", url: "branches.ulytau" },
+        { title: "г. Шымкент", url: "branches.shymkent" }
+    ];
+
     const allDirectionsSubLinks = [
         { title: "Медицинское образование", url: "medical.education"},
         { title: "Кадровые ресурсы", url: "human.resources"},
@@ -154,7 +177,32 @@ export default function Header() {
 
                 </div>
 
-                <a className="mr-8 hover:text-gray-900">Филиалы</a>
+                {/* Филиалы */}
+                <div className="relative group mr-8">
+                    <button className="group-hover:text-gray-900 focus:outline-none flex items-center cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            className="mr-2 h-4 w-4 transition-transform group-hover:rotate-180" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                        Филиалы
+                    </button>
+                    <div className="fixed left-1/2 -translate-x-1/2 transform mt-8 bg-white border-[1px] border-gray-300 shadow-lg rounded-xl py-2 z-50 
+                        transition-all duration-150 ease-in-out opacity-0 scale-95 invisible group-hover:opacity-100 group-hover:scale-100 group-hover:visible">
+                        <div className="grid grid-cols-2 gap-4 p-4">
+                            {branchesSubLinks.map((link, index) => (
+                                <Link
+                                    key={index}
+                                    href={route(link.url)}
+                                    className="whitespace-nowrap hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors duration-150"
+                                >
+                                    {link.title}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
                 <a className="mr-8 hover:text-gray-900">Новости</a>
             </nav>
             <div className='hidden lg:flex flex-wrap items-end justify-end'>
