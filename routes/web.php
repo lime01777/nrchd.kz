@@ -83,79 +83,79 @@ Route::get('/accreditation', function () {
 })->name('services.accreditation');
 
 // Маршруты для филиалов
-Route::get('/branches/astana', function () {
+Route::get('/astana', function () {
     return Inertia::render('Branches/Astana');
 })->name('branches.astana');
 
-Route::get('/branches/almaty', function () {
+Route::get('/almaty', function () {
     return Inertia::render('Branches/Almaty');
 })->name('branches.almaty');
 
-Route::get('/branches/akmola', function () {
+Route::get('/akmola', function () {
     return Inertia::render('Branches/Akmola');
 })->name('branches.akmola');
 
-Route::get('/branches/aktobe', function () {
+Route::get('/aktobe', function () {
     return Inertia::render('Branches/Aktobe');
 })->name('branches.aktobe');
 
-Route::get('/branches/almaty-region', function () {
+Route::get('/almaty_region', function () {
     return Inertia::render('Branches/AlmatyRegion');
 })->name('branches.almaty_region');
 
-Route::get('/branches/atyrau', function () {
+Route::get('/atyrau', function () {
     return Inertia::render('Branches/Atyrau');
 })->name('branches.atyrau');
 
-Route::get('/branches/east', function () {
+Route::get('/east', function () {
     return Inertia::render('Branches/East');
 })->name('branches.east');
 
-Route::get('/branches/zhambyl', function () {
+Route::get('/zhambyl', function () {
     return Inertia::render('Branches/Zhambyl');
 })->name('branches.zhambyl');
 
-Route::get('/branches/zhetysu', function () {
+Route::get('/zhetysu', function () {
     return Inertia::render('Branches/Zhetysu');
 })->name('branches.zhetysu');
 
-Route::get('/branches/west', function () {
+Route::get('/west', function () {
     return Inertia::render('Branches/West');
 })->name('branches.west');
 
-Route::get('/branches/karaganda', function () {
+Route::get('/karaganda', function () {
     return Inertia::render('Branches/Karaganda');
 })->name('branches.karaganda');
 
-Route::get('/branches/kostanay', function () {
+Route::get('/kostanay', function () {
     return Inertia::render('Branches/Kostanay');
 })->name('branches.kostanay');
 
-Route::get('/branches/kyzylorda', function () {
+Route::get('/kyzylorda', function () {
     return Inertia::render('Branches/Kyzylorda');
 })->name('branches.kyzylorda');
 
-Route::get('/branches/mangystau', function () {
+Route::get('/mangystau', function () {
     return Inertia::render('Branches/Mangystau');
 })->name('branches.mangystau');
 
-Route::get('/branches/pavlodar', function () {
+Route::get('/pavlodar', function () {
     return Inertia::render('Branches/Pavlodar');
 })->name('branches.pavlodar');
 
-Route::get('/branches/north', function () {
+Route::get('/north', function () {
     return Inertia::render('Branches/North');
 })->name('branches.north');
 
-Route::get('/branches/turkestan', function () {
+Route::get('/turkestan', function () {
     return Inertia::render('Branches/Turkestan');
 })->name('branches.turkestan');
 
-Route::get('/branches/ulytau', function () {
+Route::get('/ulytau', function () {
     return Inertia::render('Branches/Ulytau');
 })->name('branches.ulytau');
 
-Route::get('/branches/shymkent', function () {
+Route::get('/shymkent', function () {
     return Inertia::render('Branches/Shymkent');
 })->name('branches.shymkent');
 
