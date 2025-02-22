@@ -6,6 +6,7 @@ import ImportantDoc from '@/Components/ImportantDoc';
 import FileAccordTitle from '@/Components/FileAccordTitle';
 import FileAccordChlank from '@/Components/FileAccordChlank';
 import NameDoctor from '@/Components/NameDoctor';
+import PdfViewer from '@/Components/PdfViewer';
 
 export default function Training() {
   return (
@@ -47,15 +48,26 @@ export default function Training() {
         </div>
     </section>
 
-    <ImportantDoc bgcolor="bg-fuchsia-100" title="Документы, регламентирующие деятельность научного центра"
-        description="Устав ННЦРЗ" filetype="pdf" img={2} />
+    <section className="text-gray-600 body-font">
+        <div className="container px-5 py-8 mx-auto">
+            <div className="flex flex-col">
+                <h2 className="text-2xl font-semibold mb-4">Документы</h2>
+                <div className="space-y-4">
+                    <div>
+                        <h3 className="text-xl font-medium mb-2">Устав</h3>
+                        <PdfViewer pdfUrl="/storage/documents/ustav.pdf" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     
-    <section class="text-gray-600 body-font">
-      <div class="container px-5 pt-24 mx-auto">
-        <div class="flex flex-wrap px-5 pb-5 bg-fuchsia-100 rounded-2xl">
+    <section className="text-gray-600 body-font">
+      <div className="container px-5 pt-24 mx-auto">
+        <div className="flex flex-wrap px-5 pb-5 bg-fuchsia-100 rounded-2xl">
           <FileAccordTitle title="Стратегия развития" />
           <FileAccordChlank description="Стратегия на 2032" filetype="pdf" img={2} />
-          <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
+          <FileAccordChlank description="План развития национальных управляющих холдингов" filetype="pdf" img={2} />
           <FileAccordTitle title="Финансовая отчетность" />
           <FileAccordChlank description="Отчет за 2022 г" filetype="pdf" img={2} />
           <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
@@ -72,9 +84,8 @@ export default function Training() {
         </div>
       </div>
     </section>
-
     </>
-  )
+  );
 }
 
-Training.layout = (page) => <LayoutDirection img="headcentre" h1="Обучающие циклы">{page}</LayoutDirection>
+Training.layout = page => <LayoutDirection img="headcentre" h1="Обучающие циклы">{page}</LayoutDirection>
