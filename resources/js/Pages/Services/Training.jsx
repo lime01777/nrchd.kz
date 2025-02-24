@@ -54,8 +54,7 @@ export default function Training() {
                 <h2 className="text-2xl font-semibold mb-4">Документы</h2>
                 <div className="space-y-4">
                     <div>
-                        <h3 className="text-xl font-medium mb-2">Устав</h3>
-                        <PdfViewer pdfUrl="/storage/documents/ustav.pdf" />
+                        <PdfViewer pdfUrl="https://drive.google.com/file/d/1OZsG6PXT-MKle40jlFWF7Gwih-4e6JUg/view" />
                     </div>
                 </div>
             </div>
