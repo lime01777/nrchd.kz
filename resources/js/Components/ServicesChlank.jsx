@@ -7,7 +7,7 @@ function ServicesChlank({title, bgcolor}) {
             <h1 className="title-font sm:text-xl text-lg font-medium text-gray-900 mb-3">{title}</h1>
             <a
                 className="cursor-pointer mt-3 text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3">Перейти
-                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                     className="w-4 h-4 ml-2" viewBox="0 0 24 24">
                     <path d="M5 12h14M12 5l7 7-7 7"></path>
                 </svg>

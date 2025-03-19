@@ -1,8 +1,9 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import React, {useState, useEffect} from 'react';
 import DirectionsSubLinks from './DirectionsSubLinks';
 
 export default function Header() {
+    const { auth } = usePage().props;
     const [isScrolled, setIsScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -36,12 +37,12 @@ export default function Header() {
         { title: "Аккредитация", url: "medical.accreditation"},
         { title: "Оценка технологий здравоохранения", url: "health.rate"},
         { title: "Клинические протоколы", url: "clinical.protocols"},
-        { title: "Междурародное сотрудничество", url: "medical.education"},
-        { title: "Рейтинг медицинских организаций", url: "medical.education"},
-        { title: "Медицинская наука", url: "medical.education"},
-        { title: "Лекарственная политика", url: "medical.education"},
+        { title: "Стратегические инициативы и международное сотрудничество", url: "strategic.initiatives"},
+        { title: "Рейтинг медицинских организаций", url: "medical.rating"},
+        { title: "Медицинская наука", url: "medical.science"},
+        { title: "Лекарственная политика", url: "drug.policy"},
         { title: "Первичная медико-санитарная помощь", url: "medical.education"},
-        { title: "Национальные счета здравоохранения", url: "medical.education"},
+        { title: "Национальные счета здравоохранения", url: "health.accounts"},
         
     ];
 
@@ -59,11 +60,10 @@ export default function Header() {
         { title: "Оценка рекламных материалов", url: "services.adsEvaluation" },
         { title: "Оценка технологий здравоохранения", url: "services.healthTechAssessment" },
         { title: "Экспертиза лекарственных средств", url: "services.drugExpertise" },
-        { title: "Экспертиза образовательных программ", url: "services.educationPrograms" },
-        { title: "Научно-медицинская экспертиза", url: "services.medicalExpertise" },
-        { title: "Аккредитация медорганизаций", url: "services.accreditation" }
-        
-    ];
+        { title: "Образовательные программы", url: "services.educationPrograms" },
+        { title: "Медицинская экспертиза", url: "services.medicalExpertise" },
+        { title: "Аккредитация", url: "services.accreditation" },
+            ];
 
 
     useEffect(() => {
@@ -83,7 +83,7 @@ export default function Header() {
         <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
             <Link href={route('home')}
                 className="hidden lg:flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
-            <span className="text-xs uppercase">национальный научный центр развития <br />здравоохранения им.
+            <span className="text-sm uppercase">национальный научный центр развития <br />здравоохранения им.
                 салидат
                 каирбековой</span>
             </Link>
@@ -203,17 +203,42 @@ export default function Header() {
     </div>
                 </div>
 
-                <a className="mr-8 hover:text-gray-900">Новости</a>
+                                {/* Новости */}
+                                <div className="mr-8">
+                    <Link href={route('news')} className="hover:text-gray-900">
+                        Новости
+                    </Link>
+                </div>
+
+                <a className="mr-8 hover:text-gray-900"></a>
             </nav>
             <div className='hidden lg:flex flex-wrap items-end justify-end'>
                 <button
-                    className="mx-1 inline-flex items-center hover:border-b-2 border-black py-1 px-3 focus:outline-none text-sm mt-4 md:mt-0 transition-all ease-in duration-150">EN
+                    className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                </button>
+                {auth?.user && (
+                    <Link
+                        href={route('admin.dashboard')}
+                        className="mx-1 inline-flex items-center py-1 px-3 focus:outline-none text-sm text-gray-900 mt-4 md:mt-0 transition-all ease-in duration-150 hover:text-blue-600"
+                    >
+                        <svg className="h-5 w-5 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Админ
+                    </Link>
+                )}
+                <button
+                    className="mx-1 inline-flex items-center bg-gray-50 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">EN
                 </button>
                 <button
-                    className="mx-1 inline-flex items-center border-b-2 border-black py-1 px-3 focus:outline-none text-sm text-gray-900 mt-4 md:mt-0 transition-all ease-in duration-150">RU
+                    className="mx-1 inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">RU
                 </button>
                 <button
-                    className="mx-1 inline-flex items-center hover:border-b-2 border-black py-1 px-3 focus:outline-none text-sm mt-4 md:mt-0 transition-all ease-in duration-150">KZ
+                    className="mx-1 inline-flex items-center bg-gray-50 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">KZ
                 </button>
             </div>
 

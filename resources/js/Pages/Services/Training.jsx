@@ -7,6 +7,7 @@ import FileAccordTitle from '@/Components/FileAccordTitle';
 import FileAccordChlank from '@/Components/FileAccordChlank';
 import NameDoctor from '@/Components/NameDoctor';
 import PdfViewer from '@/Components/PdfViewer';
+import FAQ from '@/Components/FAQ'; // Add this line
 
 export default function Training() {
   return (
@@ -62,26 +63,52 @@ export default function Training() {
     </section>
     
     <section className="text-gray-600 body-font">
-      <div className="container px-5 pt-24 mx-auto">
-        <div className="flex flex-wrap px-5 pb-5 bg-fuchsia-100 rounded-2xl">
-          <FileAccordTitle title="Стратегия развития" />
-          <FileAccordChlank description="Стратегия на 2032" filetype="pdf" img={2} />
-          <FileAccordChlank description="План развития национальных управляющих холдингов" filetype="pdf" img={2} />
-          <FileAccordTitle title="Финансовая отчетность" />
-          <FileAccordChlank description="Отчет за 2022 г" filetype="pdf" img={2} />
-          <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
-          <FileAccordTitle title="Закупки" />
-          <FileAccordChlank description="Отчет за 2022 г" filetype="pdf" img={2} />
-          <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
-          <FileAccordTitle title="Нормативные документы" />
-          <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
-          <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
-          <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
-          <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
-          <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
-          <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
+        <div className="container px-5 py-12 mx-auto">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-8">Часто задаваемые вопросы</h2>
+            <FAQ 
+                items={[
+                    {
+                        question: "Как записаться на обучающий цикл?",
+                        answer: "Для записи на обучающий цикл необходимо заполнить заявку на нашем сайте или связаться с нами по телефону. После обработки заявки наш специалист свяжется с вами для подтверждения участия и предоставления дополнительной информации."
+                    },
+                    {
+                        question: "Какие документы необходимы для участия в обучении?",
+                        answer: "Для участия в обучении вам понадобятся: удостоверение личности, диплом о медицинском образовании (при необходимости), и документы, подтверждающие вашу квалификацию. Точный список документов зависит от выбранного курса."
+                    },
+                    {
+                        question: "Выдается ли сертификат после прохождения обучения?",
+                        answer: "Да, по окончании обучающего цикла всем участникам выдается сертификат установленного образца, подтверждающий прохождение курса и полученные знания."
+                    },
+                    {
+                        question: "Можно ли пройти обучение дистанционно?",
+                        answer: "Да, многие наши обучающие циклы доступны в дистанционном формате. При регистрации вы можете выбрать удобный для вас формат обучения: очный или дистанционный."
+                    }
+                ]}
+            />
         </div>
-      </div>
+    </section>
+
+    <section className="text-gray-600 body-font">
+        <div className="container px-5 pt-24 mx-auto">
+            <div className="flex flex-wrap px-5 pb-5 bg-fuchsia-100 rounded-2xl">
+                <FileAccordTitle title="Стратегия развития" />
+                <FileAccordChlank description="Стратегия на 2032" filetype="pdf" img={2} />
+                <FileAccordChlank description="План развития национальных управляющих холдингов" filetype="pdf" img={2} />
+                <FileAccordTitle title="Финансовая отчетность" />
+                <FileAccordChlank description="Отчет за 2022 г" filetype="pdf" img={2} />
+                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
+                <FileAccordTitle title="Закупки" />
+                <FileAccordChlank description="Отчет за 2022 г" filetype="pdf" img={2} />
+                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
+                <FileAccordTitle title="Нормативные документы" />
+                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
+                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
+                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
+                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
+                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
+                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
+            </div>
+        </div>
     </section>
     </>
   );
