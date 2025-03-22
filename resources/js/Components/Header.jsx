@@ -188,9 +188,20 @@ export default function Header() {
         Филиалы
     </button>
     <div className="fixed left-1/2 -translate-x-1/2 transform mt-8 bg-white border-[1px] border-gray-300 shadow-lg rounded-xl py-2 z-50 
-        transition-all duration-150 ease-in-out opacity-0 scale-95 invisible group-hover:opacity-100 group-hover:scale-100 group-hover:visible">
+        transition-all duration-150 ease-in-out opacity-0 scale-95 invisible group-hover:opacity-100 group-hover:scale-100 group-hover:visible flex">
         <div className="grid grid-cols-2 gap-4 p-4">
-            {branchesSubLinks.map((link, index) => (
+            {branchesSubLinks.slice(0, 8).map((link, index) => (
+                <Link
+                    key={index}
+                    href={route(link.url)}
+                    className="whitespace-nowrap hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors duration-150"
+                >
+                    {link.title}
+                </Link>
+            ))}
+        </div>
+        <div className="grid grid-cols-2 gap-4 p-4">
+            {branchesSubLinks.slice(8).map((link, index) => (
                 <Link
                     key={index}
                     href={route(link.url)}
