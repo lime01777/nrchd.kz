@@ -179,39 +179,36 @@ export default function Header() {
 
                 {/* Филиалы */}
                 <div className="relative group mr-8">
-    <button className="group-hover:text-gray-900 focus:outline-none flex items-center cursor-pointer">
-        <svg xmlns="http://www.w3.org/2000/svg"
-            className="mr-2 h-4 w-4 transition-transform group-hover:rotate-180" fill="none"
-            viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-        Филиалы
-    </button>
-    <div className="fixed left-1/2 -translate-x-1/2 transform mt-8 bg-white border-[1px] border-gray-300 shadow-lg rounded-xl py-2 z-50 
-        transition-all duration-150 ease-in-out opacity-0 scale-95 invisible group-hover:opacity-100 group-hover:scale-100 group-hover:visible flex">
-        <div className="grid grid-cols-2 gap-4 p-4">
-            {branchesSubLinks.slice(0, 8).map((link, index) => (
-                <Link
-                    key={index}
-                    href={route(link.url)}
-                    className="whitespace-nowrap hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors duration-150"
-                >
-                    {link.title}
-                </Link>
-            ))}
-        </div>
-        <div className="grid grid-cols-2 gap-4 p-4">
-            {branchesSubLinks.slice(8).map((link, index) => (
-                <Link
-                    key={index}
-                    href={route(link.url)}
-                    className="whitespace-nowrap hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors duration-150"
-                >
-                    {link.title}
-                </Link>
-            ))}
-        </div>
-    </div>
+                    <button className="group-hover:text-gray-900 focus:outline-none flex items-center cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            className="mr-2 h-4 w-4 transition-transform group-hover:rotate-180" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                        Филиалы
+                    </button>
+
+                    {/* Контейнер для двойного меню */}
+                    <div className="fixed left-1/2 -translate-x-1/2 transform mt-8 bg-white border-[1px] border-gray-300 shadow-lg rounded-xl py-2 z-50 
+    transition-all duration-150 ease-in-out opacity-0 scale-95 invisible group-hover:opacity-100 group-hover:scale-100 group-hover:visible flex"
+                        style={{ transformOrigin: "top center" }}>
+                        {/* Первое меню */}
+                        <ul className="w-96 py-2 border-r border-gray-100">
+                            {branchesSubLinks.slice(0, Math.ceil(branchesSubLinks.length / 2)).map((link, index) => (
+                            <DirectionsSubLinks key={index} title={link.title} url={link.url} />
+                            ))}
+                        </ul>
+
+                        {/* Второе меню */}
+                        <ul className="w-96 py-2">
+                            {branchesSubLinks.slice(Math.ceil(branchesSubLinks.length / 2)).map((link, index) => (
+                            <DirectionsSubLinks key={index} title={link.title} url={link.url} />
+                            ))}
+                        </ul>
+                    </div>
+                    
+                    {/* Увеличенная зона интерактивности */}
+                    <div className="absolute inset-0 -top-8 -bottom-8 cursor-pointer"></div>
                 </div>
 
                                 {/* Новости */}
