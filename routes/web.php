@@ -208,6 +208,11 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings');
     Route::put('/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
     Route::post('/settings/backup', [App\Http\Controllers\Admin\SettingController::class, 'createBackup'])->name('admin.settings.backup');
+
+    // Маршруты для управления аккордеонами документов
+    Route::resource('document-accordions', App\Http\Controllers\Admin\DocumentAccordionController::class, [
+        'names' => 'admin.document-accordions'
+    ]);
 });
 
 // Маршруты для филиалов

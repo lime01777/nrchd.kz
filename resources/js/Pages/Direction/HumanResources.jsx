@@ -2,8 +2,7 @@ import { Head } from '@inertiajs/react';
 import React from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import ChartHead from '@/Components/ChartHead'
-import FileAccordTitle from '@/Components/FileAccordTitle';
-import FileAccordChlank from '@/Components/FileAccordChlank';
+import PageAccordions from '@/Components/PageAccordions';
 import FolderChlank from '@/Components/FolderChlank';
 import { Link } from '@inertiajs/react';
 
@@ -63,17 +62,10 @@ export default function HumanResources() {
     </section>
     <ChartHead />
     <section className="text-gray-600 body-font">
-    <div className="container px-5 pt-24 mx-auto">
-      <div className="flex flex-wrap px-5 pb-5 bg-red-100 rounded-2xl">
-        <FileAccordTitle title="Кадровый дефицит" />
-        <FileAccordChlank description="Моделирование новой формулы дефицита" filetype="xls" img={3} />
-        <FileAccordChlank description="Обновленная методика определения дефицита КРЗ" filetype="pdf" img={2}/>
-        <FileAccordTitle title="Планирование и прогнозирование кадровых ресурсов здравоохранения" />
-        <FileAccordChlank description="Среднесрочный прогноз потребности в медкадрах г. Астана" filetype="xls" img={3}/>
-        <FileAccordChlank description="Методика прогнозирования" filetype="pdf" img={2}/>
+      <div className="container px-5 pt-24 mx-auto">
+        <PageAccordions />
       </div>
-    </div>
-  </section>
+    </section>
     </>
   )
 }

@@ -29,7 +29,7 @@ export default function AdminLayout({ children, title }) {
 
       <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 ease-in-out`}>
         <div className="flex items-center justify-center h-16 bg-blue-600 text-white">
-          <h2 className="text-xl font-semibold">НЦРЗ Админ</h2>
+          <h2 className="text-xl font-semibold">Админ ННЦРЗ</h2>
         </div>
         <nav className="mt-5 px-2">
           <Link 
@@ -58,6 +58,15 @@ export default function AdminLayout({ children, title }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             Документы
+          </Link>
+          <Link 
+            href={route('admin.document-accordions.index')} 
+            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${route().current('admin.document-accordions.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
+          >
+            <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
+            Аккордеоны документов
           </Link>
           <Link 
             href={route('admin.users')} 

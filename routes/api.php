@@ -22,3 +22,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // Маршруты для документов
 Route::get('/documents/by-accordion/{accordionId}', [DocumentApiController::class, 'getByAccordionId']);
+
+// Маршрут для получения файлов из storage
+Route::get('/files', [\App\Http\Controllers\FileController::class, 'getFiles']);
+
+// Маршрут для получения аккордеонов по маршруту страницы
+Route::get('/accordions-for-page', [\App\Http\Controllers\FileController::class, 'getAccordionsForPage']);

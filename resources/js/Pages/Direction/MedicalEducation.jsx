@@ -2,14 +2,14 @@ import { Head } from "@inertiajs/react";
 import React, { useState } from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
 import BannerCatalog from "@/Components/BannerCatalog";
-import FilesAccord from "@/Components/FilesAccord";
+import PageAccordions from "@/Components/PageAccordions";
 
 export default function MedicalEducation() {
   const [showFullText, setShowFullText] = useState(false);
 
   return (
     <>
-    <Head title="NNCRZ" />
+    <Head title="Медицинское образование" />
     <section className="text-gray-600 body-font pb-8">
 
         <div className="container px-5 py-12 mx-auto">
@@ -50,7 +50,7 @@ export default function MedicalEducation() {
         </div>
     </section>
     <BannerCatalog />
-    <FilesAccord />
+    <PageAccordions />
     </>
     
   )
