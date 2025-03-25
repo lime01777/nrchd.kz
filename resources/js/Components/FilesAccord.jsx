@@ -3,7 +3,7 @@ import FileAccordTitle from './FileAccordTitle';
 import FileAccordChlank from './FileAccordChlank';
 import axios from 'axios';
 
-export default function FilesAccord({ sections: propSections, bgColor = 'bg-green-100', folder = '', title = '', name = '' }) {
+export default function FilesAccord({ sections: propSections, bgColor = 'bg-green-100', folder = '', title = '', name = '', onVideoClick }) {
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -76,9 +76,9 @@ export default function FilesAccord({ sections: propSections, bgColor = 'bg-gree
   return (
     <div className="flex flex-wrap -mx-4">
       <div className="w-full px-4">
-        <div className={`rounded-lg overflow-hidden ${bgColor} mb-6`}>
+        <div className={`rounded-lg overflow-hidden ${bgColor}`}>
           {sections.map((section, index) => (
-            <div key={index} className="mb-4">
+            <div key={index}>
               <FileAccordTitle
                 title={section.title}
                 isOpen={openSections[index]}
@@ -91,6 +91,7 @@ export default function FilesAccord({ sections: propSections, bgColor = 'bg-gree
                       <div key={fileIndex} className="bg-white rounded-lg shadow p-3">
                         <FileAccordChlank
                           {...document}
+                          onVideoClick={onVideoClick}
                         />
                       </div>
                     ))}
@@ -98,6 +99,7 @@ export default function FilesAccord({ sections: propSections, bgColor = 'bg-gree
                       <div key={fileIndex} className="bg-white rounded-lg shadow p-3">
                         <FileAccordChlank
                           file={file}
+                          onVideoClick={onVideoClick}
                         />
                       </div>
                     ))}

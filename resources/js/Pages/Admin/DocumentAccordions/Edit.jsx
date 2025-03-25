@@ -11,13 +11,43 @@ export default function Edit({ accordion, folders, pages }) {
         folder_path: accordion.folder_path || '',
         title: accordion.title || '',
         is_active: accordion.is_active || false,
-        sort_order: accordion.sort_order || 0
+        sort_order: accordion.sort_order || 0,
+        bg_color: accordion.bg_color || 'bg-gray-100' // Добавляем поле bg_color с данными из аккордеона
     });
+
+    // Фильтрация страниц для отображения только направлений и их подстраниц
+    const directionPages = pages.filter(page => 
+        page.route.startsWith('direction') || 
+        page.route.includes('/direction/') ||
+        page.route.includes('Direction/')
+    );
+
+    // Доступные цвета для выбора
+    const availableColors = [
+        { value: 'bg-gray-100', label: 'Серый' },
+        { value: 'bg-red-100', label: 'Красный' },
+        { value: 'bg-blue-100', label: 'Синий' },
+        { value: 'bg-green-100', label: 'Зеленый' },
+        { value: 'bg-yellow-100', label: 'Желтый' },
+        { value: 'bg-purple-100', label: 'Фиолетовый' },
+        { value: 'bg-pink-100', label: 'Розовый' },
+        { value: 'bg-indigo-100', label: 'Индиго' },
+        { value: 'bg-orange-100', label: 'Оранжевый' },
+        { value: 'bg-teal-100', label: 'Бирюзовый' },
+        { value: 'bg-fuchsia-100', label: 'Фуксия' },
+    ];
 
     // Автоматически устанавливаем цвет фона на основе выбранной страницы
     const handlePageChange = (e) => {
         const pageRoute = e.target.value;
-        setData('page_route', pageRoute);
+        const bgColor = getPageColor(pageRoute) || 'bg-gray-100';
+        
+        setData({
+            ...data,
+            page_route: pageRoute,
+            bg_color: bgColor
+        });
+        
         // Название аккордеона по умолчанию равно названию выбранной страницы
         if (!data.name) {
             const selectedPage = pages.find(page => page.route === pageRoute);
@@ -29,9 +59,7 @@ export default function Edit({ accordion, folders, pages }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Автоматически добавляем цвет фона на основе выбранной страницы
-        const formData = { ...data, bg_color: getPageColor(data.page_route) };
-        put(route('admin.document-accordions.update', accordion.id), formData);
+        put(route('admin.document-accordions.update', accordion.id), data);
     };
 
     return (
@@ -51,15 +79,15 @@ export default function Edit({ accordion, folders, pages }) {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             <div>
                                 <Select
-                                    label="Страница"
+                                    label="Страница направления"
                                     name="page_route"
                                     value={data.page_route}
                                     onChange={handlePageChange}
                                     error={errors.page_route}
                                     required
                                 >
-                                    <option value="">Выберите страницу</option>
-                                    {pages.map((page) => (
+                                    <option value="">Выберите страницу направления</option>
+                                    {directionPages.map((page) => (
                                         <option key={page.route} value={page.route}>
                                             {page.name}
                                         </option>
@@ -119,6 +147,25 @@ export default function Edit({ accordion, folders, pages }) {
                                     onChange={(e) => setData('sort_order', parseInt(e.target.value))}
                                     error={errors.sort_order}
                                 />
+                            </div>
+                            
+                            <div>
+                                <Select
+                                    label="Цвет фона"
+                                    name="bg_color"
+                                    value={data.bg_color}
+                                    onChange={(e) => setData('bg_color', e.target.value)}
+                                    error={errors.bg_color}
+                                >
+                                    {availableColors.map((color) => (
+                                        <option key={color.value} value={color.value}>
+                                            {color.label}
+                                        </option>
+                                    ))}
+                                </Select>
+                                <div className={`mt-2 p-2 rounded ${data.bg_color}`}>
+                                    Предпросмотр выбранного цвета
+                                </div>
                             </div>
                             
                             <div className="flex items-center mt-4">

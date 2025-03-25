@@ -41,7 +41,7 @@ export default function Header() {
         { title: "Рейтинг медицинских организаций", url: "medical.rating"},
         { title: "Медицинская наука", url: "medical.science"},
         { title: "Лекарственная политика", url: "drug.policy"},
-        { title: "Первичная медико-санитарная помощь", url: "medical.education"},
+        { title: "Первичная медико-санитарная помощь", url: "primary.healthcare"},
         { title: "Национальные счета здравоохранения", url: "health.accounts"},
         
     ];

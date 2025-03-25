@@ -5,7 +5,7 @@ import ImportantDoc from '@/Components/ImportantDoc';
 import FileAccordTitle from '@/Components/FileAccordTitle';
 import FileAccordChlank from '@/Components/FileAccordChlank';
 import FolderChlank from '@/Components/FolderChlank';
-import FilesAccord from '@/Components/FilesAccord';
+import PageAccordions from '@/Components/PageAccordions';
 
 export default function DrugPolicy() {
   return (
@@ -51,7 +51,7 @@ export default function DrugPolicy() {
     </section>
 
     {/* Перечни возмещения */}
-    <FilesAccord 
+    <PageAccordions 
       bgColor="bg-yellow-50"
       sections={[
         {

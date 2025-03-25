@@ -1,7 +1,7 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
-import FilesAccord from '@/Components/FilesAccord';
+import PageAccordions from '@/Components/PageAccordions';
 
 export default function Research() {
   return (
@@ -72,70 +72,7 @@ export default function Research() {
         </div>
       </section>
       
-      <FilesAccord 
-        bgColor="bg-gray-100"
-        accordionId="strategic-research"
-        sections={[
-          {
-            title: "Стратегические документы",
-            documents: [
-              { 
-                description: "Стратегия развития здравоохранения Казахстана до 2030 года", 
-                filetype: "pdf", 
-                img: 2, 
-                filesize: "4.5 MB",
-                date: "15.01.2023",
-                url: "#"
-              },
-              { 
-                description: "Концепция развития первичной медико-санитарной помощи", 
-                filetype: "pdf", 
-                img: 2, 
-                filesize: "2.8 MB",
-                date: "22.03.2023",
-                url: "#"
-              },
-              { 
-                description: "Программа борьбы с неинфекционными заболеваниями", 
-                filetype: "pdf", 
-                img: 2, 
-                filesize: "3.2 MB",
-                date: "10.06.2023",
-                url: "#"
-              }
-            ]
-          },
-          {
-            title: "Отчеты и аналитические материалы",
-            documents: [
-              { 
-                description: "Анализ системы здравоохранения Казахстана", 
-                filetype: "pdf", 
-                img: 2, 
-                filesize: "5.1 MB",
-                date: "05.09.2023",
-                url: "#"
-              },
-              { 
-                description: "Отчет о состоянии здоровья населения Казахстана", 
-                filetype: "pdf", 
-                img: 2, 
-                filesize: "4.7 MB",
-                date: "12.12.2023",
-                url: "#"
-              },
-              { 
-                description: "Прогноз развития здравоохранения до 2035 года", 
-                filetype: "pdf", 
-                img: 2, 
-                filesize: "3.5 MB",
-                date: "20.02.2024",
-                url: "#"
-              }
-            ]
-          }
-        ]}
-      />
+      <PageAccordions />
     </>
   );
 }

@@ -174,13 +174,49 @@ class DocumentAccordionController extends Controller
      */
     private function getAvailablePages()
     {
-        // Здесь можно динамически получать список страниц из маршрутов
-        // или использовать статический список основных страниц
         return [
-            ['route' => 'human.resources', 'name' => 'Кадровые ресурсы'],
-            ['route' => 'medical.education', 'name' => 'Медицинское образование'],
-            ['route' => 'science', 'name' => 'Наука'],
-            ['route' => 'international.cooperation', 'name' => 'Международное сотрудничество'],
+            // Страницы из раздела Direction
+            ['route' => 'direction.human.resources', 'name' => 'Кадровые ресурсы'],
+            ['route' => 'direction.medical.education', 'name' => 'Медицинское образование'],
+            ['route' => 'direction.medical.science', 'name' => 'Медицинская наука'],
+            ['route' => 'direction.medical.rating', 'name' => 'Рейтинг медицинских организаций'],
+            ['route' => 'direction.medical.accreditation', 'name' => 'Аккредитация медицинских организаций'],
+            ['route' => 'direction.medical.statistics', 'name' => 'Медицинская статистика'],
+            ['route' => 'direction.clinical.protocols', 'name' => 'Клинические протоколы'],
+            ['route' => 'direction.drug.policy', 'name' => 'Лекарственная политика'],
+            ['route' => 'direction.electronic.health', 'name' => 'Электронное здравоохранение'],
+            ['route' => 'direction.health.accounts', 'name' => 'Национальные счета здравоохранения'],
+            ['route' => 'direction.health.rate', 'name' => 'Тарифы на медицинские услуги'],
+            ['route' => 'direction.strategic.initiatives', 'name' => 'Стратегические инициативы'],
+            
+            // Страницы из подраздела Direction/StrategicInitiatives
+            ['route' => 'direction.strategic.initiatives.astana.declaration', 'name' => 'Декларация Астаны'],
+            ['route' => 'direction.strategic.initiatives.partnership', 'name' => 'Стратегическое партнерство'],
+            ['route' => 'direction.strategic.initiatives.research', 'name' => 'Стратегические исследования'],
+            
+            // Страницы из подраздела Direction/MedicalScience
+            ['route' => 'direction.medical.science.clinical', 'name' => 'Клинические исследования'],
+            ['route' => 'direction.medical.science.research', 'name' => 'Научные исследования'],
+            ['route' => 'direction.medical.science.tech', 'name' => 'Инновационные технологии'],
+            ['route' => 'direction.medical.science.council', 'name' => 'Научный совет'],
+            
+            // Страницы из подраздела Direction/MedicalRating
+            ['route' => 'direction.medical.rating.quality', 'name' => 'Оценка качества'],
+            ['route' => 'direction.medical.rating.regional', 'name' => 'Региональный рейтинг'],
+            
+            // Страницы из подраздела Direction/HumanResources
+            ['route' => 'direction.human.resources.medical.workers', 'name' => 'Медицинские работники'],
+            ['route' => 'direction.human.resources.managers', 'name' => 'Руководители'],
+            ['route' => 'direction.human.resources.graduates', 'name' => 'Выпускники'],
+            
+            // Страницы из подраздела Direction/DrugPolicy
+            ['route' => 'direction.drug.policy.regulations', 'name' => 'Нормативные документы'],
+            ['route' => 'direction.drug.policy.commission', 'name' => 'Формулярная комиссия'],
+            
+            // Другие основные разделы сайта
+            ['route' => 'about', 'name' => 'О центре'],
+            ['route' => 'news', 'name' => 'Новости'],
+            ['route' => 'contacts', 'name' => 'Контакты'],
             ['route' => 'press.center', 'name' => 'Пресс-центр']
         ];
     }

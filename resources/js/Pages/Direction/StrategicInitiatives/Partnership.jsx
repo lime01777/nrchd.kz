@@ -1,7 +1,7 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
-import FilesAccord from '@/Components/FilesAccord';
+import PageAccordions from '@/Components/PageAccordions';
 
 export default function Partnership() {
   return (
@@ -53,62 +53,7 @@ export default function Partnership() {
         </div>
       </section>
       
-      <FilesAccord 
-        bgColor="bg-gray-100"
-        accordionId="strategic-partnership"
-        sections={[
-          {
-            title: "Меморандумы о сотрудничестве",
-            documents: [
-              { 
-                description: "Меморандум о сотрудничестве с ВОЗ", 
-                filetype: "pdf", 
-                img: 2, 
-                filesize: "1.5 MB",
-                date: "12.06.2023",
-                url: "#"
-              },
-              { 
-                description: "Меморандум о сотрудничестве с ЮНИСЕФ", 
-                filetype: "pdf", 
-                img: 2, 
-                filesize: "1.2 MB",
-                date: "03.09.2023",
-                url: "#"
-              },
-              { 
-                description: "Соглашение о партнерстве с Всемирным банком", 
-                filetype: "pdf", 
-                img: 2, 
-                filesize: "2.1 MB",
-                date: "15.11.2023",
-                url: "#"
-              }
-            ]
-          },
-          {
-            title: "Международные проекты",
-            documents: [
-              { 
-                description: "Проект по развитию первичной медико-санитарной помощи", 
-                filetype: "pdf", 
-                img: 2, 
-                filesize: "3.2 MB",
-                date: "22.01.2024",
-                url: "#"
-              },
-              { 
-                description: "Проект по борьбе с неинфекционными заболеваниями", 
-                filetype: "pdf", 
-                img: 2, 
-                filesize: "2.8 MB",
-                date: "05.02.2024",
-                url: "#"
-              }
-            ]
-          }
-        ]}
-      />
+      <PageAccordions />
     </>
   );
 }

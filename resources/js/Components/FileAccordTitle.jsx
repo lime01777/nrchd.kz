@@ -3,7 +3,7 @@ import React from 'react';
 function FileAccordTitle({title, isOpen, toggleOpen}) {
   return (
     <div 
-      className="flex flex-row w-full justify-between p-4 my-4 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors duration-200"
+      className="flex flex-row w-full justify-between p-4 cursor-pointer rounded-lg transition-colors duration-200"
       onClick={toggleOpen}
     >
         <div className='flex'>

@@ -3,7 +3,7 @@ import axios from 'axios';
 import FilesAccord from '@/Components/FilesAccord';
 import { usePage } from '@inertiajs/react';
 
-export default function PageAccordions() {
+export default function PageAccordions({ bgColor }) {
     const [accordions, setAccordions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -91,14 +91,13 @@ export default function PageAccordions() {
     return (
         <div className="container px-5 py-8 mx-auto">
             {accordions.map((accordion) => (
-                <div key={accordion.id} className="mb-8">
-                    <FilesAccord 
-                        title={accordion.title} 
-                        folder={accordion.folder_path} 
-                        bgColor={accordion.bg_color}
-                        name={accordion.name}
-                    />
-                </div>
+                <FilesAccord 
+                    key={accordion.id}
+                    title={accordion.title} 
+                    folder={accordion.folder_path} 
+                    bgColor={bgColor || accordion.bg_color}
+                    name={accordion.name}
+                />
             ))}
         </div>
     );

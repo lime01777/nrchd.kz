@@ -2,7 +2,7 @@ import { Head } from "@inertiajs/react";
 import React from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
 import BannerCatalog from "@/Components/BannerCatalog";
-import FilesAccord from "@/Components/FilesAccord";
+import PageAccordions from "@/Components/PageAccordions";
 import FAQ from "@/Components/FAQ";
 import GoogleDriveFiles from "@/Components/GoogleDriveFiles";
 import FolderChlank from '@/Components/FolderChlank';
@@ -74,45 +74,7 @@ export default function MedicalScience() {
       {/* Локальная комиссия по биоэтике */}
 
       <BannerCatalog />
-      <FilesAccord 
-        bgColor="bg-gray-100"
-        sections={[
-          {
-            title: "Научно-медицинская экспертиза",
-            documents: [
-              { 
-                description: "МР по оформлению и утверждению НМР", 
-                filetype: "pdf", 
-                img: 2, 
-                filesize: "1.2 MB",
-                date: "15.03.2024",
-                url: "https://drive.google.com/file/d/1OZsG6PXT-MKle40jlFWF7Gwih-4e6JUg/view"
-              },
-              { 
-                description: "О проведении НМЭ", 
-                filetype: "doc", 
-                img: 1,
-                filesize: "850 KB",
-                date: "10.03.2024",
-                url: "https://drive.google.com/file/d/1OZsG6PXT-MKle40jlFWF7Gwih-4e6JUg/view"
-              }
-            ]
-          },
-          {
-            title: "Методические рекомендации",
-            documents: [
-              { 
-                description: "Совершенствование системы оценки медицинских технологий", 
-                filetype: "pdf", 
-                img: 2,
-                filesize: "2.4 MB",
-                date: "20.03.2024",
-                url: "https://drive.google.com/file/d/1OZsG6PXT-MKle40jlFWF7Gwih-4e6JUg/view"
-              }
-            ]
-          }
-        ]}
-      />
+      <PageAccordions />
     </>
   )
 }

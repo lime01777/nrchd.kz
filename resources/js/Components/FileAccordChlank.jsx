@@ -4,6 +4,9 @@ import axios from 'axios';
 function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date = "27.03.2024", url = "#", file }) {
   const [fileInfo, setFileInfo] = useState({ size: filesize, date: date });
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [viewerUrl, setViewerUrl] = useState(null);
+  const [error, setError] = useState(null);
 
   // Если передан объект file, используем его свойства
   useEffect(() => {
@@ -112,17 +115,74 @@ function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date
     return `${window.location.origin}${url.startsWith('/') ? '' : '/'}${url}`;
   };
 
+  // Получаем иконку для типа файла
+  const getFileTypeIcon = () => {
+    if (!url || url === "#") return "1"; // По умолчанию doc формат (1.png)
+    
+    const extension = url.split('.').pop().toLowerCase();
+    
+    if (['pdf'].includes(extension)) {
+      return "2"; // pdf формат (2.png)
+    } else if (['xls', 'xlsx'].includes(extension)) {
+      return "3"; // xlsx формат (3.png)
+    } else if (['txt'].includes(extension)) {
+      return "4"; // txt формат (4.png)
+    } else if (['ppt', 'pptx'].includes(extension)) {
+      return "5"; // pptx формат (5.png)
+    } else if (['doc', 'docx'].includes(extension)) {
+      return "1"; // doc формат (1.png)
+    }
+    
+    return "1"; // По умолчанию doc формат
+  };
+
+  // Конвертация документов Office с помощью Google Docs Viewer
+  const convertOfficeDocument = (fileUrl) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const absoluteUrl = getAbsoluteFileUrl();
+      const encodedUrl = encodeURIComponent(absoluteUrl);
+      
+      // Google Docs Viewer для просмотра Office документов
+      const googleViewerUrl = `https://docs.google.com/viewer?url=${encodedUrl}&embedded=true`;
+      
+      setViewerUrl(googleViewerUrl);
+      setIsLoading(false);
+      return googleViewerUrl;
+    } catch (error) {
+      console.error('Ошибка при конвертации документа:', error);
+      setError('Не удалось подготовить документ для просмотра');
+      setIsLoading(false);
+      return null;
+    }
+  };
+
   const openModal = (e) => {
     e.preventDefault();
     setShowModal(true);
     // Предотвращаем прокрутку страницы при открытом модальном окне
     document.body.style.overflow = 'hidden';
+    
+    // Если это документ Office, подготавливаем его для просмотра
+    const fileType = getFileType();
+    if (['word', 'excel'].includes(fileType)) {
+      convertOfficeDocument(url);
+    } else {
+      // Для других типов файлов сбрасываем состояние просмотрщика
+      setViewerUrl(null);
+    }
   };
 
   const closeModal = () => {
     setShowModal(false);
     // Восстанавливаем прокрутку страницы
     document.body.style.overflow = 'auto';
+    // Сбрасываем состояние
+    setViewerUrl(null);
+    setIsLoading(false);
+    setError(null);
   };
 
   return (
@@ -133,14 +193,22 @@ function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date
             <h2 className="font-medium leading-normal text-gray-800 line-clamp-6 mb-3">{description}</h2>
           </div>
           <div className="flex mt-auto justify-between items-center">
-            <button
-              onClick={openModal}
-              className="cursor-pointer text-black inline-flex items-center border-gray-300 border rounded-lg px-3 py-2 text-sm hover:bg-gray-50 transition-colors duration-200">
-              Открыть
-            </button>
+            <div className="flex space-x-2">
+              <button
+                onClick={openModal}
+                className="cursor-pointer text-black inline-flex items-center border-gray-300 border rounded-lg px-3 py-2 text-sm hover:bg-gray-50 transition-colors duration-200">
+                Открыть
+              </button>
+              <a
+                href={url}
+                download
+                className="cursor-pointer text-black inline-flex items-center border-gray-300 border rounded-lg px-3 py-2 text-sm hover:bg-gray-50 transition-colors duration-200">
+                Скачать
+              </a>
+            </div>
             <div className="flex flex-col text-sm">
               <div className="flex flex-row items-center">
-                <img src={`/images/${img || 'doc'}.png`} alt="" className="w-4 h-4" />
+                <img src={`/img/FileType/${getFileTypeIcon()}.png`} alt="" className="w-4 h-4" />
                 <p className="ml-1 uppercase text-xs text-gray-600">{filetype}, {fileInfo.size}</p>
               </div>
               <p className="text-gray-400 text-xs text-right">{fileInfo.date}</p>
@@ -149,7 +217,7 @@ function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date
         </div>
       </div>
 
-      {/* Модальное окно для просмотра документа */}
+      {/* Модальное окно для просмотра документов */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={closeModal}>
           <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
@@ -165,48 +233,82 @@ function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date
               </button>
             </div>
             <div className="flex-grow p-4 overflow-auto">
-              {getFileType() === 'pdf' ? (
-                <iframe 
-                  src={`${url}#toolbar=0`} 
-                  className="w-full h-full min-h-[70vh]" 
-                  title={description}
-                ></iframe>
+              {isLoading ? (
+                <div className="flex flex-col items-center justify-center h-[70vh]">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900 mb-4"></div>
+                  <p className="text-gray-600">Подготовка документа к просмотру...</p>
+                </div>
+              ) : error ? (
+                <div className="flex flex-col items-center justify-center h-[70vh]">
+                  <div className="text-red-500 mb-4">
+                    <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                  </div>
+                  <p className="text-gray-600 mb-4">{error}</p>
+                  <a 
+                    href={url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                  >
+                    Скачать файл
+                  </a>
+                </div>
               ) : getFileType() === 'image' ? (
-                <img 
-                  src={url} 
-                  alt={description} 
-                  className="max-w-full max-h-[70vh] mx-auto"
-                />
-              ) : getFileType() === 'word' ? (
-                <iframe 
-                  src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(getAbsoluteFileUrl())}`} 
-                  className="w-full h-full min-h-[70vh]" 
-                  title={description}
-                  frameBorder="0"
-                ></iframe>
-              ) : getFileType() === 'excel' ? (
-                <iframe 
-                  src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(getAbsoluteFileUrl())}`} 
-                  className="w-full h-full min-h-[70vh]" 
-                  title={description}
-                  frameBorder="0"
-                ></iframe>
-              ) : getFileType() === 'powerpoint' ? (
-                <iframe 
-                  src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(getAbsoluteFileUrl())}`} 
-                  className="w-full h-full min-h-[70vh]" 
-                  title={description}
-                  frameBorder="0"
-                ></iframe>
-              ) : getFileType() === 'text' ? (
-                <iframe 
-                  src={url} 
-                  className="w-full h-full min-h-[70vh]" 
-                  title={description}
-                ></iframe>
+                <div className="flex items-center justify-center h-[70vh]">
+                  <img 
+                    src={url} 
+                    alt={description} 
+                    className="max-w-full max-h-[70vh] object-contain"
+                  />
+                </div>
+              ) : getFileType() === 'pdf' ? (
+                <div className="flex flex-col items-center justify-center h-[70vh]">
+                  <div className="w-full h-full">
+                    <iframe 
+                      src={`${url}#toolbar=0&navpanes=0`}
+                      className="w-full h-full min-h-[70vh]" 
+                      title={description}
+                    ></iframe>
+                  </div>
+                </div>
+              ) : ['word', 'excel'].includes(getFileType()) && viewerUrl ? (
+                <div className="flex flex-col items-center justify-center h-[70vh]">
+                  <div className="w-full h-full">
+                    <iframe 
+                      src={viewerUrl}
+                      className="w-full h-full min-h-[70vh]" 
+                      title={description}
+                      frameBorder="0"
+                    ></iframe>
+                  </div>
+                </div>
+              ) : ['word', 'excel', 'powerpoint'].includes(getFileType()) ? (
+                <div className="flex flex-col items-center justify-center h-[70vh]">
+                  <div className="text-blue-500 mb-4">
+                    <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                  </div>
+                  <p className="text-gray-600 mb-4">Предпросмотр для этого типа файла недоступен</p>
+                  <a 
+                    href={url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                  >
+                    Скачать файл
+                  </a>
+                </div>
               ) : (
                 <div className="flex flex-col items-center justify-center h-[70vh]">
-                  <p className="text-gray-600 mb-4">Предпросмотр недоступен для этого типа файла</p>
+                  <div className="text-gray-500 mb-4">
+                    <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                  </div>
+                  <p className="text-gray-600 mb-4">Предпросмотр для этого типа файла недоступен</p>
                   <a 
                     href={url} 
                     target="_blank" 

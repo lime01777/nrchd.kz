@@ -4,7 +4,7 @@ import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import VideoModal from '@/Components/VideoModal';
 
-export default function MedicalWorkers() {
+export default function Mkb11() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');
@@ -23,14 +23,13 @@ export default function MedicalWorkers() {
 
   return (
     <>
-      <Head title="Медработникам" />
+      <Head title="МКБ-11" />
 
-      {/* Документы для медработников */}
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6">
             <SimpleFileDisplay 
-              folder="Кадровые ресурсы/Папка-Медработникам" 
+              folder="Электронное здравоохранение\Папка — МКБ 11" 
               title="" 
               bgColor="bg-white"
               onVideoClick={openVideoModal}
@@ -51,10 +50,12 @@ export default function MedicalWorkers() {
   );
 }
 
-MedicalWorkers.layout = page => <LayoutFolderChlank 
+Mkb11.layout = page => <LayoutFolderChlank 
   bgColor="bg-white"
-  h1="Медработникам" 
-  parentRoute={route('human.resources')} 
-  parentName="Кадровые ресурсы"
-  heroBgColor="bg-red-100"
+  h1="МКБ-11" 
+  parentRoute={route('electronic.health')} 
+  parentName="Электронное здравоохранение"
+  heroBgColor="bg-fuchsia-100"
+  buttonBgColor="bg-fuchsia-100"
+  buttonHoverBgColor="hover:bg-fuchsia-200"
 >{page}</LayoutFolderChlank>;

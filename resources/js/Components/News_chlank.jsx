@@ -3,25 +3,27 @@ import { Link } from '@inertiajs/react';
 
 function News_chlank({ date, description, slug }) {
   return (
-    <div className="p-4 lg:w-1/2 md:w-full">
-        <div className="flex border-2 rounded-lg border-gray-200 border-opacity-50 p-8 sm:flex-row flex-col">
+    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+        <div className="flex flex-col p-6 h-full">
             <div className="flex-grow">
-                <p className="leading-relaxed text-base mb-1">{date}</p>
-                <h2 className="text-gray-900 text-lg title-font font-medium mb-3">{description}</h2>
+                <p className="text-gray-500 text-sm mb-2">{date}</p>
+                <h2 className="text-gray-900 text-lg font-medium mb-4 line-clamp-3 h-[4.5rem]" title={description}>
+                    {description}
+                </h2>
                 {slug ? (
                   <Link 
                     href={route('news.show', slug)} 
-                    className="cursor-pointer mt-3 text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3"
+                    className="mt-auto text-black inline-flex items-center border-gray-300 border rounded-lg px-4 py-2 text-sm hover:bg-gray-50 transition-colors duration-200"
                   >
-                    Читать Новость
+                    Читать новость
                     <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
                         strokeWidth="2" className="w-4 h-4 ml-2" viewBox="0 0 24 24">
                         <path d="M5 12h14M12 5l7 7-7 7"></path>
                     </svg>
                   </Link>
                 ) : (
-                  <a className="cursor-pointer mt-3 text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3">
-                    Читать Новость
+                  <a className="mt-auto text-black inline-flex items-center border-gray-300 border rounded-lg px-4 py-2 text-sm hover:bg-gray-50 transition-colors duration-200">
+                    Читать новость
                     <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
                         strokeWidth="2" className="w-4 h-4 ml-2" viewBox="0 0 24 24">
                         <path d="M5 12h14M12 5l7 7-7 7"></path>

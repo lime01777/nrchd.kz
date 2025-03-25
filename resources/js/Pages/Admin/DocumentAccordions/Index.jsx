@@ -25,68 +25,76 @@ export default function Index() {
                 )}
 
                 <div className="bg-white shadow-md rounded-lg overflow-hidden">
-                    <Table>
-                        <Table.Head>
-                            <Table.Row>
-                                <Table.Cell>ID</Table.Cell>
-                                <Table.Cell>Название</Table.Cell>
-                                <Table.Cell>Страница</Table.Cell>
-                                <Table.Cell>Папка</Table.Cell>
-                                <Table.Cell>Заголовок</Table.Cell>
-                                <Table.Cell>Статус</Table.Cell>
-                                <Table.Cell>Порядок</Table.Cell>
-                                <Table.Cell>Действия</Table.Cell>
-                            </Table.Row>
-                        </Table.Head>
-                        <Table.Body>
-                            {accordions && accordions.length > 0 ? (
-                                accordions.map((accordion) => (
-                                    <Table.Row key={accordion.id}>
-                                        <Table.Cell>{accordion.id}</Table.Cell>
-                                        <Table.Cell>{accordion.name}</Table.Cell>
-                                        <Table.Cell>{accordion.page_route || 'Не указано'}</Table.Cell>
-                                        <Table.Cell className="max-w-xs truncate" title={accordion.folder_path}>
-                                            {accordion.folder_path}
-                                        </Table.Cell>
-                                        <Table.Cell>{accordion.title}</Table.Cell>
-                                        <Table.Cell>
-                                            {accordion.is_active ? (
-                                                <Badge variant="success">Активен</Badge>
-                                            ) : (
-                                                <Badge variant="default">Неактивен</Badge>
-                                            )}
-                                        </Table.Cell>
-                                        <Table.Cell>{accordion.sort_order}</Table.Cell>
-                                        <Table.Cell>
-                                            <div className="flex space-x-2">
-                                                <Link href={route('admin.document-accordions.edit', accordion.id)}>
-                                                    <Button variant="primary" className="mr-2">
-                                                        Редактировать
-                                                    </Button>
-                                                </Link>
-                                                <Link 
-                                                    href={route('admin.document-accordions.destroy', accordion.id)} 
-                                                    method="delete" 
-                                                    as="button"
-                                                    onBefore={() => confirm('Вы уверены, что хотите удалить этот аккордеон?')}
-                                                >
-                                                    <Button variant="danger">
-                                                        Удалить
-                                                    </Button>
-                                                </Link>
-                                            </div>
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <Table.Head>
+                                <Table.Row>
+                                    <Table.Cell className="font-semibold">ID</Table.Cell>
+                                    <Table.Cell className="font-semibold">Название</Table.Cell>
+                                    <Table.Cell className="font-semibold">Страница</Table.Cell>
+                                    <Table.Cell className="font-semibold">Папка</Table.Cell>
+                                    <Table.Cell className="font-semibold">Заголовок</Table.Cell>
+                                    <Table.Cell className="font-semibold">Статус</Table.Cell>
+                                    <Table.Cell className="font-semibold">Порядок</Table.Cell>
+                                    <Table.Cell className="font-semibold">Действия</Table.Cell>
+                                </Table.Row>
+                            </Table.Head>
+                            <Table.Body>
+                                {accordions && accordions.length > 0 ? (
+                                    accordions.map((accordion) => (
+                                        <Table.Row key={accordion.id}>
+                                            <Table.Cell>{accordion.id}</Table.Cell>
+                                            <Table.Cell className="max-w-[150px] truncate" title={accordion.name}>
+                                                {accordion.name}
+                                            </Table.Cell>
+                                            <Table.Cell className="max-w-[150px] truncate" title={accordion.page_route}>
+                                                {accordion.page_route || 'Не указано'}
+                                            </Table.Cell>
+                                            <Table.Cell className="max-w-[150px] truncate" title={accordion.folder_path}>
+                                                {accordion.folder_path}
+                                            </Table.Cell>
+                                            <Table.Cell className="max-w-[150px] truncate" title={accordion.title}>
+                                                {accordion.title}
+                                            </Table.Cell>
+                                            <Table.Cell>
+                                                {accordion.is_active ? (
+                                                    <Badge variant="success">Активен</Badge>
+                                                ) : (
+                                                    <Badge variant="default">Неактивен</Badge>
+                                                )}
+                                            </Table.Cell>
+                                            <Table.Cell>{accordion.sort_order}</Table.Cell>
+                                            <Table.Cell>
+                                                <div className="flex flex-wrap gap-2">
+                                                    <Link href={route('admin.document-accordions.edit', accordion.id)}>
+                                                        <Button variant="primary" size="sm">
+                                                            Редактировать
+                                                        </Button>
+                                                    </Link>
+                                                    <Link 
+                                                        href={route('admin.document-accordions.destroy', accordion.id)} 
+                                                        method="delete" 
+                                                        as="button"
+                                                        onBefore={() => confirm('Вы уверены, что хотите удалить этот аккордеон?')}
+                                                    >
+                                                        <Button variant="danger" size="sm">
+                                                            Удалить
+                                                        </Button>
+                                                    </Link>
+                                                </div>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    ))
+                                ) : (
+                                    <Table.Row>
+                                        <Table.Cell colSpan={8} className="text-center py-8">
+                                            Аккордеоны не найдены
                                         </Table.Cell>
                                     </Table.Row>
-                                ))
-                            ) : (
-                                <Table.Row>
-                                    <Table.Cell colSpan="8" className="text-center py-4">
-                                        Аккордеоны не найдены
-                                    </Table.Cell>
-                                </Table.Row>
-                            )}
-                        </Table.Body>
-                    </Table>
+                                )}
+                            </Table.Body>
+                        </Table>
+                    </div>
                 </div>
             </div>
         </AdminLayout>

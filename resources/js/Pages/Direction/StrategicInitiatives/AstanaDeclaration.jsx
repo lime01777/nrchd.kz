@@ -1,7 +1,7 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
-import FilesAccord from '@/Components/FilesAccord';
+import PageAccordions from '@/Components/PageAccordions';
 
 export default function AstanaDeclaration() {
   return (
@@ -72,9 +72,7 @@ export default function AstanaDeclaration() {
         </div>
       </section>
       
-      <FilesAccord 
-        bgColor="bg-gray-100"
-        accordionId="astana-declaration"
+      <PageAccordions 
         sections={[
           {
             title: "Документы по Декларации Астаны",

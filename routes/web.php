@@ -42,6 +42,18 @@ Route::get('/electronic-health', function () {
     return Inertia::render('Direction/ElectronicHealth');
 })->name('electronic.health');
 
+Route::get('/electronic-health/mkb11', function () {
+    return Inertia::render('Direction/ElectronicHealth/Mkb11');
+})->name('electronic.health.mkb11');
+
+Route::get('/electronic-health/regulations', function () {
+    return Inertia::render('Direction/ElectronicHealth/Regulations');
+})->name('electronic.health.regulations');
+
+Route::get('/electronic-health/standards', function () {
+    return Inertia::render('Direction/ElectronicHealth/Standards');
+})->name('electronic.health.standards');
+
 Route::get('/strategic-initiatives', function () {
     return Inertia::render('Direction/StrategicInitiatives');
 })->name('strategic.initiatives');
@@ -121,6 +133,18 @@ Route::get('/health-tech-assessment', function () {
 Route::get('/drug-expertise', function () {
     return Inertia::render('Services/DrugExpertise');
 })->name('services.drugExpertise');
+
+Route::get('/primary-healthcare', function () {
+    return Inertia::render('Direction/PrimaryHealthCare');
+})->name('primary.healthcare');
+
+Route::get('/primary-healthcare/outpatient', function () {
+    return Inertia::render('Direction/PrimaryHealthCare/Outpatient');
+})->name('primary.healthcare.outpatient');
+
+Route::get('/primary-healthcare/prevention', function () {
+    return Inertia::render('Direction/PrimaryHealthCare/Prevention');
+})->name('primary.healthcare.prevention');
 
 Route::get('/education-programs', function () {
     return Inertia::render('Services/EducationPrograms');

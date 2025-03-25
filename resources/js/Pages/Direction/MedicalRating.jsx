@@ -2,7 +2,7 @@ import { Head } from '@inertiajs/react';
 import React from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
-import FilesAccord from '@/Components/FilesAccord';
+import PageAccordions from '@/Components/PageAccordions';
 
 export default function MedicalRating() {
   return (
@@ -41,7 +41,7 @@ export default function MedicalRating() {
       </section>
 
       {/* Методические рекомендации */}
-      <FilesAccord 
+      <PageAccordions 
         bgColor="bg-blue-50"
         sections={[
           {
