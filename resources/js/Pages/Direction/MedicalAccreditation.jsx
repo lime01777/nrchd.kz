@@ -4,6 +4,7 @@ import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
 import News from '@/Components/News';
 import ImportantDoc from '@/Components/ImportantDoc';
+import FilesAccord from '@/Components/FilesAccord';
 
 export default function MedicalAccreditation() {
   return (

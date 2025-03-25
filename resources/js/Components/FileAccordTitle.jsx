@@ -3,13 +3,13 @@ import React from 'react';
 function FileAccordTitle({title, isOpen, toggleOpen}) {
   return (
     <div 
-      className="flex flex-row w-full justify-between p-4 cursor-pointer rounded-lg transition-colors duration-200"
+      className="flex flex-row w-full items-center justify-between p-4 cursor-pointer rounded-lg transition-colors duration-200"
       onClick={toggleOpen}
     >
-        <div className='flex'>
+        <div className='flex flex-grow'>
             <h1 className="sm:text-xl text-lg font-semibold title-font text-gray-900">{title}</h1>
         </div>
-        <div className='flex ml-4 md:ml-0'>
+        <div className='flex'>
             <div className="text-black inline-flex items-center">
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 

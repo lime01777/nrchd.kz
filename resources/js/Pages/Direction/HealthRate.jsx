@@ -4,13 +4,15 @@ import FolderChlank from '@/Components/FolderChlank';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FileAccordTitle from '@/Components/FileAccordTitle';
 import FileAccordChlank from '@/Components/FileAccordChlank';
+import FilesAccord from '@/Components/FilesAccord';
+import PageAccordions from "@/Components/PageAccordions";
 
 export default function HealthRate() {
   const [showFullText, setShowFullText] = useState(false);
   
   return (
     <>
-    <Head title='NNCRZ' />
+    <Head title='Оценка технологий здравоохранения' />
     <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
             <div className='flex flex-wrap px-12 text-justify mb-4'>
@@ -120,6 +122,26 @@ export default function HealthRate() {
         </div>
     </section>
 
+    <section className="text-gray-600 body-font">
+        <div className="container px-5 pt-12 pb-12 mx-auto">
+            <div className="flex flex-wrap px-5 bg-fuchsia-100">
+                <FilesAccord 
+                    folder="Оценка технологии здравоохранения/Набор — Методические рекомендации"
+                    title="Методические рекомендации"
+                    bgColor="bg-fuchsia-100"
+                />
+            </div>
+            
+            <div className="flex flex-wrap px-5 bg-fuchsia-100">
+                <FilesAccord 
+                    folder="Оценка технологии здравоохранения/Набор — Приказы"
+                    title="Приказы"
+                    bgColor="bg-fuchsia-100"
+                />
+            </div>
+        </div>
+    </section>
+    <PageAccordions bgColor="bg-fuchsia-100" />
     </>
   )
 }

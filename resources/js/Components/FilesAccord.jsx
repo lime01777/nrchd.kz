@@ -3,7 +3,7 @@ import FileAccordTitle from './FileAccordTitle';
 import FileAccordChlank from './FileAccordChlank';
 import axios from 'axios';
 
-export default function FilesAccord({ sections: propSections, bgColor = 'bg-green-100', folder = '', title = '', name = '', onVideoClick }) {
+export default function FilesAccord({ sections: propSections, bgColor = 'bg-green-100', folder = '', title = '', name = '', onVideoClick, defaultOpen = false }) {
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -16,7 +16,7 @@ export default function FilesAccord({ sections: propSections, bgColor = 'bg-gree
       // Инициализируем состояние открытых разделов
       const initialOpenState = {};
       propSections.forEach((_, index) => {
-        initialOpenState[index] = false;
+        initialOpenState[index] = index === 0 ? defaultOpen : false;
       });
       setOpenSections(initialOpenState);
       setLoading(false);
@@ -41,7 +41,7 @@ export default function FilesAccord({ sections: propSections, bgColor = 'bg-gree
           // Инициализируем состояние открытых разделов
           const initialOpenState = {};
           response.data.forEach((_, index) => {
-            initialOpenState[index] = false;
+            initialOpenState[index] = index === 0 ? defaultOpen : false;
           });
           setOpenSections(initialOpenState);
           setLoading(false);
@@ -52,7 +52,7 @@ export default function FilesAccord({ sections: propSections, bgColor = 'bg-gree
           setLoading(false);
         });
     }
-  }, [propSections, folder, title]);
+  }, [propSections, folder, title, defaultOpen]);
 
   const toggleSection = (index) => {
     setOpenSections(prevState => ({

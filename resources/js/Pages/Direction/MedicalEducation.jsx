@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
 import BannerCatalog from "@/Components/BannerCatalog";
 import PageAccordions from "@/Components/PageAccordions";
+import FilesAccord from "@/Components/FilesAccord";
 
 export default function MedicalEducation() {
   const [showFullText, setShowFullText] = useState(false);
@@ -50,7 +51,46 @@ export default function MedicalEducation() {
         </div>
     </section>
     <BannerCatalog />
-    <PageAccordions />
+    <section className="text-gray-600 body-font">
+        <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
+            {/* Первый аккордеон */}
+            <div className="flex flex-wrap px-5 bg-green-100">
+                <FilesAccord 
+                    folder="MedicalEducation/nma"
+                    title="Научно-медицинская экспертиза "
+                    bgColor="bg-green-100"
+                    defaultOpen={true}
+                />
+            </div>
+            
+            {/* Второй аккордеон */}
+            <div className="flex flex-wrap px-5 bg-green-100">
+                <FilesAccord 
+                    folder="MedicalEducation/class mediumd"
+                    title="Повышение квалификации для среднего медперсонала"
+                    bgColor="bg-green-100"
+                />
+            </div>
+            
+            {/* Третий аккордеон */}
+            <div className="flex flex-wrap px-5 bg-green-100">
+                <FilesAccord 
+                    folder="MedicalEducation/class menedger"
+                    title="Повышение квалификации для менеджеров"
+                    bgColor="bg-green-100"
+                />
+            </div>
+            
+            {/* Четвертый аккордеон */}
+            <div className="flex flex-wrap px-5 bg-green-100">
+                <FilesAccord 
+                    folder="MedicalEducation/class doctor"
+                    title="Повышение квалификации для врачей"
+                    bgColor="bg-green-100"
+                />
+            </div>
+        </div>
+    </section>
     </>
     
   )

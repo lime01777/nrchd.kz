@@ -70,6 +70,18 @@ Route::get('/clinical-protocols', function () {
     return Inertia::render('Direction/ClinicalProtocols');
 })->name('clinical.protocols');
 
+Route::get('/clinical-protocols/catalog', function () {
+    return Inertia::render('Direction/ClinicalProtocols/Catalog');
+})->name('clinical.protocols.catalog');
+
+Route::get('/clinical-protocols/monitoring', function () {
+    return Inertia::render('Direction/ClinicalProtocols/Monitoring');
+})->name('clinical.protocols.monitoring');
+
+Route::get('/clinical-protocols/commission', function () {
+    return Inertia::render('Direction/ClinicalProtocols/Commission');
+})->name('clinical.protocols.commission');
+
 Route::get('/medical-accreditation', function () {
     return Inertia::render('Direction/MedicalAccreditation');
 })->name('medical.accreditation');

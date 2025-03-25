@@ -16,11 +16,18 @@ export default function Edit({ accordion, folders, pages }) {
     });
 
     // Фильтрация страниц для отображения только направлений и их подстраниц
-    const directionPages = pages.filter(page => 
-        page.route.startsWith('direction') || 
-        page.route.includes('/direction/') ||
-        page.route.includes('Direction/')
-    );
+    const directionPages = pages.filter(page => {
+        const route = page.route.toLowerCase();
+        return route.includes('direction') || 
+               route.includes('направления') || 
+               route.includes('napravlenia') ||
+               route.includes('primaryhealthcare') ||
+               route.includes('electronichealth') ||
+               route.includes('healthrate');
+    });
+    
+    // Сортировка страниц по имени для удобства
+    directionPages.sort((a, b) => a.name.localeCompare(b.name));
 
     // Доступные цвета для выбора
     const availableColors = [
@@ -89,10 +96,13 @@ export default function Edit({ accordion, folders, pages }) {
                                     <option value="">Выберите страницу направления</option>
                                     {directionPages.map((page) => (
                                         <option key={page.route} value={page.route}>
-                                            {page.name}
+                                            {page.name} ({page.route})
                                         </option>
                                     ))}
                                 </Select>
+                                <p className="text-sm text-gray-500 mt-1">
+                                    Всего найдено страниц направлений: {directionPages.length}
+                                </p>
                             </div>
                             
                             <div>
