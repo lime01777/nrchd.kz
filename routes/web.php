@@ -194,6 +194,27 @@ Route::get('/medical-rating/quality', function () {
     return Inertia::render('Direction/MedicalRating/Quality');
 })->name('medical.rating.quality');
 
+// Маршруты для страниц аккредитации
+Route::get('/accreditation/guides', function () {
+    return Inertia::render('Accreditation/Guides');
+})->name('accreditation.guides');
+
+Route::get('/accreditation/experts', function () {
+    return Inertia::render('Accreditation/Experts');
+})->name('accreditation.experts');
+
+Route::get('/accreditation/training-materials', function () {
+    return Inertia::render('Accreditation/TrainingMaterials');
+})->name('accreditation.training');
+
+Route::get('/accreditation/active-standards', function () {
+    return Inertia::render('Accreditation/ActiveStandards');
+})->name('accreditation.standards');
+
+Route::get('/accreditation/standards-archive', function () {
+    return Inertia::render('Accreditation/StandardsArchive');
+})->name('accreditation.archive');
+
 // Маршруты для новостей
 Route::get('/news', [App\Http\Controllers\NewsController::class, 'index'])->name('news');
 Route::get('/news/{slug}', [App\Http\Controllers\NewsController::class, 'show'])->name('news.show');

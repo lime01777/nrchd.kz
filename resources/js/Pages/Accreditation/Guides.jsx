@@ -1,0 +1,55 @@
+import { Head } from '@inertiajs/react';
+import React from 'react';
+import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
+import FilesAccord from '@/Components/FilesAccord';
+import BannerCatalog from '@/Components/BannerCatalog';
+
+export default function Guides() {
+  return (
+    <>
+      <Head title="Руководства по аккредитации | ННЦРЗ" />
+      <section className="text-gray-600 body-font pb-8">
+        <div className="container px-5 py-12 mx-auto">
+          <div className="flex flex-wrap px-12 text-justify mb-4">
+            <h1 className="text-3xl font-semibold text-gray-900 mb-6 w-full">Руководства по аккредитации</h1>
+            <p className="tracking-wide leading-relaxed">
+              В этом разделе представлены руководства и методические материалы, которые помогут вам подготовиться к процессу 
+              аккредитации медицинских организаций. Здесь вы найдете документы, содержащие требования, рекомендации 
+              и инструкции по прохождению аккредитации в соответствии с требованиями законодательства Республики Казахстан.
+            </p>
+          </div>
+        </div>
+      </section>
+      
+      <BannerCatalog />
+      
+      <section className="text-gray-600 body-font">
+        <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
+          <div className="flex flex-wrap px-5 bg-yellow-100">
+            <FilesAccord 
+              folder="Accreditation/Guides"
+              title="Руководства по аккредитации"
+              bgColor="bg-yellow-100"
+              defaultOpen={true}
+            />
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+Guides.layout = page => (
+  <LayoutFolderChlank 
+    bgColor="bg-white" 
+    h1="Руководства по аккредитации" 
+    parentRoute={route('medical.accreditation')} 
+    parentName="Аккредитация медицинских организаций"
+    heroBgColor="bg-yellow-100"
+    buttonBgColor="bg-yellow-100"
+    buttonHoverBgColor="hover:bg-yellow-200"
+    buttonBorderColor="border-yellow-200"
+  >
+    {page}
+  </LayoutFolderChlank>
+);
