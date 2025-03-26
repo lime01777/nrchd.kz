@@ -42,7 +42,7 @@ const FooterLinks = () => {
                         <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3">График работы</h2>
                         <nav className="list-none mb-10">
                             <li>
-                                <a className="text-gray-600 hover:text-gray-800">Пн...Пт, с 9:00 до 18:00</a>
+                                <a className="text-gray-600 hover:text-gray-800">Пн - Пт, с 9:00 до 18:00</a>
                             </li>
                             <li>
                                 <a className="text-gray-600 hover:text-gray-800">Перерыв с 13:00 до 14:00</a>

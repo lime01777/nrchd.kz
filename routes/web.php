@@ -130,6 +130,18 @@ Route::get('/vacancy-jobs', function () {
     return Inertia::render('AboutCentre/Vacancy');
 })->name('vacancy.jobs');
 
+Route::get('/about-faq', function () {
+    return Inertia::render('AboutCentre/FAQ');
+})->name('about.faq');
+
+Route::get('/about-contacts', function () {
+    return Inertia::render('AboutCentre/Contacts');
+})->name('about.contacts');
+
+Route::get('/about-partners', function () {
+    return Inertia::render('AboutCentre/Partners');
+})->name('about.partners');
+
 Route::get('/training', function () {
     return Inertia::render('Services/Training');
 })->name('services.training');

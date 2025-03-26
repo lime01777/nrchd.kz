@@ -50,8 +50,9 @@ export default function Header() {
         { title: "О Центре", url: "about.centre"},
         { title: "Салидат Каирбекова", url: "salidat.kairbekova"},
         { title: "Вакансии", url: "vacancy.jobs"},
-        { title: "Вопросы и ответы", url: "salidat.kairbekova"},
-        { title: "Контактная информация", url: "salidat.kairbekova"},
+        { title: "Вопросы и ответы", url: "about.faq"},
+        { title: "Контактная информация", url: "about.contacts"},
+        { title: "Партнеры", url: "about.partners"},
         
     ];
 
@@ -221,12 +222,6 @@ export default function Header() {
                 <a className="mr-8 hover:text-gray-900"></a>
             </nav>
             <div className='hidden lg:flex flex-wrap items-end justify-end'>
-                <button
-                    className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                </button>
                 {auth?.user && (
                     <Link
                         href={route('admin.dashboard')}
@@ -240,13 +235,13 @@ export default function Header() {
                     </Link>
                 )}
                 <button
-                    className="mx-1 inline-flex items-center bg-gray-50 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">EN
+                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">EN
                 </button>
                 <button
-                    className="mx-1 inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">RU
+                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">RU
                 </button>
                 <button
-                    className="mx-1 inline-flex items-center bg-gray-50 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">KZ
+                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">KZ
                 </button>
             </div>
 
@@ -290,13 +285,13 @@ export default function Header() {
                     <a href="#" className="hover:text-gray-400">Новости</a>
                 </nav>
                 <button
-                    className="mx-1 inline-flex items-center bg-gray-50 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">EN
+                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">EN
                 </button>
                 <button
-                    className="mx-1 inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">RU
+                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">RU
                 </button>
                 <button
-                    className="mx-1 inline-flex items-center bg-gray-50 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">KZ
+                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">KZ
                 </button>
             </div>
         </div>

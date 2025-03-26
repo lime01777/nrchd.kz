@@ -9,15 +9,7 @@ function Sponsors() {
                 <div className='flex'>
                     <h1 className="sm:text-2xl text-2xl font-semibold title-font text-gray-900 mb-2">Партнеры</h1>
                 </div>
-                <div className='flex'>
-                    <a
-                        className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3">Все партнеры
-                        <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
-                            strokeWidth="2" className="w-4 h-4 ml-2" viewBox="0 0 24 24">
-                            <path d="M5 12h14M12 5l7 7-7 7"></path>
-                        </svg>
-                    </a>
-                </div>
+
             </div>
             <div className="flex flex-wrap -m-4">
                 <SponsorsChlank description="Казахстанский Национальный Университет Медицинских Исследований" />
@@ -25,7 +17,7 @@ function Sponsors() {
                 <SponsorsChlank description="Национальный холдинг “Медицинский исследовательский институт”" />
                 <SponsorsChlank description="Национальный холдинг “Медицинский исследовательский институт”" />
                 <SponsorsChlank description="Казахстанский Национальный Университет Медицинских Исследований" />
-                <SponsorsChlank description="Мерзляков Владимир Денисович" />
+                <SponsorsChlank description="Казахстанский Национальный Университет Медицинских Исследований" />
             </div>
         </div>
     </section>

@@ -1,16 +1,17 @@
 import { Head } from '@inertiajs/react';
 import React from 'react';
+import LayoutDirection from '@/Layouts/LayoutDirection';
 
-export default function Training() {
+export default function HealthTechAssessment() {
   return (
     <>
-      <Head title="Организация и проведение обучающих циклов" />
+      <Head title="Оценка технологий здравоохранения" />
       <div className="container mx-auto py-10">
-        <h1 className="text-3xl font-semibold">Организация и проведение обучающих циклов</h1>
+        <h1 className="text-3xl font-semibold mb-6">Оценка технологий здравоохранения</h1>
         <p className="mt-4">Здесь будет информация об услуге...</p>
       </div>
     </>
   );
 }
 
-Training.layout = (page) => <Layout img="service-training" h1="Организация и проведение обучающих циклов">{page}</Layout>;
+HealthTechAssessment.layout = (page) => <LayoutDirection img="service-health-tech" h1="Оценка технологий здравоохранения">{page}</LayoutDirection>;
