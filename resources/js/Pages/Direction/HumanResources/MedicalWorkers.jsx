@@ -31,7 +31,7 @@ export default function MedicalWorkers() {
           <div className="bg-white p-6">
             <SimpleFileDisplay 
               folder="Кадровые ресурсы/Папка-Медработникам" 
-              title="" 
+              title="Документы для медицинских работников" 
               bgColor="bg-white"
               onVideoClick={openVideoModal}
             />

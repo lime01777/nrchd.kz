@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Database\Seeders\NewsSeeder;
+use Database\Seeders\TestNewsSeeder;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -20,6 +21,9 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+        
+        // Запуск сидера для тестовых новостей
+        $this->call(TestNewsSeeder::class);
         
         $this->call([
             NewsSeeder::class,

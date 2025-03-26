@@ -1,125 +1,123 @@
+import React, { useState } from 'react';
 import { Head } from '@inertiajs/react';
-import React from 'react';
-import LayoutDirection from '@/Layouts/LayoutDirection';
-import { Link } from '@inertiajs/react';
-import FileAccordChlank from '@/Components/FileAccordChlank';
-import FileAccordTitle from '@/Components/FileAccordTitle';
+import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
+import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
+import VideoModal from '@/Components/VideoModal';
+import NormativeDocumentsList from '@/Components/NormativeDocumentsList';
 
 export default function Clinical() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [selectedFileName, setSelectedFileName] = useState('');
+
+  const openVideoModal = (videoUrl, fileName) => {
+    setSelectedVideo(videoUrl);
+    setSelectedFileName(fileName);
+    setIsModalOpen(true);
+  };
+
+  const closeVideoModal = () => {
+    setIsModalOpen(false);
+    setSelectedVideo(null);
+    setSelectedFileName('');
+  };
+
   return (
     <>
       <Head title="Клинические исследования" />
 
-            {/* Кнопка возврата */}
-            <section className="text-gray-600 body-font pb-8 bg-gray-200">
+      <section className="text-gray-600 body-font pb-24 bg-gray-200">
         <div className="container px-5 mx-auto">
-          <div className="flex justify-center">
-            <Link 
-              href={route('medical.science')} 
-              className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3"
-            >
-              <svg 
-                fill="none" 
-                stroke="currentColor" 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth="2"
-                className="w-4 h-4 mr-2" 
-                viewBox="0 0 24 24"
-              >
-                <path d="M19 12H5M12 19l-7-7 7-7"></path>
-              </svg>
-              Вернуться к медицинской науке
-            </Link>
-          </div>
-        </div>
-      </section>
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="mb-6">
+              <p className="text-lg text-gray-700 mb-4">
 
-      <section className="text-gray-600 body-font pb-8 bg-gray-200">
-        <div className="container px-5 py-12 mx-auto">
-          <div className='flex flex-wrap px-12 text-justify mb-4'>
-            <p className="tracking-wide leading-relaxed">
-              Клинические исследования – важнейший этап в разработке и внедрении новых методов лечения, 
-              диагностики и профилактики заболеваний. Наш департамент координирует проведение клинических 
-              исследований в соответствии с международными стандартами качества и этическими принципами.
-            </p>
-          </div>
-          <div className='flex flex-wrap px-12 text-justify mb-4'>
-            <p className="tracking-wide leading-relaxed">
-              Мы обеспечиваем методологическую и организационную поддержку исследователей, проводим 
-              экспертизу протоколов клинических исследований и осуществляем мониторинг их проведения.
-            </p>
-          </div>
-        </div>
-      </section>
+              В целях обеспечения развития и координации проведения клинических исследований в Казахстане на базе Национального научного центра развития здравоохранения имени Салидат Каирбековой создан Центр развития клинических исследований.
+<br /><br />Мы оказываем поддержку научному сообществу Казахстана в:
+  <li>развитии клинических исследований в стране,</li>
+<li>развитии межсекторального исследовательского взаимодействия в рамках клинических исследований</li>
+<li>формировании внутригосударственной научной коллаборации</li>
+<li>разработки инструментов, способствующих эффективной интеграции специалистов практического здравоохранения в формат клинического исследования.</li>
+<br />  Мы ориентированы оказывать содействие заинтересованным сторонам исследовательской среды в формировании конкурентоспособной экосистемы для развития биомедицинских исследований в РК. 
 
-      {/* Нормативные документы */}
-      <section className="text-gray-600 body-font pb-8 bg-gray-200">
-        <div className="container px-5 mx-auto">
-          <div className="bg-gray-50 p-6 rounded-lg mb-8">
-            <FileAccordTitle title="Нормативные документы" />
-            <div className="flex flex-wrap -m-4 mt-4">
-              <FileAccordChlank 
-                description="Правила проведения клинических исследований в Республике Казахстан" 
-                filetype="pdf" 
-                img="pdf" 
-                filesize="1.5 Мб"
-                date="10.01.2023"
-              />
-              <FileAccordChlank 
-                description="Требования к оформлению протоколов клинических исследований" 
-                filetype="pdf" 
-                img="pdf" 
-                filesize="980 Кб"
-                date="15.02.2023"
-              />
-              <FileAccordChlank 
-                description="Этические принципы проведения клинических исследований" 
-                filetype="pdf" 
-                img="pdf" 
-                filesize="750 Кб"
-                date="20.03.2023"
+              </p>
+            </div>
+            
+            <SimpleFileDisplay 
+              folder="Медицинская наука\Папка — Клинические исследования\Поток -  Методологические разработки" 
+              title="Клинические исследования" 
+              bgColor="bg-white"
+              onVideoClick={openVideoModal}
+            />
+          </div>
+          <div className="mt-8 bg-gray-200">
+            <div className="mt-8 bg-gray-200">
+              <NormativeDocumentsList 
+                documents={[
+                  {
+                    title: 'Кодекс РК «О здоровье народа и системе здравоохранения»',
+                    url: 'https://adilet.zan.kz/rus/docs/K2000000360'
+                  },
+                  {
+                    title: 'Приказ Министра здравоохранения Республики Казахстан от 7 апреля 2022 года № ҚР ДСМ- 35 «О внесении изменений и дополнений в приказ Министра здравоохранения Республики Казахстан от 11 декабря 2020 года № ҚР ДСМ-248/2020 «Об утверждении правил проведения клинических исследований лекарственных средств и медицинских изделий, клинико-лабораторных испытаний медицинских изделий для диагностики вне живого организма (in vitro) и требования к клиническим базам и оказания государственной услуги «Выдача разрешения на проведение клинического исследования и (или) испытания фармакологических и лекарственных средств, медицинских изделий»',
+                    url: 'https://adilet.zan.kz/rus/docs/V2200027526'
+                  },
+                  {
+                    title: 'Приказ Министра здравоохранения Республики Казахстан от 21 декабря 2020 года № ҚР ДСМ-310/2020. Об утверждении правил проведения биомедицинских исследований и требований к исследовательским центрам',
+                    url: 'https://adilet.zan.kz/rus/docs/V2000021851#z3'
+                  },
+                  {
+                    title: 'Приказ и.о. Министра здравоохранения Республики Казахстан от 4 февраля 2021 года № ҚР ДСМ-15 «Об утверждении надлежащих фармацевтических практик»',
+                    url: 'https://adilet.zan.kz/rus/docs/V2100022167'
+                  },
+                  {
+                    title: 'Приказ Министра здравоохранения Республики Казахстан от 8 декабря 2020 года № ҚР ДСМ-237/2020 «Об утверждении Правил ввоза на территорию Республики Казахстан и вывоза с территории Республики Казахстан лекарственных средств и медицинских изделий и оказания государственной услуги "Выдача согласования и (или) заключения (разрешительного документа) на ввоз (вывоз) зарегистрированных и не зарегистрированных в Республике Казахстан лекарственных средств и медицинских изделий»',
+                    url: 'https://adilet.zan.kz/rus/docs/V2000021749'
+                  },
+                  {
+                    title: 'Решение Совета Евразийской экономической комиссии от 3 ноября 2016 года № 79 «Об утверждении Правил надлежащей клинической практики Евразийского экономического союза»',
+                    url: 'https://adilet.zan.kz/rus/docs/H16EV000079'
+                  },
+                  {
+                    title: 'Решение Совета Евразийской экономической комиссии от 3 ноября 2016 года № 85 «Об утверждении Правил проведения исследований биоэквивалентности лекарственных препаратов в рамках Евразийского экономического союза»',
+                    url: 'https://adilet.zan.kz/rus/docs/H16EV000085'
+                  },
+                  {
+                    title: 'Решение Совета Евразийской экономической комиссии от 3 ноября 2016 N 89 «Об утверждении Правил проведения исследований биологических лекарственных средств Евразийского экономического союза»',
+                    url: 'https://docs.eaeunion.org/docs/ru-ru/01411954/cncd_21112016_89'
+                  },
+                  {
+                    title: 'Рекомендации Коллегии ЕЭК от 17 июля 2018 г. №11«Руководство по общим вопросам клинических исследований»',
+                    url: 'https://docs.eaeunion.org/docs/ru-ru/01418320/clcr_20072018_11'
+                  },
+                  {
+                    title: 'Решение Коллегии ЕЭК от 26 ноября 2019 г. № 202 «Об утверждении Руководства по доклиническим исследованиям безопасности в целях проведения клинических исследований и регистрации лекарственных препаратов»',
+                    url: 'https://adilet.zan.kz/rus/docs/H19EK000202'
+                  },
+                  {
+                    title: 'Рекомендации Коллегии ЕЭК от 17 декабря 2019 г. № 42 «О Руководстве по выбору не исследуемых лекарственных препаратов с целью проведения клинических исследований лекарственных препаратов»',
+                    url: 'https://continent-online.com/Document/?doc_id=31993845&ysclid=lrq8363l8o477078394'
+                  }
+                ]}
+                title="Нормативные документы"
+                bgColor="bg-gray-200"
               />
             </div>
           </div>
         </div>
       </section>
-
-      {/* Текущие исследования */}
-      <section className="text-gray-600 body-font pb-8 bg-gray-200">
-        <div className="container px-5 mx-auto">
-          <div className="bg-gray-50 p-6 rounded-lg mb-8">
-            <FileAccordTitle title="Текущие исследования" />
-            <div className="flex flex-wrap -m-4 mt-4">
-              <FileAccordChlank 
-                description="Реестр клинических исследований, проводимых в РК (2023)" 
-                filetype="xls" 
-                img="xls" 
-                filesize="2.3 Мб"
-                date="01.06.2023"
-              />
-              <FileAccordChlank 
-                description="Отчет о результатах клинических исследований за 2022 год" 
-                filetype="pdf" 
-                img="pdf" 
-                filesize="3.1 Мб"
-                date="15.02.2023"
-              />
-              <FileAccordChlank 
-                description="План клинических исследований на 2023-2024 годы" 
-                filetype="pdf" 
-                img="pdf" 
-                filesize="1.2 Мб"
-                date="10.01.2023"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
+      
 
     </>
-  )
+  );
 }
 
-Clinical.layout = page => <LayoutDirection img="medicalscience" h1="Клинические исследования">{page}</LayoutDirection>
+Clinical.layout = page => <LayoutFolderChlank 
+  bgColor="bg-white"
+  h1="Клинические исследования" 
+  parentRoute={route('medical.science')} 
+  parentName="Медицинская наука"
+  heroBgColor="bg-gray-200"
+  buttonBgColor="bg-gray-200"
+  buttonHoverBgColor="hover:bg-gray-300"
+>{page}</LayoutFolderChlank>;

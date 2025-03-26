@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function SimpleFileDisplay({ folder, title, onVideoClick }) {
+function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, limit, singleColumn = false }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -99,10 +99,13 @@ function SimpleFileDisplay({ folder, title, onVideoClick }) {
           return file;
         });
         
-        setFiles(processedFiles);
+        // Если есть лимит, ограничиваем количество файлов
+        const limitedFiles = limit ? processedFiles.slice(0, limit) : processedFiles;
+        
+        setFiles(limitedFiles);
         
         // Получаем информацию о размере и дате для каждого файла
-        const fileInfoPromises = processedFiles.map(file => {
+        const fileInfoPromises = limitedFiles.map(file => {
           if (file.url && file.url !== "#") {
             return axios.head(file.url)
               .then(response => {
@@ -135,7 +138,7 @@ function SimpleFileDisplay({ folder, title, onVideoClick }) {
         Promise.all(fileInfoPromises).then(infos => {
           const fileInfoMap = {};
           infos.forEach((info, index) => {
-            fileInfoMap[processedFiles[index].id || processedFiles[index].url] = info;
+            fileInfoMap[limitedFiles[index].id || limitedFiles[index].url] = info;
           });
           setFileInfos(fileInfoMap);
           setLoading(false);
@@ -148,7 +151,7 @@ function SimpleFileDisplay({ folder, title, onVideoClick }) {
     };
 
     fetchFiles();
-  }, [folder, title]);
+  }, [folder, title, limit]);
 
   // Определение иконки по типу файла
   const getFileTypeIcon = (fileName) => {
@@ -355,7 +358,7 @@ function SimpleFileDisplay({ folder, title, onVideoClick }) {
   }
 
   return (
-    <div className="py-6">
+    <div className={`py-6 ${bgColor}`}>
       {title && (
         <h2 className="text-2xl font-semibold mb-6 text-gray-800">{title}</h2>
       )}
@@ -365,7 +368,7 @@ function SimpleFileDisplay({ folder, title, onVideoClick }) {
           Нет доступных документов
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className={`grid ${singleColumn ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} gap-4`}>
           {files.map((file, index) => {
             // Подготовка полей файла, учитывая разные форматы данных
             const fileName = file.name || '';

@@ -1,11 +1,8 @@
 import { Head } from "@inertiajs/react";
 import React from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
-import BannerCatalog from "@/Components/BannerCatalog";
-import PageAccordions from "@/Components/PageAccordions";
-import FAQ from "@/Components/FAQ";
-import GoogleDriveFiles from "@/Components/GoogleDriveFiles";
 import FolderChlank from '@/Components/FolderChlank';
+import FilesAccord from '@/Components/FilesAccord';
 
 export default function MedicalScience() {
   return (
@@ -15,26 +12,31 @@ export default function MedicalScience() {
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>
             <p className="tracking-wide leading-relaxed">
-              Департамент медицинского образования и науки – подразделение ННЦРЗ, главная миссия которого – 
-              содействовать развитию и модернизации медицинского образования и науки и способствовать внедрению 
-              инновационных технологий в отрасли и разработке эффективных управленческих решений.
+            Департамент медицинской науки – ключевое структурное подразделение ННЦРЗ, деятельность которого направлена на развитие научных исследований в области здравоохранения, внедрение инновационных технологий и повышение эффективности управления медицинской наукой.
             </p>
-          </div>
-          <div className='flex flex-wrap px-12 text-justify mb-4'>
             <p className="tracking-wide leading-relaxed">
-              Департамент вправе представлять и пересматривать статус научной организации в области 
-              здравоохранения, проводить оценки результативности научной, научно-технической и инновационной 
-              деятельности.
+            Основные задачи департамента:
+            </p>
+            <p className="tracking-wide leading-relaxed">
+            Развитие научных исследований – поддержка и координация фундаментальных и прикладных исследований, направленных на решение актуальных проблем здравоохранения.
+            </p>
+            <p className="tracking-wide leading-relaxed">
+            Анализ и оценка научной деятельности – мониторинг результативности исследований, научно-технических и инновационных проектов.
+            </p>
+            <p className="tracking-wide leading-relaxed">
+            Разработка и внедрение инноваций – содействие трансферу технологий и интеграции передовых научных достижений в клиническую практику.
+            </p>
+            <p className="tracking-wide leading-relaxed">
+            Формирование научной политики – разработка стратегий и рекомендаций по совершенствованию медицинской науки и образования.
+            </p>
+            <p className="tracking-wide leading-relaxed">
+            Международное сотрудничество – взаимодействие с ведущими мировыми научными центрами и участие в международных проектах.
+            </p>
+            <p className="tracking-wide leading-relaxed">
+            Департамент обладает полномочиями по представлению и пересмотру статуса научной организации в области здравоохранения, а также по проведению комплексной оценки научно-исследовательской деятельности.
             </p>
           </div>
           <div className='flex flex-wrap px-12 justify-center mb-4'>
-            <button className="cursor-pointer mt-3 text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3">
-              Читать далее
-              <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                  className="w-4 h-4 ml-2" viewBox="0 0 24 24">
-                  <path d="M5 12h14M12 5l7 7-7 7"></path>
-              </svg>
-            </button>
           </div>
         </div>
       </section>
@@ -44,7 +46,7 @@ export default function MedicalScience() {
         <div className="container px-5 mx-auto">
           <div className="flex flex-wrap">
             <FolderChlank 
-              h1="Программа и методология научно-медицинских исследований" 
+              h1="Перечень утвержденных научно-медицинских разработок" 
               color="bg-gray-200" 
               colorsec="bg-gray-300" 
               href={route('medical.science.research')}
@@ -72,9 +74,17 @@ export default function MedicalScience() {
       </section>
 
       {/* Локальная комиссия по биоэтике */}
-
-      <BannerCatalog />
-      <PageAccordions />
+      <section className="text-gray-600 body-font">
+        <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
+            {/* Первый аккордеон */}
+            <FilesAccord 
+                folder="Медицинская наука/Локальная комиссия по биоэтике"
+                title="Локальная комиссия по биоэтике"
+                bgColor="bg-gray-200"
+                defaultOpen={true}
+            />
+        </div>
+    </section>
     </>
   )
 }

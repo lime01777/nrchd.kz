@@ -1,10 +1,28 @@
 import { Head } from '@inertiajs/react';
-import React from 'react';
+import React, { useState } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
-import PageAccordions from '@/Components/PageAccordions';
+import ActualFile from '@/Components/ActualFile';
+import FilesAccord from '@/Components/FilesAccord';
+
 
 export default function MedicalRating() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [selectedFileName, setSelectedFileName] = useState('');
+
+  const openVideoModal = (videoUrl, fileName) => {
+    setSelectedVideo(videoUrl);
+    setSelectedFileName(fileName);
+    setIsModalOpen(true);
+  };
+
+  const closeVideoModal = () => {
+    setIsModalOpen(false);
+    setSelectedVideo(null);
+    setSelectedFileName('');
+  };
+
   return (
     <>
       <Head title="Рейтинг медицинских организаций" />
@@ -12,9 +30,8 @@ export default function MedicalRating() {
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>
             <p className="tracking-wide leading-relaxed">
-              Клинический протокол — научно доказанные рекомендации по профилактике, диагностике, лечению, 
-              медицинской реабилитации и паллиативной медицинской помощи при определенном заболевании или 
-              состоянии пациентов в соответствии с законодательством Республики Казахстан.
+              Рейтинговая оценка медицинских организаций позволяет выявить клиники с наилучшими результатами деятельности, а также даёт инструменты менеджменту клиник сфокусироваться на улучшении качества предоставляемой медицинской помощи.
+              Целью рейтинговой оценки является выстраивание доверительных отношений между социумом и системой здравоохранения.
             </p>
           </div>
         </div>
@@ -25,70 +42,34 @@ export default function MedicalRating() {
         <div className="container pt-8 pb-24 mx-auto">
           <div className="flex md:flex-row flex-wrap">
             <FolderChlank 
-              h1="Рейтинг медицинских организаций по профилю в разрезе регионов за 2021-2022 г." 
+              h1="Архив рейтингов" 
               color="bg-blue-100" 
               colorsec="bg-blue-200" 
               href={route('medical.rating.regional')}
             />
-            <FolderChlank 
-              h1="Итоги рейтингования медицинских организаций по критериям доступности и качества медицинской помощи" 
-              color="bg-blue-100" 
-              colorsec="bg-blue-200" 
-              href={route('medical.rating.quality')}
-            />
           </div>
         </div>
       </section>
 
-      {/* Методические рекомендации */}
-      <PageAccordions 
-        bgColor="bg-blue-50"
-        sections={[
-          {
-            title: "Методические рекомендации",
-            documents: [
-              { 
-                description: "Методические рекомендации «Индикаторы оценки деятельности медицинских организаций, оказывающих экстренную, неотложную медицинскую помощь»", 
-                filetype: "pdf", 
-                img: 2, 
-                filesize: "3.5 MB",
-                date: "12.03.2024",
-                url: "https://drive.google.com/file/d/1OZsG6PXT-MKle40jlFWF7Gwih-4e6JUg/view"
-              },
-              { 
-                description: "Методические рекомендации по проведению рейтинговой оценки медицинских организаций", 
-                filetype: "pdf", 
-                img: 2,
-                filesize: "2.1 MB",
-                date: "15.02.2024",
-                url: "https://drive.google.com/file/d/1OZsG6PXT-MKle40jlFWF7Gwih-4e6JUg/view"
-              },
-              { 
-                description: "Методические рекомендации по оценке качества медицинской помощи", 
-                filetype: "pdf", 
-                img: 2,
-                filesize: "1.8 MB",
-                date: "20.01.2024",
-                url: "https://drive.google.com/file/d/1OZsG6PXT-MKle40jlFWF7Gwih-4e6JUg/view"
-              }
-            ]
-          }
-        ]}
+      {/* Блок с лучшими организациями */}
+      <ActualFile 
+        title="Лучшие из лучших в здравоохранении Республики Казахстан"
+        folder="Рейтинг медицинских организаций" 
+        bgColor="bg-blue-100"
       />
 
-      {/* Лучшие из лучших */}
-      <section className="text-gray-600 body-font bg-blue-50 py-10">
-        <div className="container mx-auto px-5">
-          <div className="flex flex-col w-full mb-10">
-            <h1 className="text-2xl font-medium title-font mb-4 text-gray-900 tracking-widest text-center">
-              Лучшие из лучших в здравоохранении Республики Казахстан
-            </h1>
-          </div>
-          <div className="flex flex-wrap -m-4">
-            {/* Здесь можно добавить карточки лучших организаций */}
-          </div>
+      {/* Блок с методические документами */}
+      <section className="text-gray-600 body-font">
+        <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
+            {/* Первый аккордеон */}
+            <FilesAccord 
+                folder="Рейтинг медицинских организаций/Набор - Методические руководства по рейтингу медицинских организаций"
+                title="Методические рекомендации"
+                bgColor="bg-blue-100"
+                defaultOpen={true}
+            />
         </div>
-      </section>
+    </section>
     </>
   )
 }
