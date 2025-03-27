@@ -29,7 +29,13 @@ vendor.zip
 nncrz.zip
 
 # Ignore large media files
+*.zip
+docs.zip
+htdocs.zip
 *.mp4
+public/img/BranchImg/*.mp4
+public/img/BranchImg/video-whatsapp-*
+public/img/HeroImg/*.png
 *.mov
 *.avi
 *.wmv
