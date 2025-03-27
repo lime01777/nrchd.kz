@@ -1,7 +1,7 @@
 import React from 'react';
 import BranchTemplate from './BranchTemplate';
 
-export default function Zhetysu() {
+export default function Zhetisu() {
     const title = "Жетысуский филиал";
     const description = "Жетысуский филиал занимается..."; // Добавьте описание здесь
 

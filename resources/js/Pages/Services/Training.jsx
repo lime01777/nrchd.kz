@@ -43,27 +43,6 @@ export default function Training() {
     </section>
 
     <section className="text-gray-600 body-font">
-        <div className="container px-5 pt-8 pb-24 mx-auto">
-            <div className='flex md:flex-row flex-wrap'>
-                <FolderChlank h1="Финансовая отчетность" color="bg-fuchsia-100" colorsec="bg-fuchsia-200" />
-            </div>
-        </div>
-    </section>
-
-    <section className="text-gray-600 body-font">
-        <div className="container px-5 py-8 mx-auto">
-            <div className="flex flex-col">
-                <h2 className="text-2xl font-semibold mb-4">Документы</h2>
-                <div className="space-y-4">
-                    <div>
-                        <PdfViewer pdfUrl="https://drive.google.com/file/d/1OZsG6PXT-MKle40jlFWF7Gwih-4e6JUg/view" />
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <section className="text-gray-600 body-font">
         <div className="container px-5 py-12 mx-auto">
             <h2 className="text-2xl font-semibold text-gray-900 mb-8">Часто задаваемые вопросы</h2>
             <FAQ 

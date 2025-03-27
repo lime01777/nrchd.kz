@@ -99,7 +99,7 @@ export default function SalidatKairbekova() {
                     <h1 className="sm:text-2xl text-2xl font-semibold title-font text-gray-900 mb-2">Дело жизни</h1>
 
                     <p className="tracking-wide leading-relaxed">
-                        Назначение Салидат Зекеновны министром здравоохранения Республики Казахстан в 2010 году стало
+                    <br />Назначение Салидат Зекеновны министром здравоохранения Республики Казахстан в 2010 году стало
                         вершиной её профессионального успеха.
                     </p>
                     <br />
