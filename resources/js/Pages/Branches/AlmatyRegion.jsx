@@ -9,3 +9,4 @@ export default function AlmatyRegion() {
         <BranchTemplate title={title} description={description} />
     );
 }
+ 

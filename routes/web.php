@@ -304,7 +304,7 @@ Route::get('/akmola', function () {
 Route::get('/aktobe', function () {
     return Inertia::render('Branches/Aktobe');
 })->name('branches.aktobe');
-
+ 
 Route::get('/almaty_region', function () {
     return Inertia::render('Branches/AlmatyRegion');
 })->name('branches.almatyregion');

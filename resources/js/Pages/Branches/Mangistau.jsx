@@ -9,3 +9,4 @@ export default function Mangistau() {
         <BranchTemplate title={title} description={description} />
     );
 }
+ 

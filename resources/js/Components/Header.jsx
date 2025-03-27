@@ -91,7 +91,7 @@ export default function Header() {
             </Link>
             <nav className="hidden md:ml-auto md:mr-auto lg:flex flex-wrap items-center text-base justify-center">
                 <div className="relative group mr-8">
-                    {/* Кнопка */}
+                    {/* Кнопка  */}
                     <button className="group-hover:text-gray-900 focus:outline-none flex items-center cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg"
                             className="mr-2 h-4 w-4 transition-transform group-hover:rotate-180" fill="none"
