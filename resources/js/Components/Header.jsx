@@ -57,14 +57,15 @@ export default function Header() {
     ];
 
     const allServicesSubLinks = [
-        { title: "Обучающие циклы", url: "services.training" },
+        { title: "Организация и проведение обучающих циклов по дополнительному и неформальному образованию ЦМОП", url: "services.training" },
         { title: "Оценка рекламных материалов", url: "services.adsEvaluation" },
         { title: "Оценка технологий здравоохранения", url: "services.healthTechAssessment" },
         { title: "Экспертиза лекарственных средств", url: "services.drugExpertise" },
-        { title: "Образовательные программы", url: "services.educationPrograms" },
-        { title: "Медицинская экспертиза", url: "services.medicalExpertise" },
-        { title: "Аккредитация", url: "services.accreditation" },
-            ];
+        { title: "Экспертиза научно-образовательных программ дополнительного образования", url: "services.educationPrograms" },
+        { title: "Научно-медицинская экспертиза", url: "services.medicalExpertise" },
+        { title: "Аккредитация медицинских организаций и организаций здравоохранения", url: "services.accreditation" },
+        { title: "Постаккредитационный мониторинг", url: "services.postAccreditationMonitoring" },
+    ];
 
 
     useEffect(() => {
@@ -248,7 +249,7 @@ export default function Header() {
             {/* Бургер-меню (мобильная версия) */}
             <div className="lg:hidden flex justify-between w-full">
                 <Link href={route('home')} className="flex font-medium items-start text-gray-900 mb-4 md:mb-0">
-                <span className="text-2xl uppercase">NNCRZ</span>
+                <span className="text-xs uppercase leading-tight">национальный научный центр развития <br />здравоохранения им. салидат каирбековой</span>
                 </Link>
                 <button onClick={()=> setMenuOpen(!menuOpen)}
                     className="text-gray-900 focus:outline-none content-center mb-4"
@@ -268,31 +269,149 @@ export default function Header() {
             </div>
             {/* Мобильное меню на полный экран */}
             <div className={`fixed inset-0 bg-white text-gray-800 flex flex-col items-center justify-center transform
-                transition-transform duration-300 ${ menuOpen ? "translate-x-0" : "-translate-x-full" }`}>
+                transition-transform duration-300 ${ menuOpen ? "translate-x-0" : "-translate-x-full" } z-50 overflow-y-auto`}>
                 <button onClick={()=> setMenuOpen(false)}
-                    className="absolute top-5 right-5 text-gray-400 hover:text-white"
+                    className="absolute top-5 right-5 text-gray-800 hover:text-gray-600"
                     >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
-                <nav className="flex flex-col items-center space-y-10 text-3xl">
-                    <a href="#" className="hover:text-gray-400">Направления</a>
-                    <a href="#" className="hover:text-gray-400">Услуги</a>
-                    <a href="#" className="hover:text-gray-400">О центре</a>
-                    <a href="#" className="hover:text-gray-400">Филиалы</a>
-                    <a href="#" className="hover:text-gray-400">Новости</a>
+                
+                <nav className="flex flex-col items-start w-full px-8 py-12 space-y-8 text-xl">
+                    {/* Направления - выпадающий список */}
+                    <div className="w-full">
+                        <button 
+                            onClick={() => setDropdownOpen(dropdownOpen === 'directions' ? null : 'directions')}
+                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
+                            <span>Направления</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" 
+                                className={`h-5 w-5 transition-transform ${dropdownOpen === 'directions' ? 'rotate-180' : ''}`} 
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        {dropdownOpen === 'directions' && (
+                            <div className="ml-4 mt-2 space-y-2 text-base border-l-2 border-gray-200 pl-4">
+                                {allDirectionsSubLinks.map((link, index) => (
+                                    <div key={index} className="py-1">
+                                        <Link href={route(link.url)} className="text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                            {link.title}
+                                        </Link>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Услуги - выпадающий список */}
+                    <div className="w-full">
+                        <button 
+                            onClick={() => setDropdownOpen(dropdownOpen === 'services' ? null : 'services')}
+                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
+                            <span>Услуги</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" 
+                                className={`h-5 w-5 transition-transform ${dropdownOpen === 'services' ? 'rotate-180' : ''}`} 
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        {dropdownOpen === 'services' && (
+                            <div className="ml-4 mt-2 space-y-2 text-base border-l-2 border-gray-200 pl-4">
+                                {allServicesSubLinks.map((link, index) => (
+                                    <div key={index} className="py-1">
+                                        <Link href={route(link.url)} className="text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                            {link.title}
+                                        </Link>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* О центре - выпадающий список */}
+                    <div className="w-full">
+                        <button 
+                            onClick={() => setDropdownOpen(dropdownOpen === 'about' ? null : 'about')}
+                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
+                            <span>О центре</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" 
+                                className={`h-5 w-5 transition-transform ${dropdownOpen === 'about' ? 'rotate-180' : ''}`} 
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        {dropdownOpen === 'about' && (
+                            <div className="ml-4 mt-2 space-y-2 text-base border-l-2 border-gray-200 pl-4">
+                                {allAboutCentreSubLinks.map((link, index) => (
+                                    <div key={index} className="py-1">
+                                        <Link href={route(link.url)} className="text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                            {link.title}
+                                        </Link>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Филиалы - выпадающий список */}
+                    <div className="w-full">
+                        <button 
+                            onClick={() => setDropdownOpen(dropdownOpen === 'branches' ? null : 'branches')}
+                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
+                            <span>Филиалы</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" 
+                                className={`h-5 w-5 transition-transform ${dropdownOpen === 'branches' ? 'rotate-180' : ''}`} 
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        {dropdownOpen === 'branches' && (
+                            <div className="ml-4 mt-2 space-y-2 text-base border-l-2 border-gray-200 pl-4">
+                                {branchesSubLinks.map((link, index) => (
+                                    <div key={index} className="py-1">
+                                        <Link href={route(link.url)} className="text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                            {link.title}
+                                        </Link>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Новости */}
+                    <div className="w-full">
+                        <Link 
+                            href={route('news')}
+                            className="text-gray-800 hover:text-blue-600"
+                            onClick={() => setMenuOpen(false)}>
+                            Новости
+                        </Link>
+                    </div>
                 </nav>
-                <button
-                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">EN
-                </button>
-                <button
-                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">RU
-                </button>
-                <button
-                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">KZ
-                </button>
+                
+                {/* Языки и админ-панель */}
+                <div className="flex flex-col items-center mt-8">
+                    {auth?.user && (
+                        <Link
+                            href={route('admin.dashboard')}
+                            className="flex items-center py-1 px-3 mb-4 focus:outline-none text-gray-800 hover:text-blue-600"
+                            onClick={() => setMenuOpen(false)}
+                        >
+                            <svg className="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Админ
+                        </Link>
+                    )}
+                    <div className="flex space-x-2">
+                        <button className="py-1 px-3 border border-gray-300 rounded-md hover:bg-gray-100">EN</button>
+                        <button className="py-1 px-3 border border-gray-300 rounded-md hover:bg-gray-100">RU</button>
+                        <button className="py-1 px-3 border border-gray-300 rounded-md hover:bg-gray-100">KZ</button>
+                    </div>
+                </div>
             </div>
         </div>
     </header>

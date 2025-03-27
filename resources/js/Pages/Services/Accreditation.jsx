@@ -1,26 +1,20 @@
 import { Head } from '@inertiajs/react';
 import React from 'react';
-import LayoutDirection from '@/Layouts/LayoutDirection';
+import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 import FileAccordTitle from '@/Components/FileAccordTitle';
 import FileAccordChlank from '@/Components/FileAccordChlank';
 
 export default function Accreditation() {
   return (
     <>
-      <Head title="Аккредитация медицинских организаций" />
-      <section className="text-gray-600 body-font pb-8">
-        <div className="container px-5 py-12 mx-auto">
-          <div className="flex flex-wrap px-12 text-justify mb-4">
-            <h1 className="text-3xl font-semibold text-gray-900 mb-6">Аккредитация медицинских организаций</h1>
+      <Head title="Аккредитация медицинских организаций и организаций здравоохранения" />
+      <section className="text-gray-600 body-font">
+        <div className="container px-5 pt-12 pb-8 mx-auto">
+          <div className="flex flex-wrap text-justify mb-4">
             <p className="tracking-wide leading-relaxed">
               Национальный научный центр развития здравоохранения проводит аккредитацию медицинских организаций 
               на соответствие требованиям законодательства Республики Казахстан в области здравоохранения.
             </p>
-          </div>
-          <div className="flex justify-center mt-4">
-            <button className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3 transition-all duration-150 ease-in">
-              Подать заявку
-            </button>
           </div>
         </div>
       </section>
@@ -64,7 +58,7 @@ export default function Accreditation() {
         <div className="container px-5 pt-8 pb-12 mx-auto bg-gray-100 p-6 rounded-lg">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Заявка на аккредитацию</h2>
           <form>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input type="text" placeholder="Полное наименование организации" className="p-2 border rounded-md w-full" />
               <input type="text" placeholder="Форма собственности" className="p-2 border rounded-md w-full" />
               <input type="text" placeholder="Год создания организации" className="p-2 border rounded-md w-full" />
@@ -97,4 +91,4 @@ export default function Accreditation() {
   )
 }
 
-Accreditation.layout = (page) => <LayoutDirection img="headaccreditation" h1="Аккредитация медицинских организаций">{page}</LayoutDirection>;
+Accreditation.layout = (page) => <ServicesPageLayout title="Аккредитация медицинских организаций и организаций здравоохранения" img="headaccreditation">{page}</ServicesPageLayout>;

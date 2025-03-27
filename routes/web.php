@@ -182,6 +182,10 @@ Route::get('/accreditation', function () {
     return Inertia::render('Services/Accreditation');
 })->name('services.accreditation');
 
+Route::get('/post-accreditation-monitoring', function () {
+    return Inertia::render('Services/PostAccreditationMonitoring');
+})->name('services.postAccreditationMonitoring');
+
 Route::get('/medical-rating', function () {
     return Inertia::render('Direction/MedicalRating');
 })->name('medical.rating');

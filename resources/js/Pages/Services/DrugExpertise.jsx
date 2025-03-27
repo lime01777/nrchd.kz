@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import React from 'react';
-import LayoutDirection from '@/Layouts/LayoutDirection';
+import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 
 export default function DrugExpertise() {
   return (
@@ -14,4 +14,4 @@ export default function DrugExpertise() {
   );
 }
 
-DrugExpertise.layout = (page) => <LayoutDirection img="service-drug" h1="Экспертиза лекарственных средств">{page}</LayoutDirection>;
+DrugExpertise.layout = (page) => <ServicesPageLayout title="Экспертиза лекарственных средств" img="service-drug">{page}</ServicesPageLayout>;
