@@ -1,1 +1,0 @@
-import{j as t}from"./app-Yk9gaJH0.js";import o from"./BranchTemplate-DUU7n5b6.js";import"./LayoutDirection-rW-s4k0A.js";import"./Footer-BzBNFN_x.js";function s(){return t.jsx(o,{title:"Алматинский областной филиал",description:"Алматинский областной филиал занимается..."})}export{s as default};
