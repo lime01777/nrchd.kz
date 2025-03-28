@@ -220,23 +220,23 @@ Route::get('/medical-rating/quality', function () {
 
 // Маршруты для страниц аккредитации
 Route::get('/accreditation/guides', function () {
-    return Inertia::render('Accreditation/Guides');
+    return Inertia::render('Direction/Accreditation/Guides');
 })->name('accreditation.guides');
 
 Route::get('/accreditation/experts', function () {
-    return Inertia::render('Accreditation/Experts');
+    return Inertia::render('Direction/Accreditation/Experts');
 })->name('accreditation.experts');
 
 Route::get('/accreditation/training-materials', function () {
-    return Inertia::render('Accreditation/TrainingMaterials');
+    return Inertia::render('Direction/Accreditation/TrainingMaterials');
 })->name('accreditation.training');
 
 Route::get('/accreditation/active-standards', function () {
-    return Inertia::render('Accreditation/ActiveStandards');
+    return Inertia::render('Direction/Accreditation/ActiveStandards');
 })->name('accreditation.standards');
 
 Route::get('/accreditation/standards-archive', function () {
-    return Inertia::render('Accreditation/StandardsArchive');
+    return Inertia::render('Direction/Accreditation/StandardsArchive');
 })->name('accreditation.archive');
 
 // Маршруты для новостей

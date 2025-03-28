@@ -38,7 +38,7 @@ const TabDocuments = ({ tabs = [], defaultTab = 0, folder = '', api = false }) =
           // Группируем документы по годам из имени файла (примерно как 2023_документ.pdf)
           const years = {};
           
-          response.data.filter(item => !item.isDirectory).forEach(doc => {
+          response.data.filter(item => !item.isDirectory && item.name).forEach(doc => {
             // Пытаемся извлечь год из имени файла или используем текущий
             let year = new Date().getFullYear().toString();
             
@@ -60,7 +60,8 @@ const TabDocuments = ({ tabs = [], defaultTab = 0, folder = '', api = false }) =
             years[year].documents.push({
               title: formatFileName(doc.name),
               fileType: getFileExtension(doc.name),
-              url: `/storage/documents/${folder}/${doc.name}`
+              url: `/storage/documents/${folder}/${doc.name}`,
+              name: doc.name // Сохраняем исходное имя файла
             });
           });
           
@@ -132,6 +133,15 @@ const TabDocuments = ({ tabs = [], defaultTab = 0, folder = '', api = false }) =
   // Получение информации о файле через HEAD запрос
   const fetchFileInfo = async (url) => {
     try {
+      // Проверяем, что URL определен
+      if (!url || typeof url !== 'string') {
+        console.warn('Attempt to fetch file info with undefined or invalid URL');
+        return {
+          fileSize: '∼ MB',
+          date: new Date().toLocaleDateString('ru-RU')
+        };
+      }
+
       // Исправляем формирование URL - убираем дублирование путей
       let cleanUrl = url;
       
@@ -149,6 +159,15 @@ const TabDocuments = ({ tabs = [], defaultTab = 0, folder = '', api = false }) =
         if (parts.length > 1) {
           cleanUrl = '/' + parts[1];
         }
+      }
+      
+      // Проверяем, что URL не содержит "undefined" в конце
+      if (cleanUrl.includes('undefined') || cleanUrl.endsWith('/undefined')) {
+        console.warn('Skip fetching file info for URL containing undefined:', cleanUrl);
+        return {
+          fileSize: '∼ MB',
+          date: new Date().toLocaleDateString('ru-RU')
+        };
       }
       
       // Кодируем URL для обработки кириллицы и пробелов
@@ -395,10 +414,26 @@ const DocumentCard = ({ document, openDocument, fetchFileInfo, getFileTypeIcon }
       const getFileInfo = async () => {
         try {
           setLoading(true);
+          
+          // Проверяем, что URL не содержит undefined
+          if (!document.url || typeof document.url !== 'string' || document.url.includes('undefined')) {
+            console.warn('Skip fetching file info for invalid URL:', document.url);
+            setFileInfo({
+              fileSize: '∼ MB',
+              date: new Date().toLocaleDateString('ru-RU')
+            });
+            setLoading(false);
+            return;
+          }
+          
           const info = await fetchFileInfo(document.url);
           setFileInfo(info);
         } catch (error) {
           console.error('Ошибка при получении информации о файле:', error);
+          setFileInfo({
+            fileSize: '∼ MB',
+            date: new Date().toLocaleDateString('ru-RU')
+          });
         } finally {
           setLoading(false);
         }

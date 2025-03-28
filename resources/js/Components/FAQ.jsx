@@ -41,42 +41,44 @@ export default function FAQ({ items = [], title, className = '' }) {
                 <h2 className="text-2xl font-semibold text-gray-900 mb-6">{title}</h2>
             )}
 
-            <div className="space-y-4">
+            <div className="divide-y divide-black divide-opacity-100 border-t border-b border-black">
                 {faqItems.map((item, index) => (
-                    <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
+                    <div key={index} className="py-5">
                         <button
                             onClick={() => toggleItem(index)}
-                            className="flex justify-between items-center w-full px-6 py-4 text-left text-gray-900 font-medium focus:outline-none"
+                            className="flex justify-between items-center w-full text-left focus:outline-none group"
                         >
-                            <span>{item.question}</span>
-                            <span className="ml-6">
-                                {openItems[index] ? (
-                                    <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center">
-                                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <span className="text-base md:text-lg font-medium text-gray-900">{item.question}</span>
+                            <span className="ml-6 flex-shrink-0">
+                                <div className={`w-10 h-10 rounded-full border-2 border-black flex items-center justify-center transform transition-all duration-300 ${openItems[index] ? 'bg-white' : 'bg-white'}`}>
+                                    {openItems[index] ? (
+                                        <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4"></path>
                                         </svg>
-                                    </div>
-                                ) : (
-                                    <div className="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center">
-                                        <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    ) : (
+                                        <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v12m6-6H6"></path>
                                         </svg>
-                                    </div>
-                                )}
+                                    )}
+                                </div>
                             </span>
                         </button>
                         
-                        {openItems[index] && (
-                            <div className="px-6 py-4 bg-gray-50">
-                                <div className="text-gray-700">
-                                    {typeof item.answer === 'string' ? (
-                                        <p>{item.answer}</p>
-                                    ) : (
-                                        item.answer
-                                    )}
-                                </div>
+                        <div 
+                            className={`mt-2 overflow-hidden transition-all duration-500 ease-in-out ${
+                                openItems[index] 
+                                    ? 'max-h-[1000px] opacity-100' 
+                                    : 'max-h-0 opacity-0'
+                            }`}
+                        >
+                            <div className="text-base text-gray-700 pt-2 pb-1">
+                                {typeof item.answer === 'string' ? (
+                                    <p>{item.answer}</p>
+                                ) : (
+                                    item.answer
+                                )}
                             </div>
-                        )}
+                        </div>
                     </div>
                 ))}
             </div>

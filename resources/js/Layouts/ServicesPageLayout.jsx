@@ -65,7 +65,7 @@ export default function ServicesPageLayout({ children, title, img }) {
             {/* Правая колонка - форма заявки */}
             <div className="w-full lg:w-1/2 px-4 mt-8 lg:mt-0">
               <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-                <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 text-center">Заявка на услугу</h2>
+                <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 text-center">Свяжитесь с нами</h2>
                 <form onSubmit={handleSubmit}>
                   <div className="mb-4">
                     <label htmlFor="name" className="block text-gray-700 text-sm font-medium mb-1">ФИО</label>

@@ -1,0 +1,1 @@
+import{j as t}from"./app-Yk9gaJH0.js";import o from"./BranchTemplate-DUU7n5b6.js";import"./LayoutDirection-rW-s4k0A.js";import"./Footer-BzBNFN_x.js";function m(){return t.jsx(o,{title:"Астанинский филиал",description:"Астанинский филиал занимается..."})}export{m as default};
