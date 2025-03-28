@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date = "27.03.2024", url = "#", file }) {
+function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date = "27.03.2024", url = "#", file, onVideoClick }) {
   const [fileInfo, setFileInfo] = useState({ size: filesize, date: date });
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -97,6 +97,8 @@ function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date
       return 'powerpoint';
     } else if (['txt'].includes(extension)) {
       return 'text';
+    } else if (['mp4', 'avi', 'mov', 'webm'].includes(extension)) {
+      return 'video';
     }
     
     return null;
@@ -131,9 +133,46 @@ function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date
       return "5"; // pptx формат (5.png)
     } else if (['doc', 'docx'].includes(extension)) {
       return "1"; // doc формат (1.png)
+    } else if (['mp4', 'avi', 'mov', 'webm'].includes(extension)) {
+      return "6"; // видео формат
+    } else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
+      return "7"; // изображение
     }
     
     return "1"; // По умолчанию doc формат
+  };
+
+  // Получаем короткое название типа файла
+  const getFileTypeShort = () => {
+    if (!url || url === "#") return "";
+    
+    const extension = url.split('.').pop().toLowerCase();
+    
+    switch (extension) {
+      case 'pdf':
+        return 'PDF';
+      case 'doc':
+      case 'docx':
+        return 'DOCX';
+      case 'xls':
+      case 'xlsx':
+        return 'XLSX';
+      case 'ppt':
+      case 'pptx':
+        return 'PPTX';
+      case 'txt':
+        return 'TXT';
+      case 'mp4':
+      case 'avi':
+      case 'mov':
+        return 'MP4';
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+        return 'JPG';
+      default:
+        return extension.toUpperCase();
+    }
   };
 
   // Конвертация документов Office с помощью Google Docs Viewer
@@ -165,9 +204,16 @@ function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date
     // Предотвращаем прокрутку страницы при открытом модальном окне
     document.body.style.overflow = 'hidden';
     
-    // Если это документ Office, подготавливаем его для просмотра
+    // Для видео можем использовать отдельный видео-плеер
     const fileType = getFileType();
-    if (['word', 'excel'].includes(fileType)) {
+    if (fileType === 'video' && typeof onVideoClick === 'function') {
+      onVideoClick(url, description);
+      closeModal();
+      return;
+    }
+    
+    // Если это документ Office, подготавливаем его для просмотра
+    if (['word', 'excel', 'powerpoint'].includes(fileType)) {
       convertOfficeDocument(url);
     } else {
       // Для других типов файлов сбрасываем состояние просмотрщика
@@ -209,7 +255,7 @@ function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date
             <div className="flex flex-col text-sm">
               <div className="flex flex-row items-center">
                 <img src={`/img/FileType/${getFileTypeIcon()}.png`} alt="" className="w-4 h-4" />
-                <p className="ml-1 uppercase text-xs text-gray-600">{filetype}, {fileInfo.size}</p>
+                <p className="ml-1 uppercase text-xs text-gray-600">{getFileTypeShort()}, {fileInfo.size}</p>
               </div>
               <p className="text-gray-400 text-xs text-right">{fileInfo.date}</p>
             </div>
@@ -222,7 +268,9 @@ function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={closeModal}>
           <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center p-4 border-b">
-              <h3 className="text-xl font-semibold text-gray-800 truncate">{description}</h3>
+              <h3 className="text-xl font-semibold text-gray-800 truncate">
+                {description}
+              </h3>
               <button 
                 onClick={closeModal}
                 className="text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -266,14 +314,27 @@ function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date
               ) : getFileType() === 'pdf' ? (
                 <div className="flex flex-col items-center justify-center h-[70vh]">
                   <div className="w-full h-full">
-                    <iframe 
-                      src={`${url}#toolbar=0&navpanes=0`}
-                      className="w-full h-full min-h-[70vh]" 
-                      title={description}
-                    ></iframe>
+                    <object 
+                      data={url} 
+                      type="application/pdf"
+                      className="w-full h-full min-h-[70vh]">
+                      <p>Ваш браузер не поддерживает встроенный просмотр PDF. 
+                         <a href={url} target="_blank" rel="noopener noreferrer">Скачайте PDF</a>.</p>
+                    </object>
                   </div>
                 </div>
-              ) : ['word', 'excel'].includes(getFileType()) && viewerUrl ? (
+              ) : getFileType() === 'video' ? (
+                <div className="flex flex-col items-center justify-center h-[70vh]">
+                  <div className="w-full h-full">
+                    <video 
+                      src={url}
+                      className="max-w-full max-h-[70vh]" 
+                      controls
+                      autoPlay
+                    ></video>
+                  </div>
+                </div>
+              ) : ['word', 'excel', 'powerpoint'].includes(getFileType()) && viewerUrl ? (
                 <div className="flex flex-col items-center justify-center h-[70vh]">
                   <div className="w-full h-full">
                     <iframe 
@@ -283,23 +344,6 @@ function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date
                       frameBorder="0"
                     ></iframe>
                   </div>
-                </div>
-              ) : ['word', 'excel', 'powerpoint'].includes(getFileType()) ? (
-                <div className="flex flex-col items-center justify-center h-[70vh]">
-                  <div className="text-blue-500 mb-4">
-                    <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                  </div>
-                  <p className="text-gray-600 mb-4">Предпросмотр для этого типа файла недоступен</p>
-                  <a 
-                    href={url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
-                  >
-                    Скачать файл
-                  </a>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center h-[70vh]">

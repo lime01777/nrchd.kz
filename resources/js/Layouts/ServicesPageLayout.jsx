@@ -3,7 +3,7 @@ import Header from '@/Components/Header';
 import Footer from '@/Components/Footer';
 import { Link } from '@inertiajs/react';
 
-export default function ServicesPageLayout({ children, title, img }) {
+export default function ServicesPageLayout({ children, title, img, bgColor = "bg-yellow-100" }) {
   const [formData, setFormData] = useState({
     name: '',
     organization: '',
@@ -36,12 +36,28 @@ export default function ServicesPageLayout({ children, title, img }) {
     });
   };
 
+  const scrollToTimeline = (e) => {
+    e.preventDefault();
+    const element = document.getElementById('service-timeline');
+    if (element) {
+      // Вычисляем высоту хедера (примерно 80px, но можно настроить)
+      const headerHeight = 80;
+      // Вычисляем позицию элемента относительно верха страницы
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      // Прокручиваем к элементу с учетом высоты хедера
+      window.scrollTo({
+        top: elementPosition - headerHeight,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <>
       <Header />
       
       {/* Services Hero Section with Yellow Background */}
-      <section className="bg-yellow-100 text-gray-800 body-font relative">
+      <section className={`${bgColor} text-gray-800 body-font relative`}>
         <div className="container mx-auto px-5 py-12 md:py-24">
           <div className="flex flex-wrap -mx-4 items-center">
             {/* Левая колонка - заголовок и кнопка */}
@@ -50,15 +66,15 @@ export default function ServicesPageLayout({ children, title, img }) {
                 {title}
               </h1>
               <div className="flex flex-wrap">
-                <Link 
-                  href="#" 
+                <button 
+                  onClick={scrollToTimeline}
                   className="bg-transparent hover:bg-blue-100 text-blue-500 border border-blue-500 px-4 md:px-6 py-2 md:py-3 text-sm md:text-base rounded-md font-medium transition-all duration-300 inline-flex items-center w-full sm:w-auto justify-center"
                 >
                   Подробнее
                   <svg className="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path>
                   </svg>
-                </Link>
+                </button>
               </div>
             </div>
             
@@ -160,7 +176,7 @@ export default function ServicesPageLayout({ children, title, img }) {
       </section>
 
       {/* Main Content Section */}
-      <section className="text-gray-600 body-font">
+      <section className="text-gray-600 body-font" id="service-timeline">
         {children}
       </section>
       

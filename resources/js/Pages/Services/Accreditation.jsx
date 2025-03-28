@@ -101,7 +101,9 @@ export default function Accreditation() {
           </div>
           
           <div className="w-full lg:w-1/3 px-4 mb-8 lg:mb-0">
-            <ServiceTimeline items={timelineItems} />
+            <div id="service-timeline">
+              <ServiceTimeline items={timelineItems} />
+            </div>
           </div>
         </div>
         

@@ -126,13 +126,15 @@ export default function AdsEvaluation() {
           <div className="w-full lg:w-2/3 px-4 mt-10">
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <p className="text-gray-700 leading-relaxed">
-                Согласно Правилам осуществления рекламы лекарственных средств и медицинских изделий РГП на ПХВ «Национальный научный центр развития здравоохранения им. Салидат Каирбековой» проводит оценку рекламных материалов лекарственных средств и медицинских изделий на соответствие требованиям законодательства Республики Казахстан в области здравоохранения.
+                Национальный научный центр развития здравоохранения проводит оценку рекламных материалов, содержащих информацию о лекарственных средствах и медицинских изделиях.
               </p>
             </div>
           </div>
           
           <div className="w-full lg:w-1/3 px-4 mb-8 lg:mb-0">
-            <ServiceTimeline items={timelineItems} />
+            <div id="service-timeline">
+              <ServiceTimeline items={timelineItems} />
+            </div>
           </div>
         </div>
         
