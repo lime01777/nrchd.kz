@@ -1,0 +1,1 @@
+import{j as t}from"./app-Bj6Oymk7.js";import o from"./BranchTemplate-B11MEaK6.js";import"./LayoutDirection-CKcHLZUT.js";import"./Footer-CIt1i26A.js";function m(){return t.jsx(o,{title:"Актюбинский филиал",description:"Актюбинский филиал занимается..."})}export{m as default};
