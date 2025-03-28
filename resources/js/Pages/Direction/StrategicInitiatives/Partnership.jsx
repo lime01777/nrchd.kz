@@ -59,8 +59,11 @@ export default function Partnership() {
 }
 
 Partnership.layout = page => <LayoutFolderChlank 
-  img="strategy" 
   h1="Международное партнерство" 
   parentRoute={route('strategic.initiatives')} 
   parentName="Стратегические инициативы и международное сотрудничество"
+  heroBgColor="bg-green-100"
+  buttonBgColor="bg-green-100"
+  buttonHoverBgColor="hover:bg-green-200"
+  buttonBorderColor="border-green-200"
 >{page}</LayoutFolderChlank>;

@@ -131,8 +131,11 @@ export default function AstanaDeclaration() {
 }
 
 AstanaDeclaration.layout = page => <LayoutFolderChlank 
-  img="strategy" 
   h1="Декларация Астаны по первичной медико-санитарной помощи" 
   parentRoute={route('strategic.initiatives')} 
   parentName="Стратегические инициативы и международное сотрудничество"
+  heroBgColor="bg-green-100"
+  buttonBgColor="bg-green-100"
+  buttonHoverBgColor="hover:bg-green-200"
+  buttonBorderColor="border-green-200"
 >{page}</LayoutFolderChlank>;

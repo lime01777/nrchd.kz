@@ -28,3 +28,6 @@ Route::get('/files', [\App\Http\Controllers\FileController::class, 'getFiles']);
 
 // Маршрут для получения аккордеонов по маршруту страницы
 Route::get('/accordions-for-page', [\App\Http\Controllers\FileController::class, 'getAccordionsForPage']);
+
+// Маршрут для получения документов в табличном формате (для TabDocuments)
+Route::get('/tabdocuments', [\App\Http\Controllers\FileController::class, 'getTabDocuments']);

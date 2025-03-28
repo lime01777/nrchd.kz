@@ -58,6 +58,26 @@ Route::get('/strategic-initiatives', function () {
     return Inertia::render('Direction/StrategicInitiatives');
 })->name('strategic.initiatives');
 
+Route::get('/strategic-initiatives/initiatives', function () {
+    return Inertia::render('Direction/StrategicInitiatives/Initiatives');
+})->name('strategic.initiatives.initiatives');
+
+Route::get('/strategic-initiatives/tourism', function () {
+    return Inertia::render('Direction/StrategicInitiatives/Tourism');
+})->name('strategic.initiatives.tourism');
+
+Route::get('/strategic-initiatives/partnership', function () {
+    return Inertia::render('Direction/StrategicInitiatives/Partnership');
+})->name('strategic.initiatives.partnership');
+
+Route::get('/strategic-initiatives/expert', function () {
+    return Inertia::render('Direction/StrategicInitiatives/Expert');
+})->name('strategic.initiatives.expert');
+
+Route::get('/strategic-initiatives/coalition', function () {
+    return Inertia::render('Direction/StrategicInitiatives/Coalition');
+})->name('strategic.initiatives.coalition');
+
 Route::get('/health-accounts', function () {
     return Inertia::render('Direction/HealthAccounts');
 })->name('health.accounts');
