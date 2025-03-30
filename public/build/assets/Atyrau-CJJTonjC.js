@@ -1,0 +1,1 @@
+import{j as t}from"./app-CjNl4jR4.js";import r from"./BranchTemplate-CJMBQysN.js";import"./LayoutDirection-SiKDfP3m.js";import"./Footer-CwVaHzZK.js";function m(){return t.jsx(r,{title:"Атырауский филиал",description:"Атырауский филиал занимается..."})}export{m as default};
