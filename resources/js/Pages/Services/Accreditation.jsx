@@ -298,4 +298,4 @@ export default function Accreditation() {
   );
 }
 
-Accreditation.layout = (page) => <ServicesPageLayout title="Аккредитация медицинских организаций" img="service-accreditation">{page}</ServicesPageLayout>;
+Accreditation.layout = (page) => <ServicesPageLayout title="Аккредитация медицинских организаций" img="service-accreditation" bgColor="bg-purple-100">{page}</ServicesPageLayout>;
