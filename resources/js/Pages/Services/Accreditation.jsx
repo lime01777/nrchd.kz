@@ -284,7 +284,7 @@ export default function Accreditation() {
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">Отдел по аккредитации</h3>
               <p className="text-gray-600">г. Астана, улица Иманова, 13</p>
-              <p className="text-gray-600">8-7172-700-950, внутренний номер: 1049, 1079</p>
+              <p className="text-gray-600">8-7172-570-951, внутренний номер: 1000, 1143, 1127, 1046, 1064, 1014</p>
             </div>
           </div>
         </div>
