@@ -122,4 +122,4 @@ export default function MedicalAccreditation() {
   )
 }
 
-MedicalAccreditation.layout = page => <LayoutDirection img="medicalaccreditation" h1="Аккредитация медицинских организаций">{page}</LayoutDirection>
+MedicalAccreditation.layout = page => <LayoutDirection img="humanresources" h1="Аккредитация медицинских организаций">{page}</LayoutDirection>
