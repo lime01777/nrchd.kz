@@ -1,1 +1,0 @@
-import{j as t}from"./app-DFheNYIf.js";import r from"./BranchTemplate-CVhP0ok_.js";import"./LayoutDirection-CiafZWfm.js";import"./Footer-BPwoyAx4.js";function s(){return t.jsx(r,{title:"Карагандинский филиал",description:"Карагандинский филиал занимается..."})}export{s as default};
