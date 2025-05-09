@@ -29,5 +29,11 @@ Route::get('/files', [\App\Http\Controllers\FileController::class, 'getFiles']);
 // Маршрут для получения аккордеонов по маршруту страницы
 Route::get('/accordions-for-page', [\App\Http\Controllers\FileController::class, 'getAccordionsForPage']);
 
+// Маршрут для перевода текста через Google Translate API
+Route::post('/translate', [\App\Http\Controllers\TranslationController::class, 'translate']);
+
+// Test endpoint for the translation API
+Route::post('/test-translation', [\App\Http\Controllers\TranslationController::class, 'testTranslation']);
+
 // Маршрут для получения документов в табличном формате (для TabDocuments)
 Route::get('/tabdocuments', [\App\Http\Controllers\FileController::class, 'getTabDocuments']);

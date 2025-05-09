@@ -9,7 +9,7 @@ import FAQ from '@/Components/FAQ';
 export default function DrugExpertise() {
   const timelineItems = [
     { title: "Первичная оценка", value: "5 рабочих дней" },
-    { title: "Проведение профессиональной экспертизы", value: "20 рабочих дней" },
+    { title: "Проведение профессиональной экспертизы", value: "20 рабочих дней / 30 рабочих дней / 40 рабочих дней" },
     { title: "Формирование и предоставление заключения", value: "5 рабочих дней" },
   ];
 

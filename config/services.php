@@ -35,4 +35,17 @@ return [
         ],
     ],
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Google Translate API
+    |--------------------------------------------------------------------------
+    |
+    | Here you can set your Google Translate API key for translation services.
+    | Get an API key: https://cloud.google.com/translate/docs/setup
+    |
+    */
+    'google_translate' => [
+        'api_key' => env('GOOGLE_TRANSLATE_API_KEY'),
+    ],
 ];

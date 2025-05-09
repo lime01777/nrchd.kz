@@ -21,10 +21,10 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         '35a6ad97d21e794e7e22a17d806652e4' => __DIR__ . '/..' . '/nunomaduro/termwind/src/Functions.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '2203a247e6fda86070a5e4e07aed533a' => __DIR__ . '/..' . '/symfony/clock/Resources/now.php',
         '09f6b20656683369174dd6fa83b7e5fb' => __DIR__ . '/..' . '/symfony/polyfill-uuid/bootstrap.php',
         'a1105708a18b76903365ca1c4aa61b02' => __DIR__ . '/..' . '/symfony/translation/Resources/functions.php',
-        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '47e1160838b5e5a10346ac4084b58c23' => __DIR__ . '/..' . '/laravel/prompts/src/helpers.php',
         'e39a8b23c42d4e1452234d762b03835a' => __DIR__ . '/..' . '/ramsey/uuid/src/functions.php',
         '265b4faa2b3a9766332744949e83bf97' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Collections/helpers.php',
@@ -96,6 +96,7 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
             'Symfony\\Component\\CssSelector\\' => 30,
             'Symfony\\Component\\Console\\' => 26,
             'Symfony\\Component\\Clock\\' => 24,
+            'Stichoza\\GoogleTranslate\\' => 25,
         ),
         'R' => 
         array (
@@ -195,6 +196,7 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'B' => 
         array (
             'Brick\\Math\\' => 11,
+            'Barryvdh\\TranslationManager\\' => 28,
         ),
         'A' => 
         array (
@@ -210,8 +212,8 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
         ),
         'Whoops\\' => 
         array (
@@ -348,6 +350,10 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'Symfony\\Component\\Clock\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/clock',
+        ),
+        'Stichoza\\GoogleTranslate\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/stichoza/google-translate-php/src',
         ),
         'Ramsey\\Uuid\\' => 
         array (
@@ -594,6 +600,10 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         array (
             0 => __DIR__ . '/..' . '/brick/math/src',
         ),
+        'Barryvdh\\TranslationManager\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/barryvdh/laravel-translation-manager/src',
+        ),
         'App\\' => 
         array (
             0 => __DIR__ . '/../..' . '/app',
@@ -602,6 +612,17 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
     );
 
     public static $classMap = array (
+        'App\\Http\\Controllers\\Admin\\DashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DashboardController.php',
+        'App\\Http\\Controllers\\Admin\\DocumentAccordionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DocumentAccordionController.php',
+        'App\\Http\\Controllers\\Admin\\DocumentCategoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DocumentCategoryController.php',
+        'App\\Http\\Controllers\\Admin\\DocumentController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DocumentController.php',
+        'App\\Http\\Controllers\\Admin\\DocumentsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DocumentsController.php',
+        'App\\Http\\Controllers\\Admin\\FolderController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/FolderController.php',
+        'App\\Http\\Controllers\\Admin\\NewsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/NewsController.php',
+        'App\\Http\\Controllers\\Admin\\SettingController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/SettingController.php',
+        'App\\Http\\Controllers\\Admin\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/UserController.php',
+        'App\\Http\\Controllers\\Api\\DocumentApiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/DocumentApiController.php',
+        'App\\Http\\Controllers\\Api\\DocumentController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/DocumentController.php',
         'App\\Http\\Controllers\\Auth\\AuthenticatedSessionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/AuthenticatedSessionController.php',
         'App\\Http\\Controllers\\Auth\\ConfirmablePasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ConfirmablePasswordController.php',
         'App\\Http\\Controllers\\Auth\\EmailVerificationNotificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/EmailVerificationNotificationController.php',
@@ -612,13 +633,33 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'App\\Http\\Controllers\\Auth\\RegisteredUserController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/RegisteredUserController.php',
         'App\\Http\\Controllers\\Auth\\VerifyEmailController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/VerifyEmailController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\FileController' => __DIR__ . '/../..' . '/app/Http/Controllers/FileController.php',
+        'App\\Http\\Controllers\\GoogleDriveController' => __DIR__ . '/../..' . '/app/Http/Controllers/GoogleDriveController.php',
+        'App\\Http\\Controllers\\NewsController' => __DIR__ . '/../..' . '/app/Http/Controllers/NewsController.php',
         'App\\Http\\Controllers\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProfileController.php',
         'App\\Http\\Middleware\\HandleInertiaRequests' => __DIR__ . '/../..' . '/app/Http/Middleware/HandleInertiaRequests.php',
         'App\\Http\\Requests\\Auth\\LoginRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Auth/LoginRequest.php',
         'App\\Http\\Requests\\ProfileUpdateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ProfileUpdateRequest.php',
+        'App\\Models\\Document' => __DIR__ . '/../..' . '/app/Models/Document.php',
+        'App\\Models\\DocumentAccordion' => __DIR__ . '/../..' . '/app/Models/DocumentAccordion.php',
+        'App\\Models\\DocumentCategory' => __DIR__ . '/../..' . '/app/Models/DocumentCategory.php',
+        'App\\Models\\Folder' => __DIR__ . '/../..' . '/app/Models/Folder.php',
+        'App\\Models\\News' => __DIR__ . '/../..' . '/app/Models/News.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
+        'Barryvdh\\TranslationManager\\Console\\CleanCommand' => __DIR__ . '/..' . '/barryvdh/laravel-translation-manager/src/Console/CleanCommand.php',
+        'Barryvdh\\TranslationManager\\Console\\ExportCommand' => __DIR__ . '/..' . '/barryvdh/laravel-translation-manager/src/Console/ExportCommand.php',
+        'Barryvdh\\TranslationManager\\Console\\FindCommand' => __DIR__ . '/..' . '/barryvdh/laravel-translation-manager/src/Console/FindCommand.php',
+        'Barryvdh\\TranslationManager\\Console\\ImportCommand' => __DIR__ . '/..' . '/barryvdh/laravel-translation-manager/src/Console/ImportCommand.php',
+        'Barryvdh\\TranslationManager\\Console\\ResetCommand' => __DIR__ . '/..' . '/barryvdh/laravel-translation-manager/src/Console/ResetCommand.php',
+        'Barryvdh\\TranslationManager\\Controller' => __DIR__ . '/..' . '/barryvdh/laravel-translation-manager/src/Controller.php',
+        'Barryvdh\\TranslationManager\\Events\\TranslationsExportedEvent' => __DIR__ . '/..' . '/barryvdh/laravel-translation-manager/src/Events/TranslationsExportedEvent.php',
+        'Barryvdh\\TranslationManager\\Manager' => __DIR__ . '/..' . '/barryvdh/laravel-translation-manager/src/Manager.php',
+        'Barryvdh\\TranslationManager\\ManagerServiceProvider' => __DIR__ . '/..' . '/barryvdh/laravel-translation-manager/src/ManagerServiceProvider.php',
+        'Barryvdh\\TranslationManager\\Models\\Translation' => __DIR__ . '/..' . '/barryvdh/laravel-translation-manager/src/Models/Translation.php',
+        'Barryvdh\\TranslationManager\\TranslationServiceProvider' => __DIR__ . '/..' . '/barryvdh/laravel-translation-manager/src/TranslationServiceProvider.php',
+        'Barryvdh\\TranslationManager\\Translator' => __DIR__ . '/..' . '/barryvdh/laravel-translation-manager/src/Translator.php',
         'Brick\\Math\\BigDecimal' => __DIR__ . '/..' . '/brick/math/src/BigDecimal.php',
         'Brick\\Math\\BigInteger' => __DIR__ . '/..' . '/brick/math/src/BigInteger.php',
         'Brick\\Math\\BigNumber' => __DIR__ . '/..' . '/brick/math/src/BigNumber.php',
@@ -737,6 +778,8 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'Cron\\MonthField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/MonthField.php',
         'Database\\Factories\\UserFactory' => __DIR__ . '/../..' . '/database/factories/UserFactory.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
+        'Database\\Seeders\\NewsSeeder' => __DIR__ . '/../..' . '/database/seeders/NewsSeeder.php',
+        'Database\\Seeders\\TestNewsSeeder' => __DIR__ . '/../..' . '/database/seeders/TestNewsSeeder.php',
         'DateError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
         'DateException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateException.php',
         'DateInvalidOperationException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateInvalidOperationException.php',
@@ -6246,6 +6289,15 @@ class ComposerStaticInit626b9e7ddd47fb7eff9aaa53cce0c9ad
         'SebastianBergmann\\Type\\UnknownType' => __DIR__ . '/..' . '/sebastian/type/src/type/UnknownType.php',
         'SebastianBergmann\\Type\\VoidType' => __DIR__ . '/..' . '/sebastian/type/src/type/VoidType.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
+        'Stichoza\\GoogleTranslate\\Exceptions\\LanguagesRequestException' => __DIR__ . '/..' . '/stichoza/google-translate-php/src/Exceptions/LanguagesRequestException.php',
+        'Stichoza\\GoogleTranslate\\Exceptions\\LargeTextException' => __DIR__ . '/..' . '/stichoza/google-translate-php/src/Exceptions/LargeTextException.php',
+        'Stichoza\\GoogleTranslate\\Exceptions\\RateLimitException' => __DIR__ . '/..' . '/stichoza/google-translate-php/src/Exceptions/RateLimitException.php',
+        'Stichoza\\GoogleTranslate\\Exceptions\\TranslationDecodingException' => __DIR__ . '/..' . '/stichoza/google-translate-php/src/Exceptions/TranslationDecodingException.php',
+        'Stichoza\\GoogleTranslate\\Exceptions\\TranslationRequestException' => __DIR__ . '/..' . '/stichoza/google-translate-php/src/Exceptions/TranslationRequestException.php',
+        'Stichoza\\GoogleTranslate\\GoogleTranslate' => __DIR__ . '/..' . '/stichoza/google-translate-php/src/GoogleTranslate.php',
+        'Stichoza\\GoogleTranslate\\Tokens\\GoogleTokenGenerator' => __DIR__ . '/..' . '/stichoza/google-translate-php/src/Tokens/GoogleTokenGenerator.php',
+        'Stichoza\\GoogleTranslate\\Tokens\\SampleTokenGenerator' => __DIR__ . '/..' . '/stichoza/google-translate-php/src/Tokens/SampleTokenGenerator.php',
+        'Stichoza\\GoogleTranslate\\Tokens\\TokenProviderInterface' => __DIR__ . '/..' . '/stichoza/google-translate-php/src/Tokens/TokenProviderInterface.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
         'Symfony\\Component\\Clock\\Clock' => __DIR__ . '/..' . '/symfony/clock/Clock.php',
         'Symfony\\Component\\Clock\\ClockAwareTrait' => __DIR__ . '/..' . '/symfony/clock/ClockAwareTrait.php',

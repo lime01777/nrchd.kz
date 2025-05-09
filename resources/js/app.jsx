@@ -1,5 +1,6 @@
 import '../css/app.css';
 import './bootstrap';
+import './Utils/translator'; // Import translator utility for site-wide translations
 
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';

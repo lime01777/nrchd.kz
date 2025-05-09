@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import React, {useState, useEffect} from 'react';
 import DirectionsSubLinks from './DirectionsSubLinks';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Header() {
     const { auth } = usePage().props;
@@ -11,6 +12,7 @@ export default function Header() {
     const branchesSubLinks = [
         { title: "г. Астана", url: "branches.astana" },
         { title: "г. Алматы", url: "branches.almaty" },
+        { title: "Абайская область", url: "branches.abay" },
         { title: "Акмолинская область", url: "branches.akmola" },
         { title: "Актюбинская область", url: "branches.aktobe" },
         { title: "Алматинская область", url: "branches.almatyregion" },
@@ -392,11 +394,63 @@ export default function Header() {
                 </nav>
                 
                 {/* Языки и админ-панель */}
-                <div className="flex flex-col items-center mt-8">
+                <div className="flex items-center space-x-2 ml-4">
+                    {/* Direct language buttons with visual feedback */}
+                    <div className="flex space-x-2">
+                        <button 
+                            className="lang-btn px-2 py-1 rounded text-sm font-medium border border-blue-500" 
+                            data-lang="en"
+                            style={{ backgroundColor: 'white', color: '#3b82f6' }} 
+                            onClick={() => {
+                                console.log('EN button clicked directly');
+                                // Используем упрощенный переводчик
+                                import('../Utils/translator-simple.js')
+                                    .then(translator => {
+                                        translator.translatePage('en');
+                                    })
+                                    .catch(err => {
+                                        console.error('Translator error:', err);
+                                        alert('Ошибка загрузки переводчика: ' + err.message);
+                                    });
+                            }}
+                        >
+                            EN
+                        </button>
+                        <button 
+                            className="lang-btn px-2 py-1 rounded text-sm font-medium border border-blue-500" 
+                            data-lang="ru"
+                            style={{ backgroundColor: '#3b82f6', color: 'white' }} 
+                            onClick={() => {
+                                console.log('RU button clicked directly');
+                                // Используем упрощенный переводчик
+                                import('../Utils/translator-simple.js').then(translator => {
+                                    translator.translatePage('ru');
+                                });
+                            }}
+                        >
+                            RU
+                        </button>
+                        <button 
+                            className="lang-btn px-2 py-1 rounded text-sm font-medium border border-blue-500" 
+                            data-lang="kz"
+                            style={{ backgroundColor: 'white', color: '#3b82f6' }} 
+                            onClick={() => {
+                                console.log('KZ button clicked directly');
+                                // Используем упрощенный переводчик
+                                import('../Utils/translator-simple.js').then(translator => {
+                                    translator.translatePage('kz');
+                                });
+                            }}
+                        >
+                            KZ
+                        </button>
+                    </div>
+                    
+                    {/* Admin panel link */}
                     {auth?.user && (
                         <Link
                             href={route('admin.dashboard')}
-                            className="flex items-center py-1 px-3 mb-4 focus:outline-none text-gray-800 hover:text-blue-600"
+                            className="flex items-center py-1 px-3 ml-2 focus:outline-none text-gray-800 hover:text-blue-600"
                             onClick={() => setMenuOpen(false)}
                         >
                             <svg className="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -406,11 +460,6 @@ export default function Header() {
                             Админ
                         </Link>
                     )}
-                    <div className="flex space-x-2">
-                        <button className="py-1 px-3 border border-gray-300 rounded-md hover:bg-gray-100">EN</button>
-                        <button className="py-1 px-3 border border-gray-300 rounded-md hover:bg-gray-100">RU</button>
-                        <button className="py-1 px-3 border border-gray-300 rounded-md hover:bg-gray-100">KZ</button>
-                    </div>
                 </div>
             </div>
         </div>

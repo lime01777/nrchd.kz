@@ -1,15 +1,24 @@
 <?php return array(
     'root' => array(
         'name' => 'laravel/laravel',
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
-        'reference' => '51f89bd8ac1dbacef0121e5efdadb7a8d3cbd8bf',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => 'df6ef977a37f149a1cc3abe9ada0242e435e66b6',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
+        'barryvdh/laravel-translation-manager' => array(
+            'pretty_version' => 'v0.6.7',
+            'version' => '0.6.7.0',
+            'reference' => '5be9386b0e11887ad6b7d573d6215e40b9ffce88',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../barryvdh/laravel-translation-manager',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'brianium/paratest' => array(
             'pretty_version' => 'v7.6.0',
             'version' => '7.6.0.0',
@@ -440,9 +449,9 @@
             'dev_requirement' => false,
         ),
         'laravel/laravel' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
-            'reference' => '51f89bd8ac1dbacef0121e5efdadb7a8d3cbd8bf',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => 'df6ef977a37f149a1cc3abe9ada0242e435e66b6',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -1108,6 +1117,15 @@
             'replaced' => array(
                 0 => '*',
             ),
+        ),
+        'stichoza/google-translate-php' => array(
+            'pretty_version' => 'v5.2.0',
+            'version' => '5.2.0.0',
+            'reference' => '9429773d991c98f68a25bec40d20f590ea3312a0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../stichoza/google-translate-php',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'symfony/clock' => array(
             'pretty_version' => 'v7.1.6',

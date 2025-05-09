@@ -3,7 +3,7 @@ import Header from '@/Components/Header';
 import Footer from '@/Components/Footer';
 import { Link } from '@inertiajs/react';
 
-export default function ServicesPageLayout({ children, title, img, bgColor = "bg-yellow-100", customForm }) {
+export default function ServicesPageLayout({ children, title, img, bgColor = "bg-yellow-100", customForm, hideForm = false }) {
   const [formData, setFormData] = useState({
     name: '',
     organization: '',
@@ -57,11 +57,11 @@ export default function ServicesPageLayout({ children, title, img, bgColor = "bg
       <Header />
       
       {/* Services Hero Section with Yellow Background */}
-      <section className={`${bgColor} text-gray-800 body-font relative`}>
+      <section className={`${bgColor} text-gray-800 body-font relative py-12 md:py-24`}>
         <div className="container mx-auto px-5 py-12 md:py-24">
           <div className="flex flex-wrap -mb-16 items-center">
             {/* Левая колонка - заголовок и кнопка */}
-            <div className="w-full lg:w-1/2 px-4 py-8 lg:py-0">
+            <div className={`w-full ${hideForm ? '' : 'lg:w-1/2'} px-4 py-8 lg:py-0`}>
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
                 {title}
               </h1>
@@ -79,11 +79,12 @@ export default function ServicesPageLayout({ children, title, img, bgColor = "bg
             </div>
             
             {/* Правая колонка - форма заявки */}
-            <div className="w-full lg:w-1/2 px-4 mt-8 lg:mt-0">
-              {customForm ? (
-                customForm
-              ) : (
-                <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+            {!hideForm && (
+              <div className="w-full lg:w-1/2 px-4 mt-8 lg:mt-0">
+                {customForm ? (
+                  customForm
+                ) : (
+                  <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
                   <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 text-center">Свяжитесь с нами</h2>
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
@@ -174,7 +175,8 @@ export default function ServicesPageLayout({ children, title, img, bgColor = "bg
                   </form>
                 </div>
               )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </section>

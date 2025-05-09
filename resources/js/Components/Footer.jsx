@@ -12,7 +12,7 @@ const FooterLinks = () => {
     const navLinks2 = [
         {label: 'Новости ННЦРЗ', url:'/news'},
         {label: 'Новости по направлениям', url:'/news/directions'},
-        {label: 'Новости филалов', url:'/news/branches'},
+        {label: 'Новости филиалов', url:'/news/branches'},
         {label: 'Салитат Каирбекова', url:'/about-centre/salidat-kairbekova'},
     ];
 

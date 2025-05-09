@@ -385,6 +385,10 @@ Route::get('/shymkent', function () {
     return Inertia::render('Branches/Shymkent');
 })->name('branches.shymkent');
 
+Route::get('/abay', function () {
+    return Inertia::render('Branches/Abay');
+})->name('branches.abay');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

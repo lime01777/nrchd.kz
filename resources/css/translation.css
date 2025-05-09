@@ -1,0 +1,36 @@
+/* Translation-related styles */
+
+/* Loading state while translation is in progress */
+body.translating {
+  position: relative;
+  cursor: progress;
+}
+
+body.translating::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, #4F46E5, #818CF8, #4F46E5);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  z-index: 9999;
+}
+
+/* Active language button styling */
+.lang-btn.active-lang {
+  font-weight: 500;
+  border-color: #4F46E5;
+}
+
+/* Loading animation */
+@keyframes loading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
