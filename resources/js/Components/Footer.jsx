@@ -13,7 +13,7 @@ const FooterLinks = () => {
         {label: 'Новости ННЦРЗ', url:'/news'},
         {label: 'Новости по направлениям', url:'/news/directions'},
         {label: 'Новости филиалов', url:'/news/branches'},
-        {label: 'Салитат Каирбекова', url:'/about-centre/salidat-kairbekova'},
+        {label: 'Салидат Каирбекова', url:'/about-centre/salidat-kairbekova'},
     ];
 
     return (

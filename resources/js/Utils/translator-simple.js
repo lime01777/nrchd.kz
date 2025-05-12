@@ -1,76 +1,129 @@
 /**
- * Simplified translation utility 
+ * Advanced translation utility with translation caching
  * Uses Google Translate API through Laravel backend
+ * And stores translations in the database for reuse
  */
 
-// Show debugging info on page
-const DEBUG = true;
+// Отключаем отображение сообщений о переводе
+const DEBUG = false;
+
+// Cache object to store translations during the current session
+const translationCache = {};
+
+/**
+ * Log messages to console only
+ */
+const logMessage = (message) => {
+  // Скрываем все сообщения о переводе, чтобы не отображать информационный блок
+  if (DEBUG) {
+    // просто выводим в консоль
+    console.log('[Translator]', message);
+  }
+};
+
+/**
+ * Get cached translation if available
+ */
+const getCachedTranslation = (text, targetLang) => {
+  const cacheKey = `${text}_${targetLang}`;
+  return translationCache[cacheKey];
+};
+
+/**
+ * Save translation to cache
+ */
+const saveToCache = (text, targetLang, translation) => {
+  const cacheKey = `${text}_${targetLang}`;
+  translationCache[cacheKey] = translation;
+};
 
 /**
  * Translate the page to the specified language
  * @param {string} targetLang - Target language code (en, ru, kz)
  */
 export const translatePage = async (targetLang) => {
-  // Create visual feedback
-  const debugElement = document.createElement('div');
-  debugElement.style.position = 'fixed';
-  debugElement.style.top = '0';
-  debugElement.style.left = '0';
-  debugElement.style.width = '100%';
-  debugElement.style.zIndex = '9999';
-  debugElement.style.background = 'rgba(0,0,0,0.8)';
-  debugElement.style.color = 'white';
-  debugElement.style.padding = '15px';
-  debugElement.style.fontSize = '16px';
-  debugElement.style.textAlign = 'center';
-  debugElement.innerHTML = `<h3>Перевод страницы на ${targetLang}</h3><div id="debug-status">Инициализация...</div>`;
-  document.body.appendChild(debugElement);
+  // Проверяем, если страница уже переведена на этот язык, пропускаем перевод
+  if (document.documentElement.getAttribute('data-language') === targetLang) {
+    return;
+  }
   
-  const updateStatus = (message) => {
-    const status = document.getElementById('debug-status');
-    if (status) {
-      status.innerHTML += `<br>${message}`;
+  // Добавляем стиль для скрытия всех информационных блоков
+  const style = document.createElement('style');
+  style.textContent = `
+    body > div:not(.main-container):not(.container):not(.wrapper):not([class*="component"]):not([id*="component"]) {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        width: 0 !important;
+        overflow: hidden !important;
+        pointer-events: none !important;
+        position: absolute !important;
+        top: -9999px !important;
     }
-    console.log('[Translator]', message);
-  };
+  `;
+  document.head.appendChild(style);
+
+  // Удаляем существующие инфоблоки о переводе
+  const elementsToHide = [
+    'Перевод страницы', 'Прогресс:', 'Найдено', 'Тестирование API', 'CSRF токен',
+    'Перевод элемента', 'Инициализация'
+  ];
+  
+  // Удаляем текстовые узлы, содержащие информацию о переводе
+  const allNodes = document.createTreeWalker(
+    document.body,
+    NodeFilter.SHOW_TEXT,
+    null,
+    false
+  );
+  
+  const nodesToRemove = [];
+  let currentNode;
+  while (currentNode = allNodes.nextNode()) {
+    if (elementsToHide.some(text => currentNode.nodeValue && currentNode.nodeValue.includes(text))) {
+      nodesToRemove.push(currentNode);
+    }
+  }
+  
+  // Удаляем или скрываем найденные узлы
+  nodesToRemove.forEach(node => {
+    if (node.parentNode) {
+      const parentElement = node.parentNode.closest('div, p, span');
+      if (parentElement && !parentElement.closest('.component') && !parentElement.closest('.container')) {
+        parentElement.style.display = 'none';
+      }
+    }
+  });
   
   try {
     // Get CSRF token
     const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
     if (!token) {
-      updateStatus('❌ ОШИБКА: CSRF токен не найден!');
+      logMessage('ОШИБКА: CSRF токен не найден!');
       return;
     }
     
-    updateStatus(`✓ CSRF токен найден`);
-    updateStatus(`Тестирование API перевода...`);
+    logMessage('CSRF токен найден');
     
-    // Test API first
-    const testResponse = await fetch('/api/test-translation', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': token
-      },
-      body: JSON.stringify({
-        source: 'ru',
-        target: targetLang,
-        text: 'Тестовый перевод'
-      })
-    });
-    
-    const testData = await testResponse.json();
-    
-    if (!testData.success) {
-      updateStatus(`❌ ОШИБКА API: ${testData.message || 'Неизвестная ошибка'}`);
-      updateStatus(`Детали API: ${JSON.stringify(testData)}`);
-      return;
+    // First check if translations are available in the cache
+    const cachedTranslations = localStorage.getItem(`pageTranslations_${targetLang}`);
+    if (cachedTranslations) {
+      logMessage(`Найдены кэшированные переводы для языка ${targetLang}, применяем их`);
+      try {
+        const translations = JSON.parse(cachedTranslations);
+        applyStoredTranslations(translations);
+        updateButtonStyles(targetLang);
+        logMessage('Кэшированные переводы успешно применены');
+        return;
+      } catch (e) {
+        logMessage(`Ошибка при применении кэшированных переводов: ${e.message}, продолжаем с переводом API`);
+        // Continue with API translation
+      }
     }
-    
-    updateStatus(`✓ API перевода работает! Тестовый перевод: "${testData.translation}"`);
-    updateStatus(`Поиск текстовых элементов на странице...`);
     
     // Get all text nodes
+    logMessage('Поиск текстовых элементов на странице...');
     const textNodes = [];
     const walker = document.createTreeWalker(
       document.body,
@@ -79,9 +132,6 @@ export const translatePage = async (targetLang) => {
         acceptNode: (node) => {
           // Skip empty nodes
           if (!node.textContent.trim()) return NodeFilter.FILTER_REJECT;
-          
-          // Skip nodes in our debug element
-          if (debugElement.contains(node)) return NodeFilter.FILTER_REJECT;
           
           // Skip script, style tags
           const parent = node.parentElement;
@@ -104,7 +154,10 @@ export const translatePage = async (targetLang) => {
       }
     }
     
-    updateStatus(`Найдено ${textNodes.length} текстовых элементов для перевода`);
+    logMessage(`Найдено ${textNodes.length} текстовых элементов для перевода`);
+    
+    // Prepare collection to store translations for saving
+    const translationsToSave = {};
     
     // Simple sequential translation of each node to avoid overwhelming API
     let translatedCount = 0;
@@ -116,66 +169,149 @@ export const translatePage = async (targetLang) => {
       if (originalText.length < 2) continue;
       
       try {
-        updateStatus(`Перевод элемента ${i+1}/${textNodes.length}`);
+        // Check if already cached in this session
+        let translatedText = getCachedTranslation(originalText, targetLang);
         
-        const response = await fetch('/api/translate', {
+        if (!translatedText) {
+          // Not in session cache, try to get from API
+          const response = await fetch('/api/translate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': token
+            },
+            body: JSON.stringify({
+              text: originalText,
+              source: 'ru',
+              target: targetLang,
+              cache: true // Tell API to store this translation
+            })
+          });
+          
+          const result = await response.json();
+          
+          if (result.success && result.translation) {
+            translatedText = result.translation;
+            saveToCache(originalText, targetLang, translatedText);
+          } else {
+            logMessage(`Ошибка перевода элемента: ${result.message || 'Неизвестная ошибка'}`);
+            continue;
+          }
+        } else {
+          logMessage(`Использован кэшированный перевод для "${originalText.substring(0, 20)}..."`);
+        }
+        
+        // Apply translation
+        node.textContent = node.textContent.replace(originalText, translatedText);
+        translationsToSave[originalText] = translatedText;
+        translatedCount++;
+        
+      } catch (error) {
+        logMessage(`Ошибка при переводе элемента ${i+1}: ${error.message}`);
+      }
+      
+      // Log progress every 20 elements
+      if (i % 20 === 0) {
+        logMessage(`Прогресс: ${i+1}/${textNodes.length} (${Math.round((i+1)/textNodes.length*100)}%)`);
+      }
+    }
+    
+    // Save all translations to localStorage for future use
+    if (Object.keys(translationsToSave).length > 0) {
+      localStorage.setItem(`pageTranslations_${targetLang}`, JSON.stringify(translationsToSave));
+      logMessage(`Сохранены переводы для языка ${targetLang} в локальное хранилище`);
+      
+      // Also send all translations to server for permanent storage
+      try {
+        await fetch('/api/save-translations', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': token
           },
           body: JSON.stringify({
-            text: originalText,
-            source: 'ru',
-            target: targetLang
+            translations: translationsToSave,
+            target_language: targetLang,
+            page_url: window.location.pathname
           })
         });
-        
-        const result = await response.json();
-        
-        if (result.success && result.translation) {
-          node.textContent = node.textContent.replace(originalText, result.translation);
-          translatedCount++;
-        } else {
-          updateStatus(`⚠️ Ошибка перевода элемента: ${result.message || 'Неизвестная ошибка'}`);
-        }
-      } catch (error) {
-        updateStatus(`⚠️ Ошибка при переводе элемента ${i+1}: ${error.message}`);
-      }
-      
-      // Update every 5 elements
-      if (i % 5 === 0) {
-        updateStatus(`Прогресс: ${i+1}/${textNodes.length} (${Math.round((i+1)/textNodes.length*100)}%)`);
+        logMessage('Переводы сохранены на сервере');
+      } catch (e) {
+        logMessage(`Ошибка при сохранении переводов на сервере: ${e.message}`);
       }
     }
     
     // Save language preference
     localStorage.setItem('preferredLanguage', targetLang);
     
-    updateStatus(`✅ Перевод завершен! Переведено ${translatedCount} из ${textNodes.length} элементов`);
+    logMessage(`Перевод завершен! Переведено ${translatedCount} из ${textNodes.length} элементов`);
     
     // Update active language button style
-    const buttons = document.querySelectorAll('.lang-btn');
-    buttons.forEach(btn => {
-      const langCode = btn.getAttribute('data-lang');
-      if (langCode === targetLang) {
-        btn.style.backgroundColor = '#3b82f6';
-        btn.style.color = 'white';
-      } else {
-        btn.style.backgroundColor = 'white';
-        btn.style.color = '#3b82f6';
-      }
-    });
+    updateButtonStyles(targetLang);
     
   } catch (error) {
-    updateStatus(`❌ КРИТИЧЕСКАЯ ОШИБКА: ${error.message}`);
+    logMessage(`КРИТИЧЕСКАЯ ОШИБКА: ${error.message}`);
+  }
+};
+
+/**
+ * Apply stored translations to the page
+ */
+const applyStoredTranslations = (translations) => {
+  const textNodes = [];
+  const walker = document.createTreeWalker(
+    document.body,
+    NodeFilter.SHOW_TEXT,
+    {
+      acceptNode: (node) => {
+        // Skip empty nodes
+        if (!node.textContent.trim()) return NodeFilter.FILTER_REJECT;
+        
+        // Skip script, style tags
+        const parent = node.parentElement;
+        if (!parent) return NodeFilter.FILTER_REJECT;
+        
+        const tagName = parent.tagName.toLowerCase();
+        if (tagName === 'script' || tagName === 'style' || tagName === 'noscript') {
+          return NodeFilter.FILTER_REJECT;
+        }
+        
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    }
+  );
+  
+  // Collect all nodes
+  while (walker.nextNode()) {
+    if (walker.currentNode.textContent.trim().length > 2) {
+      textNodes.push(walker.currentNode);
+    }
   }
   
-  // Keep debug element visible for a longer time
-  setTimeout(() => {
-    document.body.removeChild(debugElement);
-  }, 8000);
-}
+  textNodes.forEach(node => {
+    const originalText = node.textContent.trim();
+    if (translations[originalText]) {
+      node.textContent = node.textContent.replace(originalText, translations[originalText]);
+    }
+  });
+};
+
+/**
+ * Update language button styles
+ */
+const updateButtonStyles = (targetLang) => {
+  const buttons = document.querySelectorAll('.lang-btn');
+  buttons.forEach(btn => {
+    const langCode = btn.getAttribute('data-lang');
+    if (langCode === targetLang) {
+      btn.style.backgroundColor = '#3b82f6';
+      btn.style.color = 'white';
+    } else {
+      btn.style.backgroundColor = 'white';
+      btn.style.color = '#3b82f6';
+    }
+  });
+};
 
 // Initialize when document loads
 document.addEventListener('DOMContentLoaded', () => {

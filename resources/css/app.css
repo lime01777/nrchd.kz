@@ -4,3 +4,14 @@
 
 /* Import translation styles */
 @import 'translation.css';
+
+/* Global font family setting */
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body, p, h1, h2, h3, h4, h5, h6, span, div, a, button, input, textarea, select, li {
+    font-family: 'Inter', system-ui, sans-serif !important;
+  }
+}

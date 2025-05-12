@@ -1,62 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import News_chlank from './News_chlank';
 import { Link } from '@inertiajs/react';
+import Slider from 'react-slick';
+
+// Импортируем CSS для слайдера
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function News() {
   const [latestNews, setLatestNews] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Загружаем последние новости при монтировании компонента
-    fetch('/api/latest-news')
-      .then(response => response.json())
+    // Загружаем последние 10 новостей из БД
+    fetch('/api/latest-news?limit=10')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok: ' + response.status);
+        }
+        return response.json();
+      })
       .then(data => {
+        console.log('Получено новостей из БД:', data.length);
         setLatestNews(data);
         setLoading(false);
       })
       .catch(error => {
         console.error('Ошибка при загрузке новостей:', error);
+        // В случае ошибки все равно переходим в состояние загрузки = false
         setLoading(false);
-        
-        // Если API недоступен, используем статичные данные для демонстрации
-        setLatestNews([
-          {
-            id: 1,
-            title: 'Министерство здравоохранения Республики Казахстан провело конференцию по вопросам развития медицинского образования',
-            publish_date: '2025-03-20',
-            slug: 'conference-medical-education'
-          },
-          {
-            id: 2,
-            title: 'Новые клинические протоколы по лечению сердечно-сосудистых заболеваний утверждены в Казахстане',
-            publish_date: '2025-03-18',
-            slug: 'new-clinical-protocols'
-          },
-          {
-            id: 3,
-            title: 'Республиканский центр развития здравоохранения подписал меморандум о сотрудничестве с ВОЗ',
-            publish_date: '2025-03-15',
-            slug: 'memorandum-who'
-          },
-          {
-            id: 4,
-            title: 'Запущена новая программа повышения квалификации для медицинских работников',
-            publish_date: '2025-03-10',
-            slug: 'new-qualification-program'
-          },
-          {
-            id: 5,
-            title: 'Итоги международной конференции по цифровизации здравоохранения',
-            publish_date: '2025-03-05',
-            slug: 'digital-health-conference'
-          },
-          {
-            id: 6,
-            title: 'Обновлены стандарты аккредитации медицинских организаций',
-            publish_date: '2025-03-01',
-            slug: 'updated-accreditation-standards'
-          }
-        ]);
       });
   }, []);
 
@@ -76,27 +48,59 @@ function News() {
                 </Link>
                 </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {loading ? (
-                  <div className="col-span-full text-center py-10">
+            {loading ? (
+                <div className="text-center py-10">
                     <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
                     <p className="mt-2">Загрузка новостей...</p>
-                  </div>
-                ) : latestNews.length > 0 ? (
-                  latestNews.slice(0, 6).map((news, index) => (
-                    <News_chlank 
-                      key={news.id || index}
-                      date={new Date(news.publish_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}
-                      description={news.title}
-                      slug={news.slug}
-                    />
-                  ))
-                ) : (
-                  <div className="col-span-full text-center py-10">
+                </div>
+            ) : latestNews.length > 0 ? (
+                <div className="relative news-slider-container">
+                    <Slider
+                        dots={true}
+                        infinite={true}
+                        speed={500}
+                        slidesToShow={3}
+                        slidesToScroll={1}
+                        initialSlide={0}
+                        autoplay={true}
+                        autoplaySpeed={5000}
+                        cssEase="linear"
+                        responsive={[
+                            {
+                                breakpoint: 1024,
+                                settings: {
+                                    slidesToShow: 2,
+                                    slidesToScroll: 1,
+                                    dots: true
+                                }
+                            },
+                            {
+                                breakpoint: 600,
+                                settings: {
+                                    slidesToShow: 1,
+                                    slidesToScroll: 1,
+                                    initialSlide: 0
+                                }
+                            }
+                        ]}
+                        className="mx-2"
+                    >
+                        {latestNews.slice(0, 10).map((news, index) => (
+                            <div key={news.id || index} className="px-2">
+                                <News_chlank
+                                    date={new Date(news.publish_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                    description={news.title}
+                                    slug={news.slug}
+                                />
+                            </div>
+                        ))}
+                    </Slider>
+                </div>
+            ) : (
+                <div className="text-center py-10">
                     <p>Нет доступных новостей</p>
-                  </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     </section>
   )

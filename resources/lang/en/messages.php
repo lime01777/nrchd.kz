@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'welcome' => 'Welcome',
+    'home' => 'Home',
+    'about' => 'About Us',
+    'contacts' => 'Contacts',
+    'news' => 'News',
+    'documents' => 'Documents',
+    'more' => 'More',
+    'read_more' => 'Read more',
+    'search' => 'Search',
+    'directions' => 'Directions',
+    'partners' => 'Partners',
+    'projects' => 'Projects',
+    'services' => 'Services',
+    'gallery' => 'Gallery',
+    'categories' => 'Categories',
+    'all_news' => 'All News',
+    'all_documents' => 'All Documents',
+    'published_at' => 'Published at',
+    'downloads' => 'Downloads',
+    'address' => 'Address',
+    'phone' => 'Phone',
+    'email' => 'Email',
+    'social_networks' => 'Social Networks',
+    'copyright' => 'All rights reserved',
+];

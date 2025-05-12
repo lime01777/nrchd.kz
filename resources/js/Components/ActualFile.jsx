@@ -1,7 +1,7 @@
 import React from 'react';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 
-export default function ActualFile({ title, folder, bgColor = 'bg-white', onVideoClick }) {
+export default function ActualFile({ title, folder, bgColor = 'bg-white', onVideoClick, hideDownload = false }) {
   return (
     <div className="text-gray-600 body-font py-10">
       <div className="container mx-auto px-5">
@@ -22,6 +22,7 @@ export default function ActualFile({ title, folder, bgColor = 'bg-white', onVide
                 onVideoClick={onVideoClick}
                 limit={2} // Ограничиваем только двумя документами
                 singleColumn={true} // Явно указываем отображение в одну колонку
+                hideDownload={hideDownload}
               />
             </div>
           </div>

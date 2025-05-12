@@ -4,19 +4,24 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Middleware\LanguageMiddleware;
 
-Route::get('/', function () {
-    return Inertia::render('Home', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-})->name('home');
+// Применяем мидлвар языка ко всем маршрутам
+Route::middleware([LanguageMiddleware::class])->group(function () {
+    Route::get('/', function () {
+        return Inertia::render('Home', [
+            'canLogin' => Route::has('login'),
+            'canRegister' => Route::has('register'),
+            'laravelVersion' => Application::VERSION,
+            'phpVersion' => PHP_VERSION,
+            'locale' => app()->getLocale(), // Добавляем текущий язык в пропсы
+        ]);
+    })->name('home');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+}); // Конец мидлвара языка
 
 Route::get('/medical-education', function () {
     return Inertia::render('Direction/MedicalEducation');
@@ -189,6 +194,10 @@ Route::get('/primary-healthcare/outpatient', function () {
 Route::get('/primary-healthcare/prevention', function () {
     return Inertia::render('Direction/PrimaryHealthCare/Prevention');
 })->name('primary.healthcare.prevention');
+
+Route::get('/medical-statistics', function () {
+    return Inertia::render('Direction/MedicalStatistics');
+})->name('medical.statistics');
 
 Route::get('/education-programs', function () {
     return Inertia::render('Services/EducationPrograms');

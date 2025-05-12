@@ -4,18 +4,18 @@ import { router } from '@inertiajs/react';
 
 const Directions = () => {
     const allDirections = [
-        { imgname: 1, title: "Медицинское образование", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "medical.education", hasRoute: true},
-        { imgname: 2, title: "Кадровые ресурсы", bgcolor: "bg-rose-100", bgborder: "border-rose-200", url: "human.resources", hasRoute: true},
-        { imgname: 3, title: "Электронное здравоохранение", bgcolor: "bg-fuchsia-100", bgborder: "border-fuchsia-200", url: "electronic.health", hasRoute: true},
-        { imgname: 4, title: "Аккредитация", bgcolor: "bg-yellow-100", bgborder: "border-yellow-200", url: "medical.accreditation", hasRoute: true},
-        { imgname: 5, title: "Оценка технологий здравоохранения", bgcolor: "bg-violet-100", bgborder: "border-violet-200", url: "health.rate", hasRoute: true},
-        { imgname: 6, title: "Клинические протоколы", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "clinical.protocols", hasRoute: true},
-        { imgname: 7, title: "Стратегические инициативы и междурародное сотрудничество", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "strategic.initiatives", hasRoute: true},
-        { imgname: 8, title: "Рейтинг медицинских организаций", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "#", hasRoute: false, path: "/rating"},
-        { imgname: 9, title: "Медицинская наука", bgcolor: "bg-gray-100", bgborder: "border-gray-200", url: "medical.science", hasRoute: true},
-        { imgname: 10, title: "Лекарственная политика", bgcolor: "bg-yellow-100", bgborder: "border-yellow-200", url: "drug.policy", hasRoute: true},
-        { imgname: 11, title: "Первичная медико-санитарная помощь", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "primary.healthcare", hasRoute: true},
-        { imgname: 12, title: "Национальные счета здравоохранения", bgcolor: "bg-purple-200", bgborder: "border-purple-200", url: "#", hasRoute: false, path: "/national-health-accounts"}
+        { imgname: 1, title: "Медицинское образование", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "/medical-education", hasRoute: false, path: "/medical-education"},
+        { imgname: 2, title: "Кадровые ресурсы", bgcolor: "bg-rose-100", bgborder: "border-rose-200", url: "/human-resources", hasRoute: false, path: "/human-resources"},
+        { imgname: 3, title: "Электронное здравоохранение", bgcolor: "bg-fuchsia-100", bgborder: "border-fuchsia-200", url: "/electronic-health", hasRoute: false, path: "/electronic-health"},
+        { imgname: 4, title: "Аккредитация", bgcolor: "bg-yellow-100", bgborder: "border-yellow-200", url: "/medical-accreditation", hasRoute: false, path: "/medical-accreditation"},
+        { imgname: 5, title: "Оценка технологий здравоохранения", bgcolor: "bg-violet-100", bgborder: "border-violet-200", url: "/health-tech-assessment", hasRoute: false, path: "/health-tech-assessment"},
+        { imgname: 6, title: "Клинические протоколы", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "/clinical-protocols", hasRoute: false, path: "/clinical-protocols"},
+        { imgname: 7, title: "Стратегические инициативы и межродовое сотрудничество", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "/strategic-initiatives", hasRoute: false, path: "/strategic-initiatives"},
+        { imgname: 8, title: "Рейтинг медицинских организаций", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "/rating", hasRoute: false, path: "/rating"},
+        { imgname: 9, title: "Медицинская наука", bgcolor: "bg-gray-100", bgborder: "border-gray-200", url: "/medical-science", hasRoute: false, path: "/medical-science"},
+        { imgname: 10, title: "Лекарственная политика", bgcolor: "bg-yellow-100", bgborder: "border-yellow-200", url: "/drug-policy", hasRoute: false, path: "/drug-policy"},
+        { imgname: 11, title: "Первичная медико-санитарная помощь", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "/primary-healthcare", hasRoute: false, path: "/primary-healthcare"},
+        { imgname: 12, title: "Национальные счета здравоохранения", bgcolor: "bg-purple-200", bgborder: "border-purple-200", url: "/national-health-accounts", hasRoute: false, path: "/national-health-accounts"}
     ];
 
     const [ showMore, setShowMore ] = useState(false);
@@ -31,7 +31,7 @@ const Directions = () => {
             <div className="flex flex-wrap -m-4">
                 {allDirections.slice(0, 6).map((direction, index) =>(
                 <DirectionsChlank key={index} imgname={direction.imgname} title={direction.title}
-                    bgcolor={direction.bgcolor} bgborder={direction.bgborder} url={direction.url} />
+                    bgcolor={direction.bgcolor} bgborder={direction.bgborder} url={direction.url} hasRoute={direction.hasRoute} path={direction.path} />
                 ))}
             </div>
             {/* Скрытые направления */}
@@ -39,7 +39,7 @@ const Directions = () => {
                 ? "md:max-h-[1000px] max-h-[1500px]" : "max-h-0" }`}>
                 {allDirections.slice(6).map((direction, index) => (
                 <DirectionsChlank key={index} imgname={direction.imgname} title={direction.title}
-                    bgcolor={direction.bgcolor} bgborder={direction.bgborder} url={direction.url} />
+                    bgcolor={direction.bgcolor} bgborder={direction.bgborder} url={direction.url} hasRoute={direction.hasRoute} path={direction.path} />
                 ))}
             </div>
 

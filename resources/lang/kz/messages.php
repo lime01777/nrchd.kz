@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'welcome' => 'Қош келдіңіз',
+    'home' => 'Басты бет',
+    'about' => 'Біз туралы',
+    'contacts' => 'Байланыстар',
+    'news' => 'Жаңалықтар',
+    'documents' => 'Құжаттар',
+    'more' => 'Толығырақ',
+    'read_more' => 'Оқу',
+    'search' => 'Іздеу',
+    'directions' => 'Бағыттар',
+    'partners' => 'Серіктестер',
+    'projects' => 'Жобалар',
+    'services' => 'Қызметтер',
+    'gallery' => 'Галерея',
+    'categories' => 'Санаттар',
+    'all_news' => 'Барлық жаңалықтар',
+    'all_documents' => 'Барлық құжаттар',
+    'published_at' => 'Жарияланған күні',
+    'downloads' => 'Жүктеулер',
+    'address' => 'Мекен-жайы',
+    'phone' => 'Телефон',
+    'email' => 'Email',
+    'social_networks' => 'Әлеуметтік желілер',
+    'copyright' => 'Барлық құқықтар қорғалған',
+];

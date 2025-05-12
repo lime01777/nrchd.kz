@@ -39,12 +39,13 @@ export default function Header() {
         { title: "Аккредитация", url: "medical.accreditation"},
         { title: "Оценка технологий здравоохранения", url: "health.rate"},
         { title: "Клинические протоколы", url: "clinical.protocols"},
-        { title: "Стратегические инициативы и международное сотрудничество", url: "strategic.initiatives"},
+        { title: "Стратегические инициативы и межродовое сотрудничество", url: "strategic.initiatives"},
         { title: "Рейтинг медицинских организаций", url: "medical.rating"},
         { title: "Медицинская наука", url: "medical.science"},
         { title: "Лекарственная политика", url: "drug.policy"},
         { title: "Первичная медико-санитарная помощь", url: "primary.healthcare"},
         { title: "Национальные счета здравоохранения", url: "health.accounts"},
+        { title: "Медицинская статистика", url: "medical.statistics"},
         
     ];
 
@@ -238,13 +239,47 @@ export default function Header() {
                     </Link>
                 )}
                 <button
-                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">EN
+                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0"
+                    onClick={() => {
+                        console.log('EN button clicked (desktop)');
+                        import('../Utils/translator-simple.js')
+                            .then(translator => {
+                                translator.translatePage('en');
+                            })
+                            .catch(err => {
+                                console.error('Translator error:', err);
+                                alert('Ошибка загрузки переводчика: ' + err.message);
+                            });
+                    }}
+                >EN
                 </button>
                 <button
-                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">RU
+                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0"
+                    onClick={() => {
+                        console.log('RU button clicked (desktop)');
+                        import('../Utils/translator-simple.js')
+                            .then(translator => {
+                                translator.translatePage('ru');
+                            })
+                            .catch(err => {
+                                console.error('Translator error:', err);
+                            });
+                    }}
+                >RU
                 </button>
                 <button
-                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0">KZ
+                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0"
+                    onClick={() => {
+                        console.log('KZ button clicked (desktop)');
+                        import('../Utils/translator-simple.js')
+                            .then(translator => {
+                                translator.translatePage('kz');
+                            })
+                            .catch(err => {
+                                console.error('Translator error:', err);
+                            });
+                    }}
+                >KZ
                 </button>
             </div>
 

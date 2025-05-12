@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, limit, singleColumn = false }) {
+function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, limit, singleColumn = false, hideDownload = false }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -393,12 +393,14 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
                         className="cursor-pointer text-black inline-flex items-center border-gray-300 border rounded-lg px-3 py-2 text-sm hover:bg-gray-50 transition-colors duration-200">
                         Открыть
                       </button>
-                      <a
-                        href={file.url}
-                        download
-                        className="cursor-pointer text-black inline-flex items-center border-gray-300 border rounded-lg px-3 py-2 text-sm hover:bg-gray-50 transition-colors duration-200">
-                        Скачать
-                      </a>
+                      {!hideDownload && (
+                        <a
+                          href={file.url}
+                          download
+                          className="cursor-pointer text-black inline-flex items-center border-gray-300 border rounded-lg px-3 py-2 text-sm hover:bg-gray-50 transition-colors duration-200">
+                          Скачать
+                        </a>
+                      )}
                     </div>
                     <div className="flex flex-col text-sm">
                       <div className="flex flex-row items-center">

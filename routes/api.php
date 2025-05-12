@@ -30,10 +30,17 @@ Route::get('/files', [\App\Http\Controllers\FileController::class, 'getFiles']);
 Route::get('/accordions-for-page', [\App\Http\Controllers\FileController::class, 'getAccordionsForPage']);
 
 // Маршрут для перевода текста через Google Translate API
-Route::post('/translate', [\App\Http\Controllers\TranslationController::class, 'translate']);
+Route::post('/translate', [\App\Http\Controllers\FixedTranslationController::class, 'translate']);
 
 // Test endpoint for the translation API
-Route::post('/test-translation', [\App\Http\Controllers\TranslationController::class, 'testTranslation']);
+Route::post('/test-translation', [\App\Http\Controllers\FixedTranslationController::class, 'testTranslation']);
+
+// Маршрут для сохранения коллекции переводов
+Route::post('/save-translations', [\App\Http\Controllers\FixedTranslationController::class, 'saveTranslations']);
+
+// Маршруты для управления языком сайта
+Route::post('/set-language', [\App\Http\Controllers\LanguageController::class, 'setLanguage']);
+Route::post('/page-translations', [\App\Http\Controllers\LanguageController::class, 'getPageTranslations']);
 
 // Маршрут для получения документов в табличном формате (для TabDocuments)
 Route::get('/tabdocuments', [\App\Http\Controllers\FileController::class, 'getTabDocuments']);

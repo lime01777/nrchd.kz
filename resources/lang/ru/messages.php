@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'welcome' => 'Добро пожаловать',
+    'home' => 'Главная',
+    'about' => 'О нас',
+    'contacts' => 'Контакты',
+    'news' => 'Новости',
+    'documents' => 'Документы',
+    'more' => 'Подробнее',
+    'read_more' => 'Читать далее',
+    'search' => 'Поиск',
+    'directions' => 'Направления',
+    'partners' => 'Партнеры',
+    'projects' => 'Проекты',
+    'services' => 'Услуги',
+    'gallery' => 'Галерея',
+    'categories' => 'Категории',
+    'all_news' => 'Все новости',
+    'all_documents' => 'Все документы',
+    'published_at' => 'Опубликовано',
+    'downloads' => 'Загрузки',
+    'address' => 'Адрес',
+    'phone' => 'Телефон',
+    'email' => 'Email',
+    'social_networks' => 'Социальные сети',
+    'copyright' => 'Все права защищены',
+];
