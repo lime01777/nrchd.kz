@@ -1,9 +1,10 @@
 import { Head, Link } from '@inertiajs/react';
 import React, { useState } from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
-import ActualFile from '@/Components/ActualFile';
 import FilesAccord from '@/Components/FilesAccord';
 import ChartHead from '@/Components/ChartHead';
+import FolderChlank from '@/Components/FolderChlank';
+import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 
 export default function MedicalStatistics() {
     const [showFullText, setShowFullText] = useState(false);
@@ -51,71 +52,33 @@ export default function MedicalStatistics() {
             </div>
             
             {/* Блок с папками и подстраницами */}
-            <div className="container px-5 py-10 mx-auto">
-                <h2 className="text-2xl font-semibold mb-8 text-gray-800">Статистические материалы</h2>
-                
-                <div className="flex flex-wrap -m-4">
-                    {/* Папка 1 */}
-                    <div className="p-4 lg:w-1/3 md:w-1/2">
-                        <div className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                            <div className="p-6">
-                                <h2 className="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">СТАТИСТИКА</h2>
-                                <h1 className="title-font text-lg font-medium text-gray-900 mb-3">Демографические показатели</h1>
-                                <p className="leading-relaxed mb-3">Данные о рождаемости, смертности, продолжительности жизни и других демографических показателях.</p>
-                                <div className="flex items-center flex-wrap">
-                                    <Link href="#" className="text-blue-500 inline-flex items-center md:mb-2 lg:mb-0">Подробнее
-                                        <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M5 12h14"></path>
-                                            <path d="M12 5l7 7-7 7"></path>
-                                        </svg>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    {/* Папка 2 */}
-                    <div className="p-4 lg:w-1/3 md:w-1/2">
-                        <div className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                            <div className="p-6">
-                                <h2 className="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">СТАТИСТИКА</h2>
-                                <h1 className="title-font text-lg font-medium text-gray-900 mb-3">Заболеваемость населения</h1>
-                                <p className="leading-relaxed mb-3">Статистические данные о распространенности различных заболеваний и их динамике.</p>
-                                <div className="flex items-center flex-wrap">
-                                    <Link href="#" className="text-blue-500 inline-flex items-center md:mb-2 lg:mb-0">Подробнее
-                                        <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M5 12h14"></path>
-                                            <path d="M12 5l7 7-7 7"></path>
-                                        </svg>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    {/* Папка 3 */}
-                    <div className="p-4 lg:w-1/3 md:w-1/2">
-                        <div className="h-full border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                            <div className="p-6">
-                                <h2 className="tracking-widest text-xs title-font font-medium text-gray-400 mb-1">СТАТИСТИКА</h2>
-                                <h1 className="title-font text-lg font-medium text-gray-900 mb-3">Ресурсы здравоохранения</h1>
-                                <p className="leading-relaxed mb-3">Информация о медицинских учреждениях, медицинских кадрах и финансировании.</p>
-                                <div className="flex items-center flex-wrap">
-                                    <Link href="#" className="text-blue-500 inline-flex items-center md:mb-2 lg:mb-0">Подробнее
-                                        <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M5 12h14"></path>
-                                            <path d="M12 5l7 7-7 7"></path>
-                                        </svg>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <section className="text-gray-600 body-font">
+        <div className="container pt-8 pb-24 mx-auto">
+            <div className="flex md:flex-row flex-wrap">
+                <FolderChlank 
+                    h1="Отчёты" 
+                    color="bg-purple-200" 
+                    colorsec="bg-purple-300" 
+                    href={route('medical.statistics.reports')}
+                />
+                <FolderChlank 
+                    h1="Статистические данные" 
+                    color="bg-purple-200" 
+                    colorsec="bg-purple-300" 
+                    href={route('medical.statistics.statdata')}
+                />
+                <FolderChlank 
+                    h1="Аналитические материалы" 
+                    color="bg-purple-200" 
+                    colorsec="bg-purple-300" 
+                    href={route('medical.statistics.analytics')}
+                />
             </div>
+        </div>
+    </section>
             
             {/* Блок с графиком из примера */}
-            <div className="container px-5 py-10 mx-auto bg-purple-50 rounded-lg my-10">
+            <div className="container px-5 py-10 mx-auto bg-purple-100 rounded-lg my-10">
                 <h2 className="text-2xl font-semibold mb-8 text-gray-800">Статистические исследования</h2>
                 
                 <div className="flex flex-wrap md:flex-nowrap">
@@ -128,27 +91,35 @@ export default function MedicalStatistics() {
                 </div>
             </div>
             
-            {/* Блок ActualFile с одним документом */}
+            {/* Блок ActualFile c слайдом документов */}
             <div className="py-8">
-                <ActualFile 
-                    title="Действующий документ" 
-                    folder="Дирекции/Медицинская статистика/Документ"
-                    bgColor="bg-blue-50"
-                    hideDownload={false}
-                />
+                <div className="container mx-auto px-5">
+                    <div className="bg-purple-100 p-6 rounded-lg shadow-md">
+                        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Действующие документы</h2>
+                        <SimpleFileDisplay 
+                            folder="Медицинская статистика/Актуальные документы"
+                            title=""
+                            bgColor="transparent"
+                            hideDownload={true}
+                            autoOpen={true}
+                            hideTitle={true}
+                            className="h-[400px] overflow-hidden"
+                        />
+                    </div>
+                </div>
             </div>
             
             {/* Блок ActualFile с тремя документами */}
             <div className="container px-5 py-10 mx-auto">
                 <h2 className="text-2xl font-semibold mb-6 text-gray-800">Актуальные статистические данные</h2>
-                <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+                <div className="bg-purple-100 p-6 rounded-lg shadow-sm">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {/* Первый документ */}
                         <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
                             <h3 className="font-medium text-lg mb-2">Статистический сборник</h3>
                             <p className="text-sm text-gray-600 mb-3">Ежегодный статистический сборник по здравоохранению Республики Казахстан</p>
                             <div className="flex space-x-2">
-                                <button className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded">Открыть</button>
+                                <button className="text-xs bg-purple-50 text-blue-700 px-3 py-1 rounded">Открыть</button>
                             </div>
                         </div>
                         
@@ -157,7 +128,7 @@ export default function MedicalStatistics() {
                             <h3 className="font-medium text-lg mb-2">Демографические показатели</h3>
                             <p className="text-sm text-gray-600 mb-3">Статистические данные по населению за 2023 год с аналитическими материалами</p>
                             <div className="flex space-x-2">
-                                <button className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded">Открыть</button>
+                                <button className="text-xs bg-purple-50 text-blue-700 px-3 py-1 rounded">Открыть</button>
                             </div>
                         </div>
                         
@@ -166,7 +137,7 @@ export default function MedicalStatistics() {
                             <h3 className="font-medium text-lg mb-2">Заболеваемость населения</h3>
                             <p className="text-sm text-gray-600 mb-3">Сводные данные по заболеваемости населения и факторам риска</p>
                             <div className="flex space-x-2">
-                                <button className="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded">Открыть</button>
+                                <button className="text-xs bg-purple-50 text-blue-700 px-3 py-1 rounded">Открыть</button>
 
                             </div>
                         </div>
@@ -175,7 +146,7 @@ export default function MedicalStatistics() {
             </div>
             
             {/* Блок с двумя графиками как на главной странице */}
-            <section className="text-gray-600 body-font py-16 bg-gray-50">
+            <section className="text-gray-600 body-font py-16 bg-white">
                 <div className="container mx-auto px-5">
                     <h2 className="text-3xl font-bold mb-12 text-gray-800">Статистика и аналитика</h2>
                     
@@ -212,16 +183,16 @@ export default function MedicalStatistics() {
         <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
             {/* Первый аккордеон */}
             <FilesAccord 
-                folder="Медицинская наука/Локальная комиссия по биоэтике"
-                title="Локальная комиссия по биоэтике"
-                bgColor="bg-gray-200"
+                folder="Медицинская статистика/Приказы"
+                title="Приказы"
+                bgColor="bg-purple-200"
                 defaultOpen={true}
             />
             {/* Второй аккордеон */}
             <FilesAccord 
-                folder="Медицинская наука/Локальная комиссия по биоэтике"
-                title="Локальная комиссия по биоэтике"
-                bgColor="bg-gray-200"
+                folder="Медицинская статистика/Методические рекомендации"
+                title="Методические рекомендации"
+                bgColor="bg-purple-200"
                 defaultOpen={true}
             />
         </div>

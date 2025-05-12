@@ -21,7 +21,7 @@ export default function Contacts() {
                                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Адрес и контакты</h2>
                                 <div className="mb-4">
                                     <h3 className="text-gray-700 font-medium">Адрес:</h3>
-                                    <p className="text-gray-600">010000, Республика Казахстан, г. Астана, ул. Иманова, 13</p>
+                                    <p className="text-gray-600">010000, Республика Казахстан, г. Астана, ул. Мангилек Ел, 20</p>
                                 </div>
                                 <div className="mb-4">
                                     <h3 className="text-gray-700 font-medium">Телефоны:</h3>
@@ -30,7 +30,7 @@ export default function Contacts() {
                                 </div>
                                 <div className="mb-4">
                                     <h3 className="text-gray-700 font-medium">E-mail:</h3>
-                                    <p className="text-gray-600">info@nrchd.kz</p>
+                                    <p className="text-gray-600">office@nrchd.kz</p>
                                 </div>
                                 <div>
                                     <h3 className="text-gray-700 font-medium">График работы:</h3>

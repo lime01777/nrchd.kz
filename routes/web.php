@@ -199,6 +199,18 @@ Route::get('/medical-statistics', function () {
     return Inertia::render('Direction/MedicalStatistics');
 })->name('medical.statistics');
 
+Route::get('/medical-statistics/reports', function () {
+    return Inertia::render('Direction/MedStats/Reports');
+})->name('medical.statistics.reports');
+
+Route::get('/medical-statistics/statdata', function () {
+    return Inertia::render('Direction/MedStats/StatData');
+})->name('medical.statistics.statdata');
+
+Route::get('/medical-statistics/analytics', function () {
+    return Inertia::render('Direction/MedStats/Analytics');
+})->name('medical.statistics.analytics');
+
 Route::get('/education-programs', function () {
     return Inertia::render('Services/EducationPrograms');
 })->name('services.educationPrograms');

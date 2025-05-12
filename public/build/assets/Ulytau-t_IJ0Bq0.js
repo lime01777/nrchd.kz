@@ -1,0 +1,1 @@
+import{j as t}from"./app-CuYqoGhO.js";import o from"./BranchTemplate-Dxv6Zhm4.js";import"./LayoutDirection-tYnbr67F.js";import"./Footer-FVnIoDtM.js";function m(){return t.jsx(o,{title:"Улытауский филиал",description:"Улытауский филиал занимается..."})}export{m as default};
