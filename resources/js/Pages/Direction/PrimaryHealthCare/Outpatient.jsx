@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import React, { useState } from 'react';
-import LayoutDirection from '@/Layouts/LayoutDirection';
+import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import PageAccordions from '@/Components/PageAccordions';
 import BannerCatalog from '@/Components/BannerCatalog';
 
@@ -65,4 +65,4 @@ export default function Outpatient() {
   )
 }
 
-Outpatient.layout = (page) => <LayoutDirection img={'pmsp_outpatient'} h1={'Амбулаторная помощь'}>{page}</LayoutDirection>;
+Outpatient.layout = (page) => <LayoutFolderChlank h1={'Амбулаторная помощь'}>{page}</LayoutFolderChlank>;

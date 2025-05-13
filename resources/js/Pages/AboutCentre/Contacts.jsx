@@ -68,7 +68,7 @@ export default function Contacts() {
                                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Карта проезда</h2>
                                 <div className="aspect-w-16 aspect-h-9">
                                     <iframe 
-                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2503.5463470896225!2d71.4164!3d51.1664!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTHCsDEwJzU4LjUiTiA3McKwMjQnNTkuNCJF!5e0!3m2!1sru!2skz!4v1616000000000!5m2!1sru!2skz" 
+                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d469.4763059572582!2d71.43565068647455!3d51.11692493107856!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x424585006513e77b%3A0x3b03064db10fe73!2z0J3QsNGG0LjQvtC90LDQu9GM0L3Ri9C5INC90LDRg9GH0L3Ri9C5INGG0LXQvdGC0YAg0YDQsNC30LLQuNGC0LjRjyDQt9C00YDQsNCy0L7QvtGF0YDQsNC90LXQvdC40Y8g0LjQvNC10L3QuCDQodCw0LvQuNC00LDRgiDQmtCw0LjRgNCx0LXQutC-0LLQvtC5INCc0Jcg0KDQmiAo0J3QndCm0KDQlyDQnNCXINCg0Jop!5e0!3m2!1sru!2skz!4v1747113775363!5m2!1sru!2skz" 
                                         width="100%" 
                                         height="450" 
                                         style={{ border: 0 }} 

@@ -1,6 +1,7 @@
 import { Head } from '@inertiajs/react';
 import React, { useState, useRef } from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
+import FilesAccord from '@/Components/FilesAccord';
 
 // Компонент формы постаккредитационного мониторинга для отображения в шапке
 const PostMonitoringForm = () => {
@@ -321,8 +322,8 @@ export default function PostAccreditationMonitoring() {
                   <p className="text-sm text-gray-700 mb-1">
                     <strong>Отдел по аккредитации:</strong>
                   </p>
-                  <p className="text-sm text-gray-600">г. Астана, улица Иманова, 13</p>
-                  <p className="text-sm text-gray-600">8-7172-700-950, внутренний номер: 1049, 1079</p>
+                  <p className="text-sm text-gray-600">г. Астана, улица Мангелик Ел, 20</p>
+                  <p className="text-sm text-gray-600">8-7172-648-600, внутренний номер: 1049, 1079</p>
                 </div>
               </div>
             </div>

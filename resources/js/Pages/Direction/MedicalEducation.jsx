@@ -53,14 +53,6 @@ export default function MedicalEducation() {
     <BannerCatalog />
     <section className="text-gray-600 body-font">
         <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
-            {/* Первый аккордеон */}
-                <FilesAccord 
-                    folder="MedicalEducation/nma"
-                    title="Научно-медицинская экспертиза "
-                    bgColor="bg-green-100"
-                    defaultOpen={true}
-                />
-
             
             {/* Второй аккордеон */}
                 <FilesAccord 

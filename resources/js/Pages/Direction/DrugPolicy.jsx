@@ -12,28 +12,39 @@ export default function DrugPolicy() {
       question: "Перечни возмещения в рамках ГОБМП и ОСМС",
       answer: (
         <div className="space-y-2">
-          <ol className="list-decimal pl-5 space-y-3">
-            <li>
-              <a href="https://adilet.zan.kz/rus/docs/V2100022782" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                Приказ Министра здравоохранения Республики Казахстан от 18 мая 2021 года № ҚР ДСМ – 41 «Об утверждении Казахстанского национального лекарственного формуляра»
-              </a>
-            </li>
-            <li>
-              <a href="https://adilet.zan.kz/rus/docs/V2100023885#z4" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                Приказ Министра здравоохранения Республики Казахстан от 5 августа 2021 года № ҚР ДСМ – 75 «Об утверждении Перечня лекарственных средств и медицинских изделий для бесплатного и (или) льготного амбулаторного обеспечения отдельных категорий граждан Республики Казахстан с определенными заболеваниями (состояниями)»
-              </a>
-            </li>
-            <li>
-              <a href="https://adilet.zan.kz/rus/docs/V2100024078" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                Приказ Министра здравоохранения Республики Казахстан от 20 августа 2021 года № ҚР ДСМ-88 «Об определении перечня лекарственных средств и медицинских изделий, закупаемых у единого дистрибьютора»
-              </a>
-            </li>
-            <li>
-              <a href="https://adilet.zan.kz/rus/docs/V2000021479" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                Приказ Министра здравоохранения Республики Казахстан от 20 октября 2020 года № ҚР ДСМ - 142/2020 «Об утверждении перечня орфанных заболеваний и лекарственных средств для их лечения (орфанных)»
-              </a>
-            </li>
-          </ol>
+          <div className="flex flex-col space-y-4">
+            <a href="https://adilet.zan.kz/rus/docs/V2100022782" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              КНФ - Казахстанский национальный лекарственный формуляр
+            </a>
+            
+            <a href="https://adilet.zan.kz/rus/docs/V2000021479" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              Перечень орфанных заболеваний и лекарственных средств
+            </a>
+            
+            <a href="https://adilet.zan.kz/rus/docs/V2100024078" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              Перечень закупа ЕД (единого дистрибьютора)
+            </a>
+            
+            <a href="https://adilet.zan.kz/rus/docs/V2100023885" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              Перечень АЛО (амбулаторного лекарственного обеспечения)
+            </a>
+
+            <a href="https://adilet.zan.kz/rus/docs/V2000021910" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              Правила формирования перечня ЕД
+            </a>
+
+            <a href="https://adilet.zan.kz/rus/docs/V2000021913" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              Правила формирования КНФ
+            </a>
+
+            <a href="https://adilet.zan.kz/rus/docs/V2100023783" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              Правила формирования перечня АЛО (утратили силу)
+            </a>
+
+            <a href="https://adilet.zan.kz/rus/docs/V2000021454" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              Правила формирования перечня орфанных заболеваний и ЛС
+            </a>
+          </div>
         </div>
       )
     },

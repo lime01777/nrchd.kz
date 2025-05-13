@@ -34,10 +34,6 @@ const FooterLinks = () => {
                             информация</h2>
                         <nav className="list-none mb-10">
                             <li>
-                                <a href="mailto:a.skakova@nrchd.kz"
-                                    className="text-gray-600 hover:text-gray-800 hover:underline">a.skakova@nrchd.kz</a>,
-                            </li>
-                            <li>
                                 <a href="mailto:s.zhaldybaeva@nrchd.kz"
                                     className="text-gray-600 hover:text-gray-800 hover:underline">s.zhaldybaeva@nrchd.kz</a>
                             </li>

@@ -29,7 +29,7 @@ export default function ClinicalProtocolsCatalog() {
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6">
             <SimpleFileDisplay 
-              folder="Клинические протоколы\Поток — клинические протоколы" 
+              folder="Клинические протоколы\Поток — клинические протоколы\ЭЛ БАЗА КП" 
               title="" 
               bgColor="bg-white"
               onVideoClick={openVideoModal}

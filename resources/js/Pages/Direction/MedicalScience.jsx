@@ -12,12 +12,6 @@ export default function MedicalScience() {
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>
             <p className="tracking-wide leading-relaxed">
-            Департамент медицинской науки – ключевое структурное подразделение ННЦРЗ, деятельность которого направлена на развитие научных исследований в области здравоохранения, внедрение инновационных технологий и повышение эффективности управления медицинской наукой.
-            </p>
-            <p className="tracking-wide leading-relaxed">
-            Основные задачи департамента:
-            </p>
-            <p className="tracking-wide leading-relaxed">
             Развитие научных исследований – поддержка и координация фундаментальных и прикладных исследований, направленных на решение актуальных проблем здравоохранения.
             </p>
             <p className="tracking-wide leading-relaxed">
@@ -31,9 +25,6 @@ export default function MedicalScience() {
             </p>
             <p className="tracking-wide leading-relaxed">
             Международное сотрудничество – взаимодействие с ведущими мировыми научными центрами и участие в международных проектах.
-            </p>
-            <p className="tracking-wide leading-relaxed">
-            Департамент обладает полномочиями по представлению и пересмотру статуса научной организации в области здравоохранения, а также по проведению комплексной оценки научно-исследовательской деятельности.
             </p>
           </div>
           <div className='flex flex-wrap px-12 justify-center mb-4'>
@@ -80,6 +71,12 @@ export default function MedicalScience() {
             <FilesAccord 
                 folder="Медицинская наука/Локальная комиссия по биоэтике"
                 title="Локальная комиссия по биоэтике"
+                bgColor="bg-gray-200"
+                defaultOpen={true}
+            />
+            <FilesAccord 
+                folder="MedicalEducation/nma"
+                title="Научно-медицинская экспертиза "
                 bgColor="bg-gray-200"
                 defaultOpen={true}
             />

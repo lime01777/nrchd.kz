@@ -289,7 +289,7 @@ export default function Accreditation() {
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <span>для предоставления точки доступа к ИС МЗ РК «СУКМУ» <a href="https://nrchd.kz/files/%D0%BD%D0%BE%D0%B2%D0%BE%D0%B5 2023/%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%B5%D1%86 %D0%BE%D0%B1%D1%8A%D1%8F%D0%B7%D0%B0%D1%82%D0%B5%D0%BB%D1%8C%D1%81%D1%82%D0%B2%D0%B0 %D0%BE %D0%BD%D0%B5%D1%80%D0%B0%D0%B7%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B8.docx" className="text-blue-600 hover:underline">(скачать)</a></span>
+          <span>для предоставления точки доступа к ИС МЗ РК «СУКМУ» <a href="https://nrchd.kz/files/%D0%BD%D0%BE%D0%B2%D0%BE%D0%B5 2023/%D0%BF%D0%B5%D1%80%D0%B5%D1%87%D0%B5%D0%BD%D1%8C %D0%BD%D0%B5%D0%BE%D0%B1%D1%85%D0%BE%D0%B4%D0%B8%D0%BC%D1%8B%D1%85 %D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%BE%D0%B2 %D0%B4%D0%BB%D1%8F %D0%BC%D0%B5%D0%B4%D0%B8%D1%86%D0%B8%D0%BD%D1%81%D0%BA%D0%B8%D1%85 %D0%BE%D1%80%D0%B3%D0%B0%D0%BD%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8 %D0%B4%D0%BB%D1%8F %D0%BF%D1%80%D0%B5%D0%B4%D0%BE%D1%81%D1%82%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F %D1%82%D0%BE%D1%87%D0%BA%D0%B8 %D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0 %D0%BA %D0%98%D0%A1 %D0%9C%D0%97 %D0%A0%D0%9A %C2%AB%D0%A1%D0%A3%D0%9A%D0%9C%D0%A3%C2%BB.docx" className="text-blue-600 hover:underline">(скачать)</a></span>
         </li>
         <li className="flex items-start">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -301,7 +301,7 @@ export default function Accreditation() {
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <span>образец обязательства о неразглашении <a href="https://nrchd.kz/files/%D0%BD%D0%BE%D0%B2%D0%BE%D0%B5 2023/%D0%BF%D0%B5%D1%80%D0%B5%D1%87%D0%B5%D0%BD%D1%8C %D0%BD%D0%B5%D0%BE%D0%B1%D1%85%D0%BE%D0%B4%D0%B8%D0%BC%D1%8B%D1%85 %D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%BE%D0%B2 %D0%B4%D0%BB%D1%8F %D0%BC%D0%B5%D0%B4%D0%B8%D1%86%D0%B8%D0%BD%D1%81%D0%BA%D0%B8%D1%85 %D0%BE%D1%80%D0%B3%D0%B0%D0%BD%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8 %D0%B4%D0%BB%D1%8F %D0%BF%D1%80%D0%B5%D0%B4%D0%BE%D1%81%D1%82%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F %D1%82%D0%BE%D1%87%D0%BA%D0%B8 %D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0 %D0%BA %D0%98%D0%A1 %D0%9C%D0%97 %D0%A0%D0%9A %C2%AB%D0%A1%D0%A3%D0%9A%D0%9C%D0%A3%C2%BB.docx" className="text-blue-600 hover:underline">(скачать)</a></span>
+          <span>образец обязательства о неразглашении <a href="https://nrchd.kz/files/%D0%BD%D0%BE%D0%B2%D0%BE%D0%B5 2023/%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%B5%D1%86 %D0%BE%D0%B1%D1%8A%D1%8F%D0%B7%D0%B0%D1%82%D0%B5%D0%BB%D1%8C%D1%81%D1%82%D0%B2%D0%B0 %D0%BE %D0%BD%D0%B5%D1%80%D0%B0%D0%B7%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B8.docx" className="text-blue-600 hover:underline">(скачать)</a></span>
         </li>
       </ul>
     </div>

@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import React, { useState } from 'react';
-import LayoutDirection from '@/Layouts/LayoutDirection';
+import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import PageAccordions from '@/Components/PageAccordions';
 import BannerCatalog from '@/Components/BannerCatalog';
 
@@ -70,4 +70,4 @@ export default function Prevention() {
   )
 }
 
-Prevention.layout = (page) => <LayoutDirection img={'pmsp_prevention'} h1={'Профилактика и скрининг'}>{page}</LayoutDirection>;
+Prevention.layout = (page) => <LayoutFolderChlank img={'pmsp_prevention'} h1={'Профилактика и скрининг'}>{page}</LayoutFolderChlank>;
