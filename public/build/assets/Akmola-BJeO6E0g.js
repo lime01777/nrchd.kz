@@ -1,1 +1,0 @@
-import{j as t}from"./app-BG_Nq7Ty.js";import o from"./BranchTemplate-BT043aRK.js";import"./LayoutDirection-BOZL3DKc.js";import"./Footer-wk6WW4q-.js";function s(){return t.jsx(o,{title:"Акмолинский филиал",description:"Акмолинский филиал занимается..."})}export{s as default};

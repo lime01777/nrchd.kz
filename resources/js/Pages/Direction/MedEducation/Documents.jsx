@@ -33,7 +33,7 @@ export default function Documents() {
             <SimpleFileDisplay 
               folder="Медицинское образование/Папка — Нормативные документы" 
               title="Нормативная база медицинского образования" 
-              bgColor="bg-purple-50"
+              bgColor="bg-green-50"
               onVideoClick={openVideoModal}
             />
 
@@ -58,6 +58,9 @@ Documents.layout = page => <LayoutFolderChlank
   h1="Нормативные документы" 
   parentRoute={route('direction.medical.education')} 
   parentName="Медицинское образование"
+  heroBgColor="bg-green-100"
+  buttonBgColor="bg-green-100"
+  buttonHoverBgColor="hover:bg-green-200"
   breadcrumbs={[
     { name: 'Направления', route: 'directions' },
     { name: 'Медицинское образование', route: 'direction.medical.education' },

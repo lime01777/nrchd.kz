@@ -2,6 +2,8 @@ import { Head } from '@inertiajs/react';
 import React, { useState, useRef } from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 import FilesAccord from '@/Components/FilesAccord';
+import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
+import VideoModal from '@/Components/VideoModal';
 
 // Компонент формы постаккредитационного мониторинга для отображения в шапке
 const PostMonitoringForm = () => {
@@ -250,6 +252,22 @@ const PostMonitoringForm = () => {
 };
 
 export default function PostAccreditationMonitoring() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [selectedFileName, setSelectedFileName] = useState('');
+
+  const openVideoModal = (videoUrl, fileName) => {
+    setSelectedVideo(videoUrl);
+    setSelectedFileName(fileName);
+    setIsModalOpen(true);
+  };
+
+  const closeVideoModal = () => {
+    setIsModalOpen(false);
+    setSelectedVideo(null);
+    setSelectedFileName('');
+  };
+
   const handleDownloadTemplate = () => {
     const templateUrl = '/storage/documents/Услуги/Постаккредитационный мониторинг/Шаблон -Отчёт об исполнении плана корректирующих мероприятий.docx';
     
@@ -330,6 +348,25 @@ export default function PostAccreditationMonitoring() {
           </div>
         </div>
       </section>
+
+      <section className="text-gray-600 body-font pb-16">
+        <div className="container px-5 mx-auto">
+          <SimpleFileDisplay 
+            folder="Услуги/Постаккредитационный мониторинг/План проведения постаккредитационного мониторинга медицинских организаций" 
+            title="План проведения постаккредитационного мониторинга медицинских организаций" 
+            bgColor="bg-blue-50"
+            onVideoClick={openVideoModal}
+          />
+        </div>
+      </section>
+
+      {isModalOpen && (
+        <VideoModal
+          videoUrl={selectedVideo}
+          fileName={selectedFileName}
+          onClose={closeVideoModal}
+        />
+      )}
     </>
   );
 }

@@ -49,12 +49,6 @@ export default function MedicalScience() {
               href={route('medical.science.clinical')}
             />
             <FolderChlank 
-              h1="Отраслевой центр технологических компетенций" 
-              color="bg-gray-200" 
-              colorsec="bg-gray-300" 
-              href={route('medical.science.tech')}
-            />
-            <FolderChlank 
               h1="Ученый совет" 
               color="bg-gray-200" 
               colorsec="bg-gray-300" 

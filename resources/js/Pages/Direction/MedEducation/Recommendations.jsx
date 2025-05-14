@@ -33,7 +33,7 @@ export default function Recommendations() {
             <SimpleFileDisplay 
               folder="Медицинское образование/Папка — Методические рекомендации" 
               title="Методические рекомендации по образовательной деятельности" 
-              bgColor="bg-purple-50"
+              bgColor="bg-green-50"
               onVideoClick={openVideoModal}
             />
 
@@ -55,6 +55,9 @@ export default function Recommendations() {
 
 Recommendations.layout = page => <LayoutFolderChlank 
   bgColor="bg-white"
+  heroBgColor="bg-green-100"
+  buttonBgColor="bg-green-100"
+  buttonHoverBgColor="hover:bg-green-200"
   h1="Методические рекомендации" 
   parentRoute={route('direction.medical.education')} 
   parentName="Медицинское образование"

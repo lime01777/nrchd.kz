@@ -277,6 +277,11 @@ Route::get('/direction/medical-education/rating', function () {
     return Inertia::render('Direction/MedEducation/Rating');
 })->name('direction.medical.education.rating');
 
+// Маршрут для Отраслевого центра технологических компетенций
+Route::get('/direction/tech-competence', function () {
+    return Inertia::render('Direction/TechCompetence');
+})->name('direction.tech.competence');
+
 // Маршруты для новостей
 Route::get('/news', [App\Http\Controllers\NewsController::class, 'index'])->name('news');
 Route::get('/news/{slug}', [App\Http\Controllers\NewsController::class, 'show'])->name('news.show');

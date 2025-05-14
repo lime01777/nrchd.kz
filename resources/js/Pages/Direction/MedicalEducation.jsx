@@ -13,116 +13,103 @@ export default function MedicalEducation() {
     <>
     <Head title="Медицинское образование" />
     <section className="text-gray-600 body-font pb-8">
+      <div className="container px-5 py-12 mx-auto">
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">Медицинское образование в Республике Казахстан</h2>
+          
+          <p className="text-gray-700 mb-4 leading-relaxed">
+            Подготовка медицинских кадров является одним из основных приоритетов государства.
+          </p>
 
-        <div className="container px-5 py-12 mx-auto">
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Система образования в Республике Казахстан</h2>
-            
-            <div className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-700 mb-3">Уровни образования:</h3>
-              <ul className="list-none space-y-2 ml-6">
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-gray-700 mb-3">Медицинские организации образования</h3>
+            <p className="text-gray-700 mb-3">
+              Для обеспечения системы здравоохранения квалифицированными врачебными кадрами в республике подготовку медицинских кадров проводят:
+            </p>
+            <div className="bg-green-50 p-4 rounded-lg mb-4">
+              <ul className="list-none space-y-2">
                 <li className="flex items-start">
                   <span className="text-green-600 mr-2 mt-1">•</span>
-                  <span>Среднее образование (общее среднее образование, техническое и профессиональное образование)</span>
+                  <span>8 медицинских ВУЗов</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-600 mr-2 mt-1">•</span>
-                  <span>Послесреднее образование</span>
+                  <span>7 факультетов в составе многопрофильных ВУЗов</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-600 mr-2 mt-1">•</span>
-                  <span>Высшее образование</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 mr-2 mt-1">•</span>
-                  <span>Послевузовское образование</span>
+                  <span>17 национальных центров, НИИ, НЦ, реализующих программы резидентуры</span>
                 </li>
               </ul>
             </div>
+          </div>
+
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-gray-700 mb-3">Уровни обучения врачей</h3>
             
-            <div className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-700 mb-3">Медицинское образование</h3>
-              <p className="text-gray-700 mb-4">
-                Медицинское образование Республики Казахстан осуществляется по уровням: бакалавриат, магистратура, резидентура и докторантура.
-              </p>
-              
-              <div className="bg-green-50 p-4 rounded-lg mb-4">
-                <h4 className="font-semibold mb-2">Подготовку медицинских кадров проводят:</h4>
-                <ul className="list-disc pl-5 space-y-1 text-gray-700">
-                  <li>8 медицинских ВУЗов</li>
-                  <li>7 факультетов в составе многопрофильных ВУЗов</li>
-                  <li>17 национальных центров, НИИ, НЦ, реализующих программы резидентуры</li>
-                </ul>
-              </div>
-            </div>
-            
-            <div className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-700 mb-3">Уровни обучения врачей</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2">Базовое высшее медицинское образование</h4>
-                  <p className="text-gray-700">7 лет (бакалавриат + интернатура) – 3 специальности</p>
-                </div>
-                
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2">Непрерывное интегрированное медицинское образование</h4>
-                  <p className="text-gray-700">6 лет (бакалавриат + магистратура + интернатура) – 4 специальности</p>
-                </div>
-              </div>
-              
-              <div className="bg-green-50 p-4 rounded-lg mb-4">
-                <h4 className="font-semibold mb-2">Послевузовское образование</h4>
-                <ul className="list-disc pl-5 space-y-1 text-gray-700">
-                  <li>Резидентура – по 49 специальностям от 2 до 4 лет</li>
-                  <li>Профильная магистратура (1-1,5 года)</li>
-                  <li>Научно-педагогическая магистратура (2 года)</li>
-                  <li>Докторантура PhD (3 года)</li>
-                </ul>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="bg-green-50 p-4 rounded-lg">
+                <h4 className="font-semibold mb-2">Базовое высшее медицинское образование</h4>
+                <p className="text-gray-700">7 лет (бакалавриат + интернатура) – 3 специальности</p>
               </div>
               
               <div className="bg-green-50 p-4 rounded-lg">
-                <h4 className="font-semibold mb-2">Подготовка средних медицинских кадров</h4>
-                <p className="text-gray-700">С техническим и профессиональным, послесредним образованием осуществляют 94 медицинских колледжа</p>
+                <h4 className="font-semibold mb-2">Непрерывное интегрированное медицинское образование</h4>
+                <p className="text-gray-700">6 лет (бакалавриат + магистратура + интернатура) – 4 специальности</p>
               </div>
             </div>
-
-            <div className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-700 mb-3">Основные задачи:</h3>
-              <p className="text-gray-700 mb-4">
-                Методологическое сопровождение и мониторинг эффективности деятельности организаций медицинского образования и науки в области подготовки кадров для системы здравоохранения:
-              </p>
+            
+            <div className="bg-green-50 p-4 rounded-lg mb-4">
+              <h4 className="font-semibold mb-2">Послевузовское образование</h4>
               <ul className="list-disc pl-5 space-y-1 text-gray-700">
-                <li>Изучение институциональной среды медицинских ВУЗов, медицинских и высших колледжей РК (по таким составляющим как качество образовательного процесса; администрирование образовательного процесса и культура безопасности; качество научного процесса; качество клинического процесса; антикоррупционная культура и противодействие коррупции) на основе опроса обучающихся, профессорско-преподавательского состава и административно-управленческого персонала;</li>
-                <li>Проведение рейтинговой оценки образовательной деятельности медицинских ВУЗов, медицинских колледжей, НИИ, НЦ в соответствии с утвержденной методикой по итогам учебного года.</li>
-                <li>Координация контроля качества дополнительного образования, экспертизы образовательных программ дополнительного образования в области здравоохранения и ведение информационной системы каталога образовательных программ дополнительного образования.</li>
+                <li>Резидентура – по 49 специальностям от 2 до 4 лет</li>
+                <li>Профильная магистратура (1-1,5 года)</li>
+                <li>Научно-педагогическая магистратура (2 года)</li>
+                <li>Докторантура PhD (3 года)</li>
               </ul>
+            </div>
+            
+            <div className="bg-green-50 p-4 rounded-lg">
+              <h4 className="font-semibold mb-2">Подготовка средних медицинских кадров</h4>
+              <p className="text-gray-700">С техническим и профессиональным, послесредним образованием осуществляют 94 медицинских колледжа</p>
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <h3 className="text-xl font-semibold text-gray-700 mb-3">Методологическое сопровождение и мониторинг эффективности деятельности организаций медицинского образования и науки в области подготовки кадров для системы здравоохранения:</h3>
+            <p className="text-gray-700 mb-4">
+              Методологическое сопровождение и мониторинг эффективности деятельности организаций медицинского образования и науки в области подготовки кадров для системы здравоохранения:
+            </p>
+            <div className="space-y-3">
+              <div className="flex">
+                <span className="font-semibold text-green-600 mr-2">1.</span>
+                <p className="text-gray-700">Изучение институциональной среды медицинских ВУЗов, медицинских и высших колледжей РК (по таким составляющим как качество образовательного процесса; администрирование образовательного процесса и культура безопасности; качество научного процесса; качество клинического процесса; антикоррупционная культура и противодействие коррупции) на основе опроса обучающихся, профессорско-преподавательского состава и административно-управленческого персонала;</p>
+              </div>
+              <div className="flex">
+                <span className="font-semibold text-green-600 mr-2">2.</span>
+                <p className="text-gray-700">Проведение рейтинговой оценки образовательной деятельности медицинских ВУЗов, медицинских колледжей, НИИ, НЦ в соответствии с утвержденной методикой по итогам учебного года.</p>
+              </div>
+              <div className="flex">
+                <span className="font-semibold text-green-600 mr-2">3.</span>
+                <p className="text-gray-700">Координация контроля качества дополнительного образования, экспертизы образовательных программ дополнительного образования в области здравоохранения и ведение информационной системы каталога образовательных программ дополнительного образования.</p>
+              </div>
             </div>
           </div>
         </div>
-        
-        <div className="container px-5 py-8 mx-auto">
-          <div className="flex flex-wrap -m-4">
-            <FolderChlank 
-              h1="Нормативные документы" 
-              color="bg-green-100" 
-              colorsec="bg-green-200" 
-              href={route('direction.medical.education.documents')}
-            />
-            <FolderChlank 
-              h1="Методические рекомендации" 
-              color="bg-green-100" 
-              colorsec="bg-green-200" 
-              href={route('direction.medical.education.recommendations')}
-            />
-            <FolderChlank 
-              h1="Рейтинговая оценка МОО" 
-              color="bg-green-100" 
-              colorsec="bg-green-200" 
-              href={route('direction.medical.education.rating')}
-            />
-          </div>
+      </div>
+      
+      <div className="container px-5 py-8 mx-auto">
+        <div className="flex flex-wrap -m-4">
+          <FolderChlank 
+            h1="Нормативные документы" 
+            color="bg-green-100" 
+            colorsec="bg-green-200" 
+            href={route('direction.medical.education.documents')}
+          />
         </div>
+      </div>
+
+
     </section>
     <BannerCatalog />
     <section className="text-gray-600 body-font">
