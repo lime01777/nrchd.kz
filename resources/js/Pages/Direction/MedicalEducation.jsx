@@ -22,19 +22,19 @@ export default function MedicalEducation() {
               <h3 className="text-xl font-semibold text-gray-700 mb-3">Уровни образования:</h3>
               <ul className="list-none space-y-2 ml-6">
                 <li className="flex items-start">
-                  <span className="text-purple-600 mr-2 mt-1">•</span>
+                  <span className="text-green-600 mr-2 mt-1">•</span>
                   <span>Среднее образование (общее среднее образование, техническое и профессиональное образование)</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-purple-600 mr-2 mt-1">•</span>
+                  <span className="text-green-600 mr-2 mt-1">•</span>
                   <span>Послесреднее образование</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-purple-600 mr-2 mt-1">•</span>
+                  <span className="text-green-600 mr-2 mt-1">•</span>
                   <span>Высшее образование</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-purple-600 mr-2 mt-1">•</span>
+                  <span className="text-green-600 mr-2 mt-1">•</span>
                   <span>Послевузовское образование</span>
                 </li>
               </ul>
@@ -46,7 +46,7 @@ export default function MedicalEducation() {
                 Медицинское образование Республики Казахстан осуществляется по уровням: бакалавриат, магистратура, резидентура и докторантура.
               </p>
               
-              <div className="bg-purple-50 p-4 rounded-lg mb-4">
+              <div className="bg-green-50 p-4 rounded-lg mb-4">
                 <h4 className="font-semibold mb-2">Подготовку медицинских кадров проводят:</h4>
                 <ul className="list-disc pl-5 space-y-1 text-gray-700">
                   <li>8 медицинских ВУЗов</li>
@@ -60,18 +60,18 @@ export default function MedicalEducation() {
               <h3 className="text-xl font-semibold text-gray-700 mb-3">Уровни обучения врачей</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div className="bg-purple-50 p-4 rounded-lg">
+                <div className="bg-green-50 p-4 rounded-lg">
                   <h4 className="font-semibold mb-2">Базовое высшее медицинское образование</h4>
                   <p className="text-gray-700">7 лет (бакалавриат + интернатура) – 3 специальности</p>
                 </div>
                 
-                <div className="bg-purple-50 p-4 rounded-lg">
+                <div className="bg-green-50 p-4 rounded-lg">
                   <h4 className="font-semibold mb-2">Непрерывное интегрированное медицинское образование</h4>
                   <p className="text-gray-700">6 лет (бакалавриат + магистратура + интернатура) – 4 специальности</p>
                 </div>
               </div>
               
-              <div className="bg-purple-50 p-4 rounded-lg mb-4">
+              <div className="bg-green-50 p-4 rounded-lg mb-4">
                 <h4 className="font-semibold mb-2">Послевузовское образование</h4>
                 <ul className="list-disc pl-5 space-y-1 text-gray-700">
                   <li>Резидентура – по 49 специальностям от 2 до 4 лет</li>
@@ -81,7 +81,7 @@ export default function MedicalEducation() {
                 </ul>
               </div>
               
-              <div className="bg-purple-50 p-4 rounded-lg">
+              <div className="bg-green-50 p-4 rounded-lg">
                 <h4 className="font-semibold mb-2">Подготовка средних медицинских кадров</h4>
                 <p className="text-gray-700">С техническим и профессиональным, послесредним образованием осуществляют 94 медицинских колледжа</p>
               </div>
@@ -105,20 +105,20 @@ export default function MedicalEducation() {
           <div className="flex flex-wrap -m-4">
             <FolderChlank 
               h1="Нормативные документы" 
-              color="bg-purple-100" 
-              colorsec="bg-purple-200" 
+              color="bg-green-100" 
+              colorsec="bg-green-200" 
               href={route('direction.medical.education.documents')}
             />
             <FolderChlank 
               h1="Методические рекомендации" 
-              color="bg-purple-100" 
-              colorsec="bg-purple-200" 
+              color="bg-green-100" 
+              colorsec="bg-green-200" 
               href={route('direction.medical.education.recommendations')}
             />
             <FolderChlank 
               h1="Рейтинговая оценка МОО" 
-              color="bg-purple-100" 
-              colorsec="bg-purple-200" 
+              color="bg-green-100" 
+              colorsec="bg-green-200" 
               href={route('direction.medical.education.rating')}
             />
           </div>
@@ -149,6 +149,74 @@ export default function MedicalEducation() {
                     bgColor="bg-green-100"
                 />
         </div>
+    </section>
+
+    <section className="text-gray-600 body-font pb-8">
+      <div className="container px-5 py-12 mx-auto">
+        <div className="bg-green-100 p-6 rounded-lg shadow-sm">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            Контактная информация
+          </h3>
+          <p className="text-lg mb-4">
+            По возникшим вопросам касательно процедуры подачи заявок для экспертизы и включения программ сертификационных курсов и повышения квалификации в Каталог просим обратиться в:
+          </p>
+          
+          <div className="pl-4 border-l-4 border-green-300 mt-5 mb-5">
+            <p className="font-medium text-gray-700 mb-1">Департамент развития медицинского образования и науки ННЦРЗ</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+              <div className="flex items-start">
+                <div className="flex-shrink-0 mr-3 mt-1 text-green-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Рабочий телефон:</p>
+                  <p className="text-base font-medium">+7(7172) 700950 (вн. 1114)</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="flex-shrink-0 mr-3 mt-1 text-green-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Мобильный телефон:</p>
+                  <p className="text-base font-medium">+7(707)189-46-80</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="flex-shrink-0 mr-3 mt-1 text-green-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Электронный адрес:</p>
+                  <a href="mailto:ddmes.rcrz@mail.ru" className="text-base font-medium text-green-700 hover:underline">ddmes.rcrz@mail.ru</a>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="flex-shrink-0 mr-3 mt-1 text-green-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Контактное лицо:</p>
+                  <p className="text-base font-medium">Есдаулет Самат Азаматұлы</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
     </>
     

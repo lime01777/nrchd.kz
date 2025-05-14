@@ -1,1 +1,0 @@
-import{j as t}from"./app-DNNMKsOB.js";import o from"./BranchTemplate-CrC1dZ5W.js";import"./LayoutDirection-B648Ouq9.js";import"./Footer-5B6YzcMs.js";function s(){return t.jsx(o,{title:"Шымкентский филиал",description:"Шымкентский филиал занимается..."})}export{s as default};
