@@ -260,6 +260,10 @@ Route::get('/accreditation/standards-archive', function () {
     return Inertia::render('Direction/Accreditation/StandardsArchive');
 })->name('accreditation.archive');
 
+Route::get('/accreditation/commission', function () {
+    return Inertia::render('Direction/Accreditation/Commission');
+})->name('accreditation.commission');
+
 // Маршруты для медицинского образования
 Route::get('/direction/medical-education', function () {
     return Inertia::render('Direction/MedicalEducation');

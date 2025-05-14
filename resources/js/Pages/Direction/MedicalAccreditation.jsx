@@ -263,6 +263,8 @@ export default function MedicalAccreditation() {
                 <FolderChlank h1="Действующие стандарты и критерии аккредитации" color="bg-yellow-200"
                     colorsec="bg-yellow-300" href={route('accreditation.standards')} />
                 <FolderChlank h1="Архив стандартов" color="bg-yellow-200" colorsec="bg-yellow-300" href={route('accreditation.archive')} />
+                <FolderChlank h1="Акредитационная комиссия" color="bg-yellow-200"
+                    colorsec="bg-yellow-300" href={route('accreditation.commission')} />
             </div>
         </div>
     </section>
