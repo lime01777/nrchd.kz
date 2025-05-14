@@ -1,1 +1,0 @@
-import{j as t}from"./app-D87KEnlL.js";import o from"./BranchTemplate-DWNheUl2.js";import"./LayoutDirection-DLWH0W-F.js";import"./Footer-D4jFnF3u.js";function s(){return t.jsx(o,{title:"Жамбылский филиал",description:"Жамбылский филиал занимается..."})}export{s as default};
