@@ -172,26 +172,6 @@ export default function DrugPolicy() {
     </section>
 
 
-    <section className="text-gray-600 body-font">
-        <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
-           
-                <FilesAccord 
-                    folder="Лекарственная политика\Набор — Перечни возмещения в рамках ГОБМП и ОСМС"
-                    title="Перечни возмещения в рамках ГОБМП и ОСМС"
-                    bgColor="bg-amber-100"
-                    defaultOpen={true}
-                />
-         
-
-                <FilesAccord 
-                    folder="Лекарственная политика\Набор — Правила формирования перечней"
-                    title="Правила формирования перечней"
-                    bgColor="bg-amber-100"
-                    defaultOpen={true}
-                />
-        </div>
-    </section>
-
     </>
   )
 }
