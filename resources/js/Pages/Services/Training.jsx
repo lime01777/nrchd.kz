@@ -67,29 +67,6 @@ export default function Training() {
             />
         </div>
     </section>
-
-    <section className="text-gray-600 body-font">
-        <div className="container px-5 pt-24 mx-auto">
-            <div className="flex flex-wrap px-5 pb-5 bg-fuchsia-100 rounded-2xl">
-                <FileAccordTitle title="Стратегия развития" />
-                <FileAccordChlank description="Стратегия на 2032" filetype="pdf" img={2} />
-                <FileAccordChlank description="План развития национальных управляющих холдингов" filetype="pdf" img={2} />
-                <FileAccordTitle title="Финансовая отчетность" />
-                <FileAccordChlank description="Отчет за 2022 г" filetype="pdf" img={2} />
-                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
-                <FileAccordTitle title="Закупки" />
-                <FileAccordChlank description="Отчет за 2022 г" filetype="pdf" img={2} />
-                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
-                <FileAccordTitle title="Нормативные документы" />
-                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
-                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
-                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
-                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
-                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
-                <FileAccordChlank description="План развития национальных управляющих холдингов, национальных холдингов и национальных компаний" filetype="pdf" img={2} />
-            </div>
-        </div>
-    </section>
     </>
   );
 }

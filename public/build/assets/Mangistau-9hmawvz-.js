@@ -1,1 +1,0 @@
-import{j as t}from"./app-ClAMgIw2.js";import i from"./BranchTemplate-BErRov1a.js";import"./LayoutDirection-BVCUTque.js";import"./Footer-CfidA8W4.js";function m(){return t.jsx(i,{title:"Мангистауский филиал",description:"Мангистауский филиал занимается..."})}export{m as default};

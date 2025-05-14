@@ -28,8 +28,8 @@ export default function AdsEvaluation() {
     { 
       name: "Оценка печатного рекламного модуля", 
       unit: "1 модуль", 
-      priceWithVAT: "135 740,00", 
-      priceWithoutVAT: "121 375,00" 
+      priceWithVAT: "152 740,00", 
+      priceWithoutVAT: "136 375,00" 
     },
     { 
       name: "Оценка рекламного аудиоролика", 

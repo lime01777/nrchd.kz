@@ -260,6 +260,23 @@ Route::get('/accreditation/standards-archive', function () {
     return Inertia::render('Direction/Accreditation/StandardsArchive');
 })->name('accreditation.archive');
 
+// Маршруты для медицинского образования
+Route::get('/direction/medical-education', function () {
+    return Inertia::render('Direction/MedicalEducation');
+})->name('direction.medical.education');
+
+Route::get('/direction/medical-education/documents', function () {
+    return Inertia::render('Direction/MedEducation/Documents');
+})->name('direction.medical.education.documents');
+
+Route::get('/direction/medical-education/recommendations', function () {
+    return Inertia::render('Direction/MedEducation/Recommendations');
+})->name('direction.medical.education.recommendations');
+
+Route::get('/direction/medical-education/rating', function () {
+    return Inertia::render('Direction/MedEducation/Rating');
+})->name('direction.medical.education.rating');
+
 // Маршруты для новостей
 Route::get('/news', [App\Http\Controllers\NewsController::class, 'index'])->name('news');
 Route::get('/news/{slug}', [App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
