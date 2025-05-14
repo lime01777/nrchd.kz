@@ -150,7 +150,7 @@ export default function DrugPolicy() {
                     href={route('drug.policy.commission')}
                 />
                 <FolderChlank 
-                    h1="Протоколы заседаний Формулярной комиссии за 2023 год" 
+                    h1="Протоколы заседаний Формулярной комиссии" 
                     color="bg-amber-100" 
                     colorsec="bg-amber-200" 
                     href={route('drug.policy.regulations')}
