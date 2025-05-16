@@ -152,18 +152,6 @@ export default function ServicesPageLayout({ children, title, img, bgColor = "bg
                       ></textarea>
                     </div>
                     
-                    <div className="flex items-center mb-4">
-                      <input 
-                        type="checkbox" 
-                        id="consent" 
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        required
-                      />
-                      <label htmlFor="consent" className="ml-2 block text-xs text-gray-700">
-                        Я согласен на обработку персональных данных
-                      </label>
-                    </div>
-                    
                     <div className="flex justify-center">
                       <button 
                         type="submit"

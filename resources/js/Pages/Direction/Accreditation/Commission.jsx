@@ -1,28 +1,12 @@
-import React, { useState } from 'react';
 import { Head } from '@inertiajs/react';
+import React from 'react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 
+
 export default function Commission() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState(null);
-  const [selectedFileName, setSelectedFileName] = useState('');
-
-  const openVideoModal = (videoUrl, fileName) => {
-    setSelectedVideo(videoUrl);
-    setSelectedFileName(fileName);
-    setIsModalOpen(true);
-  };
-
-  const closeVideoModal = () => {
-    setIsModalOpen(false);
-    setSelectedVideo(null);
-    setSelectedFileName('');
-  };
-
   return (
     <>
       <Head title="Аккредитационная комиссия" />
-      
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -36,138 +20,70 @@ export default function Commission() {
             <p className="text-gray-700 mb-4">
               Состав аккредитационной комиссии утверждается аккредитующим органом. В состав аккредитационной комиссии входят представители государственных органов и организаций, неправительственных общественных объединений и ассоциаций, специалисты в области науки и образования, прошедшие обучение по вопросам аккредитации в области здравоохранения.
             </p>
-          </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-5">Эксперты ННЦРЗ на 1 квартал 2025 г.</h2>
+            <p className="text-gray-700 mb-4">
+              Деятельность аккредитационной комиссии Национального научного центра развития здравоохранения направлена на обеспечение качества медицинских услуг путем объективной оценки медицинских организаций. Комиссия действует на принципах независимости, беспристрастности и профессионализма, используя современные стандарты и методологии, признанные на международном уровне.
+            </p>
+
+            <p className="text-gray-700 mb-6">
+              В задачи комиссии входит проведение экспертизы соответствия медицинских организаций стандартам аккредитации, формирование рекомендаций по улучшению качества медицинских услуг, а также развитие культуры безопасности пациентов в организациях здравоохранения Республики Казахстан.
+            </p>
             
-            <div className="mb-4">
-              <p className="text-gray-700">Всего в реестре экспертов ННЦРЗ зарегистрировано 114 специалистов, прошедших соответствующую подготовку и аттестацию.</p>
-            </div>
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Состав аккредитационной комиссии ННЦРЗ</h3>
             
-            <div className="overflow-hidden">
-              <div className="bg-yellow-100 p-3 rounded-lg mb-4 flex justify-between">
-                <span className="font-medium">Всего экспертов: 114</span>
-                <button className="text-yellow-800 hover:text-yellow-900" onClick={() => window.print()}>Распечатать список</button>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+              <div className="flex flex-col items-center">
+                <div className="w-40 h-48 mb-3 rounded-lg overflow-hidden bg-gray-100 shadow-md">
+                  <img src="/img/Commision/1.png" alt="Фото Сарсембаев Канат Талгатович" className="w-full h-full object-cover" />
+                </div>
+                <h4 className="text-center font-medium text-gray-800">Карибеков Темирлан Сибирьевич</h4>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2 text-sm">
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">1.</span>
-                  <span className="text-gray-700">Аманова Бота Сериккановна</span>
+              <div className="flex flex-col items-center">
+                <div className="w-40 h-48 mb-3 rounded-lg overflow-hidden bg-gray-100 shadow-md">
+                  <img src="/img/Commision/2.png" alt="Фото Мукашева Айгуль Сагатовна" className="w-full h-full object-cover" />
                 </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">2.</span>
-                  <span className="text-gray-700">Абдреимова Гульмира Икрамхановна</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">3.</span>
-                  <span className="text-gray-700">Абенова Кульзи Танашевна</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">4.</span>
-                  <span className="text-gray-700">Алкеева Раушан Оралбаевна</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">5.</span>
-                  <span className="text-gray-700">Амреева Лейла Мурановна</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">6.</span>
-                  <span className="text-gray-700">Аманбекова Мира Турекуловна</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">7.</span>
-                  <span className="text-gray-700">Амрина Гульнар Кажахметовна</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">8.</span>
-                  <span className="text-gray-700">Андосов Данияр Мухаметкаирович</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">9.</span>
-                  <span className="text-gray-700">Акаева Нурсулу Каримовна</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">10.</span>
-                  <span className="text-gray-700">Асенова Ляззат Хасеновна</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">11.</span>
-                  <span className="text-gray-700">Артаева Асель Нуржановна</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">12.</span>
-                  <span className="text-gray-700">Алтаева Айгуль Саулетбековна</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">13.</span>
-                  <span className="text-gray-700">Айдарханова Меруерт Сапаргалиевна</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">14.</span>
-                  <span className="text-gray-700">Ахметов Ералы Есенгельдиевич</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">15.</span>
-                  <span className="text-gray-700">Ахметова Замзагүл Амандыққызы</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">16.</span>
-                  <span className="text-gray-700">Ахметова Халима Омиркуловна</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">17.</span>
-                  <span className="text-gray-700">Бейсембаева Кырмызы Нурбековна</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">18.</span>
-                  <span className="text-gray-700">Бекбосынова Гульнара Лентаевна</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">19.</span>
-                  <span className="text-gray-700">Баймурина Елена Сергеевна</span>
-                </div>
-                <div className="flex items-center border-b border-gray-100 py-2">
-                  <span className="text-yellow-800 font-semibold mr-2 w-7">20.</span>
-                  <span className="text-gray-700">Бримжанова Маржан Дихановна</span>
-                </div>
+                <h4 className="text-center font-medium text-gray-800">Байжунусов Эрик Абенович</h4>
               </div>
               
-              {/* Бутоны "Показать все" и "Скрыть" для полного списка */}
-              <div className="mt-6 text-center">
-                <div className="inline-block py-2 px-6 bg-yellow-50 hover:bg-yellow-100 text-yellow-800 font-medium rounded-full transition-colors cursor-pointer">
-                  Показать всех экспертов (114)...
+              <div className="flex flex-col items-center">
+                <div className="w-40 h-48 mb-3 rounded-lg overflow-hidden bg-gray-100 shadow-md">
+                  <img src="/img/Commision/3.png" alt="Фото Нурманбетов Даулет Нурманбетович" className="w-full h-full object-cover" />
                 </div>
-                <p className="text-gray-500 mt-2 text-sm">Нажмите, чтобы увидеть полный список экспертов</p>
+                <h4 className="text-center font-medium text-gray-800">Локшин Вячеслав Нотанович</h4>
+              </div>
+              
+              <div className="flex flex-col items-center">
+                <div className="w-40 h-48 mb-3 rounded-lg overflow-hidden bg-gray-100 shadow-md">
+                  <img src="/img/Commision/4.png" alt="Фото Алиева Гульнара Танатовна" className="w-full h-full object-cover" />
+                </div>
+                <h4 className="text-center font-medium text-gray-800">Сексенбаев Бахытжан Дерибсалиевич</h4>
+              </div>
+              
+              <div className="flex flex-col items-center">
+                <div className="w-40 h-48 mb-3 rounded-lg overflow-hidden bg-gray-100 shadow-md">
+                  <img src="/img/Commision/5.png" alt="Фото Нуралиев Марат Аманкулович" className="w-full h-full object-cover" />
+                </div>
+                <h4 className="text-center font-medium text-gray-800">Шайхиев Саин Саинович</h4>
               </div>
             </div>
           </div>
         </div>
       </section>
-      
-      {isModalOpen && (
-        <VideoModal
-          videoUrl={selectedVideo}
-          fileName={selectedFileName}
-          onClose={closeVideoModal}
-        />
-      )}
     </>
   );
 }
 
-Commission.layout = page => <LayoutFolderChlank 
-  bgColor="bg-white"
-  heroBgColor="bg-yellow-100"
-  buttonBgColor="bg-yellow-100"
-  buttonHoverBgColor="hover:bg-yellow-200"
-  h1="Аккредитационная комиссия" 
-  parentRoute={route('medical.accreditation')} 
-  parentName="Аккредитация"
-  breadcrumbs={[
-    { name: 'Направления', route: 'directions' },
-    { name: 'Аккредитация', route: 'medical.accreditation' },
-    { name: 'Аккредитационная комиссия', route: 'accreditation.commission' },
-  ]}
-/>;
+Commission.layout = page => (
+  <LayoutFolderChlank 
+    bgColor="bg-white"
+    heroBgColor="bg-yellow-100"
+    buttonBgColor="bg-yellow-100"
+    buttonHoverBgColor="hover:bg-yellow-200"
+    h1="Аккредитационная комиссия" 
+    parentRoute={route('medical.accreditation')} 
+    parentName="Аккредитация"
+  >
+    {page}
+  </LayoutFolderChlank>
+);
