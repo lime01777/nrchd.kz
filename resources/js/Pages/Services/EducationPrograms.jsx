@@ -211,4 +211,4 @@ export default function EducationPrograms() {
   );
 }
 
-EducationPrograms.layout = (page) => <ServicesPageLayout title="Экспертиза научно-образовательных программ дополнительного образования" img="service-education" bgColor='bg-green-100'>{page}</ServicesPageLayout>;
+EducationPrograms.layout = (page) => <ServicesPageLayout title="Экспертиза образовательных программ дополнительного образования" img="service-education" bgColor='bg-green-100'>{page}</ServicesPageLayout>;

@@ -295,7 +295,7 @@ export default function Clinical() {
 
 Clinical.layout = page => <LayoutFolderChlank 
   bgColor="bg-white"
-  h1="Клинические исследования" 
+  h1="Центр развития клинических исследований"
   parentRoute={route('medical.science')} 
   parentName="Медицинская наука"
   heroBgColor="bg-gray-200"
