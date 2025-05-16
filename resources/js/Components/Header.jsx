@@ -34,7 +34,7 @@ export default function Header() {
 
     const allDirectionsSubLinks = [
         { title: "Медицинское образование", url: "medical.education"},
-        { title: "Кадровые ресурсы", url: "human.resources"},
+        { title: "Кадровые ресурсы здравоохранения", url: "human.resources"},
         { title: "Электронное здравоохранение", url: "electronic.health"},
         { title: "Аккредитация", url: "medical.accreditation"},
         { title: "Оценка технологий здравоохранения", url: "health.rate"},
@@ -60,7 +60,7 @@ export default function Header() {
     ];
 
     const allServicesSubLinks = [
-        { title: "Организация и проведение обучающих циклов по дополнительному и неформальному образованию ЦМОП", url: "services.training" },
+        { title: "Организация и проведение обучающих циклов по дополнительному и неформальному образованию", url: "services.training" },
         { title: "Оценка рекламных материалов", url: "services.adsEvaluation" },
         { title: "Оценка технологий здравоохранения", url: "services.healthTechAssessment" },
         { title: "Экспертиза лекарственных средств", url: "services.drugExpertise" },
