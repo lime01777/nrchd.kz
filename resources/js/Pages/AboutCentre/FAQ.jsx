@@ -100,4 +100,4 @@ export default function FAQ() {
     );
 }
 
-FAQ.layout = (page) => <LayoutDirection img="headcentre" h1="Вопросы и ответы">{page}</LayoutDirection>;
+FAQ.layout = (page) => <LayoutDirection img="aboutcenter" h1="Вопросы и ответы">{page}</LayoutDirection>;

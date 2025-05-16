@@ -118,4 +118,4 @@ export default function Contacts() {
     );
 }
 
-Contacts.layout = (page) => <LayoutDirection img="headcentre" h1="Контактная информация">{page}</LayoutDirection>;
+Contacts.layout = (page) => <LayoutDirection img="contact" h1="Контактная информация">{page}</LayoutDirection>;

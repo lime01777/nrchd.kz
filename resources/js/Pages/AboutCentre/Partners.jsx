@@ -56,4 +56,4 @@ export default function Partners() {
     );
 }
 
-Partners.layout = (page) => <LayoutDirection img="headcentre" h1="Партнеры">{page}</LayoutDirection>;
+Partners.layout = (page) => <LayoutDirection img="partner" h1="Партнеры">{page}</LayoutDirection>;
