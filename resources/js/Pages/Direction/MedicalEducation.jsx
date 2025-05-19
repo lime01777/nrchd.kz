@@ -16,13 +16,11 @@ export default function MedicalEducation() {
       <div className="container px-5 py-12 mx-auto">
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Медицинское образование в Республике Казахстан</h2>
-          
           <p className="text-gray-700 mb-4 leading-relaxed">
             Подготовка медицинских кадров является одним из основных приоритетов государства.
           </p>
 
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-700 mb-3">Медицинские организации образования</h3>
             <p className="text-gray-700 mb-3">
               Для обеспечения системы здравоохранения квалифицированными врачебными кадрами в республике подготовку медицинских кадров проводят:
             </p>
@@ -45,33 +43,37 @@ export default function MedicalEducation() {
           </div>
 
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-700 mb-3">Уровни обучения врачей</h3>
+            <h3 className="text-xl font-semibold text-gray-700 mb-3">Обучение врачей проводится по следующим уровням образования:</h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h4 className="font-semibold mb-2">Базовое высшее медицинское образование</h4>
-                <p className="text-gray-700">7 лет (бакалавриат + интернатура) – 3 специальности</p>
+            <div className="overflow-hidden border border-green-100 rounded-lg mb-6">
+              {/* Базовое и интегрированное образование */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-px">
+                <div className="bg-green-50 p-5">
+                  <h4 className="font-semibold mb-2 text-green-800">Базовое высшее медицинское образование</h4>
+                  <p className="text-gray-700">7 лет (бакалавриат + интернатура) – 3 специальности</p>
+                </div>
+                <div className="bg-green-50 p-5">
+                  <h4 className="font-semibold mb-2 text-green-800">Непрерывное интегрированное медицинское образование</h4>
+                  <p className="text-gray-700">6 лет (бакалавриат + магистратура + интернатура) – 4 специальности</p>
+                </div>
               </div>
               
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h4 className="font-semibold mb-2">Непрерывное интегрированное медицинское образование</h4>
-                <p className="text-gray-700">6 лет (бакалавриат + магистратура + интернатура) – 4 специальности</p>
+              {/* Послевузовское образование */}
+              <div className="bg-green-50 p-5 border-t border-green-100">
+                <h4 className="font-semibold mb-2 text-green-800">Послевузовское образование</h4>
+                <ul className="list-none space-y-1 text-gray-700">
+                  <li>• Резидентура – по 49 специальностям от 2 до 4 лет</li>
+                  <li>• Профильная магистратура (1-1,5 года)</li>
+                  <li>• Научно-педагогическая магистратура (2 года)</li>
+                  <li>• Докторантура PhD (3 года)</li>
+                </ul>
               </div>
-            </div>
-            
-            <div className="bg-green-50 p-4 rounded-lg mb-4">
-              <h4 className="font-semibold mb-2">Послевузовское образование</h4>
-              <ul className="list-disc pl-5 space-y-1 text-gray-700">
-                <li>Резидентура – по 49 специальностям от 2 до 4 лет</li>
-                <li>Профильная магистратура (1-1,5 года)</li>
-                <li>Научно-педагогическая магистратура (2 года)</li>
-                <li>Докторантура PhD (3 года)</li>
-              </ul>
-            </div>
-            
-            <div className="bg-green-50 p-4 rounded-lg">
-              <h4 className="font-semibold mb-2">Подготовка средних медицинских кадров</h4>
-              <p className="text-gray-700">С техническим и профессиональным, послесредним образованием осуществляют 94 медицинских колледжа</p>
+              
+              {/* Подготовка средних медицинских кадров */}
+              <div className="bg-green-50 p-5 border-t border-green-100">
+                <h4 className="font-semibold mb-2 text-green-800">Подготовка средних медицинских кадров</h4>
+                <p className="text-gray-700">С техническим и профессиональным, послесредним образованием осуществляют 94 медицинских колледжа</p>
+              </div>
             </div>
           </div>
 
@@ -98,10 +100,22 @@ export default function MedicalEducation() {
       <div className="container px-5 py-8 mx-auto">
         <div className="flex flex-wrap -m-4">
           <FolderChlank 
-            h1="Нормативные документы" 
+            h1="Информационная система Каталог образовательных программ дополнительного образования в сфере здравоохранения"
             color="bg-green-100" 
             colorsec="bg-green-200" 
             href={route('direction.medical.education.documents')}
+          />
+          <FolderChlank 
+            h1="Перечень организаций дополнительного образования по медицинским специальностям"
+            color="bg-green-100" 
+            colorsec="bg-green-200" 
+            href={route('direction.medical.education.recommendations')}
+          />
+          <FolderChlank 
+            h1="Результаты рейтинговой оценки по образовательной деятельности медицинских ВУЗов, НИИ, НЦ, ВМК и МК"
+            color="bg-green-100" 
+            colorsec="bg-green-200" 
+            href={route('direction.medical.education.rating')}
           />
         </div>
       </div>
