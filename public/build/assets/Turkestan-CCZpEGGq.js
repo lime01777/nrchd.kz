@@ -1,1 +1,0 @@
-import{j as t}from"./app-B1_rgBT4.js";import r from"./BranchTemplate-Ce9zl1Hl.js";import"./LayoutDirection-BYALhbUH.js";import"./Footer-9pObny6O.js";function m(){return t.jsx(r,{title:"Туркестанский филиал",description:"Туркестанский филиал занимается..."})}export{m as default};

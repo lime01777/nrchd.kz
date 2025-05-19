@@ -1,0 +1,35 @@
+/* Стили для плавного зацикливания GIF анимаций */
+.hero-gif-background {
+  animation: hero-gif-fade 0.1s ease-in-out infinite;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: opacity;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+@keyframes hero-gif-fade {
+  0%, 100% { opacity: 1; }
+}
+
+/* Улучшение отрисовки для всех браузеров */
+.hero-section img {
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* Дополнительные стили для плавных переходов */
+.hero-transition {
+  transition: opacity 0.1s ease;
+}
+
+/* Для улучшенной производительности на мобильных устройствах */
+@media (max-width: 768px) {
+  .hero-gif-background {
+    /* Оптимизация для мобильных */
+    image-rendering: optimizeSpeed;
+  }
+}

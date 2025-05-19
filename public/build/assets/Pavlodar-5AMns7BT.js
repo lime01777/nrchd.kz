@@ -1,0 +1,1 @@
+import{j as t}from"./app-D1eyus9j.js";import o from"./BranchTemplate-N-s8d0qg.js";import"./LayoutDirection-DrgIqMKl.js";import"./Footer-CqfjBAUt.js";function m(){return t.jsx(o,{title:"Павлодарский филиал",description:"Павлодарский филиал занимается..."})}export{m as default};

@@ -1,0 +1,1 @@
+import{j as t}from"./app-D1eyus9j.js";import o from"./BranchTemplate-N-s8d0qg.js";import"./LayoutDirection-DrgIqMKl.js";import"./Footer-CqfjBAUt.js";function m(){return t.jsx(o,{title:"Восточно-Казахстанский филиал",description:"Восточно-Казахстанский филиал занимается..."})}export{m as default};
