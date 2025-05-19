@@ -1,21 +1,16 @@
 import { Head } from '@inertiajs/react';
 import React from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
-import ServiceTimeline from '@/Components/ServiceTimeline';
+import FilesAccord from '@/Components/FilesAccord';
 
 export default function EducationPrograms() {
-  const timelineItems = [
-    { title: "Регистрация заявки", value: "1 рабочий день" },
-    { title: "Срок проведения оценки", value: "10 рабочих дней" },
-    { title: "Выдача заключения", value: "2 рабочих дня" }
-  ];
 
   return (
     <>
       <Head title="Экспертиза научно-образовательных программ дополнительного образования" />
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">
-          <div className="w-full lg:w-2/3 px-4">
+          <div className="w-full lg:w-full px-4">
             <p className="mb-6 text-gray-700 leading-relaxed">
               Проведение экспертизы образовательной программы (ОП) для включения 
               ОП ДО в Каталог осуществляется на основании заключенного с 
@@ -36,9 +31,6 @@ export default function EducationPrograms() {
             </p>
           </div>
           
-          <div className="w-full lg:w-1/3 px-4">
-            <ServiceTimeline items={timelineItems} />
-          </div>
         </div>
       </div>
       <section className="text-gray-600 body-font pb-8">
@@ -47,7 +39,7 @@ export default function EducationPrograms() {
           <div className="p-6 lg:p-10">
             <h1 className="title-font text-2xl font-medium text-gray-900 mb-3">Описание услуги</h1>
             <p className="leading-relaxed mb-3">
-              Экспертиза образовательных программ дополнительного образования проводится согласно Правилам дополнительного и неформального образования специалистов в области здравоохранения, утвержденным приказом МЗ РК от 18 мая 2020 года № ҚР ДСМ-49/2020.
+              Экспертиза образовательных программ дополнительного образования проводится согласно Правилам дополнительного и неформального образования специалистов в области здравоохранения, утвержденным приказом МЗ РК от 21 декабря 2020 года № ҚР ДСМ-303/2020. (Зарегистрирован в Министерстве юстиции Республики Казахстан 22 декабря 2020 года № 21847.)
             </p>
             <p className="leading-relaxed mb-3">
               Экспертиза проводится с целью проверки качества и соответствия образовательных программ установленным требованиям и существующим потребностям обучения согласно приоритетам развития отрасли здравоохранения.
@@ -141,6 +133,29 @@ export default function EducationPrograms() {
         </div>
       </div>
       
+
+ <section className="text-gray-600 body-font">
+        <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
+            
+            {/* Второй аккордеон */}
+                <FilesAccord 
+                    folder="Услуги/Экспертиза образовательных программ/НПА"
+                    title="Нормативно-правовые акты"
+                    bgColor="bg-green-100"
+                    defaultOpen={true}
+                />
+            
+            {/* Третий аккордеон */}
+                <FilesAccord 
+                    folder="Услуги/Экспертиза образовательных программ/Полезные материалы"
+                    title="Полезные материалы"
+                    bgColor="bg-green-100"
+                    defaultOpen={true}
+                  />
+            
+        </div>
+    </section>
+
       <div className="container px-5 py-12 mx-auto">
         <div className="bg-green-100 p-6 rounded-lg shadow-sm">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">
