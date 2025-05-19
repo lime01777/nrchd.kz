@@ -24,16 +24,15 @@ export default function Recommendations() {
 
   return (
     <>
-      <Head title="Методические рекомендации" />
+      <Head title="Перечень организаций дополнительного образования по медицинским специальностям" />
       <br /><br />
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6 rounded-lg">
             
             <SimpleFileDisplay 
-              folder="Медицинское образование/Папка — Методические рекомендации" 
-              title="Методические рекомендации по образовательной деятельности" 
-              bgColor="bg-green-50"
+              folder="MedicalEducation/Recommend" 
+              title="" 
               onVideoClick={openVideoModal}
             />
 
@@ -58,13 +57,13 @@ Recommendations.layout = page => <LayoutFolderChlank
   heroBgColor="bg-green-100"
   buttonBgColor="bg-green-100"
   buttonHoverBgColor="hover:bg-green-200"
-  h1="Методические рекомендации" 
+  h1="Перечень организаций дополнительного образования по медицинским специальностям" 
   parentRoute={route('direction.medical.education')} 
   parentName="Медицинское образование"
   breadcrumbs={[
     { name: 'Направления', route: 'directions' },
     { name: 'Медицинское образование', route: 'direction.medical.education' },
-    { name: 'Методические рекомендации', route: null }
+    { name: 'Перечень организаций дополнительного образования по медицинским специальностям', route: null }
   ]}
   children={page}
 />
