@@ -1,0 +1,1 @@
+import{j as t}from"./app-DXC_C2vs.js";import o from"./BranchTemplate-CNkL4shK.js";import"./LayoutDirection-Cv84EuGp.js";import"./Footer-Dd3ZPOdM.js";/* empty css             */function c(){return t.jsx(o,{title:"Шымкентский филиал",description:"Шымкентский филиал занимается..."})}export{c as default};

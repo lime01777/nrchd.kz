@@ -1,1 +1,0 @@
-import{j as t}from"./app-D1eyus9j.js";import i from"./BranchTemplate-N-s8d0qg.js";import"./LayoutDirection-DrgIqMKl.js";import"./Footer-CqfjBAUt.js";function m(){return t.jsx(i,{title:"Жетысуский филиал",description:"Жетысуский филиал занимается..."})}export{m as default};

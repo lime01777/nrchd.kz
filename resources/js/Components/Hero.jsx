@@ -58,8 +58,8 @@ function Hero({
     };
   }, [useGif, useVideo]);
   
-  // Определяем класс для текста
-  const textColorClass = (useGif || useVideo) ? 'text-white' : 'text-gray-900';
+  // Всегда используем черный цвет для текста заголовка
+  const textColorClass = 'text-gray-900';
   
   return (
     /* Main Hero */
@@ -100,7 +100,8 @@ function Hero({
           )}
           
           {/* Опциональный полупрозрачный оверлей для лучшей читаемости текста */}
-          {overlay && (useGif || useVideo) && (
+          {/* Оверлей отключен по запросу пользователя */}
+          {false && overlay && (useGif || useVideo) && (
             <div className="absolute inset-0 bg-black bg-opacity-30 z-0"></div>
           )}
           
