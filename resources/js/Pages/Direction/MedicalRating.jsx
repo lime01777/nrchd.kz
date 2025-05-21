@@ -74,4 +74,4 @@ export default function MedicalRating() {
   )
 }
 
-MedicalRating.layout = page => <LayoutDirection img="reiting" h1="Рейтинг медицинских организаций">{page}</LayoutDirection>;
+MedicalRating.layout = page => <LayoutDirection img="reiting" h1="Рейтинг медицинских организаций" useVideo={true}>{page}</LayoutDirection>;

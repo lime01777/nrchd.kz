@@ -131,4 +131,4 @@ export default function HumanResources() {
   )
 }
 
-HumanResources.layout = (page) => <LayoutDirection img={'humanresources'} h1={'Кадровые ресурсы'}>{page}</LayoutDirection>;
+HumanResources.layout = (page) => <LayoutDirection img={'humanresources'} h1={'Кадровые ресурсы'} useVideo={true}>{page}</LayoutDirection>;

@@ -1,1 +1,0 @@
-import{j as t}from"./app-DXC_C2vs.js";import o from"./BranchTemplate-CNkL4shK.js";import"./LayoutDirection-Cv84EuGp.js";import"./Footer-Dd3ZPOdM.js";/* empty css             */function a(){return t.jsx(o,{title:"Костанайский филиал",description:"Костанайский филиал занимается..."})}export{a as default};

@@ -147,4 +147,4 @@ export default function HealthRate() {
   )
 }
 
-HealthRate.layout = (page) => <LayoutDirection img={'healthrate'} h1={'Оценка медицинских технологий'}>{page}</LayoutDirection>
+HealthRate.layout = (page) => <LayoutDirection img={'healthrate'} h1={'Оценка медицинских технологий'} useVideo={true}>{page}</LayoutDirection>

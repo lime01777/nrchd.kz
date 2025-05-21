@@ -176,4 +176,4 @@ export default function DrugPolicy() {
   )
 }
 
-DrugPolicy.layout = page => <LayoutDirection img="politica" h1="Лекарственная политика">{page}</LayoutDirection>;
+DrugPolicy.layout = page => <LayoutDirection img="politica" h1="Лекарственная политика" useVideo={true}>{page}</LayoutDirection>;

@@ -128,4 +128,4 @@ export default function ClinicalProtocols() {
   )
 }
 
-ClinicalProtocols.layout = (page) => <LayoutDirection img={'clinicalprotocols'} h1={'Клинические протоколы'}>{page}</LayoutDirection>;
+ClinicalProtocols.layout = (page) => <LayoutDirection img={'clinicalprotocols'} h1={'Клинические протоколы'} useVideo={true}>{page}</LayoutDirection>;

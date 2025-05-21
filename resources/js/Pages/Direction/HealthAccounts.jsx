@@ -61,4 +61,4 @@ export default function HealthAccounts() {
   )
 }
 
-HealthAccounts.layout = page => <LayoutDirection img="account" h1="Национальные счета здравоохранения">{page}</LayoutDirection>
+HealthAccounts.layout = page => <LayoutDirection img="account" h1="Национальные счета здравоохранения" useVideo={true}>{page}</LayoutDirection>

@@ -137,4 +137,4 @@ export default function ElectronicHealth() {
   )
 }
 
-ElectronicHealth.layout = (page) => <LayoutDirection img={'electronichealth'} h1={'Электронное здравоохранение'}>{page}</LayoutDirection>
+ElectronicHealth.layout = (page) => <LayoutDirection img={'electronichealth'} h1={'Электронное здравоохранение'} useVideo={true}>{page}</LayoutDirection>

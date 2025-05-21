@@ -82,4 +82,4 @@ export default function PrimaryHealthCare() {
   )
 }
 
-PrimaryHealthCare.layout = (page) => <LayoutDirection img={'pmsp'} h1={'Первичная медико-санитарная помощь'}>{page}</LayoutDirection>;
+PrimaryHealthCare.layout = (page) => <LayoutDirection img={'pmsp'} h1={'Первичная медико-санитарная помощь'} useVideo={true}>{page}</LayoutDirection>;

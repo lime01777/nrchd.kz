@@ -33,4 +33,4 @@ export default function StrategicInitiatives() {
   );
 }
 
-StrategicInitiatives.layout = page => <LayoutDirection img="strategy" h1="Стратегические инициативы и международное сотрудничество">{page}</LayoutDirection>;
+StrategicInitiatives.layout = page => <LayoutDirection img="strategy" h1="Стратегические инициативы и международное сотрудничество" useVideo={true}>{page}</LayoutDirection>;

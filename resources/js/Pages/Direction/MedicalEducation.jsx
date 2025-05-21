@@ -221,4 +221,4 @@ export default function MedicalEducation() {
   )
 }
 
-MedicalEducation.layout = (page) => <LayoutDirection img={'medicaleducation'} h1={'Медицинское образование'}>{page}</LayoutDirection>;
+MedicalEducation.layout = (page) => <LayoutDirection img={'medicaleducation'} h1={'Медицинское образование'} useVideo={true}>{page}</LayoutDirection>;

@@ -80,4 +80,4 @@ export default function MedicalScience() {
   )
 }
 
-MedicalScience.layout = page => <LayoutDirection img="medicalscience" h1="Медицинская наука">{page}</LayoutDirection>
+MedicalScience.layout = page => <LayoutDirection img="medicalscience" h1="Медицинская наука" useVideo={true}>{page}</LayoutDirection>
