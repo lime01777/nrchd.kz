@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
@@ -10,6 +10,8 @@ export default function Clinical() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');
+  const [selectedYear, setSelectedYear] = useState('2025');
+  const [filteredItems, setFilteredItems] = useState([]);
 
   const openVideoModal = (videoUrl, fileName) => {
     setSelectedVideo(videoUrl);
@@ -27,7 +29,7 @@ export default function Clinical() {
     <>
       <Head title="Клинические исследования" />
 
-      <section className="text-gray-600 body-font pb-24 bg-gray-200">
+      <section className="text-gray-600 body-font pb-2 bg-gray-200">
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6 rounded-lg shadow-md">
             <div className="mb-6">
@@ -35,33 +37,49 @@ export default function Clinical() {
                 ЦРКИ создан в 2022 году приказом Министра здравоохранения РК для обеспечения развития и координации проведения клинических исследований (<a href="https://adilet.zan.kz/rus/docs/P2200000945" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">ссылка на Концепцию развития здравоохранения РК до 2026 года</a>)
               </p>
               
-              <h3 className="text-xl font-semibold text-gray-700 mb-3">Деятельность Центра</h3>
+              <h3 className="text-xl font-semibold text-gray-700 mb-4">Деятельность Центра</h3>
               
-              <div className="mb-6">
-                <ul className="list-disc pl-6 space-y-2 mb-6">
-                  <li>методологическая и информационная поддержка заинтересованных лиц по вопросам проведения клинических исследований;</li>
-                  <li>формирование приоритетных направлений в проведении клинических исследований, путем анализа ситуаций и сбора предложений от ведущих стейкхолдеров;</li>
-                  <li>формирование предложений в уполномоченный орган по развитию клинических исследований;</li>
-                </ul>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                {/* Блок 1 - Консультационная поддержка */}
+                <div className="bg-blue-100 p-5 rounded-lg shadow-sm">
+                  <h4 className="font-semibold text-gray-800 mb-3">Консультационная поддержка</h4>
+                  <ul className="list-disc pl-6 space-y-2 text-gray-700">
+                    <li>методологическая и информационная поддержка заинтересованных лиц по вопросам проведения клинических исследований;</li>
+                    <li>первичное консультирование потенциальных спонсоров по проведению клинических исследований в т.ч. подбор клинических баз;</li>
+                    <li>разработка алгоритмов и консультирование по процессам регистрации клинических исследований в Национальной информационной системе по биомедицинским исследованиям;</li>
+                  </ul>
+                </div>
                 
-                <ul className="list-disc pl-6 space-y-2 mb-6">
-                  <li>оценка возможности проведения клинических исследований и анализ инвестиционной привлекательности для потенциальных спонсоров исследований;</li>
-                  <li>анализ ситуации по готовности клинических баз к реализации клинических исследований;</li>
-                  <li>мониторинг и анализ данных по проводимым клиническим исследованиям в Казахстане;</li>
-                  <li>первичное консультирование потенциальных спонсоров по проведению клинических исследований в т.ч. подбор клинических баз;</li>
-                </ul>
+                {/* Блок 2 - Аналитическая работа */}
+                <div className="bg-green-100 p-5 rounded-lg shadow-sm">
+                  <h4 className="font-semibold text-gray-800 mb-3">Аналитическая работа</h4>
+                  <ul className="list-disc pl-6 space-y-2 text-gray-700">
+                    <li>формирование приоритетных направлений в проведении клинических исследований, путем анализа ситуаций и сбора предложений от ведущих стейкхолдеров;</li>
+                    <li>оценка возможности проведения клинических исследований и анализ инвестиционной привлекательности для потенциальных спонсоров исследований;</li>
+                    <li>анализ ситуации по готовности клинических баз к реализации клинических исследований;</li>
+                    <li>мониторинг и анализ данных по проводимым клиническим исследованиям в Казахстане;</li>
+                  </ul>
+                </div>
                 
-                <ul className="list-disc pl-6 space-y-2 mb-6">
-                  <li>разработка алгоритмов и консультирование по процессам регистрации клинических исследований в Национальной информационной системе по биомедицинским исследованиям;</li>
-                  <li>разработка инструментов, эффективной интеграции профессионалов практического здравоохранения в роль клинического исследователя;</li>
-                  <li>разработка правил и механизмов, регулирующих сбор, использование и распространение информации по клиническим исследованиям;</li>
-                </ul>
+                {/* Блок 3 - Разработка регуляторных механизмов */}
+                <div className="bg-purple-100 p-5 rounded-lg shadow-sm">
+                  <h4 className="font-semibold text-gray-800 mb-3">Разработка регуляторных механизмов</h4>
+                  <ul className="list-disc pl-6 space-y-2 text-gray-700">
+                    <li>формирование предложений в уполномоченный орган по развитию клинических исследований;</li>
+                    <li>разработка инструментов эффективной интеграции профессионалов практического здравоохранения в роль клинического исследователя;</li>
+                    <li>разработка правил и механизмов, регулирующих сбор, использование и распространение информации по клиническим исследованиям;</li>
+                  </ul>
+                </div>
                 
-                <ul className="list-disc pl-6 space-y-2">
-                  <li>повышение потенциала национальных исследователей, заинтересованности, усиление навыков в проведении клинических исследований;</li>
-                  <li>поддержка межсекторального исследовательского взаимодействия в области клинических исследований;</li>
-                  <li>выстраивание партнерских отношений с ведущими лидерами в области проведения клинических исследований.</li>
-                </ul>
+                {/* Блок 4 - Развитие сотрудничества */}
+                <div className="bg-amber-100 p-5 rounded-lg shadow-sm">
+                  <h4 className="font-semibold text-gray-800 mb-3">Развитие сотрудничества</h4>
+                  <ul className="list-disc pl-6 space-y-2 text-gray-700">
+                    <li>повышение потенциала национальных исследователей, заинтересованности, усиление навыков в проведении клинических исследований;</li>
+                    <li>поддержка межсекторального исследовательского взаимодействия в области клинических исследований;</li>
+                    <li>выстраивание партнерских отношений с ведущими лидерами в области проведения клинических исследований;</li>
+                  </ul>
+                </div>
               </div>
             </div>
             
@@ -118,10 +136,109 @@ export default function Clinical() {
               bgColor="bg-white"
               onVideoClick={openVideoModal}
             />
-            
-            <div className="mt-8">
+        </div>
+      </div>
+      </section>
+<br />
+      <section className="text-gray-600 body-font pb-24 bg-white">
+        <div className="container px-5 mx-auto">
+          <div className="flex flex-col text-center w-full mb-10">
+            <h2 className="text-2xl font-medium title-font text-gray-900 mb-4">Научные публикации центра развития клинических исследований</h2>
+
+          </div>
+
+          <div className="mb-6">
+            <label htmlFor="year-filter" className="block mb-2 text-sm font-medium text-gray-700">Фильтр по году:</label>
+            <select
+              id="year-filter"
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:w-1/4 p-2.5"
+            >
+              <option value="all">Все годы</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+            </select>
+          </div>
+
+          <div className="space-y-6">
+            {(selectedYear === 'all' || selectedYear === '2025') && (
+              <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">2025 год</h3>
+                <div className="text-center py-6">
+                  <p className="text-gray-500 italic">Публикации в процессе подготовки...</p>
+                </div>
+              </div>
+            )}
+
+            {(selectedYear === 'all' || selectedYear === '2024') && (
+              <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">2024 год</h3>
+                <div className="space-y-4">
+                  <div className="border-l-4 border-green-500 pl-4 py-2">
+                    <h5 className="font-medium text-gray-800 mb-1">Анализ текущей ситуации доступности информации о проводимых клинических испытаниях в Республике Казахстан</h5>
+                    <p className="text-sm text-gray-600 mb-1">Analysis of the current situation on the availability of information on ongoing clinical trials in the Republic of Kazakhstan</p>
+                    <p className="text-sm text-gray-600 mb-1">Авторы: Айнур Сибагатова, Гульнара Кулкаева, Балжан Касиева, Андрей Авдеев, Олжас Турар, Рустам Албаев, Насрулла Шаназаров, Талгат Нургожин, Айсулу Исабекова</p>
+                    <a href="https://newjournal.ssmu.kz/upload/iblock/9d5/1ip82xm6hsdo0xq5a3s42thslhxskji6/07_014_6_25_2023.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm underline">Читать статью</a>
+                  </div>
+
+                  <div className="border-l-4 border-green-500 pl-4 py-2">
+                    <h5 className="font-medium text-gray-800 mb-1">Функционирование этических комитетов в Казахстане: результаты и рекомендации</h5>
+                    <p className="text-sm text-gray-600 mb-1">The functioning of ethics committees in Kazakhstan: results and recommendations</p>
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/39749153/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm underline">Читать статью</a>
+                  </div>
+
+                  <div className="border-l-4 border-green-500 pl-4 py-2">
+                    <h5 className="font-medium text-gray-800 mb-1">Трансформация алгоритма приоритизации направлений развития клинических исследований в соответствии с их практической значимостью</h5>
+                    <p className="text-sm text-gray-600 mb-1">Transformation of the algorithm for prioritization of clinical trial development areas according to their practical significance based on information data analysis</p>
+                  </div>
+                  
+                  <div className="border-l-4 border-green-500 pl-4 py-2">
+                    <h5 className="font-medium text-gray-800 mb-1">Формирование конкурентной экосистемы для развития биомедицинских исследований в Республике Казахстан</h5>
+                    <p className="text-sm text-gray-600 mb-1">Formation of a competitive ecosystem for the development of biomedical research in the Republic of Kazakhstan</p>
+                  </div>
+                  
+                  <div className="border-l-4 border-green-500 pl-4 py-2">
+                    <h5 className="font-medium text-gray-800 mb-1">Управление вопросами страхования при проведении клинических исследований</h5>
+                    <p className="text-sm text-gray-600 mb-1">Insurance management in clinical trials (international and domestic experience)</p>
+                    <p className="text-sm text-gray-600 mb-1">Авторы: Кулкаева Г.У., Граф М.А., Тарасова В.М., Табаров А.Б.</p>
+                  </div>
+                  
+                  <div className="border-l-4 border-green-500 pl-4 py-2">
+                    <h5 className="font-medium text-gray-800 mb-1">Актуальные вопросы регулирования клинических исследований в Казахстане</h5>
+                    <p className="text-sm text-gray-600 mb-1">Авторы: Г.У. Кулкаева, М.А. Граф, Н.Т. Алдиярова, В.М. Тарасова, Т.С. Нургожин</p>
+                  </div>
+                  
+                  <div className="border-l-4 border-green-500 pl-4 py-2">
+                    <h5 className="font-medium text-gray-800 mb-1">Результаты анализа выстроенной системы проведения клинических исследований и барьеры для их развития в Казахстане</h5>
+                    <p className="text-sm text-gray-600 mb-1">Results of the analysis of the established research system and barriers to its development in Kazakhstan</p>
+                    <p className="text-sm text-gray-600 mb-1">Авторы: Кулкаева Г.У., Тарасова В.М., Граф М.А., Табаров А.Б.</p>
+                  </div>
+                  
+                  <div className="border-l-4 border-green-500 pl-4 py-2">
+                    <h5 className="font-medium text-gray-800 mb-1">Оценка исследовательского потенциала специалистов здравоохранения Республики Казахстан</h5>
+                    <p className="text-sm text-gray-600 mb-1">Assessment of the research potential of healthcare specialists in the Republic of Kazakhstan in the implementation of clinical research: results of online questionnaires and self-assessments</p>
+                    <p className="text-sm text-gray-600 mb-1">Авторы: Г.У. Кулкаева, В.М. Тарасова, М.А. Граф, А.Б. Табаров</p>
+                  </div>
+                  
+                  <div className="border-l-4 border-green-500 pl-4 py-2">
+                    <h5 className="font-medium text-gray-800 mb-1">Возможности использования методик оценки методологического качества клинических исследований</h5>
+                    <p className="text-sm text-gray-600 mb-1">Possibilities of using methods for assessing the methodological quality of clinical trials</p>
+                    <p className="text-sm text-gray-600 mb-1">Авторы: ТҰРАР О.А., КУЛКАЕВА Г.У., АВДЕЕВ А.В., КАЛИЖАН М.К., АЛБАЕВ Р.К., ШАНАЗАРОВ Н.А., СИБАГАТОВА А.С., КАСИЕВА Б.С., НУРГОЖИН Т.С., ИСАБЕКОВА А.М.</p>
+                    <a href="https://pharmkaz.kz/wp-content/uploads/2024/10/4-2024-2.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm underline">Читать статью</a>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+
+        <div className="container px-5 mx-auto bg-white">
+          <div className="flex flex-col text-center w-full mb-10">
               <FAQ 
-                title="Нормативно-правовые акты, регламентирующие процесс проведения клинических исследований в Казахстане"
+                title=""
                 items={[
                   {
                     question: "Какие основные положения содержит Кодекс РК «О здоровье народа и системе здравоохранения» в отношении клинических исследований?",
@@ -226,8 +343,8 @@ export default function Clinical() {
               />
             </div>
           </div>
-          <div className="mt-8 bg-gray-200">
-            <div className="mt-8 bg-gray-200">
+          <section className="text-gray-600 body-font pb-8 bg-gray-200">
+          <div className="container px-5 mx-auto">
               <NormativeDocumentsList 
                 documents={[
                   {
@@ -235,11 +352,11 @@ export default function Clinical() {
                     url: 'https://adilet.zan.kz/rus/docs/K2000000360'
                   },
                   {
-                    title: 'Приказ Министра здравоохранения Республики Казахстан от 7 апреля 2022 года № ҚР ДСМ- 35 «О внесении изменений и дополнений в приказ Министра здравоохранения Республики Казахстан от 11 декабря 2020 года № ҚР ДСМ-248/2020 «Об утверждении правил проведения клинических исследований лекарственных средств и медицинских изделий, клинико-лабораторных испытаний медицинских изделий для диагностики вне живого организма (in vitro) и требования к клиническим базам и оказания государственной услуги «Выдача разрешения на проведение клинического исследования и (или) испытания фармакологических и лекарственных средств, медицинских изделий»',
+                    title: 'Приказ Министра здравоохранения Республики Казахстан от 7 апреля 2022 года № ҚР ДСМ- 35 «О внесении изменений и дополнений в некоторые приказы Министерства здравоохранения Республики Казахстан»',
                     url: 'https://adilet.zan.kz/rus/docs/V2200027526'
                   },
                   {
-                    title: 'Приказ Министра здравоохранения Республики Казахстан от 21 декабря 2020 года № ҚР ДСМ-310/2020. Об утверждении правил проведения биомедицинских исследований и требований к исследовательским центрам',
+                    title: 'Приказ Министра здравоохранения Республики Казахстан от 21 декабря 2020 года № ҚР ДСМ-310/2020 «Об утверждении правил проведения биомедицинских исследований, требований к исследовательским центрам и порядка их аккредитации»',
                     url: 'https://adilet.zan.kz/rus/docs/V2000021851#z3'
                   },
                   {
@@ -247,11 +364,11 @@ export default function Clinical() {
                     url: 'https://adilet.zan.kz/rus/docs/V2100022167'
                   },
                   {
-                    title: 'Приказ Министра здравоохранения Республики Казахстан от 8 декабря 2020 года № ҚР ДСМ-237/2020 «Об утверждении Правил ввоза на территорию Республики Казахстан и вывоза с территории Республики Казахстан лекарственных средств и медицинских изделий и оказания государственной услуги "Выдача согласования и (или) заключения (разрешительного документа) на ввоз (вывоз) зарегистрированных и не зарегистрированных в Республике Казахстан лекарственных средств и медицинских изделий»',
+                    title: 'Приказ Министра здравоохранения Республики Казахстан от 8 декабря 2020 года № ҚР ДСМ-237/2020 «Об утверждении Правил ввоза на территорию и вывоза с территории Республики Казахстан лекарственных средств и медицинских изделий»',
                     url: 'https://adilet.zan.kz/rus/docs/V2000021749'
                   },
                   {
-                    title: 'Решение Совета Евразийской экономической комиссии от 3 ноября 2016 года № 79 «Об утверждении Правил надлежащей клинической практики Евразийского экономического союза»',
+                    title: 'Решение Совета Евразийской экономической комиссии от 3 ноября 2016 года № 79 «Об утверждении правил надлежащей клинической практики Евразийского экономического союза»',
                     url: 'https://adilet.zan.kz/rus/docs/H16EV000079'
                   },
                   {
@@ -279,11 +396,62 @@ export default function Clinical() {
                 bgColor="bg-gray-200"
               />
             </div>
+      </section>
+
+      <section className="text-gray-600 body-font pb-2 bg-white">
+        <div className="container px-5 mx-auto">
+          <div className="flex flex-col text-center w-full mb-10 mt-12">
+            <h2 className="text-2xl font-medium title-font text-gray-900 mb-4">Он-лайн образовательный ресурс</h2>
+          </div>
+          
+          <div className="bg-gray-200 p-8 rounded-lg shadow-sm mb-12">
+            <div className="prose max-w-none">
+              <p className="text-gray-700 mb-4 leading-relaxed">
+                Для унификации знаний и повышения потенциала исследователей, участвующих в реализации клинических исследований, Центр развития клинических исследований создал он-лайн образовательный ресурс.
+              </p>
+              <p className="text-gray-700 mb-4 leading-relaxed">
+                Ресурс представляет собой виртуальную учебную среду для подготовки специалистов здравоохранения по вопросам клинических исследований.
+              </p>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                Он-лайн образовательный ресурс является инструментом для повышения потенциала исследователей с опытом, а также предназначен для наделения новыми знаниями и навыками молодых специалистов (в том числе, обучающихся по образовательным программам магистратуры и докторантуры). Дистанционный подход к обучению позволит слушателям курса пройти обучение в удобное им время вне зависимости от места нахождения, и получить свидетельство об успешном освоении материалы курса после прохождения итогового тестирования.
+              </p>
+              <p className="text-gray-700 mb-8 leading-relaxed">
+                Образовательные материалы ресурса разработаны на основе международных стандартов и национального законодательства РК. Презентационный материал и библиотечные ресурсы призваны являться подспорьем исследователю в процессе их деятельности, так как охватывают широкий перечень вопросов по изучаемой тематике.
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                <div className="bg-white p-6 rounded-lg shadow-sm border border-blue-100">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-3">Базовый курс</h3>
+                  <p className="text-gray-700">
+                    Курс – Основы GCP. Введение в организацию и проведение клинических исследований (базовый курс).
+                  </p>
+                  <a href="#" className="inline-flex items-center mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                    Подробнее о курсе
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </a>
+                </div>
+                
+                <div className="bg-white p-6 rounded-lg shadow-sm border border-blue-100">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-3">Продвинутый курс</h3>
+                  <p className="text-gray-700">
+                    Курс – Международные стандарты GCP, актуальные вопросы организации и проведения клинических исследований (продвинутый курс).
+                  </p>
+                  <a href="#" className="inline-flex items-center mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                    Подробнее о курсе
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
-      
-      <section className="text-gray-600 body-font pb-24 bg-white">
+
+      <section className="text-gray-600 body-font pb-2 bg-white">
         <div className="container px-5 mx-auto">
         <News />
         </div>
