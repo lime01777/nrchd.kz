@@ -34,7 +34,7 @@ export default function Clinical() {
           <div className="bg-white p-6 rounded-lg shadow-md">
             <div className="mb-6">
               <p className="text-lg text-gray-700 mb-4">
-                ЦРКИ создан в 2022 году приказом Министра здравоохранения РК для обеспечения развития и координации проведения клинических исследований (<a href="https://adilet.zan.kz/rus/docs/P2200000945" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">ссылка на Концепцию развития здравоохранения РК до 2026 года</a>)
+                ЦРКИ создан в 2022 году приказом Министра здравоохранения РК для обеспечения развития и координации проведения клинических исследований (<a href="https://adilet.zan.kz/rus/docs/P2200000945" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">ссылка</a>)
               </p>
               
               <h3 className="text-xl font-semibold text-gray-700 mb-4">Деятельность Центра</h3>
