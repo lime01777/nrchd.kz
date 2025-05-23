@@ -235,114 +235,6 @@ export default function Clinical() {
       </section>
 
 
-        <div className="container px-5 mx-auto bg-white">
-          <div className="flex flex-col text-center w-full mb-10">
-              <FAQ 
-                title=""
-                items={[
-                  {
-                    question: "Какие основные положения содержит Кодекс РК «О здоровье народа и системе здравоохранения» в отношении клинических исследований?",
-                    answer: (
-                      <div>
-                        <p>Кодекс РК «О здоровье народа и системе здравоохранения» устанавливает основные правовые рамки для проведения клинических исследований в Казахстане.</p>
-                        <a href="https://adilet.zan.kz/rus/docs/K2000000360" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline mt-2 block">Ознакомиться с документом</a>
-                      </div>
-                    )
-                  },
-                  {
-                    question: "Какие изменения внесены в правила проведения клинических исследований лекарственных средств и медицинских изделий?",
-                    answer: (
-                      <div>
-                        <p>Приказ Министра здравоохранения Республики Казахстан от 7 апреля 2022 года № ҚР ДСМ- 35 вносит изменения и дополнения в правила проведения клинических исследований лекарственных средств и медицинских изделий, клинико-лабораторных испытаний медицинских изделий для диагностики вне живого организма (in vitro), а также требования к клиническим базам.</p>
-                        <a href="https://adilet.zan.kz/rus/docs/V2200027526" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline mt-2 block">Ознакомиться с документом</a>
-                      </div>
-                    )
-                  },
-                  {
-                    question: "Какие требования предъявляются к исследовательским центрам и проведению биомедицинских исследований?",
-                    answer: (
-                      <div>
-                        <p>Приказ Министра здравоохранения Республики Казахстан от 21 декабря 2020 года № ҚР ДСМ-310/2020 утверждает правила проведения биомедицинских исследований и устанавливает требования к исследовательским центрам.</p>
-                        <a href="https://adilet.zan.kz/rus/docs/V2000021851#z3" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline mt-2 block">Ознакомиться с документом</a>
-                      </div>
-                    )
-                  },
-                  {
-                    question: "Какие надлежащие фармацевтические практики утверждены в Казахстане?",
-                    answer: (
-                      <div>
-                        <p>Приказ и.о. Министра здравоохранения Республики Казахстан от 4 февраля 2021 года № ҚР ДСМ-15 утверждает надлежащие фармацевтические практики, применяемые в том числе при проведении клинических исследований.</p>
-                        <a href="https://adilet.zan.kz/rus/docs/V2100022167" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline mt-2 block">Ознакомиться с документом</a>
-                      </div>
-                    )
-                  },
-                  {
-                    question: "Каков порядок ввоза и вывоза лекарственных средств и медицинских изделий для клинических исследований?",
-                    answer: (
-                      <div>
-                        <p>Приказ Министра здравоохранения Республики Казахстан от 8 декабря 2020 года № ҚР ДСМ-237/2020 утверждает Правила ввоза на территорию и вывоза с территории Республики Казахстан лекарственных средств и медицинских изделий, включая неразрегистрированные, для клинических исследований.</p>
-                        <a href="https://adilet.zan.kz/rus/docs/V2000021749" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline mt-2 block">Ознакомиться с документом</a>
-                      </div>
-                    )
-                  },
-                  {
-                    question: "Какие правила надлежащей клинической практики действуют в рамках ЕАЭС?",
-                    answer: (
-                      <div>
-                        <p>Решение Совета Евразийской экономической комиссии от 3 ноября 2016 года № 79 утверждает Правила надлежащей клинической практики Евразийского экономического союза, которые являются обязательными для соблюдения при проведении клинических исследований.</p>
-                        <a href="https://adilet.zan.kz/rus/docs/H16EV000079" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline mt-2 block">Ознакомиться с документом</a>
-                      </div>
-                    )
-                  },
-                  {
-                    question: "Как регулируются исследования биоэквивалентности лекарственных препаратов?",
-                    answer: (
-                      <div>
-                        <p>Решение Совета Евразийской экономической комиссии от 3 ноября 2016 года № 85 утверждает Правила проведения исследований биоэквивалентности лекарственных препаратов в рамках Евразийского экономического союза.</p>
-                        <a href="https://adilet.zan.kz/rus/docs/H16EV000085" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline mt-2 block">Ознакомиться с документом</a>
-                      </div>
-                    )
-                  },
-                  {
-                    question: "Какие правила действуют при проведении исследований биологических лекарственных средств?",
-                    answer: (
-                      <div>
-                        <p>Решение Совета Евразийской экономической комиссии от 3 ноября 2016 N 89 утверждает Правила проведения исследований биологических лекарственных средств Евразийского экономического союза.</p>
-                        <a href="https://docs.eaeunion.org/docs/ru-ru/01411954/cncd_21112016_89" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline mt-2 block">Ознакомиться с документом</a>
-                      </div>
-                    )
-                  },
-                  {
-                    question: "Какие общие рекомендации существуют по вопросам клинических исследований в ЕАЭС?",
-                    answer: (
-                      <div>
-                        <p>Рекомендации Коллегии ЕЭК от 17 июля 2018 г. №11 содержат «Руководство по общим вопросам клинических исследований» в рамках ЕАЭС.</p>
-                        <a href="https://docs.eaeunion.org/docs/ru-ru/01418320/clcr_20072018_11" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline mt-2 block">Ознакомиться с документом</a>
-                      </div>
-                    )
-                  },
-                  {
-                    question: "Какие требования предъявляются к доклиническим исследованиям безопасности?",
-                    answer: (
-                      <div>
-                        <p>Решение Коллегии ЕЭК от 26 ноября 2019 г. № 202 утверждает Руководство по доклиническим исследованиям безопасности в целях проведения клинических исследований и регистрации лекарственных препаратов.</p>
-                        <a href="https://adilet.zan.kz/rus/docs/H19EK000202" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline mt-2 block">Ознакомиться с документом</a>
-                      </div>
-                    )
-                  },
-                  {
-                    question: "Как выбирать не исследуемые лекарственные препараты для клинических исследований?",
-                    answer: (
-                      <div>
-                        <p>Рекомендации Коллегии ЕЭК от 17 декабря 2019 г. № 42 содержат Руководство по выбору не исследуемых лекарственных препаратов с целью проведения клинических исследований лекарственных препаратов.</p>
-                        <a href="https://continent-online.com/Document/?doc_id=31993845&ysclid=lrq8363l8o477078394" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline mt-2 block">Ознакомиться с документом</a>
-                      </div>
-                    )
-                  }
-                ]}
-              />
-            </div>
-          </div>
           <section className="text-gray-600 body-font pb-8 bg-gray-200">
           <div className="container px-5 mx-auto">
               <NormativeDocumentsList 
@@ -401,7 +293,8 @@ export default function Clinical() {
       <section className="text-gray-600 body-font pb-2 bg-white">
         <div className="container px-5 mx-auto">
           <div className="flex flex-col text-center w-full mb-10 mt-12">
-            <h2 className="text-2xl font-medium title-font text-gray-900 mb-4">Он-лайн образовательный ресурс</h2>
+            <h2 className="text-2xl font-medium title-font text-gray-900 mb-4">Развитие потенциала клинических
+            исследователей</h2>
           </div>
           
           <div className="bg-gray-200 p-8 rounded-lg shadow-sm mb-12">
