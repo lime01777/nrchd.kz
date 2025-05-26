@@ -7,6 +7,7 @@ use Stichoza\GoogleTranslate\GoogleTranslate;
 use Illuminate\Support\Facades\Log;
 use App\Models\StoredTranslation;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class FixedTranslationController extends Controller
 {
@@ -18,51 +19,59 @@ class FixedTranslationController extends Controller
      */
     public function translate(Request $request)
     {
-        // Validate with more flexible language codes (some can be 2-5 chars)
-        $request->validate([
-            'text' => 'required|string',
-            'source' => 'required|string|min:2|max:5',
-            'target' => 'required|string|min:2|max:5',
-            'cache' => 'boolean'
-        ]);
-        
-        // For empty text, return original
-        if (empty(trim($request->text))) {
-            return response()->json([
-                'success' => true, 
-                'translation' => $request->text
-            ]);
-        }
-        
-        // Check if we should cache this translation
-        $shouldCache = $request->has('cache') ? $request->boolean('cache') : false;
-        
-        // First check if we already have this translation stored
-        $targetLang = $request->target;
-        if ($targetLang === 'kz') {
-            // We use 'kz' in our system, but Google API uses 'kk'
-            $googleLangCode = 'kk';
-        } else {
-            $googleLangCode = $targetLang;
-        }
-
-        // Check for existing translation in the database
-        $existingTranslation = StoredTranslation::findTranslation($request->text, $targetLang);
-        
-        if ($existingTranslation) {
-            // Translation already exists in our database
-            Log::debug('Using cached translation from database', [
-                'text' => substr($request->text, 0, 30) . (strlen($request->text) > 30 ? '...' : ''),
-                'target' => $targetLang
+        // Оборачиваем все в try-catch на уровне всего метода для защиты от белого экрана
+        try {
+            // Validate with more flexible language codes (some can be 2-5 chars)
+            $request->validate([
+                'text' => 'required|string',
+                'source' => 'required|string|min:2|max:5',
+                'target' => 'required|string|min:2|max:5',
+                'cache' => 'boolean'
             ]);
             
-            return response()->json([
-                'success' => true,
-                'translation' => $existingTranslation,
-                'source' => $request->source,
-                'target' => $targetLang,
-                'cached' => true
-            ]);
+            // For empty text, return original
+            if (empty(trim($request->text))) {
+                return response()->json([
+                    'success' => true, 
+                    'translation' => $request->text
+                ]);
+            }
+            
+            // Всегда кэшировать переводы, независимо от запроса
+            $shouldCache = true;
+            
+            // First check if we already have this translation stored
+            $targetLang = $request->target;
+            if ($targetLang === 'kz') {
+                // We use 'kz' in our system, but Google API uses 'kk'
+                $googleLangCode = 'kk';
+            } else {
+                $googleLangCode = $targetLang;
+            }
+
+        // Проверяем существующий перевод в БД с защитой от ошибок
+        try {
+            $existingTranslation = StoredTranslation::findTranslation($request->text, $targetLang);
+            
+            if ($existingTranslation) {
+                // Translation already exists in our database
+                Log::debug('Using cached translation from database', [
+                    'text' => substr($request->text, 0, 30) . (strlen($request->text) > 30 ? '...' : ''),
+                    'target' => $targetLang
+                ]);
+                
+                return response()->json([
+                    'success' => true,
+                    'translation' => $existingTranslation,
+                    'source' => $request->source,
+                    'target' => $targetLang,
+                    'cached' => true
+                ]);
+            }
+        } catch (Exception $dbException) {
+            // Если произошла ошибка при доступе к БД, логируем и продолжаем работу
+            Log::error('Error accessing database for translation: ' . $dbException->getMessage());
+            // Продолжаем выполнение и попробуем перевести без кэша
         }
         
         // Log the translation request for debugging
@@ -99,18 +108,34 @@ class FixedTranslationController extends Controller
                 $translation = $request->text;
             }
             
-            // Store the translation if caching is requested
+            // Улучшенное кэширование перевода с прямым запросом в БД в случае проблем с моделью
             if ($shouldCache && !empty($translation) && $translation !== $request->text) {
                 try {
                     $hash = StoredTranslation::generateHash($request->text, $targetLang);
                     
-                    StoredTranslation::create([
-                        'original_text' => $request->text,
-                        'translated_text' => $translation,
-                        'target_language' => $targetLang,
-                        'hash' => $hash,
-                        'page_url' => $request->header('Referer') ?? null,
-                    ]);
+                    // Сначала пробуем использовать модель Eloquent
+                    try {
+                        StoredTranslation::create([
+                            'original_text' => $request->text,
+                            'translated_text' => $translation,
+                            'target_language' => $targetLang,
+                            'hash' => $hash,
+                            'page_url' => $request->header('Referer') ?? null,
+                        ]);
+                    } catch (Exception $eloquentError) {
+                        // Если не удалось через Eloquent, попробуем прямой SQL-запрос
+                        Log::warning('Eloquent cache failed, trying raw query: ' . $eloquentError->getMessage());
+                        
+                        DB::table('stored_translations')->insert([
+                            'original_text' => $request->text,
+                            'translated_text' => $translation,
+                            'target_language' => $targetLang,
+                            'hash' => $hash,
+                            'page_url' => $request->header('Referer') ?? null,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
                     
                     Log::debug('Translation cached in database', [
                         'text' => substr($request->text, 0, 30) . (strlen($request->text) > 30 ? '...' : ''),
@@ -138,9 +163,9 @@ class FixedTranslationController extends Controller
         } catch (Exception $e) {
             Log::error('Translation error: ' . $e->getMessage(), [
                 'exception' => $e->getMessage(),
-                'source' => $request->source,
-                'target' => $targetLang,
-                'text_sample' => substr($request->text, 0, 30) . (strlen($request->text) > 30 ? '...' : ''),
+                'source' => $request->source ?? 'unknown',
+                'target' => $targetLang ?? 'unknown',
+                'text_sample' => substr($request->text ?? '', 0, 30) . (strlen($request->text ?? '') > 30 ? '...' : ''),
                 'api_key_present' => !empty(env('GOOGLE_TRANSLATE_API_KEY'))
             ]);
             
@@ -149,10 +174,27 @@ class FixedTranslationController extends Controller
                 'success' => false,
                 'error' => 'Translation failed',
                 'message' => $e->getMessage(),
-                'translation' => $request->text, // Return original text on error
-                'source' => $request->source,
-                'target' => $targetLang
+                'translation' => $request->text ?? '', // Return original text on error
+                'source' => $request->source ?? 'unknown',
+                'target' => $targetLang ?? 'unknown'
             ], 200); // Still return 200 to let the frontend handle it gracefully
+        }
+        
+        // Глобальный catch для защиты от белого экрана при любых непредвиденных ошибках
+        } catch (Exception $globalError) {
+            Log::critical('Unexpected translation error: ' . $globalError->getMessage(), [
+                'exception' => $globalError->getMessage(),
+                'trace' => $globalError->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'error' => 'Unexpected error',
+                'message' => 'An unexpected error occurred',
+                'translation' => $request->text ?? '',
+                'source' => $request->source ?? 'unknown',
+                'target' => $request->target ?? 'unknown'
+            ], 200);
         }
     }
     

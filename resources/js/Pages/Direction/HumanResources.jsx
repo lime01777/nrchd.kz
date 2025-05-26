@@ -1,10 +1,8 @@
 import { Head } from '@inertiajs/react';
 import React, { useState } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
-import ChartHead from '@/Components/ChartHead'
 import FolderChlank from '@/Components/FolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
-import { Link } from '@inertiajs/react';
 
 export default function HumanResources() {
   const [showFullText, setShowFullText] = useState(false);
@@ -106,7 +104,6 @@ export default function HumanResources() {
             </div>
         </div>
     </section>
-    <ChartHead />
     <section className="text-gray-600 body-font">
         <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
             {/* Первый аккордеон */}
