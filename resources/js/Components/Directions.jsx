@@ -5,7 +5,7 @@ import { router } from '@inertiajs/react';
 const Directions = () => {
     const allDirections = [
         { imgname: 1, title: "Медицинское образование", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "/medical-education", hasRoute: false, path: "/medical-education"},
-        { imgname: 2, title: "Кадровые ресурсы", bgcolor: "bg-rose-100", bgborder: "border-rose-200", url: "/human-resources", hasRoute: false, path: "/human-resources"},
+        { imgname: 2, title: "Кадровые ресурсы здравоохранения", bgcolor: "bg-rose-100", bgborder: "border-rose-200", url: "/human-resources", hasRoute: false, path: "/human-resources"},
         { imgname: 3, title: "Электронное здравоохранение", bgcolor: "bg-fuchsia-100", bgborder: "border-fuchsia-200", url: "/electronic-health", hasRoute: false, path: "/electronic-health"},
         { imgname: 4, title: "Аккредитация", bgcolor: "bg-yellow-100", bgborder: "border-yellow-200", url: "/medical-accreditation", hasRoute: false, path: "/medical-accreditation"},
         { imgname: 5, title: "Оценка технологий здравоохранения", bgcolor: "bg-violet-100", bgborder: "border-violet-200", url: "/health-tech-assessment", hasRoute: false, path: "/health-tech-assessment"},

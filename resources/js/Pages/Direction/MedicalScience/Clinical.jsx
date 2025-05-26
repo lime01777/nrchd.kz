@@ -143,7 +143,7 @@ export default function Clinical() {
       <section className="text-gray-600 body-font pb-24 bg-white">
         <div className="container px-5 mx-auto">
           <div className="flex flex-col text-center w-full mb-10">
-            <h2 className="text-2xl font-medium title-font text-gray-900 mb-4">Научные публикации центра развития клинических исследований</h2>
+            <h2 className="text-2xl font-medium title-font text-gray-900 mb-4">Научные публикации Центра развития клинических исследований</h2>
 
           </div>
 
