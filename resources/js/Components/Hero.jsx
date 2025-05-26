@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import './hero.css'; // Стили для геро-секции
 
 function Hero({ 
@@ -9,6 +9,9 @@ function Hero({
   overlay = true, 
   videoFormat = 'mp4' // Формат видео (по умолчанию mp4)
 }) {
+  // Создаем ref для доступа к видео-элементу
+  const videoRef = useRef(null);
+
   // Определяем путь к медиа в зависимости от типа (видео, GIF или PNG)
   let mediaPath = '';
   if (useVideo) {
@@ -19,8 +22,27 @@ function Hero({
     mediaPath = `/img/HeroImg/${img}.png`;
   }
   
+  // Обработка видео - запуск и остановка при размонтировании
+  useEffect(() => {
+    // Если используется видео, настроим его
+    if (useVideo && videoRef.current) {
+      // Перезагрузим видео при каждом изменении источника
+      videoRef.current.load();
+      videoRef.current.play();
+      
+      // Функция для очистки ресурсов при размонтировании
+      return () => {
+        if (videoRef.current) {
+          videoRef.current.pause();
+          videoRef.current.src = '';
+          videoRef.current.load();
+        }
+      };
+    }
+  }, [useVideo, mediaPath]);
+  
   // Добавим стили для плавного зацикливания GIF и видео
-  React.useEffect(() => {
+  useEffect(() => {
     if (useGif || useVideo) {
       // Создаем стиль для плавного цикла, если его еще нет
       if (!document.getElementById('hero-media-styles')) {
@@ -54,7 +76,7 @@ function Hero({
     
     // Очистка при размонтировании
     return () => {
-      // При необходимости можно удалить стили
+      // Здесь мы не удаляем стили, так как они могут понадобиться на других страницах
     };
   }, [useGif, useVideo]);
   
@@ -69,6 +91,7 @@ function Hero({
           {/* Фоновый медиа-контент (видео, GIF или изображение) */}
           {useVideo ? (
             <video 
+              ref={videoRef}
               className="hero-video-background"
               autoPlay 
               muted 
@@ -76,6 +99,7 @@ function Hero({
               playsInline
               poster={`/img/HeroImg/${img}.png`} // Постер на случай, если видео не загрузится
               preload="auto"
+              key={mediaPath} // Добавляем ключ для обновления видео при изменении пути
               style={{
                 willChange: 'transform',
                 WebkitTransform: 'translateZ(0)',

@@ -185,12 +185,13 @@ export default function Clinical() {
                   <div className="border-l-4 border-green-500 pl-4 py-2">
                     <h5 className="font-medium text-gray-800 mb-1">Функционирование этических комитетов в Казахстане: результаты и рекомендации</h5>
                     <p className="text-sm text-gray-600 mb-1">The functioning of ethics committees in Kazakhstan: results and recommendations</p>
-                    <a href="https://pubmed.ncbi.nlm.nih.gov/39749153/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm underline">Читать статью</a>
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/39749153/ " target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm underline">Читать статью</a>
                   </div>
 
                   <div className="border-l-4 border-green-500 pl-4 py-2">
                     <h5 className="font-medium text-gray-800 mb-1">Трансформация алгоритма приоритизации направлений развития клинических исследований в соответствии с их практической значимостью</h5>
                     <p className="text-sm text-gray-600 mb-1">Transformation of the algorithm for prioritization of clinical trial development areas according to their practical significance based on information data analysis</p>
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/39791504/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm underline">Читать статью</a>
                   </div>
                   
                   <div className="border-l-4 border-green-500 pl-4 py-2">
@@ -202,23 +203,27 @@ export default function Clinical() {
                     <h5 className="font-medium text-gray-800 mb-1">Управление вопросами страхования при проведении клинических исследований</h5>
                     <p className="text-sm text-gray-600 mb-1">Insurance management in clinical trials (international and domestic experience)</p>
                     <p className="text-sm text-gray-600 mb-1">Авторы: Кулкаева Г.У., Граф М.А., Тарасова В.М., Табаров А.Б.</p>
+                    <a href="https://qmu.edu.kz/upload/medialibrary/senat/nauchnyy-komitet/2024senat/kayupova-gaukhar-serikovna/Astana%20Medical%20Journal.pdf " target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm underline">Читать статью</a>
                   </div>
                   
                   <div className="border-l-4 border-green-500 pl-4 py-2">
                     <h5 className="font-medium text-gray-800 mb-1">Актуальные вопросы регулирования клинических исследований в Казахстане</h5>
                     <p className="text-sm text-gray-600 mb-1">Авторы: Г.У. Кулкаева, М.А. Граф, Н.Т. Алдиярова, В.М. Тарасова, Т.С. Нургожин</p>
+                    <a href="https://pharmkaz.kz/2024/06/29/aktualnye-voprosy-regulirovaniya-klinicheskix-issledovanij-v-kazaxstane/ " target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm underline">Читать статью</a>
                   </div>
                   
                   <div className="border-l-4 border-green-500 pl-4 py-2">
                     <h5 className="font-medium text-gray-800 mb-1">Результаты анализа выстроенной системы проведения клинических исследований и барьеры для их развития в Казахстане</h5>
                     <p className="text-sm text-gray-600 mb-1">Results of the analysis of the established research system and barriers to its development in Kazakhstan</p>
                     <p className="text-sm text-gray-600 mb-1">Авторы: Кулкаева Г.У., Тарасова В.М., Граф М.А., Табаров А.Б.</p>
+                    <a href="https://newjournal.ssmu.kz/publication/511/2024-4-31-38/ " target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm underline">Читать статью</a>
                   </div>
                   
                   <div className="border-l-4 border-green-500 pl-4 py-2">
                     <h5 className="font-medium text-gray-800 mb-1">Оценка исследовательского потенциала специалистов здравоохранения Республики Казахстан</h5>
                     <p className="text-sm text-gray-600 mb-1">Assessment of the research potential of healthcare specialists in the Republic of Kazakhstan in the implementation of clinical research: results of online questionnaires and self-assessments</p>
                     <p className="text-sm text-gray-600 mb-1">Авторы: Г.У. Кулкаева, В.М. Тарасова, М.А. Граф, А.Б. Табаров</p>
+                    <a href="https://medecol.qmu.kz/jour/article/view/759" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm underline">Читать статью</a>
                   </div>
                   
                   <div className="border-l-4 border-green-500 pl-4 py-2">
