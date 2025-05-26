@@ -10,7 +10,7 @@ export default function MedicalStatistics() {
     const [showFullText, setShowFullText] = useState(false);
 
     return (
-        <LayoutDirection img="static" h1="Медицинская статистика">
+        <LayoutDirection img="static" h1="Медицинская статистика" useVideo={true}>
             <Head title="Медицинская статистика | NNCRZ" />
             
             {/* Блок с текстом и кнопкой "Читать далее" */}
