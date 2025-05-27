@@ -32,23 +32,37 @@ const FooterLinks = () => {
                     <div className="lg:w-1/4 md:w-1/2 w-full px-4">
                         <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3">Контактная
                             информация</h2>
-                        <nav className="list-none mb-10">
-                            <li>
-                                <a href="mailto:office@nrchd.kz"
-                                    className="text-gray-600 hover:text-gray-800 hover:underline">office@nrchd.kz</a>
-                            </li>
-                        </nav>
+
+                            <div className="flex items-center mb-2">
+                                <a href="mailto:office@nrchd.kz" className="hover:text-blue-600 hover:underline">
+                                    <span className="font-medium">office@nrchd.kz</span>
+                                </a>
+                            </div>
+                            <div className="flex items-center mt-2 mb-1">
+                                <a href="tel:+77172709510" className="hover:text-blue-600 hover:underline">
+                                    <span className="font-medium">+7 (7172) 70-95-10</span> <span className="text-gray-500 text-sm"></span>
+                                </a>
+                            </div>
+                            <div className="flex items-center">
+                                <a href="tel:+77172709501" className="hover:text-blue-600 hover:underline">
+                                    <span className="font-medium">+7 (7172) 70-95-01</span> <span className="text-gray-500 text-sm"></span>
+                                </a>
+                            </div>
+
                     </div>
                     <div className="lg:w-1/4 md:w-1/2 w-full px-4">
                         <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3">График работы</h2>
-                        <nav className="list-none mb-10">
-                            <li>
-                                <span className="text-gray-600">Пн...Пт, с 9:00 до 18:00</span>
-                            </li>
-                            <li>
-                                <span className="text-gray-600">Перерыв с 13:00 до 14:00</span>
-                            </li>
-                        </nav>
+
+                            <div className="flex flex-col space-y-2">
+                                <div className="flex items-center">
+                                    <span className="text-gray-700">Пн–Пт: <span className="">9:00–18:00</span></span>
+                                </div>
+                                <div className="flex items-center">
+
+                                    <span className="text-gray-700">Обед: <span className="">13:00–14:00</span></span>
+                                </div>
+                            </div>
+
                     </div>
                 </div>
             </div>

@@ -154,7 +154,7 @@ export default function BranchTemplate({ title, description, branchFolder, leade
                                         </div>
                                         <div>
                                             <p className="text-sm text-gray-500 mb-1">Электронный адрес:</p>
-                                            <a href="mailto:branch@example.com" className="text-base font-medium text-blue-700 hover:underline">branch@example.com</a>
+                                            <a href={`mailto:${branchFolder ? branchFolder.toLowerCase() : 'branch'}@nrchd.kz`} className="text-base font-medium text-blue-700 hover:underline">{branchFolder ? branchFolder.toLowerCase() : 'branch'}@nrchd.kz</a>
                                         </div>
                                     </div>
                                     

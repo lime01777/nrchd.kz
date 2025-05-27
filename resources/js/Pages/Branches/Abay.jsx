@@ -28,6 +28,7 @@ export default function Abay() {
     
     return (
         <BranchTemplate 
+            img={'branch'}
             title={title} 
             description={description}
             branchFolder="Abay"

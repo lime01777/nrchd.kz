@@ -40,6 +40,9 @@ class FixedTranslationController extends Controller
             // Всегда кэшировать переводы, независимо от запроса
             $shouldCache = true;
             
+            // Используем параметр page_url если он передан
+            $pageUrl = $request->input('page_url', $request->header('Referer') ?? '');
+            
             // First check if we already have this translation stored
             $targetLang = $request->target;
             if ($targetLang === 'kz') {
@@ -113,33 +116,52 @@ class FixedTranslationController extends Controller
                 try {
                     $hash = StoredTranslation::generateHash($request->text, $targetLang);
                     
-                    // Сначала пробуем использовать модель Eloquent
-                    try {
-                        StoredTranslation::create([
-                            'original_text' => $request->text,
-                            'translated_text' => $translation,
-                            'target_language' => $targetLang,
-                            'hash' => $hash,
-                            'page_url' => $request->header('Referer') ?? null,
-                        ]);
-                    } catch (Exception $eloquentError) {
-                        // Если не удалось через Eloquent, попробуем прямой SQL-запрос
-                        Log::warning('Eloquent cache failed, trying raw query: ' . $eloquentError->getMessage());
-                        
-                        DB::table('stored_translations')->insert([
-                            'original_text' => $request->text,
-                            'translated_text' => $translation,
-                            'target_language' => $targetLang,
-                            'hash' => $hash,
-                            'page_url' => $request->header('Referer') ?? null,
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ]);
+                    // Проверяем, существует ли уже такой перевод
+                    $existing = StoredTranslation::where('hash', $hash)
+                        ->where('target_language', $targetLang)
+                        ->first();
+                    
+                    if ($existing) {
+                        // Обновляем URL страницы, если он новый
+                        if (!empty($pageUrl) && ($existing->page_url != $pageUrl)) {
+                            $existing->page_url = $pageUrl;
+                            $existing->save();
+                        }
+                    } else {
+                        // Сначала пробуем использовать модель Eloquent
+                        try {
+                            StoredTranslation::create([
+                                'original_text' => $request->text,
+                                'translated_text' => $translation,
+                                'target_language' => $targetLang,
+                                'hash' => $hash,
+                                'page_url' => $pageUrl,
+                            ]);
+                        } catch (Exception $eloquentError) {
+                            // Если не удалось через Eloquent, попробуем прямой SQL-запрос
+                            Log::warning('Eloquent cache failed, trying raw query: ' . $eloquentError->getMessage());
+                            
+                            // Обрезаем слишком длинные тексты, чтобы избежать ошибок с БД
+                            $maxLength = 60000; // Максимальная длина текста для БД
+                            $originalText = mb_strlen($request->text) > $maxLength ? mb_substr($request->text, 0, $maxLength) : $request->text;
+                            $translatedText = mb_strlen($translation) > $maxLength ? mb_substr($translation, 0, $maxLength) : $translation;
+                            
+                            DB::table('stored_translations')->insert([
+                                'original_text' => $originalText,
+                                'translated_text' => $translatedText,
+                                'target_language' => $targetLang,
+                                'hash' => $hash,
+                                'page_url' => $pageUrl,
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ]);
+                        }
                     }
                     
                     Log::debug('Translation cached in database', [
                         'text' => substr($request->text, 0, 30) . (strlen($request->text) > 30 ? '...' : ''),
-                        'target' => $targetLang
+                        'target' => $targetLang,
+                        'page_url' => $pageUrl
                     ]);
                 } catch (Exception $e) {
                     Log::error('Error caching translation: ' . $e->getMessage());

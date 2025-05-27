@@ -13,6 +13,7 @@ const DEFAULT_LANGUAGE = 'ru';
 class LanguageManager {
   constructor() {
     this.currentLanguage = DEFAULT_LANGUAGE;
+    this.previousLanguage = DEFAULT_LANGUAGE;
     this.translationCache = {};
     this.initialized = false;
   }
@@ -195,6 +196,21 @@ class LanguageManager {
   }
   
   /**
+   * Вернуться к предыдущему языку при ошибке перевода
+   */
+  revertToLastLanguage() {
+    if (this.previousLanguage && this.previousLanguage !== this.currentLanguage) {
+      console.log(`[LanguageManager] Reverting to previous language: ${this.previousLanguage}`);
+      this.currentLanguage = this.previousLanguage;
+      // Восстанавливаем сохраненные настройки
+      document.documentElement.setAttribute('data-language', this.previousLanguage);
+      this.updateLanguageButtons();
+      return true;
+    }
+    return false;
+  }
+  
+  /**
    * Переключить язык сайта
    */
   async switchLanguage(language) {
@@ -207,6 +223,10 @@ class LanguageManager {
       console.log(`[LanguageManager] Language already set to ${language}`);
       return;
     }
+    
+    // Сохраняем предыдущий язык для возможного восстановления
+    this.previousLanguage = this.currentLanguage;
+    console.log(`[LanguageManager] Saving previous language: ${this.previousLanguage}`);
     
     this.currentLanguage = language;
     this.saveLanguagePreference(language);
@@ -268,17 +288,24 @@ class LanguageManager {
    */
   async fetchPageTranslations() {
     try {
+      // Определяем URL текущей страницы
+      const currentPageUrl = window.location.pathname;
+      
       // Сначала проверим локальное хранилище
-      const cachedTranslations = localStorage.getItem(`pageTranslations_${this.currentLanguage}`);
+      const cachedPageKey = `pageTranslations_${this.currentLanguage}_${currentPageUrl}`;
+      const cachedTranslations = localStorage.getItem(cachedPageKey);
+      
       if (cachedTranslations) {
         try {
           const translations = JSON.parse(cachedTranslations);
           if (translations && Object.keys(translations).length > 0) {
-            console.log(`[LanguageManager] Using ${Object.keys(translations).length} cached translations for ${this.currentLanguage}`);
+            console.log(`[LanguageManager] Using ${Object.keys(translations).length} cached translations for ${this.currentLanguage} on page ${currentPageUrl}`);
             return translations;
           }
         } catch (e) {
           console.error('[LanguageManager] Error parsing cached translations:', e);
+          // Удаляем невалидный кэш
+          localStorage.removeItem(cachedPageKey);
         }
       }
       
@@ -290,7 +317,7 @@ class LanguageManager {
       }
       
       // Получить переводы для текущей страницы
-      console.log(`[LanguageManager] Fetching translations for ${this.currentLanguage} from server`);
+      console.log(`[LanguageManager] Fetching translations for ${this.currentLanguage} from server for page ${currentPageUrl}`);
       const response = await fetch('/api/page-translations', {
         method: 'POST',
         headers: {
@@ -298,29 +325,110 @@ class LanguageManager {
           'X-CSRF-TOKEN': token
         },
         body: JSON.stringify({
-          page_url: window.location.pathname,
-          target_language: this.currentLanguage
+          page_url: currentPageUrl,
+          language: this.currentLanguage,
+          save_all: true // Флаг для сервера, чтобы сохранять все переводы для страницы
         }),
         credentials: 'include'
       });
       
       if (!response.ok) {
-        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+        throw new Error(`Failed to fetch translations: ${response.status} ${response.statusText}`);
       }
       
-      const result = await response.json();
+      const data = await response.json();
       
-      if (result.success && result.translations) {
-        // Сохранить переводы в локальное хранилище
-        localStorage.setItem(`pageTranslations_${this.currentLanguage}`, JSON.stringify(result.translations));
-        console.log(`[LanguageManager] Fetched ${Object.keys(result.translations).length} translations from server`);
-        return result.translations;
+      if (data.success && data.translations) {
+        // Сохранить в локальное хранилище с привязкой к странице
+        try {
+          localStorage.setItem(cachedPageKey, JSON.stringify(data.translations));
+          
+          // Также сохраняем время последнего обновления
+          localStorage.setItem(`${cachedPageKey}_updated`, new Date().toISOString());
+          
+          // Если есть данные о количестве сохраненных переводов, тоже сохраняем
+          if (data.saved_count) {
+            console.log(`[LanguageManager] Server saved ${data.saved_count} translations for future use`);
+          }
+        } catch (e) {
+          console.error('[LanguageManager] Error caching translations:', e);
+        }
+        return data.translations;
+      } else {
+        console.log(`[LanguageManager] No translations found for ${this.currentLanguage}`);
+        return {};
       }
-      return {};
     } catch (error) {
-      console.error('[LanguageManager] Error fetching page translations:', error);
+      console.error('[LanguageManager] Error fetching translations:', error);
       return {};
     }
+  }
+  
+  /**
+   * Сохранить переводы на сервере для последующего использования
+   * @param {Object} translations Объект с переводами в формате { оригинал: перевод }
+   * @param {string} pageUrl URL текущей страницы
+   */
+  saveTranslationsToServer(translations, pageUrl) {
+    if (!translations || Object.keys(translations).length === 0) {
+      console.log('[LanguageManager] No translations to save');
+      return;
+    }
+    
+    // Получаем CSRF токен
+    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    if (!token) {
+      console.error('[LanguageManager] CSRF token not found, cannot save translations');
+      return;
+    }
+    
+    // Отправляем на сервер для сохранения
+    console.log(`[LanguageManager] Saving ${Object.keys(translations).length} translations to server for page ${pageUrl}`);
+    
+    fetch('/api/page-translations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': token
+      },
+      body: JSON.stringify({
+        page_url: pageUrl,
+        language: this.currentLanguage,
+        save_all: true,
+        translations: translations
+      }),
+      credentials: 'include'
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Failed to save translations: ${response.status} ${response.statusText}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.success) {
+        console.log(`[LanguageManager] Successfully saved ${data.saved_count || Object.keys(translations).length} translations for future use`);
+        // Обновляем кэш в локальном хранилище
+        const cachedPageKey = `pageTranslations_${this.currentLanguage}_${pageUrl}`;
+        try {
+          const existingData = localStorage.getItem(cachedPageKey);
+          if (existingData) {
+            const existingTranslations = JSON.parse(existingData);
+            // Объединяем существующие переводы с новыми
+            const updatedTranslations = { ...existingTranslations, ...translations };
+            localStorage.setItem(cachedPageKey, JSON.stringify(updatedTranslations));
+            localStorage.setItem(`${cachedPageKey}_updated`, new Date().toISOString());
+          }
+        } catch (e) {
+          console.error('[LanguageManager] Error updating local cache:', e);
+        }
+      } else {
+        console.error('[LanguageManager] Failed to save translations:', data);
+      }
+    })
+    .catch(error => {
+      console.error('[LanguageManager] Error saving translations:', error);
+    });
   }
   
   /**
@@ -332,63 +440,109 @@ class LanguageManager {
     const url = new URL(window.location.href);
     url.searchParams.set('lang', this.currentLanguage);
     
-    history.pushState({}, '', url.toString());
+    window.history.replaceState({}, '', url.toString());
   }
   
   /**
-   * Перевести контент страницы с помощью предоставленных переводов
-   * @param {Object} translations Объект с переводами
+   * Перевести контент страницы, используя готовые переводы
+   * @param {Object} translations Объект с переводами в формате { оригинал: перевод }
    */
   async translatePageContent(translations = {}) {
     if (!translations || Object.keys(translations).length === 0) {
-      console.log('[LanguageManager] No translations available to apply');
+      console.log('[LanguageManager] No translations provided');
       return;
     }
     
-    console.log(`[LanguageManager] Translating page with ${Object.keys(translations).length} translations`);
+    // Собираем все текстовые элементы страницы
+    const textElements = this.collectTextElements();
     
-    // Получить все текстовые ноды
-    const textNodes = this.getAllTextNodes(document.body);
-    console.log(`[LanguageManager] Found ${textNodes.length} text nodes to process`);
+    console.log(`[LanguageManager] Translating ${textElements.length} elements using ${Object.keys(translations).length} translations`);
     
-    // Перевести каждый нод
-    let translatedCount = 0;
+    const untranslated = {};
+    const newTranslations = {};
+    const currentPageUrl = window.location.pathname;
     
-    for (const node of textNodes) {
-      const originalText = node.textContent.trim();
-      if (originalText.length < 3) continue;
+    // Переводим каждый элемент
+    for (const element of textElements) {
+      const originalText = element.originalText;
       
-      // Проверить, есть ли перевод для этого текста
+      // Пропускаем пустые тексты или тексты только с пробелами
+      if (!originalText || originalText.trim() === '') continue;
+      
+      // Пропускаем числа и короткие тексты, которые могут быть идентификаторами
+      if (/^\d+$/.test(originalText) || originalText.length <= 2) continue;
+      
+      // Если есть готовый перевод, используем его
       if (translations[originalText]) {
-        node.textContent = node.textContent.replace(originalText, translations[originalText]);
-        translatedCount++;
+        const translatedText = translations[originalText];
+        if (element.node.nodeType === Node.TEXT_NODE) {
+          element.node.nodeValue = translatedText;
+        } else if (element.node.nodeType === Node.ELEMENT_NODE) {
+          if (element.attributeName) {
+            element.node.setAttribute(element.attributeName, translatedText);
+          } else {
+            element.node.innerText = translatedText;
+          }
+        }
+      } else {
+        // Если перевода нет в готовых, добавляем в список для перевода
+        untranslated[originalText] = '';
       }
     }
     
-    // Перевести атрибуты важных элементов (плейсхолдеры, тексты кнопок, альты изображений, и т.д.)
-    const attributesToTranslate = [
-      { selector: 'input[placeholder], textarea[placeholder]', attr: 'placeholder' },
-      { selector: 'button, input[type="submit"], input[type="button"]', attr: 'value' },
-      { selector: 'img[alt], area[alt]', attr: 'alt' },
-      { selector: 'a, button, [title]', attr: 'title' }
-    ];
-    
-    for (const item of attributesToTranslate) {
-      const elements = document.querySelectorAll(item.selector);
-      for (const element of elements) {
-        const originalText = element.getAttribute(item.attr);
-        if (originalText && translations[originalText]) {
-          element.setAttribute(item.attr, translations[originalText]);
-          translatedCount++;
+    // Если есть непереведенные тексты, переводим их
+    const untranslatedTexts = Object.keys(untranslated);
+    if (untranslatedTexts.length > 0) {
+      console.log(`[LanguageManager] Translating ${untranslatedTexts.length} new texts`);
+      
+      // Переводим небольшими пачками для оптимизации
+      const batchSize = 10;
+      const batches = [];
+      
+      for (let i = 0; i < untranslatedTexts.length; i += batchSize) {
+        batches.push(untranslatedTexts.slice(i, i + batchSize));
+      }
+      
+      for (const batch of batches) {
+        await Promise.all(batch.map(async (text) => {
+          try {
+            const translation = await this.translateText(text, DEFAULT_LANGUAGE, this.currentLanguage);
+            if (translation) {
+              newTranslations[text] = translation;
+            }
+          } catch (error) {
+            console.error(`[LanguageManager] Error translating text: ${text}`, error);
+          }
+        }));
+      }
+      
+      // Применяем новые переводы
+      for (const element of textElements) {
+        const originalText = element.originalText;
+        if (newTranslations[originalText]) {
+          const translatedText = newTranslations[originalText];
+          if (element.node.nodeType === Node.TEXT_NODE) {
+            element.node.nodeValue = translatedText;
+          } else if (element.node.nodeType === Node.ELEMENT_NODE) {
+            if (element.attributeName) {
+              element.node.setAttribute(element.attributeName, translatedText);
+            } else {
+              element.node.innerText = translatedText;
+            }
+          }
         }
       }
+      
+      // Добавляем новые переводы в общий список
+      Object.assign(translations, newTranslations);
+      
+      // Сохраняем все новые переводы в БД через API
+      if (Object.keys(newTranslations).length > 0) {
+        this.saveTranslationsToServer(newTranslations, currentPageUrl);
+      }
     }
     
-    // Перевести наши специальные компоненты из памяти о сайте
-    await this.translateSpecialComponents(translations);
-    
-    console.log(`[LanguageManager] Applied ${translatedCount} translations`);
-    return translatedCount;
+    return translations;
   }
   
   /**

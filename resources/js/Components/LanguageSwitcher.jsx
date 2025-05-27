@@ -21,38 +21,81 @@ function LanguageSwitcher() {
     console.log(`[LanguageSwitcher] Button clicked: ${lang}, current language: ${currentLang}`);
     if (lang === currentLang) return;
     
+    // Создаем индикатор перевода за пределами блока try-catch
+    const indicator = document.createElement('div');
+    indicator.id = 'language-switch-indicator';
+    indicator.textContent = `Переключение на ${lang}...`;
+    indicator.style.position = 'fixed';
+    indicator.style.top = '50px';
+    indicator.style.right = '10px';
+    indicator.style.backgroundColor = 'rgba(0,0,0,0.7)';
+    indicator.style.color = 'white';
+    indicator.style.padding = '10px';
+    indicator.style.borderRadius = '5px';
+    indicator.style.zIndex = '9999';
+    document.body.appendChild(indicator);
+    
+    // Добавляем таймаут безопасности, чтобы при любой ошибке индикатор исчез
+    const safetyTimeout = setTimeout(() => {
+      try {
+        const existingIndicator = document.getElementById('language-switch-indicator');
+        if (existingIndicator && existingIndicator.parentNode) {
+          existingIndicator.parentNode.removeChild(existingIndicator);
+        }
+        setIsTranslating(false);
+      } catch (e) {}
+    }, 8000); // 8 секунд максимум для перевода
+    
     try {
       // Update UI state
       setIsTranslating(true);
       
-      // Компактный индикатор перевода в углу экрана
-      const indicator = document.createElement('div');
-      indicator.textContent = `Переключение на ${lang}...`;
-      indicator.style.position = 'fixed';
-      indicator.style.top = '50px';
-      indicator.style.right = '10px';
-      indicator.style.backgroundColor = 'rgba(0,0,0,0.7)';
-      indicator.style.color = 'white';
-      indicator.style.padding = '10px';
-      indicator.style.borderRadius = '5px';
-      indicator.style.zIndex = '9999';
-      document.body.appendChild(indicator);
-      
       // Используем language manager для смены языка всего сайта
-      await languageManager.switchLanguage(lang);
+      // Устанавливаем таймаут для предотвращения бесконечного ожидания
+      const translationPromise = Promise.race([
+        languageManager.switchLanguage(lang),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Таймаут перевода. Попробуйте еще раз.')), 7000)
+        )
+      ]);
+      
+      await translationPromise;
       
       // Обновляем состояние компонента после смены языка
       setCurrentLang(lang);
       
-      // Удаляем индикатор после завершения
-      setTimeout(() => {
-        document.body.removeChild(indicator);
-      }, 1000);
-      
     } catch (error) {
       console.error('[LanguageSwitcher] Translation error:', error);
-      alert(`Ошибка при переводе: ${error.message}`);
+      // Отображаем сообщение об ошибке только если не таймаут
+      if (!error.message.includes('Таймаут')) {
+        alert(`Ошибка при переводе: ${error.message}`);
+      } else {
+        alert(`Перевод не удался из-за таймаута. Попробуйте обновить страницу и попытаться снова.`);
+      }
+      
+      // Восстанавливаем видимость элементов, которые могли быть скрыты
+      const hiddenElements = document.querySelectorAll('[style*="display: none"]');
+      hiddenElements.forEach(el => {
+        if (el.getAttribute('data-translation-hidden')) {
+          el.style.display = '';
+          el.removeAttribute('data-translation-hidden');
+        }
+      });
+      
+      // Возвращаемся к предыдущему языку
+      languageManager.revertToLastLanguage();
     } finally {
+      // Очищаем таймаут безопасности
+      clearTimeout(safetyTimeout);
+      
+      // Удаляем индикатор после завершения
+      try {
+        const existingIndicator = document.getElementById('language-switch-indicator');
+        if (existingIndicator && existingIndicator.parentNode) {
+          existingIndicator.parentNode.removeChild(existingIndicator);
+        }
+      } catch (e) {}
+      
       setIsTranslating(false);
     }
   };
