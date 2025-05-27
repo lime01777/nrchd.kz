@@ -35,35 +35,35 @@ export default function BranchTemplate({ title, description, branchFolder, leade
     return (
         <>
             <Head title={title} />
-            <LayoutBranch img="/storage/images/branches/branch-hero.jpg" h1={title}>
+            <LayoutBranch img="branch" h1={title} className="text-white">
                 {/* 1. Блок с текстовой информацией о филиале */}
                 <section className="text-gray-600 body-font pb-8">
                     <div className="container px-5 py-12 mx-auto">
                         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                            <h2 className="text-2xl font-bold text-gray-800 mb-6">О филиале</h2>
-                            <p className="text-gray-700 mb-4 leading-relaxed">
+                            <h2 className="text-2xl font-bold text-gray-800 mb-6" data-translate>О филиале</h2>
+                            <p className="text-gray-700 mb-4 leading-relaxed" data-translate>
                                 {description || "Филиал Национального научного центра развития здравоохранения имени Салидат Каирбековой является ведущим учреждением в регионе, осуществляющим научно-исследовательскую, образовательную и консультативную деятельность в сфере здравоохранения."}
                             </p>
                             
                             <div className="mb-6">
-                                <h3 className="text-xl font-semibold text-gray-700 mb-3">Основные направления деятельности:</h3>
+                                <h3 className="text-xl font-semibold text-gray-700 mb-3" data-translate>Основные направления деятельности:</h3>
                                 <div className="bg-blue-50 p-4 rounded-lg mb-4">
                                     <ul className="list-none space-y-2">
                                         <li className="flex items-start">
                                             <span className="text-blue-600 mr-2 mt-1">•</span>
-                                            <span>Научно-исследовательская работа</span>
+                                            <span data-translate>Научно-исследовательская работа</span>
                                         </li>
                                         <li className="flex items-start">
                                             <span className="text-blue-600 mr-2 mt-1">•</span>
-                                            <span>Образовательная деятельность</span>
+                                            <span data-translate>Образовательная деятельность</span>
                                         </li>
                                         <li className="flex items-start">
                                             <span className="text-blue-600 mr-2 mt-1">•</span>
-                                            <span>Экспертно-аналитическая работа</span>
+                                            <span data-translate>Экспертно-аналитическая работа</span>
                                         </li>
                                         <li className="flex items-start">
                                             <span className="text-blue-600 mr-2 mt-1">•</span>
-                                            <span>Консультативно-методическая помощь организациям здравоохранения</span>
+                                            <span data-translate>Консультативно-методическая помощь организациям здравоохранения</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -78,25 +78,25 @@ export default function BranchTemplate({ title, description, branchFolder, leade
                 {/* 3. Блок с документами (FilesAccord) */}
                 <section className="text-gray-600 body-font">
                     <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
-                        <h2 className="sm:text-3xl text-2xl font-medium title-font mb-8 text-gray-900 text-center">
+                        <h2 className="sm:text-3xl text-2xl font-medium title-font mb-8 text-gray-900 text-center" data-translate>
                             Документы
                         </h2>
                         
                         <FilesAccord 
                             folder={`Branches/${folderCode}/Documents`}
-                            title="Нормативные документы"
+                            title="Нормативные документы" data-translate-title="true"
                             bgColor="bg-blue-100"
                         />
                         
                         <FilesAccord 
                             folder={`Branches/${folderCode}/Reports`}
-                            title="Отчеты о деятельности"
+                            title="Отчеты о деятельности" data-translate-title="true"
                             bgColor="bg-blue-100"
                         />
                         
                         <FilesAccord 
                             folder={`Branches/${folderCode}/Programs`}
-                            title="Образовательные программы"
+                            title="Образовательные программы" data-translate-title="true"
                             bgColor="bg-blue-100"
                         />
                     </div>

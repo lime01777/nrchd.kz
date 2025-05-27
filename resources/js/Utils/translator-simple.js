@@ -106,6 +106,14 @@ export const translatePage = async (targetLang) => {
     
     logMessage('CSRF токен найден');
     
+    // Устанавливаем язык страницы
+    document.documentElement.setAttribute('data-language', targetLang);
+    currentLanguage = targetLang;
+    localStorage.setItem('preferredLanguage', targetLang);
+    
+    // Обновляем стили кнопок языка
+    updateButtonStyles(targetLang);
+    
     // First check if translations are available in the cache
     const cachedTranslations = localStorage.getItem(`pageTranslations_${targetLang}`);
     if (cachedTranslations) {
@@ -113,7 +121,6 @@ export const translatePage = async (targetLang) => {
       try {
         const translations = JSON.parse(cachedTranslations);
         applyStoredTranslations(translations);
-        updateButtonStyles(targetLang);
         logMessage('Кэшированные переводы успешно применены');
         return;
       } catch (e) {
@@ -255,63 +262,105 @@ export const translatePage = async (targetLang) => {
 };
 
 /**
- * Apply stored translations to the page
+ * Применяет сохраненные переводы к элементам страницы
+ * @param {Object} translations - Объект с переводами {оригинальный_текст: переведенный_текст}
  */
 const applyStoredTranslations = (translations) => {
-  const textNodes = [];
-  const walker = document.createTreeWalker(
-    document.body,
-    NodeFilter.SHOW_TEXT,
-    {
-      acceptNode: (node) => {
-        // Skip empty nodes
-        if (!node.textContent.trim()) return NodeFilter.FILTER_REJECT;
-        
-        // Skip script, style tags
-        const parent = node.parentElement;
-        if (!parent) return NodeFilter.FILTER_REJECT;
-        
-        const tagName = parent.tagName.toLowerCase();
-        if (tagName === 'script' || tagName === 'style' || tagName === 'noscript') {
-          return NodeFilter.FILTER_REJECT;
-        }
-        
-        return NodeFilter.FILTER_ACCEPT;
-      }
-    }
-  );
-  
-  // Collect all nodes
-  while (walker.nextNode()) {
-    if (walker.currentNode.textContent.trim().length > 2) {
-      textNodes.push(walker.currentNode);
-    }
+  if (!translations || Object.keys(translations).length === 0) {
+    logMessage('Нет переводов для применения');
+    return;
   }
   
-  textNodes.forEach(node => {
-    const originalText = node.textContent.trim();
-    if (translations[originalText]) {
-      node.textContent = node.textContent.replace(originalText, translations[originalText]);
+  logMessage(`Применение ${Object.keys(translations).length} переводов`);
+  
+  try {
+    // Получаем все текстовые узлы на странице
+    const textNodes = [];
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: (node) => {
+          // Пропускаем пустые узлы
+          if (!node.textContent.trim()) return NodeFilter.FILTER_REJECT;
+          
+          // Пропускаем script, style теги
+          const parent = node.parentElement;
+          if (!parent) return NodeFilter.FILTER_REJECT;
+          
+          const tagName = parent.tagName.toLowerCase();
+          if (tagName === 'script' || tagName === 'style' || tagName === 'noscript') {
+            return NodeFilter.FILTER_REJECT;
+          }
+          
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      }
+    );
+    
+    // Собираем все текстовые узлы
+    let currentNode;
+    while (currentNode = walker.nextNode()) {
+      textNodes.push(currentNode);
     }
-  });
+    
+    // Применяем переводы к каждому узлу
+    let translatedCount = 0;
+    for (const node of textNodes) {
+      const originalText = node.textContent.trim();
+      if (originalText && translations[originalText]) {
+        node.textContent = node.textContent.replace(originalText, translations[originalText]);
+        translatedCount++;
+      }
+    }
+    
+    // Обновляем атрибут языка на HTML-элементе
+    document.documentElement.setAttribute('data-language', currentLanguage);
+    
+    logMessage(`Успешно переведено ${translatedCount} элементов из ${textNodes.length}`);
+  } catch (error) {
+    logMessage(`Ошибка при применении переводов: ${error.message}`);
+  }
 };
 
 /**
- * Update language button styles
+ * Обновляет стили кнопок языка в зависимости от выбранного языка
+ * @param {string} selectedLang - Выбранный язык
  */
-const updateButtonStyles = (targetLang) => {
-  const buttons = document.querySelectorAll('.lang-btn');
-  buttons.forEach(btn => {
-    const langCode = btn.getAttribute('data-lang');
-    if (langCode === targetLang) {
-      btn.style.backgroundColor = '#3b82f6';
-      btn.style.color = 'white';
-    } else {
-      btn.style.backgroundColor = 'white';
-      btn.style.color = '#3b82f6';
-    }
+const updateButtonStyles = (selectedLang) => {
+  // Получаем все кнопки языка
+  const langButtons = document.querySelectorAll('button[class*="lang-"], button:contains("EN"), button:contains("RU"), button:contains("KZ")');
+  
+  // Сбрасываем стили всех кнопок
+  langButtons.forEach(btn => {
+    btn.classList.remove('bg-gray-300');
+    btn.classList.add('hover:bg-gray-200');
+    btn.classList.add('bg-transparent');
   });
+  
+  // Выделяем активную кнопку
+  const activeButtons = Array.from(langButtons).filter(btn => {
+    const text = btn.textContent.trim().toLowerCase();
+    if (selectedLang === 'en' && text === 'en') return true;
+    if (selectedLang === 'ru' && text === 'ru') return true;
+    if (selectedLang === 'kz' && text === 'kz') return true;
+    return false;
+  });
+  
+  // Применяем стили к активной кнопке
+  activeButtons.forEach(btn => {
+    btn.classList.remove('hover:bg-gray-200');
+    btn.classList.remove('bg-transparent');
+    btn.classList.add('bg-gray-300');
+  });
+  
+  // Сохраняем текущий язык
+  currentLanguage = selectedLang;
+  localStorage.setItem('preferredLanguage', selectedLang);
 };
+
+// Текущий язык страницы
+let currentLanguage = localStorage.getItem('preferredLanguage') || 'ru';
 
 // Initialize when document loads
 document.addEventListener('DOMContentLoaded', () => {
@@ -332,3 +381,15 @@ document.addEventListener('DOMContentLoaded', () => {
   
   console.log('[Translator] Simplified translation system initialized');
 });
+
+// Устанавливаем начальный язык страницы
+document.documentElement.setAttribute('data-language', currentLanguage);
+
+logMessage('Simplified translation system initialized');
+logMessage(`Initial language: ${currentLanguage}`);
+
+// Экспортируем переменную в глобальную область видимости для отладки
+window.translator = {
+  translatePage,
+  currentLanguage
+};

@@ -1,5 +1,5 @@
 import React from 'react';
-import BranchTemplate from './BranchTemplate';
+import LayoutBranch from '@/Layouts/LayoutBranch';
 import { Head } from '@inertiajs/react';
 
 export default function Abay() {
@@ -27,12 +27,26 @@ export default function Abay() {
     ];
     
     return (
-        <BranchTemplate 
-            img={'branch'}
-            title={title} 
-            description={description}
-            branchFolder="Abay"
-            leaders={leaders}
-        />
+        <>
+            <Head title={title} />
+            <section className="text-gray-600 body-font pb-8">
+                <div className="container px-5 py-12 mx-auto">
+                    <div className="flex flex-wrap px-12 text-justify">
+                        <p className="mb-4 tracking-wide text-gray-700 leading-relaxed">
+                            {description}
+                        </p>
+                    </div>
+                </div>
+            </section>
+            {page}
+                            {/* Страница будет отображаться через layout */}
+        </>
     );
 }
+Abay.layout = (page) => <LayoutBranch 
+img={'branch'}
+h1={title} 
+description={description}
+branchFolder="Abay"
+leaders={leaders}
+>{page}</LayoutBranch>

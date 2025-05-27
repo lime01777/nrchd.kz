@@ -16,7 +16,7 @@ export default function LayoutBranch({
       <Hero 
         img={img} 
         h1={h1} 
-        useGif={useGif}
+        useGif={false}
         useVideo={false} // Явно отключаем видео в этом макете
         overlay={overlay} 
       />

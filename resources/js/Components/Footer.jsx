@@ -3,17 +3,17 @@ import FooterNav from './FooterNav';
 
 const FooterLinks = () => {
     const navLinks1 = [
-        {label: 'Направления', url:'/direction'},
-        {label: 'Услуги', url:'/services'},
-        {label: 'Филиалы', url:'/branches'},
-        {label: 'Новости', url:'/news'},
-        {label: 'Вакансии', url:'/vacancies'},
+        {label: 'Направления', url:'/direction', translate: true},
+        {label: 'Услуги', url:'/services', translate: true},
+        {label: 'Филиалы', url:'/branches', translate: true},
+        {label: 'Новости', url:'/news', translate: true},
+        {label: 'Вакансии', url:'/vacancies', translate: true},
     ];
     const navLinks2 = [
-        {label: 'Новости ННЦРЗ', url:'/news'},
-        {label: 'Новости по направлениям', url:'/news/directions'},
-        {label: 'Новости филиалов', url:'/news/branches'},
-        {label: 'Салидат Каирбекова', url:'/about-centre/salidat-kairbekova'},
+        {label: 'Новости ННЦРЗ', url:'/news', translate: true},
+        {label: 'Новости по направлениям', url:'/news/directions', translate: true},
+        {label: 'Новости филиалов', url:'/news/branches', translate: true},
+        {label: 'Салидат Каирбекова', url:'/about-centre/salidat-kairbekova', translate: true},
     ];
 
     return (
@@ -30,7 +30,7 @@ const FooterLinks = () => {
                     <FooterNav title='Главное меню' links={navLinks1} />
                     <FooterNav title='О центре' links={navLinks2} />
                     <div className="lg:w-1/4 md:w-1/2 w-full px-4">
-                        <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3">Контактная
+                        <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3" data-translate>Контактная
                             информация</h2>
 
                             <div className="flex items-center mb-2">

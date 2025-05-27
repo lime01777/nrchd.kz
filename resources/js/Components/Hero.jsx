@@ -131,7 +131,7 @@ function Hero({
           
           {/* Контентная часть */}
           <div className="relative h-full z-10 lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
-            <h1 className={`title-font text-4xl my-auto font-semibold ${textColorClass} text-shadow-lg`}>
+            <h1 className={`title-font text-4xl my-auto font-semibold ${textColorClass} text-shadow-lg`} data-translate>
               {h1}
             </h1>
           </div>

@@ -13,19 +13,19 @@ export default function HumanResources() {
     <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify'>
-          <p className="mb-4 tracking-wide text-gray-700 leading-relaxed">
+          <p className="mb-4 tracking-wide text-gray-700 leading-relaxed" data-translate>
             Кадровые ресурсы здравоохранения — не абстрактные значения, а настоящие врачи, медицинские сестры, фармацевты и другие работники системы здравоохранения, которые ежедневно заботятся о нашем здоровье. Чтобы эта система работала слаженно и эффективно, действует Национальная обсерватория кадровых ресурсов здравоохранения (далее - Обсерватория).
           </p>
           
           <div className="w-full overflow-hidden transition-all duration-500 ease-in-out mt-4">
-            <h3 className="font-bold text-lg text-gray-800 mb-3">Ключевая задача Обсерватории</h3>
-            <p className="mb-4 tracking-wide text-gray-700 leading-relaxed">
+            <h3 className="font-bold text-lg text-gray-800 mb-3" data-translate>Ключевая задача Обсерватории</h3>
+            <p className="mb-4 tracking-wide text-gray-700 leading-relaxed" data-translate>
               Оказание методологического сопровождения государственной политики в области развития кадровых ресурсов здравоохранения путем:
             </p>
             <ul className="list-disc pl-6 mb-4 space-y-1">
-              <li>разработки и внедрения инструментов эффективного планирования и прогнозирования потребности в медицинских кадрах;</li>
-              <li>систематического анализа и мониторинга обеспеченности медицинскими кадрами;</li>
-              <li>разработки методических рекомендаций направленных на устойчивое развитие и оптимальное распределение кадровых ресурсов здравоохранения.</li>
+              <li data-translate>разработки и внедрения инструментов эффективного планирования и прогнозирования потребности в медицинских кадрах;</li>
+              <li data-translate>систематического анализа и мониторинга обеспеченности медицинскими кадрами;</li>
+              <li data-translate>разработки методических рекомендаций направленных на устойчивое развитие и оптимальное распределение кадровых ресурсов здравоохранения.</li>
             </ul>
             <p className="mb-4 tracking-wide text-gray-700 leading-relaxed">
               Проводимая работа помогает принимать обоснованные решения и обеспечивает сбалансированное развитие системы здравоохранения.

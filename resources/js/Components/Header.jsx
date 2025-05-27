@@ -242,13 +242,14 @@ export default function Header() {
                     className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0"
                     onClick={() => {
                         console.log('EN button clicked (desktop)');
-                        import('../Utils/translator-simple.js')
-                            .then(translator => {
-                                translator.translatePage('en');
+                        import('../Utils/LanguageManager.js')
+                            .then(module => {
+                                const languageManager = module.default;
+                                languageManager.switchLanguage('en');
                             })
                             .catch(err => {
-                                console.error('Translator error:', err);
-                                alert('Ошибка загрузки переводчика: ' + err.message);
+                                console.error('LanguageManager error:', err);
+                                alert('Ошибка при переключении языка: ' + err.message);
                             });
                     }}
                 >EN
@@ -257,12 +258,13 @@ export default function Header() {
                     className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0"
                     onClick={() => {
                         console.log('RU button clicked (desktop)');
-                        import('../Utils/translator-simple.js')
-                            .then(translator => {
-                                translator.translatePage('ru');
+                        import('../Utils/LanguageManager.js')
+                            .then(module => {
+                                const languageManager = module.default;
+                                languageManager.switchLanguage('ru');
                             })
                             .catch(err => {
-                                console.error('Translator error:', err);
+                                console.error('LanguageManager error:', err);
                             });
                     }}
                 >RU
@@ -271,12 +273,13 @@ export default function Header() {
                     className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0"
                     onClick={() => {
                         console.log('KZ button clicked (desktop)');
-                        import('../Utils/translator-simple.js')
-                            .then(translator => {
-                                translator.translatePage('kz');
+                        import('../Utils/LanguageManager.js')
+                            .then(module => {
+                                const languageManager = module.default;
+                                languageManager.switchLanguage('kz');
                             })
                             .catch(err => {
-                                console.error('Translator error:', err);
+                                console.error('LanguageManager error:', err);
                             });
                     }}
                 >KZ
@@ -286,7 +289,7 @@ export default function Header() {
             {/* Бургер-меню (мобильная версия) */}
             <div className="lg:hidden flex justify-between w-full">
                 <Link href={route('home')} className="flex font-medium items-start text-gray-900 mb-4 md:mb-0">
-                <span className="text-xs uppercase leading-tight">национальный научный центр развития <br />здравоохранения им. салидат каирбековой</span>
+                <span className="text-xs uppercase leading-tight" data-translate>национальный научный центр развития <br />здравоохранения им. салидат каирбековой</span>
                 </Link>
                 <button onClick={()=> setMenuOpen(!menuOpen)}
                     className="text-gray-900 focus:outline-none content-center mb-4"

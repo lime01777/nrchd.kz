@@ -247,6 +247,69 @@ class LanguageManager {
   /**
    * Применить текущий язык к странице
    */
+  /**
+   * Перевести текст с помощью API
+   * @param {string} text - Текст для перевода
+   * @param {string} sourceLang - Исходный язык
+   * @param {string} targetLang - Целевой язык
+   * @returns {Promise<string>} - Переведенный текст
+   */
+  async translateText(text, sourceLang, targetLang) {
+    if (!text || text.trim() === '') {
+      return text;
+    }
+    
+    // Проверяем, есть ли уже такой перевод в кэше
+    const cacheKey = `${text}_${targetLang}`;
+    const cachedTranslation = localStorage.getItem(cacheKey);
+    if (cachedTranslation) {
+      console.log(`[LanguageManager] Using cached translation for: ${text.substring(0, 30)}...`);
+      return cachedTranslation;
+    }
+    
+    try {
+      // Получаем CSRF токен
+      const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      if (!token) {
+        console.error('[LanguageManager] CSRF token not found for translation');
+        return text;
+      }
+      
+      // Отправляем запрос на перевод
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': token
+        },
+        body: JSON.stringify({
+          text: text,
+          source: sourceLang,
+          target: targetLang,
+          cache: true // Сохранять перевод в БД
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Translation request failed: ${response.status} ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success && data.translation) {
+        // Кэшируем перевод для будущего использования
+        localStorage.setItem(cacheKey, data.translation);
+        return data.translation;
+      } else {
+        console.error(`[LanguageManager] Translation error: ${data.message || 'Unknown error'}`);
+        return text; // Возвращаем оригинальный текст в случае ошибки
+      }
+    } catch (error) {
+      console.error(`[LanguageManager] Error translating text: ${error.message}`);
+      return text; // Возвращаем оригинальный текст в случае ошибки
+    }
+  }
+  
   async applyLanguage() {
     // Проверяем и сохраняем текущий язык снова
     const savedLanguage = this.getSavedLanguage();
@@ -543,6 +606,78 @@ class LanguageManager {
     }
     
     return translations;
+  }
+  
+  /**
+   * Собирает все текстовые элементы на странице для перевода
+   * @returns {Array} Массив объектов с текстовыми элементами
+   */
+  collectTextElements() {
+    const elements = [];
+    const translatableElements = document.querySelectorAll('[data-translate]');
+    
+    // Сначала обрабатываем элементы с атрибутом data-translate
+    translatableElements.forEach(element => {
+      // Пропускаем элементы, которые не нужно переводить
+      if (element.getAttribute('data-no-translate') === 'true') {
+        return;
+      }
+      
+      // Проверяем наличие полезного текста
+      const text = element.innerText?.trim();
+      if (text && text.length > 0) {
+        elements.push({
+          node: element,
+          originalText: text,
+          attributeName: null
+        });
+      }
+      
+      // Проверяем атрибуты, которые нужно перевести
+      const translateAttributes = element.getAttribute('data-translate-attrs');
+      if (translateAttributes) {
+        translateAttributes.split(',').forEach(attr => {
+          attr = attr.trim();
+          const attrValue = element.getAttribute(attr);
+          if (attrValue && attrValue.trim().length > 0) {
+            elements.push({
+              node: element,
+              originalText: attrValue,
+              attributeName: attr
+            });
+          }
+        });
+      }
+    });
+    
+    // Дополнительно ищем все элементы с атрибутом data-i18n
+    const i18nElements = document.querySelectorAll('[data-i18n]');
+    i18nElements.forEach(element => {
+      const text = element.innerText?.trim();
+      if (text && text.length > 0) {
+        elements.push({
+          node: element,
+          originalText: text,
+          attributeName: null
+        });
+      }
+    });
+    
+    // Также добавляем элементы с классом 'translatable'
+    const customElements = document.querySelectorAll('.translatable');
+    customElements.forEach(element => {
+      const text = element.innerText?.trim();
+      if (text && text.length > 0) {
+        elements.push({
+          node: element,
+          originalText: text,
+          attributeName: null
+        });
+      }
+    });
+    
+    console.log(`[LanguageManager] Collected ${elements.length} text elements for translation`);
+    return elements;
   }
   
   /**
