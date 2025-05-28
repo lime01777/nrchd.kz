@@ -7,7 +7,7 @@ function FileAccordTitle({title, isOpen, toggleOpen}) {
       onClick={toggleOpen}
     >
         <div className='flex flex-grow'>
-            <h1 className="sm:text-xl text-lg font-semibold title-font text-gray-900">{title}</h1>
+            <h1 className="sm:text-xl text-lg font-semibold title-font text-gray-900" data-translate>{title}</h1>
         </div>
         <div className='flex'>
             <div className="text-black inline-flex items-center">

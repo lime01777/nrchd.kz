@@ -23,13 +23,13 @@ function HeroFolder({ parentRoute, parentName, h1, bgColor = 'bg-red-100', butto
               >
                 <path d="M19 12H5M12 19l-7-7 7-7"></path>
               </svg>
-              {parentName}
+              <span data-translate>{parentName}</span>
             </Link>
           </div>
         )}
         
         <div className="absolute bottom-[20%] left-[10%]">
-          <h1 className="text-6xl font-bold text-gray-900">{h1}</h1>
+          <h1 className="text-6xl font-bold text-gray-900" data-translate>{h1}</h1>
         </div>
       </div>
     </section>

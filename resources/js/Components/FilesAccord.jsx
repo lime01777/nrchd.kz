@@ -62,11 +62,11 @@ export default function FilesAccord({ sections: propSections, bgColor = 'bg-gree
   };
 
   if (loading) {
-    return <div className="text-center py-4">Загрузка файлов...</div>;
+    return <div className="text-center py-4" data-translate>Загрузка файлов...</div>;
   }
 
   if (error) {
-    return <div className="text-center py-4 text-red-500">{error}</div>;
+    return <div className="text-center py-4 text-red-500" data-translate>{error}</div>;
   }
 
   if (sections.length === 0) {

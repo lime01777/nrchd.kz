@@ -105,7 +105,7 @@ export default function BranchTemplate({ title, description, branchFolder, leade
                 {/* 4. Блок руководство */}
                 <Leadership 
                     leaders={branchLeaders} 
-                    title="Руководство филиала"
+                    title="Руководство филиала" data-translate-title="true"
                     bgColor="bg-blue-50"
                 />
                 
@@ -113,12 +113,12 @@ export default function BranchTemplate({ title, description, branchFolder, leade
                 <section className="text-gray-600 body-font pb-8">
                     <div className="container px-5 py-12 mx-auto">
                         <div className="bg-blue-100 p-6 rounded-lg shadow-sm">
-                            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                            <h3 className="text-xl font-semibold text-gray-800 mb-4" data-translate>
                                 Контактная информация
                             </h3>
                             
                             <div className="pl-4 border-l-4 border-blue-300 mt-5 mb-5">
-                                <p className="font-medium text-gray-700 mb-1">{title}</p>
+                                <p className="font-medium text-gray-700 mb-1" data-translate>{title}</p>
                                 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
                                     <div className="flex items-start">
@@ -128,8 +128,8 @@ export default function BranchTemplate({ title, description, branchFolder, leade
                                             </svg>
                                         </div>
                                         <div>
-                                            <p className="text-sm text-gray-500 mb-1">Адрес:</p>
-                                            <p className="text-base font-medium">г. Нур-Султан, ул. Примерная, 123</p>
+                                            <p className="text-sm text-gray-500 mb-1" data-translate>Адрес:</p>
+                                            <p className="text-base font-medium" data-translate>г. Нур-Султан, ул. Примерная, 123</p>
                                         </div>
                                     </div>
                                     
@@ -140,7 +140,7 @@ export default function BranchTemplate({ title, description, branchFolder, leade
                                             </svg>
                                         </div>
                                         <div>
-                                            <p className="text-sm text-gray-500 mb-1">Телефон:</p>
+                                            <p className="text-sm text-gray-500 mb-1" data-translate>Телефон:</p>
                                             <p className="text-base font-medium">+7(7172) 700-000</p>
                                         </div>
                                     </div>
@@ -153,7 +153,7 @@ export default function BranchTemplate({ title, description, branchFolder, leade
                                             </svg>
                                         </div>
                                         <div>
-                                            <p className="text-sm text-gray-500 mb-1">Электронный адрес:</p>
+                                            <p className="text-sm text-gray-500 mb-1" data-translate>Электронный адрес:</p>
                                             <a href={`mailto:${branchFolder ? branchFolder.toLowerCase() : 'branch'}@nrchd.kz`} className="text-base font-medium text-blue-700 hover:underline">{branchFolder ? branchFolder.toLowerCase() : 'branch'}@nrchd.kz</a>
                                         </div>
                                     </div>
@@ -165,8 +165,8 @@ export default function BranchTemplate({ title, description, branchFolder, leade
                                             </svg>
                                         </div>
                                         <div>
-                                            <p className="text-sm text-gray-500 mb-1">Режим работы:</p>
-                                            <p className="text-base font-medium">Пн-Пт: 9:00-18:00</p>
+                                            <p className="text-sm text-gray-500 mb-1" data-translate>Режим работы:</p>
+                                            <p className="text-base font-medium" data-translate>Пн-Пт: 9:00-18:00</p>
                                         </div>
                                     </div>
                                 </div>

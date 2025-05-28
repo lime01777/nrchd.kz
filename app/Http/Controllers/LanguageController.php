@@ -97,10 +97,10 @@ class LanguageController extends Controller
                         ]);
                     }
                     
-                    $hash = \App\Models\StoredTranslation::generateHash($original, $language);
+                    $hash = StoredTranslation::generateHash($original, $language);
                     
                     // Сначала проверяем, есть ли уже этот перевод
-                    $existing = \App\Models\StoredTranslation::where('hash', $hash)
+                    $existing = StoredTranslation::where('hash', $hash)
                         ->where('target_language', $language)
                         ->first();
                     
@@ -113,7 +113,7 @@ class LanguageController extends Controller
                         }
                     } else {
                         // Создаем новый перевод
-                        \App\Models\StoredTranslation::create([
+                        StoredTranslation::create([
                             'original_text' => $original,
                             'translated_text' => $translated,
                             'target_language' => $language,
@@ -124,7 +124,7 @@ class LanguageController extends Controller
                         ]);
                         $savedCount++;
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Log::error('Error saving translation', [
                         'error' => $e->getMessage(),
                         'original_length' => mb_strlen($original ?? ''),
@@ -144,7 +144,7 @@ class LanguageController extends Controller
         }
         
         // Получаем переводы для этой страницы из БД
-        $translations = \App\Models\StoredTranslation::where('target_language', $language)
+        $translations = StoredTranslation::where('target_language', $language)
             ->where(function($query) use ($pageUrl) {
                 $query->where('page_url', 'LIKE', '%' . $pageUrl . '%')
                       ->orWhereNull('page_url');

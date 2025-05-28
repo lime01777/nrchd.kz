@@ -63,7 +63,7 @@ function VideoModal({ videoUrl, isOpen, onClose, fileName }) {
         className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
       >
         <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-          <h3 className="text-lg font-medium text-gray-900 truncate">{displayName}</h3>
+          <h3 className="text-lg font-medium text-gray-900 truncate" data-translate>{displayName}</h3>
           <button 
             onClick={onClose} 
             className="text-gray-400 hover:text-gray-500 focus:outline-none"
@@ -90,7 +90,7 @@ function VideoModal({ videoUrl, isOpen, onClose, fileName }) {
             onClick={onClose} 
             className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-md"
           >
-            Закрыть
+            <span data-translate>Закрыть</span>
           </button>
         </div>
       </div>

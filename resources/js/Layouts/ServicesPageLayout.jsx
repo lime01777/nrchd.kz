@@ -3,7 +3,7 @@ import Header from '@/Components/Header';
 import Footer from '@/Components/Footer';
 import { Link } from '@inertiajs/react';
 
-export default function ServicesPageLayout({ children, title, img, bgColor = "bg-yellow-100", customForm, hideForm = false }) {
+export default function ServicesPageLayout({ children, title, img, bgColor = "bg-blue-100", customForm, hideForm = false }) {
   const [formData, setFormData] = useState({
     name: '',
     organization: '',

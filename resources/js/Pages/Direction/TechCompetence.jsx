@@ -111,4 +111,4 @@ export default function TechCompetence() {
   );
 }
 
-TechCompetence.layout = (page) => <LayoutDirection img={'techcomtence'} h1={'Отраслевой центр технологических компетенций'} useVideo={true} className="text-white">{page}</LayoutDirection>;
+TechCompetence.layout = (page) => <LayoutDirection img={'techcomtence'} h1={'Отраслевой центр технологических компетенций'} useVideo={true}>{page}</LayoutDirection>;

@@ -10,6 +10,7 @@ import {
     Title,
     Tooltip,
     Legend,
+    Filler, // Добавляем плагин Filler для поддержки опции fill
 } from 'chart.js';
 
 ChartJS.register(
@@ -20,7 +21,8 @@ ChartJS.register(
     BarElement,
     Title, 
     Tooltip, 
-    Legend
+    Legend,
+    Filler // Регистрируем плагин Filler
 );
 
 const ChartChlank = ({ data, options }) => {

@@ -3,8 +3,8 @@ import LayoutBranch from '@/Layouts/LayoutBranch';
 import { Head } from '@inertiajs/react';
 
 export default function Abay() {
-    const title = "Филиал области Абай";
-    const description = "Филиал области Абай занимается координацией и реализацией государственной политики в сфере здравоохранения на территории области Абай. Филиал осуществляет мониторинг качества медицинских услуг, проводит анализ состояния здоровья населения и разрабатывает рекомендации по улучшению системы здравоохранения в регионе.";
+    const title = "Филиал области Абай"; // data-translate добавлен в компоненте LayoutBranch
+    const description = "Филиал области Абай занимается координацией и реализацией государственной политики в сфере здравоохранения на территории области Абай. Филиал осуществляет мониторинг качества медицинских услуг, проводит анализ состояния здоровья населения и разрабатывает рекомендации по улучшению системы здравоохранения в регионе."; // data-translate добавлен в разметке страницы
     
     // Данные руководства филиала
     const leaders = [
@@ -32,7 +32,7 @@ export default function Abay() {
             <section className="text-gray-600 body-font pb-8">
                 <div className="container px-5 py-12 mx-auto">
                     <div className="flex flex-wrap px-12 text-justify">
-                        <p className="mb-4 tracking-wide text-gray-700 leading-relaxed">
+                        <p className="mb-4 tracking-wide text-gray-700 leading-relaxed" data-translate>
                             {description}
                         </p>
                     </div>

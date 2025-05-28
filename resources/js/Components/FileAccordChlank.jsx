@@ -236,20 +236,20 @@ function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date
       <div className="w-full">
         <div className="flex flex-col h-[200px] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
           <div className="flex-grow overflow-hidden">
-            <h2 className="font-medium leading-normal text-gray-800 line-clamp-6 mb-3">{description}</h2>
+            <h2 className="font-medium leading-normal text-gray-800 line-clamp-6 mb-3" data-translate>{description}</h2>
           </div>
           <div className="flex mt-auto justify-between items-center">
             <div className="flex space-x-2">
               <button
                 onClick={openModal}
                 className="cursor-pointer text-black inline-flex items-center border-gray-300 border rounded-lg px-3 py-2 text-sm hover:bg-gray-50 transition-colors duration-200">
-                Открыть
+                <span data-translate>Открыть</span>
               </button>
               <a
                 href={url}
                 download
                 className="cursor-pointer text-black inline-flex items-center border-gray-300 border rounded-lg px-3 py-2 text-sm hover:bg-gray-50 transition-colors duration-200">
-                Скачать
+                <span data-translate>Скачать</span>
               </a>
             </div>
             <div className="flex flex-col text-sm">
@@ -268,7 +268,7 @@ function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={closeModal}>
           <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center p-4 border-b">
-              <h3 className="text-xl font-semibold text-gray-800 truncate">
+              <h3 className="text-xl font-semibold text-gray-800 truncate" data-translate>
                 {description}
               </h3>
               <button 
@@ -284,7 +284,7 @@ function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center h-[70vh]">
                   <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900 mb-4"></div>
-                  <p className="text-gray-600">Подготовка документа к просмотру...</p>
+                  <p className="text-gray-600" data-translate>Подготовка документа к просмотру...</p>
                 </div>
               ) : error ? (
                 <div className="flex flex-col items-center justify-center h-[70vh]">
@@ -293,7 +293,7 @@ function FileAccordChlank({ description, filetype, img, filesize = "24 KB", date
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                   </div>
-                  <p className="text-gray-600 mb-4">{error}</p>
+                  <p className="text-gray-600 mb-4" data-translate>{error}</p>
                   <a 
                     href={url} 
                     target="_blank" 

@@ -344,7 +344,7 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
     return (
       <div className="py-8 text-center">
         <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-500"></div>
-        <p className="mt-2">Загрузка файлов...</p>
+        <p className="mt-2" data-translate>Загрузка файлов...</p>
       </div>
     );
   }
@@ -364,7 +364,7 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
       )}
       
       {files.length === 0 ? (
-        <div className="py-8 text-center text-gray-500 bg-white rounded-lg shadow border border-gray-200">
+        <div className="py-8 text-center text-gray-500 bg-white rounded-lg shadow border border-gray-200" data-translate>
           Нет доступных документов
         </div>
       ) : (
@@ -391,14 +391,14 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
                       <button
                         onClick={(e) => handleFileClick(file, e)}
                         className="cursor-pointer text-black inline-flex items-center border-gray-300 border rounded-lg px-3 py-2 text-sm hover:bg-gray-50 transition-colors duration-200">
-                        Открыть
+                        <span data-translate>Открыть</span>
                       </button>
                       {!hideDownload && (
                         <a
                           href={file.url}
                           download
                           className="cursor-pointer text-black inline-flex items-center border-gray-300 border rounded-lg px-3 py-2 text-sm hover:bg-gray-50 transition-colors duration-200">
-                          Скачать
+                          <span data-translate>Скачать</span>
                         </a>
                       )}
                     </div>
@@ -438,7 +438,7 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center h-[70vh]">
                   <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900 mb-4"></div>
-                  <p className="text-gray-600">Подготовка документа к просмотру...</p>
+                  <p className="text-gray-600" data-translate>Подготовка документа к просмотру...</p>
                 </div>
               ) : modalError ? (
                 <div className="flex flex-col items-center justify-center h-[70vh]">

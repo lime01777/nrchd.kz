@@ -46,4 +46,4 @@ export default function MedicalExpertise() {
   );
 }
 
-MedicalExpertise.layout = (page) => <ServicesPageLayout title="Научно-медицинская экспертиза" img="service-expertise">{page}</ServicesPageLayout>;
+MedicalExpertise.layout = (page) => <ServicesPageLayout title="Научно-медицинская экспертиза" img="service-expertise" bgColor='bg-gray-200'>{page}</ServicesPageLayout>;

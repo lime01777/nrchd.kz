@@ -158,4 +158,4 @@ export default function AdsEvaluation() {
   );
 }
 
-AdsEvaluation.layout = (page) => <ServicesPageLayout title="Оценка рекламных материалов" img="service-ads" hideForm={true}>{page}</ServicesPageLayout>;
+AdsEvaluation.layout = (page) => <ServicesPageLayout title="Оценка рекламных материалов" img="service-ads" bgColor="bg-yellow-50" hideForm={true}>{page}</ServicesPageLayout>;

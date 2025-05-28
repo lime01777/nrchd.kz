@@ -8,7 +8,7 @@ export default function Leadership({ leaders, title = "Руководство", 
   return (
     <section className="text-gray-600 body-font">
       <div className="container px-5 py-12 mx-auto">
-        <h2 className="sm:text-3xl text-2xl font-medium title-font mb-8 text-gray-900 text-center">
+        <h2 className="sm:text-3xl text-2xl font-medium title-font mb-8 text-gray-900 text-center" data-translate>
           {title}
         </h2>
         <div className="flex flex-wrap -m-4">
@@ -30,13 +30,13 @@ export default function Leadership({ leaders, title = "Руководство", 
                     </div>
                   )}
                   <div>
-                    <h2 className="text-lg font-medium text-gray-900 title-font mb-1">{leader.name}</h2>
-                    <p className="leading-relaxed text-base">{leader.position}</p>
+                    <h2 className="text-lg font-medium text-gray-900 title-font mb-1" data-translate>{leader.name}</h2>
+                    <p className="leading-relaxed text-base" data-translate>{leader.position}</p>
                   </div>
                 </div>
                 {leader.contact && (
                   <div className="mt-2 mb-2 border-t pt-4">
-                    <p className="text-sm text-gray-500 mb-1">Контакты:</p>
+                    <p className="text-sm text-gray-500 mb-1" data-translate>Контакты:</p>
                     {leader.phone && (
                       <p className="text-sm mb-1 flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
