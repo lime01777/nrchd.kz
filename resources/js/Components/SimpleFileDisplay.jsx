@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 
-function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, limit, singleColumn = false, hideDownload = false }) {
+function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, limit, singleColumn = false, hideDownload = false, searchTerm = '' }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -340,6 +340,23 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
     setModalError(null);
   };
 
+  // Filter files based on search term
+  const filteredFiles = useMemo(() => {
+    if (!searchTerm || searchTerm.trim() === '') {
+      return files;
+    }
+    
+    const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+    
+    return files.filter(file => {
+      const fileName = (file.name || '').toLowerCase();
+      const fileDescription = (file.description || '').toLowerCase();
+      
+      return fileName.includes(normalizedSearchTerm) || 
+             fileDescription.includes(normalizedSearchTerm);
+    });
+  }, [files, searchTerm]);
+
   if (loading) {
     return (
       <div className="py-8 text-center">
@@ -363,13 +380,13 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
         <h2 className="text-2xl font-semibold mb-6 text-gray-800">{title}</h2>
       )}
       
-      {files.length === 0 ? (
+      {filteredFiles.length === 0 ? (
         <div className="py-8 text-center text-gray-500 bg-white rounded-lg shadow border border-gray-200" data-translate>
           Нет доступных документов
         </div>
       ) : (
         <div className={`grid ${singleColumn ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} gap-4`}>
-          {files.map((file, index) => {
+          {filteredFiles.map((file, index) => {
             // Подготовка полей файла, учитывая разные форматы данных
             const fileName = file.name || '';
             const fileDescription = file.description || file.name || 'Файл';
