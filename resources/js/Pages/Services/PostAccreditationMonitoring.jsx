@@ -374,5 +374,5 @@ PostAccreditationMonitoring.layout = (page) => <ServicesPageLayout
   title="Постаккредитационный мониторинг" 
   img="service-accreditation" 
   bgColor="bg-blue-300"
-  customForm={<PostMonitoringForm />}
+  hideForm={true}
 >{page}</ServicesPageLayout>;

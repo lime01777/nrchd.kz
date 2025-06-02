@@ -11,7 +11,7 @@ export default function ClinicalProtocolsCatalog() {
       <section className="text-gray-600 body-font">
         <div className="container px-5 mx-auto">
           <div className="bg-white p-4 rounded-lg shadow-sm">
-            <div className="relative w-full h-[800px]">
+            <div className="relative w-full h-[1000px]">
               <iframe 
                 src="https://diseases.medelement.com/rcrz" 
                 width="100%" 
@@ -30,7 +30,7 @@ export default function ClinicalProtocolsCatalog() {
 
 ClinicalProtocolsCatalog.layout = page => <LayoutFolderChlank 
   bgColor="bg-white"
-  h1="Клинический протокол" 
+  h1="Утвержденные клинические протоколы" 
   parentRoute={route('clinical.protocols')} 
   parentName="Клинические протоколы"
   heroBgColor="bg-blue-100"

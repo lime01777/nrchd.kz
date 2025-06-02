@@ -39,7 +39,7 @@ export default function Header() {
         { title: "Аккредитация", url: "medical.accreditation"},
         { title: "Оценка технологий здравоохранения", url: "health.rate"},
         { title: "Клинические протоколы", url: "clinical.protocols"},
-        { title: "Стратегические инициативы и межродовое сотрудничество", url: "strategic.initiatives"},
+        { title: "Стратегические инициативы и международное сотрудничество", url: "strategic.initiatives"},
         { title: "Рейтинг медицинских организаций", url: "medical.rating"},
         { title: "Медицинская наука", url: "medical.science"},
         { title: "Лекарственная политика", url: "drug.policy"},

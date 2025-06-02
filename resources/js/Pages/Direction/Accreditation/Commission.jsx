@@ -30,8 +30,22 @@ export default function Commission() {
             </p>
             
             <h3 className="text-lg font-bold text-gray-800 mb-4">Состав аккредитационной комиссии ННЦРЗ</h3>
-            
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+            <div className="flex flex-col items-center">
+                <div className="w-40 h-48 mb-3 rounded-lg overflow-hidden bg-gray-100 shadow-md">
+                  <img src="/img/Commision/2.png" alt="Фото Мукашева Айгуль Сагатовна" className="w-full h-full object-cover" />
+                </div>
+                <h4 className="text-center font-medium text-gray-800">Байжунусов Эрик Абенович</h4>
+              </div>
+              
+              <div className="flex flex-col items-center">
+                <div className="w-40 h-48 mb-3 rounded-lg overflow-hidden bg-gray-100 shadow-md">
+                  <img src="/img/Commision/4.png" alt="Фото Алиева Гульнара Танатовна" className="w-full h-full object-cover" />
+                </div>
+                <h4 className="text-center font-medium text-gray-800">Сексенбаев Бахытжан Дерибсалиевич</h4>
+              </div>
+
+
               <div className="flex flex-col items-center">
                 <div className="w-40 h-48 mb-3 rounded-lg overflow-hidden bg-gray-100 shadow-md">
                   <img src="/img/Commision/1.png" alt="Фото Сарсембаев Канат Талгатович" className="w-full h-full object-cover" />
@@ -41,24 +55,11 @@ export default function Commission() {
               
               <div className="flex flex-col items-center">
                 <div className="w-40 h-48 mb-3 rounded-lg overflow-hidden bg-gray-100 shadow-md">
-                  <img src="/img/Commision/2.png" alt="Фото Мукашева Айгуль Сагатовна" className="w-full h-full object-cover" />
-                </div>
-                <h4 className="text-center font-medium text-gray-800">Байжунусов Эрик Абенович</h4>
-              </div>
-              
-              <div className="flex flex-col items-center">
-                <div className="w-40 h-48 mb-3 rounded-lg overflow-hidden bg-gray-100 shadow-md">
                   <img src="/img/Commision/3.png" alt="Фото Нурманбетов Даулет Нурманбетович" className="w-full h-full object-cover" />
                 </div>
                 <h4 className="text-center font-medium text-gray-800">Локшин Вячеслав Нотанович</h4>
               </div>
-              
-              <div className="flex flex-col items-center">
-                <div className="w-40 h-48 mb-3 rounded-lg overflow-hidden bg-gray-100 shadow-md">
-                  <img src="/img/Commision/4.png" alt="Фото Алиева Гульнара Танатовна" className="w-full h-full object-cover" />
-                </div>
-                <h4 className="text-center font-medium text-gray-800">Сексенбаев Бахытжан Дерибсалиевич</h4>
-              </div>
+
               
               <div className="flex flex-col items-center">
                 <div className="w-40 h-48 mb-3 rounded-lg overflow-hidden bg-gray-100 shadow-md">
