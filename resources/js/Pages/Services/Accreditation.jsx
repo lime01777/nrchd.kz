@@ -114,7 +114,7 @@ export default function Accreditation() {
         </div>
         
         <ActualFile 
-          title="Действуйщий документ" 
+          title="Действующий документ" 
           folder="Услуги/Аккредитация/Документ"
           bgColor="bg-purple-50"
           hideDownload={true}
@@ -146,7 +146,7 @@ export default function Accreditation() {
     <div className="bg-white rounded-lg p-6 shadow-sm">
       <h3 className="text-lg font-semibold text-gray-800 mb-3">Отдел по аккредитации</h3>
       <p className="text-gray-600">г. Астана, улица Мангилик Ел, 20</p>
-      <p className="text-gray-600">8-7172-648-951, вн: 1014</p>
+      <p className="text-gray-600">8-7172-648-951, вн: 1014, 1049, 1079</p>
       <div className="flex flex-col space-y-2 mb-3">
         <div className="flex items-center">
           <a href="https://wa.me/77472996410" target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-green-600 hover:text-green-800 transition-colors">

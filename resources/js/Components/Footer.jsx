@@ -39,13 +39,13 @@ const FooterLinks = () => {
                                 </a>
                             </div>
                             <div className="flex items-center mt-2 mb-1">
-                                <a href="tel:+77172709510" className="hover:text-blue-600 hover:underline">
-                                    <span className="font-medium">+7 (7172) 70-95-10</span> <span className="text-gray-500 text-sm"></span>
+                                <a href="tel:+77172648951" className="hover:text-blue-600 hover:underline">
+                                    <span className="font-medium">+7 (7172) 648-951</span> <span className="text-gray-500 text-sm"></span>
                                 </a>
                             </div>
                             <div className="flex items-center">
-                                <a href="tel:+77172709501" className="hover:text-blue-600 hover:underline">
-                                    <span className="font-medium">+7 (7172) 70-95-01</span> <span className="text-gray-500 text-sm"></span>
+                                <a href="tel:+77172648951" className="hover:text-blue-600 hover:underline">
+                                    <span className="font-medium">+7 (7172) 648-951</span> <span className="text-gray-500 text-sm"></span>
                                 </a>
                             </div>
 
