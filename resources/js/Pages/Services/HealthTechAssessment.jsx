@@ -5,7 +5,7 @@ import ServiceTimeline from '@/Components/ServiceTimeline';
 
 export default function HealthTechAssessment() {
   const timelineItems = [
-    { title: "Регистрация заявки", value: "1 рабочий день" },
+    { title: "Регистрация заявки", value: "10 рабочих дней" },
     { title: "Полный отчет оценки технологий здравоохранения", value: "не более 3 месяцев" },
     { title: "Краткий отчет оценки технологий здравоохранения", value: "от 1 до 3 месяцев" },
     { title: "Справочный обзор технологии здравоохранения", value: "не более 1 месяца" }
