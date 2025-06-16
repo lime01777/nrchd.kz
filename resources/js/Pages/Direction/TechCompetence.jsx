@@ -162,96 +162,108 @@ export default function TechCompetence() {
         />
       )}
       
-      <section className="text-gray-600 body-font pb-24">
-        <div className="container px-5 mx-auto">
-          <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center"></h2>
-          <div className="bg-blue-50 p-8 rounded-lg shadow-sm">
-            <div className="flex flex-col md:flex-row">
-              {/* Форма слева (1/3) */}
-              <div className="w-full md:w-1/3 md:pr-8 mb-8 md:mb-0">
-                {/* Form heading */}
-                <div className="mb-6">
-                  <h5 className="text-base text-gray-800 font-medium">
-                    Заявка
-                  </h5>
-                </div>
+      <section className="text-gray-600 body-font overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-100 to-blue-50 h-full w-full py-12">
+          <div className="container mx-auto px-5">
+            <div className="flex flex-col md:flex-row items-center">
+              {/* Заголовок и описание слева (2/3) */}
+              <div className="w-full md:w-3/5 md:pr-16 mb-10 md:mb-0">
+                <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Отраслевой центр технологических компетенций</h2>
+                <p className="text-gray-600 leading-relaxed mb-6 text-xl">
+
+Мы рассматриваем предложения от стартапов, врачей и научных коллективов и предоставляем поддержку по вопросам оценки технологии, правовой проработки, путей коммерциализации и интеграции в систему здравоохранения.
+Наша задача — сопровождать перспективные решения на ранних этапах развития и содействовать их продвижению в рамках действующих нормативных и стратегических документов МЗ РК.
+                </p>
+
                 
-                {formSubmitted ? (
-                  <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-md mb-6">
+                {formSubmitted && (
+                  <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-md my-4">
                     Спасибо за вашу заявку! Мы свяжемся с вами в ближайшее время.
                   </div>
-                ) : null}
-                
-                <form onSubmit={handleSubmit}>
+                )}
+              </div>
+              
+              {/* Форма справа (1/3) */}
+              <div className="w-full md:w-2/5 md:pl-8 bg-white bg-opacity-50 p-6 rounded-lg">
+                <form onSubmit={handleSubmit} className="w-full">
                   {/* Name field */}
-                  <div className="mb-6">
-                    <div className="text-sm text-gray-600 mb-1">Как к вам обращаться</div>
+                  <div className="mb-8">
+                    <div className="text-base text-gray-700 mb-2 font-medium">Как к вам обращаться <span className="text-red-500">*</span></div>
                     <input 
                       type="text"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full border-0 border-b border-gray-300 py-1 focus:outline-none focus:border-blue-500 bg-transparent"
+                      className="w-full border-0 border-b-2 border-gray-300 py-2 text-lg focus:outline-none focus:border-blue-500 bg-transparent"
                     />
                   </div>
                   
                   {/* Phone field */}
-                  <div className="mb-6">
-                    <div className="text-sm text-gray-600 mb-1">Телефон</div>
+                  <div className="mb-8">
+                    <div className="text-base text-gray-700 mb-2 font-medium">Телефон <span className="text-red-500">*</span></div>
                     <input 
                       type="tel"
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
                       required
-                      className="w-full border-0 border-b border-gray-300 py-1 focus:outline-none focus:border-blue-500 bg-transparent"
+                      className="w-full border-0 border-b-2 border-gray-300 py-2 text-lg focus:outline-none focus:border-blue-500 bg-transparent"
                     />
                   </div>
                   
                   {/* Email field */}
-                  <div className="mb-6">
-                    <div className="text-sm text-gray-600 mb-1">E-mail</div>
+                  <div className="mb-8">
+                    <div className="text-base text-gray-700 mb-2 font-medium">E-mail <span className="text-red-500">*</span></div>
                     <input 
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full border-0 border-b border-gray-300 py-1 focus:outline-none focus:border-blue-500 bg-transparent"
+                      className="w-full border-0 border-b-2 border-gray-300 py-2 text-lg focus:outline-none focus:border-blue-500 bg-transparent"
                     />
                   </div>
                   
                   {/* Project name field */}
-                  <div className="mb-6">
-                    <div className="text-sm text-gray-600 mb-1">Название проекта</div>
+                  <div className="mb-8">
+                    <div className="text-base text-gray-700 mb-2 font-medium">Название проекта</div>
                     <input 
                       type="text"
                       name="projectName"
                       value={formData.projectName}
                       onChange={handleChange}
-                      className="w-full border-0 border-b border-gray-300 py-1 focus:outline-none focus:border-blue-500 bg-transparent"
+                      className="w-full border-0 border-b-2 border-gray-300 py-2 text-lg focus:outline-none focus:border-blue-500 bg-transparent"
                     />
                   </div>
                   
                   {/* Detailed request field */}
-                  <div className="mb-6">
-                    <div className="text-sm text-gray-600 mb-1">Расскажите подробнее о запросе</div>
+                  <div className="mb-8">
+                    <div className="text-base text-gray-700 mb-2 font-medium">Расскажите о запросе</div>
                     <textarea
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
-                      rows="2"
-                      className="w-full border-0 border-b border-gray-300 py-1 focus:outline-none focus:border-blue-500 bg-transparent resize-none"
+                      rows="3"
+                      className="w-full border-0 border-b-2 border-gray-300 py-2 text-lg focus:outline-none focus:border-blue-500 bg-transparent resize-none"
                     ></textarea>
                   </div>
                   
-                  {/* File upload field */}
-                  <div className="mb-8">
-                    <div className="text-xs text-gray-500 font-medium mb-1">Презентация проекта:</div>
-                    <div className="flex items-center justify-between border-b border-gray-300 py-1">
-                      <span className="text-sm text-gray-400">загрузите файл сюда</span>
-                      <label htmlFor="file-upload" className="cursor-pointer">
+
+                  
+                  {/* Submit and file upload buttons */}
+                  <div className="w-full mb-4">
+                    {fileName && (
+                      <div className="flex items-center mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span className="text-blue-600">{fileName}</span>
+                        <span className="text-xs text-gray-500 ml-2">(.pdf, .doc, .docx, .ppt, .pptx)</span>
+                      </div>
+                    )}
+                    <div className="flex justify-end space-x-4">
+                      <label htmlFor="file-upload" className="cursor-pointer px-6 py-3 bg-gray-200 text-gray-700 text-sm uppercase tracking-wider hover:bg-gray-300 focus:outline-none flex items-center font-medium rounded-sm">
                         <input
                           id="file-upload"
                           name="file-upload"
@@ -261,64 +273,23 @@ export default function TechCompetence() {
                           onChange={handleFileChange}
                           accept=".pdf,.doc,.docx,.ppt,.pptx"
                         />
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0l-4 4m4-4v12" />
                         </svg>
+                        Прикрепить файл
                       </label>
+                      <button
+                        type="submit"
+                        className="px-8 py-3 bg-blue-600 text-white text-sm uppercase tracking-wider hover:bg-blue-700 focus:outline-none flex items-center font-medium"
+                      >
+                        подать заявку
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                      </button>
                     </div>
-                    {fileName && <div className="text-sm text-blue-600 mt-1">{fileName}</div>}
                   </div>
-                  
-                  {/* Submit button */}
-                  <button
-                    type="submit"
-                    className="w-full py-2.5 bg-blue-600 text-white text-xs uppercase tracking-wider hover:bg-blue-700 focus:outline-none"
-                  >
-                    подать заявку
-                  </button>
                 </form>
-              </div>
-              
-              {/* Текстовая информация справа (2/3) */}
-              <div className="w-full md:w-2/3 md:pl-8 border-t md:border-t-0 md:border-l border-gray-300 pt-6 md:pt-0 md:pl-8">
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Отраслевой центр технологических компетенций</h3>
-                  <p className="text-gray-600 mb-4 leading-relaxed">
-                    Отраслевой центр технологических компетенций (ОЦТК) ориентирован на содействие технологическому развитию и укреплению компетенций, способствуя прогрессу и инновациям в системе здравоохранения Республики Казахстан.
-                  </p>
-                </div>
-                
-                <div className="mb-6">
-                  <h4 className="text-lg font-medium text-gray-800 mb-3">Направления деятельности:</h4>
-                  <ul className="list-disc pl-5 space-y-2 mb-4 text-gray-600">
-                    <li>Foresight прогнозирование в сфере науки и технологий в здравоохранении</li>
-                    <li>Формирование технологических политик и стратегий</li>
-                    <li>Внедрение инновационных технологий в медицинские организации</li>
-                    <li>Развитие технологических компетенций медицинских специалистов</li>
-                  </ul>
-                </div>
-                
-                <div className="mb-6">
-                  <h4 className="text-lg font-medium text-gray-800 mb-3">Как мы можем помочь вам:</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div className="bg-blue-100 p-3 rounded-lg">
-                      <h5 className="font-medium mb-1">Аналитика и оценка</h5>
-                      <p className="text-sm text-gray-600">Оценка и анализ технологических решений в сфере здравоохранения</p>
-                    </div>
-                    <div className="bg-blue-100 p-3 rounded-lg">
-                      <h5 className="font-medium mb-1">Обучение и консультации</h5>
-                      <p className="text-sm text-gray-600">Повышение технологических компетенций специалистов системы здравоохранения</p>
-                    </div>
-                    <div className="bg-blue-100 p-3 rounded-lg">
-                      <h5 className="font-medium mb-1">Партнерство и сотрудничество</h5>
-                      <p className="text-sm text-gray-600">Взаимодействие с государственными и частными организациями здравоохранения</p>
-                    </div>
-                    <div className="bg-blue-100 p-3 rounded-lg">
-                      <h5 className="font-medium mb-1">Поддержка стартапов</h5>
-                      <p className="text-sm text-gray-600">Содействие в развитии и внедрении инновационных решений в здравоохранении</p>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
