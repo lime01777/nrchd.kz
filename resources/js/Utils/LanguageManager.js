@@ -3,7 +3,9 @@
  * Обеспечивает загрузку переводов и переключение языка для всего сайта
  */
 
-import { translatePage } from './translator-simple';
+// Импортируем только типы, чтобы избежать конфликтов
+// Сама функция translatePage будет импортирована динамически
+// import { translatePage } from './translator-simple';
 
 // Доступные языки
 const AVAILABLE_LANGUAGES = ['ru', 'kz', 'en'];
@@ -16,6 +18,9 @@ class LanguageManager {
     this.previousLanguage = DEFAULT_LANGUAGE;
     this.translationCache = {};
     this.initialized = false;
+    this.localTranslations = this.loadLocalTranslations();
+    this.pageTranslations = {};
+    this.lastCacheClear = Date.now();
   }
 
   /**
@@ -212,8 +217,13 @@ class LanguageManager {
   
   /**
    * Переключить язык сайта
+   * @param {string} language - Код языка для переключения
+   * @param {boolean} [showLoader=true] - Показывать ли индикатор загрузки
+   * @returns {Promise<void>}
    */
-  async switchLanguage(language) {
+  async switchLanguage(language, showLoader = true) {
+    console.time('switchLanguage');
+    
     if (!AVAILABLE_LANGUAGES.includes(language)) {
       console.error(`[LanguageManager] Invalid language: ${language}`);
       return;
@@ -224,24 +234,46 @@ class LanguageManager {
       return;
     }
     
+    // Показываем индикатор загрузки, если нужно
+    if (showLoader) {
+      this.showLanguageLoader(true);
+    }
+    
     // Сохраняем предыдущий язык для возможного восстановления
     this.previousLanguage = this.currentLanguage;
-    console.log(`[LanguageManager] Saving previous language: ${this.previousLanguage}`);
+    console.log(`[LanguageManager] Switching from ${this.previousLanguage} to ${language}`);
     
+    // Сохраняем новый язык во всех хранилищах
     this.currentLanguage = language;
     this.saveLanguagePreference(language);
     
-    // Синхронизировать с сервером
-    await this.syncLanguageWithServer();
-    
-    // Применить перевод к странице
-    await this.applyLanguage();
-    
-    // Обновить URL, добавив параметр языка
-    this.updateUrlWithLanguage();
-    
-    // Обновить кнопки языка
-    this.updateLanguageButtons();
+    try {
+      // Синхронизировать с сервером
+      await this.syncLanguageWithServer();
+      
+      // Применить перевод к странице
+      await this.applyLanguage();
+      
+      // Обновить URL, добавив параметр языка
+      this.updateUrlWithLanguage();
+      
+      // Обновить кнопки языка
+      this.updateLanguageButtons();
+      
+      if (showLoader) {
+        this.showLanguageLoader(false);
+      }
+      
+      // Событие о переключении языка
+      document.dispatchEvent(new CustomEvent('language-changed', { detail: { language } }));
+      
+      console.timeEnd('switchLanguage');
+    } catch (error) {
+      console.error('[LanguageManager] Error during language switch:', error);
+      if (showLoader) {
+        this.showLanguageLoader(false);
+      }
+    }
   }
   
   /**
@@ -311,6 +343,7 @@ class LanguageManager {
   }
   
   async applyLanguage() {
+    console.time('language-switch');
     // Проверяем и сохраняем текущий язык снова
     const savedLanguage = this.getSavedLanguage();
     if (savedLanguage !== this.currentLanguage) {
@@ -323,20 +356,42 @@ class LanguageManager {
     
     if (this.currentLanguage === DEFAULT_LANGUAGE) {
       console.log(`[LanguageManager] Using default language: ${DEFAULT_LANGUAGE}`);
+      console.timeEnd('language-switch');
       return;
     }
     
     console.log(`[LanguageManager] Applying language: ${this.currentLanguage}`);
     
     try {
-      // Получить переводы для текущей страницы с сервера
-      const translations = await this.fetchPageTranslations();
+      // Загружаем переводы из локального кэша сначала (быстрый путь)
+      const localCache = this.loadLocalTranslations();
       
-      // Применяем переводы, используя встроенный метод
-      await this.translatePageContent(translations);
+      // Принудительная загрузка переводов для текущей страницы в фоне
+      this.fetchPageTranslations().then(translations => {
+        // Сливаем с локальным кэшем, если получили новые переводы
+        if (translations && Object.keys(translations).length > 0) {
+          // Сохраняем в локальное хранилище
+          this.saveLocalTranslations(translations);
+        }
+      }).catch(err => {
+        console.error('[LanguageManager] Failed to fetch page translations:', err);
+      });
       
-      // Переводим специальные компоненты
-      this.translateSpecialComponents(translations);
+      // Используем импортированную translatePage из translator-simple.js
+      console.log(`[LanguageManager] Translating page to ${this.currentLanguage} using cached translations`);
+      try {
+        // Явно импортируем translatePage в случае, если был конфликт
+        const { translatePage } = await import('./translator-simple');
+        await translatePage(this.currentLanguage, localCache, () => {
+          console.log('[LanguageManager] Translation completed');
+          // Переводим специальные компоненты после основного перевода страницы
+          this.translateSpecialComponents(localCache);
+        });
+      } catch (translationError) {
+        console.error('[LanguageManager] Translation error:', translationError);
+      }
+      
+      console.timeEnd('language-switch');
       
       // Регистрируем MutationObserver для перевода новых элементов
       this.registerContentObserver();
@@ -346,7 +401,45 @@ class LanguageManager {
   }
   
   /**
-   * Получить переводы для текущей страницы с сервера
+   * Загрузить локальные переводы из localStorage
+   * @returns {Object} Загруженные переводы
+   */
+  loadLocalTranslations() {
+    try {
+      const localData = localStorage.getItem('siteTranslations');
+      if (localData) {
+        const parsed = JSON.parse(localData);
+        console.log('[LanguageManager] Loaded local translations:', Object.keys(parsed).length);
+        return parsed;
+      }
+    } catch (e) {
+      console.error('[LanguageManager] Error loading local translations:', e);
+      // В случае ошибки, попытаемся очистить повреждённые данные
+      localStorage.removeItem('siteTranslations');
+    }
+    return {};
+  }
+
+  /**
+   * Сохранить переводы локально
+   * @param {Object} translations - Переводы для сохранения
+   */
+  saveLocalTranslations(translations) {
+    try {
+      // Объединяем с существующими переводами
+      const updated = { ...this.localTranslations, ...translations };
+      this.localTranslations = updated;
+      
+      // Сохраняем в localStorage
+      localStorage.setItem('siteTranslations', JSON.stringify(updated));
+      console.log('[LanguageManager] Saved local translations:', Object.keys(updated).length);
+    } catch (e) {
+      console.error('[LanguageManager] Error saving local translations:', e);
+    }
+  }
+
+  /**
+   * Получить переводы для текущей страницы с сервера или из кэша
    * @returns {Object} Полученные переводы
    */
   async fetchPageTranslations() {
@@ -967,9 +1060,109 @@ class LanguageManager {
       }
     });
   }
+
+  /**
+   * Показать или скрыть индикатор загрузки при переключении языка
+   * @param {boolean} show - Показывать или скрывать индикатор
+   */
+  showLanguageLoader(show) {
+    // Предыдущий индикатор
+    let existingLoader = document.querySelector('#language-loader');
+    
+    // Если нужно скрыть индикатор
+    if (!show) {
+      if (existingLoader) {
+        existingLoader.classList.add('fade-out');
+        setTimeout(() => {
+          if (existingLoader && existingLoader.parentNode) {
+            existingLoader.parentNode.removeChild(existingLoader);
+          }
+        }, 500); // Задержка для анимации перед удалением
+      }
+      return;
+    }
+    
+    // Если индикатор уже существует, просто показываем его
+    if (existingLoader) {
+      existingLoader.classList.remove('fade-out');
+      return;
+    }
+    
+    // Создаем новый индикатор
+    const loader = document.createElement('div');
+    loader.id = 'language-loader';
+    loader.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    `;
+    
+    // Создаем контейнер с индикатором
+    const container = document.createElement('div');
+    container.style.cssText = `
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    `;
+    
+    // Создаем спиннер
+    const spinner = document.createElement('div');
+    spinner.style.cssText = `
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    `;
+    
+    // Добавляем стиль анимации
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      #language-loader.fade-out {
+        opacity: 0 !important;
+      }
+    `;
+    
+    // Добавляем текст
+    const text = document.createElement('div');
+    text.textContent = 'Переключение языка...';
+    text.style.cssText = 'font-size: 16px; color: #333;';
+    
+    // Собираем все элементы
+    container.appendChild(spinner);
+    container.appendChild(text);
+    loader.appendChild(container);
+    document.head.appendChild(style);
+    document.body.appendChild(loader);
+    
+    // Запускаем анимацию появления
+    setTimeout(() => {
+      loader.style.opacity = '1';
+    }, 10);
+  }
   
   /**
-   * Обновить стиль кнопок языка
+   * Обновить кнопки языка на странице
    */
   updateLanguageButtons() {
     const buttons = document.querySelectorAll('.lang-btn');

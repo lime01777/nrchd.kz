@@ -2,13 +2,60 @@
  * Advanced translation utility with translation caching
  * Uses Google Translate API through Laravel backend
  * And stores translations in the database for reuse
+ * 
+ * Updated version with improved integration with language-initializer
+ * 
+ * Optimized for faster language switching with local caching
  */
+
+import languageInitializer from './language-initializer';
 
 // Отключаем отображение сообщений о переводе
 const DEBUG = false;
 
 // Cache object to store translations during the current session
 const translationCache = {};
+
+// Локальное кэширование в localStorage
+const loadLocalTranslations = () => {
+  try {
+    const savedTranslations = localStorage.getItem('site_translations_cache');
+    if (savedTranslations) {
+      const parsed = JSON.parse(savedTranslations);
+      console.log(`[Translator] Loaded ${Object.keys(parsed).length} translations from localStorage`);
+      return parsed;
+    }
+  } catch (e) {
+    console.error('[Translator] Error loading translations from localStorage:', e);
+    // Очищаем поврежденный кэш
+    localStorage.removeItem('site_translations_cache');
+  }
+  return {};
+};
+
+// Загружаем кэш переводов из localStorage
+Object.assign(translationCache, loadLocalTranslations());
+
+// Функция сохранения переводов в localStorage
+const saveLocalTranslations = () => {
+  try {
+    // Проверяем размер кэша - не сохраняем, если слишком большой
+    const cacheSize = Object.keys(translationCache).length;
+    if (cacheSize > 5000) {
+      console.log(`[Translator] Cache too large (${cacheSize} items), optimizing before save`);
+      // Можно добавить оптимизацию кэша, удалив старые записи
+      return;
+    }
+    
+    localStorage.setItem('site_translations_cache', JSON.stringify(translationCache));
+    console.log(`[Translator] Saved ${cacheSize} translations to localStorage`);
+  } catch (e) {
+    console.error('[Translator] Failed to save translations to localStorage:', e);
+  }
+};
+
+// Периодическое сохранение кэша
+setInterval(saveLocalTranslations, 60000); // Каждую минуту
 
 /**
  * Log messages to console only
@@ -25,7 +72,11 @@ const logMessage = (message) => {
  * Get cached translation if available
  */
 const getCachedTranslation = (text, targetLang) => {
-  const cacheKey = `${text}_${targetLang}`;
+  if (!text || text.trim() === '') return text;
+  
+  // Нормализуем текст для кэширования
+  const normalizedText = text.trim();
+  const cacheKey = `${normalizedText}_${targetLang}`;
   return translationCache[cacheKey];
 };
 
@@ -33,294 +84,357 @@ const getCachedTranslation = (text, targetLang) => {
  * Save translation to cache
  */
 const saveToCache = (text, targetLang, translation) => {
-  const cacheKey = `${text}_${targetLang}`;
+  if (!text || text.trim() === '' || !translation) return;
+  
+  // Нормализуем текст для кэширования
+  const normalizedText = text.trim();
+  const cacheKey = `${normalizedText}_${targetLang}`;
   translationCache[cacheKey] = translation;
+  
+  // Если кэш стал большим, инициируем сохранение
+  const cacheSize = Object.keys(translationCache).length;
+  if (cacheSize % 50 === 0) {
+    // Сохраняем переводы после каждых 50 новых переводов
+    setTimeout(saveLocalTranslations, 1000);
+  }
 };
 
 /**
  * Translate the page to the specified language
  * @param {string} targetLang - Target language code (en, ru, kz)
+ * @param {Object} preloadedTranslations - Предварительно загруженные переводы
+ * @param {Function} callback - Колбэк после завершения перевода
  */
-export const translatePage = async (targetLang) => {
+export const translatePage = async (targetLang, preloadedTranslations = {}, callback = null) => {
+  console.time('page-translation');
+  
+  // Используем улучшенный инициализатор для проверки и установки текущего языка
+  const currentLang = languageInitializer.determineCurrentLanguage();
+  
   // Проверяем, если страница уже переведена на этот язык, пропускаем перевод
-  if (document.documentElement.getAttribute('data-language') === targetLang) {
+  if (currentLang === targetLang) {
+    console.log(`[Переводчик] Страница уже переведена на ${targetLang}`);
+    if (callback) callback();
     return;
   }
   
-  // Добавляем стиль для скрытия всех информационных блоков
-  const style = document.createElement('style');
-  style.textContent = `
-    body > div:not(.main-container):not(.container):not(.wrapper):not([class*="component"]):not([id*="component"]) {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0 !important;
-        width: 0 !important;
-        overflow: hidden !important;
-        pointer-events: none !important;
-        position: absolute !important;
-        top: -9999px !important;
+  // Добавляем предварительно загруженные переводы в кэш
+  if (preloadedTranslations && Object.keys(preloadedTranslations).length > 0) {
+    for (const [text, translation] of Object.entries(preloadedTranslations)) {
+      saveToCache(text, targetLang, translation);
     }
-  `;
-  document.head.appendChild(style);
-
-  // Удаляем существующие инфоблоки о переводе
-  const elementsToHide = [
-    'Перевод страницы', 'Прогресс:', 'Найдено', 'Тестирование API', 'CSRF токен',
-    'Перевод элемента', 'Инициализация'
-  ];
-  
-  // Удаляем текстовые узлы, содержащие информацию о переводе
-  const allNodes = document.createTreeWalker(
-    document.body,
-    NodeFilter.SHOW_TEXT,
-    null,
-    false
-  );
-  
-  const nodesToRemove = [];
-  let currentNode;
-  while (currentNode = allNodes.nextNode()) {
-    if (elementsToHide.some(text => currentNode.nodeValue && currentNode.nodeValue.includes(text))) {
-      nodesToRemove.push(currentNode);
-    }
+    console.log(`[Переводчик] Добавлено ${Object.keys(preloadedTranslations).length} предзагруженных переводов в кэш`);
   }
   
-  // Удаляем или скрываем найденные узлы
-  nodesToRemove.forEach(node => {
-    if (node.parentNode) {
-      const parentElement = node.parentNode.closest('div, p, span');
-      if (parentElement && !parentElement.closest('.component') && !parentElement.closest('.container')) {
-        parentElement.style.display = 'none';
-      }
-    }
-  });
+  // Обновляем все источники истины о языке
+  languageInitializer.syncLanguageStorage(targetLang);
   
   try {
-    // Get CSRF token
+    // Добавляем стиль для скрытия всех информационных блоков
+    const style = document.createElement('style');
+    style.textContent = `
+      body > div:not(.main-container):not(.container):not(.wrapper):not([class*="component"]):not([id*="component"]) {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          height: 0 !important;
+          width: 0 !important;
+          overflow: hidden !important;
+          pointer-events: none !important;
+          position: absolute !important;
+          top: -9999px !important;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Удаляем существующие инфоблоки о переводе
+    const elementsToHide = [
+      'Перевод страницы', 'Прогресс:', 'Найдено', 'Тестирование API', 'CSRF токен',
+      'Перевод элемента', 'Инициализация'
+    ];
+    
+    // Удаляем текстовые узлы, содержащие информацию о переводе
+    const allTextNodes = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+      null,
+      false
+    );
+    
+    const nodesToRemove = [];
+    let currentNode;
+    while (currentNode = allTextNodes.nextNode()) {
+      if (elementsToHide.some(text => currentNode.nodeValue && currentNode.nodeValue.includes(text))) {
+        nodesToRemove.push(currentNode);
+      }
+    }
+    
+    // Удаляем или скрываем найденные узлы
+    nodesToRemove.forEach(node => {
+      if (node.parentNode) {
+        node.parentNode.removeChild(node);
+      }
+    });
+    
+    // Получаем все текстовые элементы на странице
+    const textElements = getTranslatableElements();
+    
+    logMessage(`Найдено ${textElements.length} элементов для перевода`);
+    
+    // Получаем CSRF токен
     const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
     if (!token) {
-      logMessage('ОШИБКА: CSRF токен не найден!');
+      console.error('CSRF токен не найден. Добавьте мета-тег csrf-token в head.');
       return;
     }
     
-    logMessage('CSRF токен найден');
+    // Создаем индикатор прогресса
+    const progressBar = createProgressBar();
     
-    // Устанавливаем язык страницы
-    document.documentElement.setAttribute('data-language', targetLang);
-    currentLanguage = targetLang;
-    localStorage.setItem('preferredLanguage', targetLang);
-    
-    // Обновляем стили кнопок языка
-    updateButtonStyles(targetLang);
-    
-    // First check if translations are available in the cache
-    const cachedTranslations = localStorage.getItem(`pageTranslations_${targetLang}`);
-    if (cachedTranslations) {
-      logMessage(`Найдены кэшированные переводы для языка ${targetLang}, применяем их`);
-      try {
-        const translations = JSON.parse(cachedTranslations);
-        applyStoredTranslations(translations);
-        logMessage('Кэшированные переводы успешно применены');
-        return;
-      } catch (e) {
-        logMessage(`Ошибка при применении кэшированных переводов: ${e.message}, продолжаем с переводом API`);
-        // Continue with API translation
-      }
-    }
-    
-    // Get all text nodes
-    logMessage('Поиск текстовых элементов на странице...');
-    const textNodes = [];
-    const walker = document.createTreeWalker(
-      document.body,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode: (node) => {
-          // Skip empty nodes
-          if (!node.textContent.trim()) return NodeFilter.FILTER_REJECT;
-          
-          // Skip script, style tags
-          const parent = node.parentElement;
-          if (!parent) return NodeFilter.FILTER_REJECT;
-          
-          const tagName = parent.tagName.toLowerCase();
-          if (tagName === 'script' || tagName === 'style' || tagName === 'noscript') {
-            return NodeFilter.FILTER_REJECT;
-          }
-          
-          return NodeFilter.FILTER_ACCEPT;
-        }
-      }
-    );
-    
-    // Collect all nodes
-    while (walker.nextNode()) {
-      if (walker.currentNode.textContent.trim().length > 2) {
-        textNodes.push(walker.currentNode);
-      }
-    }
-    
-    logMessage(`Найдено ${textNodes.length} текстовых элементов для перевода`);
-    
-    // Prepare collection to store translations for saving
-    const translationsToSave = {};
-    
-    // Simple sequential translation of each node to avoid overwhelming API
     let translatedCount = 0;
+    const totalElements = textElements.length;
     
-    for (let i = 0; i < textNodes.length; i++) {
-      const node = textNodes[i];
-      const originalText = node.textContent.trim();
+    // Кэш для хранения переводов текущей сессии
+    const pageTranslations = {};
+    
+    // Перебираем все элементы и применяем перевод
+    for (const element of textElements) {
+      const text = element.innerText.trim();
+      if (!text || text.length < 2) continue;
       
-      if (originalText.length < 2) continue;
-      
-      try {
-        // Check if already cached in this session
-        let translatedText = getCachedTranslation(originalText, targetLang);
-        
-        if (!translatedText) {
-          // Not in session cache, try to get from API
-          const response = await fetch('/api/translate', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRF-TOKEN': token
-            },
-            body: JSON.stringify({
-              text: originalText,
-              source: 'ru',
-              target: targetLang,
-              cache: true // Tell API to store this translation
-            })
-          });
-          
-          const result = await response.json();
-          
-          if (result.success && result.translation) {
-            translatedText = result.translation;
-            saveToCache(originalText, targetLang, translatedText);
-          } else {
-            logMessage(`Ошибка перевода элемента: ${result.message || 'Неизвестная ошибка'}`);
-            continue;
-          }
-        } else {
-          logMessage(`Использован кэшированный перевод для "${originalText.substring(0, 20)}..."`);
-        }
-        
-        // Apply translation
-        node.textContent = node.textContent.replace(originalText, translatedText);
-        translationsToSave[originalText] = translatedText;
+      // Проверяем кэш
+      const cachedTranslation = getCachedTranslation(text, targetLang);
+      if (cachedTranslation) {
+        // Применяем кэшированный перевод
+        element.setAttribute('data-original-text', text);
+        element.innerText = cachedTranslation;
+        pageTranslations[text] = cachedTranslation;
         translatedCount++;
-        
-      } catch (error) {
-        logMessage(`Ошибка при переводе элемента ${i+1}: ${error.message}`);
+        updateProgressBar(progressBar, translatedCount / totalElements);
+        continue;
       }
       
-      // Log progress every 20 elements
-      if (i % 20 === 0) {
-        logMessage(`Прогресс: ${i+1}/${textNodes.length} (${Math.round((i+1)/textNodes.length*100)}%)`);
-      }
-    }
-    
-    // Save all translations to localStorage for future use
-    if (Object.keys(translationsToSave).length > 0) {
-      localStorage.setItem(`pageTranslations_${targetLang}`, JSON.stringify(translationsToSave));
-      logMessage(`Сохранены переводы для языка ${targetLang} в локальное хранилище`);
-      
-      // Also send all translations to server for permanent storage
+      // Если нет в кэше, добавляем в список для перевода через API
       try {
-        await fetch('/api/save-translations', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': token
-          },
-          body: JSON.stringify({
-            translations: translationsToSave,
-            target_language: targetLang,
-            page_url: window.location.pathname
-          })
-        });
-        logMessage('Переводы сохранены на сервере');
-      } catch (e) {
-        logMessage(`Ошибка при сохранении переводов на сервере: ${e.message}`);
+        const translation = await translateTextViaAPI(text, 'ru', targetLang, token);
+        if (translation) {
+          element.setAttribute('data-original-text', text);
+          element.innerText = translation;
+          pageTranslations[text] = translation;
+          saveToCache(text, targetLang, translation);
+        }
+      } catch (err) {
+        logMessage(`Ошибка перевода: ${err.message}`);
       }
+      
+      translatedCount++;
+      updateProgressBar(progressBar, translatedCount / totalElements);
     }
     
-    // Save language preference
-    localStorage.setItem('preferredLanguage', targetLang);
+    // Удаляем индикатор прогресса
+    if (progressBar && progressBar.parentNode) {
+      progressBar.parentNode.removeChild(progressBar);
+    }
     
-    logMessage(`Перевод завершен! Переведено ${translatedCount} из ${textNodes.length} элементов`);
+    // Удаляем стиль скрытия
+    if (style && style.parentNode) {
+      style.parentNode.removeChild(style);
+    }
     
-    // Update active language button style
-    updateButtonStyles(targetLang);
+    // Сохраняем все переводы в локальное хранилище
+    setTimeout(saveLocalTranslations, 1000);
+    
+    // Вызываем колбэк для дальнейших действий
+    if (callback) callback();
+    
+    console.timeEnd('page-translation');
+    console.log(`[Translator] Translation completed: ${translatedCount} elements translated to ${targetLang}`);
     
   } catch (error) {
-    logMessage(`КРИТИЧЕСКАЯ ОШИБКА: ${error.message}`);
+    console.error('[Translator] Translation error:', error);
+    if (callback) callback(error);
   }
 };
 
 /**
- * Применяет сохраненные переводы к элементам страницы
+ * Получение всех переводимых элементов на странице
+ */
+const getTranslatableElements = () => {
+  const elements = [];
+  
+  // Селекторы для элементов, которые нужно переводить
+  const selectors = [
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'p', 'a', 'span', 'li', 'button',
+    'label', 'th', 'td', 'div.text-content',
+    '.translate-this', '[data-translate="true"]',
+    '.text-lg', '.text-sm', '.text-xl', '.text-base',
+    '.card-title', '.card-text', '.page-title',
+    'div.content > *', '.description', '.subtitle'
+  ];
+  
+  // Селекторы для элементов, которые не нужно переводить
+  const excludeSelectors = [
+    'script', 'style', 'pre', 'code',
+    '[data-no-translate="true"]', '[contenteditable="true"]',
+    'input', 'textarea', '.no-translate', '.notranslate',
+    '[lang="en"].no-translate-override', // Элементы с явно указанным языком и меткой отмены перевода
+    'svg', 'path', 'circle', 'rect', // SVG элементы
+    '.language-switcher *', // Элементы внутри переключателя языка
+    '.code', '.api-token', '.url-path', // Технические элементы
+    'iframe', 'canvas', // Интерактивные элементы
+    '.react-code', '.code-sample' // React код  
+  ];
+  
+  // Добавляем селектор для проверки родителей
+  const parentExcludeSelectors = [
+    '.no-translate-container',
+    '.code-block',
+    'pre',
+    'code',
+    '.notranslate',
+    '[data-no-translate="true"]'
+  ];
+  
+  // Создаем селектор для исключений
+  const excludeSelector = excludeSelectors.join(', ');
+  
+  // Получаем все элементы, которые нужно перевести
+  selectors.forEach(selector => {
+    try {
+      const found = document.querySelectorAll(selector);
+      found.forEach(el => {
+        // Проверяем, не находится ли элемент внутри исключенного
+        if (!el.closest(excludeSelector) && el.innerText && el.innerText.trim()) {
+          // Проверяем родителей на наличие классов/атрибутов, исключающих перевод
+          let shouldExclude = parentExcludeSelectors.some(parentSelector => 
+            el.closest(parentSelector) !== null
+          );
+          
+          if (!shouldExclude) {
+            elements.push(el);
+          }
+        }
+      });
+    } catch (e) {
+      console.error(`Error selecting ${selector}:`, e);
+    }
+  });
+  
+  console.log(`[Translator] Found ${elements.length} translatable elements`);
+  return elements;
+};
+
+/**
+ * Создание прогресс-бара для отображения прогресса перевода
+ */
+const createProgressBar = () => {
+  // Создаем контейнер
+  const progressContainer = document.createElement('div');
+  progressContainer.id = 'translation-progress';
+  progressContainer.style.cssText = 'position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 10px; border-radius: 4px; z-index: 9999; max-width: 300px;';
+  
+  // Создаем заголовок
+  const progressTitle = document.createElement('div');
+  progressTitle.textContent = 'Перевод страницы';
+  progressTitle.style.cssText = 'font-weight: bold; margin-bottom: 5px;';
+  progressContainer.appendChild(progressTitle);
+  
+  // Создаем контейнер для прогресс-бара
+  const progressBarContainer = document.createElement('div');
+  progressBarContainer.style.cssText = 'width: 100%; height: 8px; background: #444; border-radius: 4px; overflow: hidden;';
+  progressContainer.appendChild(progressBarContainer);
+  
+  // Создаем сам прогресс-бар
+  const progressBarElement = document.createElement('div');
+  progressBarElement.style.cssText = 'width: 0%; height: 100%; background: #4CAF50; transition: width 0.2s;';
+  progressBarContainer.appendChild(progressBarElement);
+  
+  // Текст с процентами
+  const progressText = document.createElement('div');
+  progressText.textContent = '0%';
+  progressText.style.cssText = 'margin-top: 5px; font-size: 12px; text-align: center;';
+  progressContainer.appendChild(progressText);
+  
+  // Добавляем на страницу
+  document.body.appendChild(progressContainer);
+  
+  // Сохраняем ссылки на элементы
+  progressContainer.barElement = progressBarElement;
+  progressContainer.textElement = progressText;
+  
+  return progressContainer;
+};
+
+/**
+ * Обновление прогресс-бара
+ */
+const updateProgressBar = (progressBar, progress) => {
+  if (!progressBar) return;
+  
+  const percent = Math.min(100, Math.round(progress * 100));
+  progressBar.barElement.style.width = `${percent}%`;
+  progressBar.textElement.textContent = `${percent}%`;
+};
+
+/**
+ * Перевод текста через API
+ */
+const translateTextViaAPI = async (text, sourceLang, targetLang, csrfToken) => {
+  if (!text || text.trim() === '') return text;
+  
+  try {
+    const response = await fetch('/api/translate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': csrfToken
+      },
+      body: JSON.stringify({
+        text: text,
+        source: sourceLang,
+        target: targetLang,
+        cache: true // Сохраняем перевод на сервере
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (data.success && data.translation) {
+      return data.translation;
+    }
+    
+    throw new Error(data.message || 'Unknown translation error');
+  } catch (error) {
+    console.error('Translation API error:', error);
+    return null;
+  }
+};
+
+/**
+ * Применение сохраненных переводов к элементам страницы
  * @param {Object} translations - Объект с переводами {оригинальный_текст: переведенный_текст}
  */
 const applyStoredTranslations = (translations) => {
-  if (!translations || Object.keys(translations).length === 0) {
-    logMessage('Нет переводов для применения');
-    return;
-  }
+  if (!translations || Object.keys(translations).length === 0) return;
   
-  logMessage(`Применение ${Object.keys(translations).length} переводов`);
+  const elements = getTranslatableElements();
+  let appliedCount = 0;
   
-  try {
-    // Получаем все текстовые узлы на странице
-    const textNodes = [];
-    const walker = document.createTreeWalker(
-      document.body,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode: (node) => {
-          // Пропускаем пустые узлы
-          if (!node.textContent.trim()) return NodeFilter.FILTER_REJECT;
-          
-          // Пропускаем script, style теги
-          const parent = node.parentElement;
-          if (!parent) return NodeFilter.FILTER_REJECT;
-          
-          const tagName = parent.tagName.toLowerCase();
-          if (tagName === 'script' || tagName === 'style' || tagName === 'noscript') {
-            return NodeFilter.FILTER_REJECT;
-          }
-          
-          return NodeFilter.FILTER_ACCEPT;
-        }
-      }
-    );
-    
-    // Собираем все текстовые узлы
-    let currentNode;
-    while (currentNode = walker.nextNode()) {
-      textNodes.push(currentNode);
+  elements.forEach(element => {
+    const text = element.innerText.trim();
+    if (text && translations[text]) {
+      element.setAttribute('data-original-text', text);
+      element.innerText = translations[text];
+      appliedCount++;
     }
-    
-    // Применяем переводы к каждому узлу
-    let translatedCount = 0;
-    for (const node of textNodes) {
-      const originalText = node.textContent.trim();
-      if (originalText && translations[originalText]) {
-        node.textContent = node.textContent.replace(originalText, translations[originalText]);
-        translatedCount++;
-      }
-    }
-    
-    // Обновляем атрибут языка на HTML-элементе
-    document.documentElement.setAttribute('data-language', currentLanguage);
-    
-    logMessage(`Успешно переведено ${translatedCount} элементов из ${textNodes.length}`);
-  } catch (error) {
-    logMessage(`Ошибка при применении переводов: ${error.message}`);
-  }
+  });
+  
+  console.log(`[Translator] Applied ${appliedCount} stored translations`);
 };
 
 /**
@@ -328,68 +442,46 @@ const applyStoredTranslations = (translations) => {
  * @param {string} selectedLang - Выбранный язык
  */
 const updateButtonStyles = (selectedLang) => {
-  // Получаем все кнопки языка
-  const langButtons = document.querySelectorAll('button[class*="lang-"], button:contains("EN"), button:contains("RU"), button:contains("KZ")');
+  const langButtons = document.querySelectorAll('.language-switcher button');
   
-  // Сбрасываем стили всех кнопок
-  langButtons.forEach(btn => {
-    btn.classList.remove('bg-gray-300');
-    btn.classList.add('hover:bg-gray-200');
-    btn.classList.add('bg-transparent');
+  if (langButtons.length === 0) return;
+  
+  langButtons.forEach(button => {
+    const buttonLang = button.getAttribute('data-lang');
+    
+    button.classList.remove('active', 'selected');
+    
+    if (buttonLang === selectedLang) {
+      button.classList.add('active', 'selected');
+    }
   });
-  
-  // Выделяем активную кнопку
-  const activeButtons = Array.from(langButtons).filter(btn => {
-    const text = btn.textContent.trim().toLowerCase();
-    if (selectedLang === 'en' && text === 'en') return true;
-    if (selectedLang === 'ru' && text === 'ru') return true;
-    if (selectedLang === 'kz' && text === 'kz') return true;
-    return false;
-  });
-  
-  // Применяем стили к активной кнопке
-  activeButtons.forEach(btn => {
-    btn.classList.remove('hover:bg-gray-200');
-    btn.classList.remove('bg-transparent');
-    btn.classList.add('bg-gray-300');
-  });
-  
-  // Сохраняем текущий язык
-  currentLanguage = selectedLang;
-  localStorage.setItem('preferredLanguage', selectedLang);
+};
+
+// Экспортируем главную функцию перевода
+export { translatePage };
+
+// Экспортируем вспомогательные функции для использования в других модулях
+export const translatorHelpers = {
+  getCachedTranslation,
+  saveToCache,
+  translateTextViaAPI,
+  applyStoredTranslations,
+  updateButtonStyles,
+  getTranslatableElements
 };
 
 // Текущий язык страницы
 let currentLanguage = localStorage.getItem('preferredLanguage') || 'ru';
 
-// Initialize when document loads
-document.addEventListener('DOMContentLoaded', () => {
-  // Set initial language button styles based on localStorage
-  const currentLang = localStorage.getItem('preferredLanguage') || 'ru';
-  const buttons = document.querySelectorAll('.lang-btn');
-  
-  buttons.forEach(btn => {
-    const langCode = btn.getAttribute('data-lang');
-    if (langCode === currentLang) {
-      btn.style.backgroundColor = '#3b82f6';
-      btn.style.color = 'white';
-    } else {
-      btn.style.backgroundColor = 'white';
-      btn.style.color = '#3b82f6';
-    }
-  });
-  
-  console.log('[Translator] Simplified translation system initialized');
-});
+// Экспортируем переменные для доступа из других модулей
+export const translatorState = {
+  get currentLanguage() { return currentLanguage; },
+  set currentLanguage(lang) { currentLanguage = lang; }
+};
 
-// Устанавливаем начальный язык страницы
-document.documentElement.setAttribute('data-language', currentLanguage);
-
-logMessage('Simplified translation system initialized');
-logMessage(`Initial language: ${currentLanguage}`);
-
-// Экспортируем переменную в глобальную область видимости для отладки
-window.translator = {
+// Экспортируем основной модуль перевода как default
+export default {
   translatePage,
-  currentLanguage
+  translatorHelpers,
+  translatorState
 };

@@ -78,18 +78,7 @@ export default function MedicalStatistics() {
     </section>
             
             {/* Блок с графиком из примера */}
-            <div className="container px-5 py-10 mx-auto bg-purple-100 rounded-lg my-10">
-                <h2 className="text-2xl font-semibold mb-8 text-gray-800">Статистические исследования</h2>
-                
-                <div className="flex flex-wrap md:flex-nowrap">
-                    <div className="w-full md:w-100%">
-                        <ChartHead 
-                            chartType="injuries" 
-                            className="h-[500px]"
-                        />
-                    </div>
-                </div>
-            </div>
+
             
             {/* Блок ActualFile c слайдом документов */}
             <div className="py-8">
@@ -110,40 +99,6 @@ export default function MedicalStatistics() {
             </div>
             
             {/* Блок ActualFile с тремя документами */}
-            <div className="container px-5 py-10 mx-auto">
-                <h2 className="text-2xl font-semibold mb-6 text-gray-800">Актуальные статистические данные</h2>
-                <div className="bg-purple-100 p-6 rounded-lg shadow-sm">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {/* Первый документ */}
-                        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 className="font-medium text-lg mb-2">Статистический сборник</h3>
-                            <p className="text-sm text-gray-600 mb-3">Ежегодный статистический сборник по здравоохранению Республики Казахстан</p>
-                            <div className="flex space-x-2">
-                                <button className="text-xs bg-purple-50 text-blue-700 px-3 py-1 rounded">Открыть</button>
-                            </div>
-                        </div>
-                        
-                        {/* Второй документ */}
-                        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 className="font-medium text-lg mb-2">Демографические показатели</h3>
-                            <p className="text-sm text-gray-600 mb-3">Статистические данные по населению за 2023 год с аналитическими материалами</p>
-                            <div className="flex space-x-2">
-                                <button className="text-xs bg-purple-50 text-blue-700 px-3 py-1 rounded">Открыть</button>
-                            </div>
-                        </div>
-                        
-                        {/* Третий документ */}
-                        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                            <h3 className="font-medium text-lg mb-2">Заболеваемость населения</h3>
-                            <p className="text-sm text-gray-600 mb-3">Сводные данные по заболеваемости населения и факторам риска</p>
-                            <div className="flex space-x-2">
-                                <button className="text-xs bg-purple-50 text-blue-700 px-3 py-1 rounded">Открыть</button>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             
             {/* Блок с двумя графиками как на главной странице */}
             <section className="text-gray-600 body-font py-16 bg-white">

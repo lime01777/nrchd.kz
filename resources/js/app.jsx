@@ -2,6 +2,7 @@ import '../css/app.css';
 import './bootstrap';
 import languageManager from './Utils/LanguageManager'; // Import language manager for site-wide translations
 import './Utils/translation-blocker'; // Import blocker for translation information blocks
+import languageInitializer from './Utils/language-initializer'; // Import new robust language initializer
 
 // Скрываем все информационные блоки о переводе
 const hideTranslationInfo = () => {
@@ -30,8 +31,10 @@ const hideTranslationInfo = () => {
 // Добавляем стили для скрытия информационных блоков
 document.addEventListener('DOMContentLoaded', hideTranslationInfo);
 
-// Инициализируем менеджер языка при загрузке приложения
-languageManager.init();
+// Используем улучшенный инициализатор языка для более надежной работы
+document.addEventListener('DOMContentLoaded', () => {
+  languageInitializer.initialize();
+});
 
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
@@ -51,9 +54,11 @@ createInertiaApp({
 
         const render = props.initialPage.props.layout || ((page) => page);
         
-        // Применяем языковые настройки при загрузке приложения
+        // Применяем улучшенную обработку языковых настроек при загрузке приложения
         setTimeout(() => {
-            // Даем время на рендер и только потом применяем язык
+            // Даем время на рендер и применяем язык через новый инициализатор
+            languageInitializer.initialize();
+            // Дополнительно применяем язык на случай, если есть необходимость
             languageManager.applyLanguage();
         }, 500);
 

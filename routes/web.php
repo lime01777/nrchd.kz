@@ -436,10 +436,18 @@ Route::get('/abay', function () {
     return Inertia::render('Branches/Abay');
 })->name('branches.abay');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Админ-панель
+    Route::prefix('admin')->name('admin.')->group(function () {
+        // Управление переводами
+        Route::get('/translations', function () {
+            return Inertia::render('Admin/Translation/TranslationManager');
+        })->name('translations');
+    });
     
     // Пример интеграции с Google Drive
     Route::get('/examples/google-drive', function () {

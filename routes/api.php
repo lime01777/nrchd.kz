@@ -44,3 +44,11 @@ Route::post('/page-translations', [\App\Http\Controllers\LanguageController::cla
 
 // Маршрут для получения документов в табличном формате (для TabDocuments)
 Route::get('/tabdocuments', [\App\Http\Controllers\FileController::class, 'getTabDocuments']);
+
+// Маршруты для системы автоматического перевода
+Route::post('/auto-translate', [\App\Http\Controllers\AutoTranslationController::class, 'translate']);
+Route::post('/auto-translate/bulk', [\App\Http\Controllers\AutoTranslationController::class, 'bulkTranslate']);
+Route::post('/auto-translate/update', [\App\Http\Controllers\AutoTranslationController::class, 'updateTranslation']);
+Route::post('/auto-translate/delete', [\App\Http\Controllers\AutoTranslationController::class, 'deleteTranslation']);
+Route::get('/auto-translate', [\App\Http\Controllers\AutoTranslationController::class, 'getTranslation']);
+Route::get('/auto-translate/content', [\App\Http\Controllers\AutoTranslationController::class, 'getContentTranslations']);
