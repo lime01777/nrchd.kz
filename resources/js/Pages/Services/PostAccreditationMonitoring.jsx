@@ -339,8 +339,8 @@ export default function PostAccreditationMonitoring() {
                   <p className="text-sm text-gray-700 mb-1">
                     <strong>Отдел по аккредитации:</strong>
                   </p>
-                  <p className="text-sm text-gray-600">г. Астана, улица Мангелик Ел, 20</p>
-                  <p className="text-sm text-gray-600">8-7172-648-600, внутренний номер: 1049, 1079</p>
+                  <p className="text-sm text-gray-600">г. Астана, улица Мангилик Ел, 20</p>
+                  <p className="text-sm text-gray-600">8-7172-648-600, внутренний номер: 1014, 1143</p>
                 </div>
               </div>
             </div>

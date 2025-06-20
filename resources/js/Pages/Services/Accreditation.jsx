@@ -58,7 +58,7 @@ export default function Accreditation() {
             </li>
             <li>
               <a href="https://adilet.zan.kz/rus/docs/V2000021852" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              Приказ Министра здравоохранения Республики Казахстан от 21 декабря 2020 года № ҚР ДСМ-299/2020 “Об утверждении правил аккредитации в области здравоохранения”
+              Приказ Министра здравоохранения Республики Казахстан от 21 декабря 2020 года № ҚР ДСМ-305/2020 “Об утверждении правил аккредитации в области здравоохранения”
               </a>
             </li>
           </ul>
@@ -92,7 +92,7 @@ export default function Accreditation() {
                 <li>Преимущественное право в системе ОСМС и ГОБМП</li>
                 <li>Повышение эффективности управления медицинской организацией</li>
                 <li>Рост вовлечённости персонала в развитие и поддержание высокого статуса медицинской организации</li>
-                <li>Освобождение от проактивного мониторинга ФСМС и профилактического контроля на следующий календарный год</li>
+                <li>Освобождение от профилактического контроля на следующий календарный год</li>
                 <li>Учет статуса аккредитации в рейтинге медицинских организаций</li>
               </ul>
 
@@ -146,7 +146,7 @@ export default function Accreditation() {
     <div className="bg-white rounded-lg p-6 shadow-sm">
       <h3 className="text-lg font-semibold text-gray-800 mb-3">Отдел по аккредитации</h3>
       <p className="text-gray-600">г. Астана, улица Мангилик Ел, 20</p>
-      <p className="text-gray-600">8-7172-648-951, вн: 1014, 1049, 1079</p>
+      <p className="text-gray-600">8-7172-648-951, вн: 1143, 1127, 1046, 1064, 1014</p>
       <div className="flex flex-col space-y-2 mb-3">
         <div className="flex items-center">
           <a href="https://wa.me/77472996410" target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-green-600 hover:text-green-800 transition-colors">
