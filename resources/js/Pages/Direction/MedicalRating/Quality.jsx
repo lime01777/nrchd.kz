@@ -6,7 +6,7 @@ import FolderChlank from '@/Components/FolderChlank';
 export default function Quality() {
   return (
     <>
-      <Head title="Итоги рейтингования медицинских организаций" />
+      <Head title="Итоги рейтингования медицинских организаций" meta={[{ name: 'description', content: 'Итоги рейтингования медицинских организаций: результаты оценки качества и эффективности.' }]} />
       
       <div className="container mx-auto px-5 py-8">
         <Link 

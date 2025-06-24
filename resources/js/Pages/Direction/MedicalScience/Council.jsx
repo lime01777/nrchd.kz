@@ -39,7 +39,7 @@ export default function Council() {
 
   return (
     <>
-      <Head title="Учёный совет" />
+      <Head title="Учёный совет" meta={[{ name: 'description', content: 'Учёный совет Национального научного центра развития здравоохранения им. Салидат Каирбековой.' }]} />
       <br /><br />
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">

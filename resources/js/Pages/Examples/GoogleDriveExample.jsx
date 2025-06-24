@@ -21,7 +21,7 @@ export default function GoogleDriveExample({ auth }) {
       user={auth.user}
       header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Пример интеграции с Google Drive</h2>}
     >
-      <Head title="Google Drive Example" />
+      <Head title="Google Drive Example" meta={[{ name: 'description', content: 'Пример интеграции Google Drive для документов.' }]} />
 
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">

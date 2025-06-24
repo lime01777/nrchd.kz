@@ -91,7 +91,7 @@ export default function DrugExpertise() {
 
   return (
     <>
-      <Head title="Экспертиза лекарственных средств" />
+      <Head title="Экспертиза лекарственных средств" meta={[{ name: 'description', content: 'Экспертиза лекарственных средств и фармацевтических препаратов.' }]} />
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-2/3 px-4 mt-10">

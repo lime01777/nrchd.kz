@@ -284,7 +284,7 @@ export default function PostAccreditationMonitoring() {
 
   return (
     <>
-      <Head title="Постаккредитационный мониторинг" />
+      <Head title="Постаккредитационный мониторинг" meta={[{ name: 'description', content: 'Постаккредитационный мониторинг медицинских организаций.' }]} />
       
       <section className="text-gray-600 body-font">
         <div className="container mx-auto py-8 md:py-16 px-4 md:px-5">

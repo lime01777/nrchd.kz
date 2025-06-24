@@ -6,7 +6,7 @@ import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 export default function Analytics() {
   return (
     <>
-      <Head title="Аналитические материалы" />
+      <Head title="Аналитические материалы" meta={[{ name: 'description', content: 'Аналитические материалы по медицинской статистике и здравоохранению.' }]} />
       
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">

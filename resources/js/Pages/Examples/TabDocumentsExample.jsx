@@ -98,7 +98,7 @@ export default function TabDocumentsExample() {
 
   return (
     <>
-      <Head title="Пример TabDocuments" />
+      <Head title="Пример TabDocuments" meta={[{ name: 'description', content: 'Демонстрация работы вкладок с документами.' }]} />
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Пример использования компонента TabDocuments</h1>
         

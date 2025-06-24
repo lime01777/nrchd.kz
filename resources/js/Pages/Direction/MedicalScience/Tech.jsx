@@ -24,7 +24,7 @@ export default function Tech() {
 
   return (
     <>
-      <Head title="Отраслевой центр технологических компетенций" />
+      <Head title="Отраслевой центр технологических компетенций" meta={[{ name: 'description', content: 'Отраслевой центр технологических компетенций: развитие инноваций в медицине.' }]} />
       <br /><br />
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">

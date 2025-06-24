@@ -23,7 +23,7 @@ export default function Managers() {
 
   return (
     <>
-      <Head title="Руководителям" />
+      <Head title="Руководителям" meta={[{ name: 'description', content: 'Информация для руководителей медицинских организаций: документы, материалы и нормативные акты.' }]} />
 
       {/* Документы для руководителей */}
       <section className="text-gray-600 body-font pb-24">

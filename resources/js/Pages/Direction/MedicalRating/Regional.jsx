@@ -24,7 +24,7 @@ export default function Regional() {
 
   return (
     <>
-      <Head title="Архив рейтингов медицинских организаций" />
+      <Head title="Архив рейтингов медицинских организаций" meta={[{ name: 'description', content: 'Архив рейтингов медицинских организаций Казахстана за предыдущие периоды.' }]} />
       <br /><br />
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">

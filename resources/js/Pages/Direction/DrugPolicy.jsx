@@ -1,12 +1,11 @@
-import { Head } from '@inertiajs/react';
 import React from 'react';
+import { Head } from '@inertiajs/react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FilesAccord from '@/Components/FilesAccord';
 import FolderChlank from '@/Components/FolderChlank';
 import FAQ from '@/Components/FAQ';
 
 export default function DrugPolicy() {
-
   const faqItems = [
     {
       question: "Перечни возмещения в рамках ГОБМП и ОСМС",
@@ -96,7 +95,7 @@ export default function DrugPolicy() {
 
   return (
     <>
-    <Head title="Лекарственная политика"/>
+    <Head title="Лекарственная политика" meta={[{ name: 'description', content: 'Лекарственная политика: информация о регулировании, доступности и применении лекарственных средств в системе здравоохранения Казахстана.' }]} />
     <section className="text-gray-600 body-font pb-8">
       <div className="container px-5 py-12 mx-auto">
         <div className='flex flex-wrap px-12 text-justify mb-4'>

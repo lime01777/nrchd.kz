@@ -6,7 +6,7 @@ import PageAccordions from '@/Components/PageAccordions';
 export default function AstanaDeclaration() {
   return (
     <>
-      <Head title="Декларация Астаны - Стратегические инициативы" />
+      <Head title="Декларация Астаны - Стратегические инициативы" meta={[{ name: 'description', content: 'Декларация Астаны: ключевой международный документ по развитию здравоохранения.' }]} />
       
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">

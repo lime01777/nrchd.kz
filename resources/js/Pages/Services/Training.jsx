@@ -8,7 +8,7 @@ import FilesAccord from '@/Components/FilesAccord';
 export default function Training() {
   return (
     <>
-    <Head title="Организация и проведение обучающих циклов по дополнительному и неформальному образованию ЦМОП"/>
+    <Head title="Организация и проведение обучающих циклов по дополнительному и неформальному образованию ЦМОП" meta={[{ name: 'description', content: 'Обучающие циклы по дополнительному и неформальному образованию ЦМОП.' }]} />
     <section className="text-gray-600 body-font pb-8">
       <div className="container px-5 py-12 mx-auto">
         <div className='flex flex-wrap px-12 text-justify mb-4'>

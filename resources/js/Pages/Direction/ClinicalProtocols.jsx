@@ -9,7 +9,7 @@ export default function ClinicalProtocols() {
   
   return (
     <>
-    <Head title='Клинические протоколы' />
+    <Head title='Клинические протоколы' meta={[{ name: 'description', content: 'Клинические протоколы: научно доказанные рекомендации по профилактике, диагностике, лечению и реабилитации при различных заболеваниях и состояниях пациентов.' }]} />
     <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
             <div className='flex flex-wrap px-12 text-justify mb-4'>

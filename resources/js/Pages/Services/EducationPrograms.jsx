@@ -7,7 +7,7 @@ export default function EducationPrograms() {
 
   return (
     <>
-      <Head title="Экспертиза научно-образовательных программ дополнительного образования" />
+      <Head title="Экспертиза научно-образовательных программ дополнительного образования" meta={[{ name: 'description', content: 'Экспертиза программ дополнительного образования в сфере медицины.' }]} />
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-full px-4">

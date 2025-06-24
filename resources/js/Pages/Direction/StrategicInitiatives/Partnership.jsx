@@ -7,7 +7,7 @@ import Sponsors from '@/Components/Sponsors';
 export default function Partnership() {
   return (
     <>
-      <Head title="Партнерство - Стратегические инициативы" />
+      <Head title="Партнерство - Стратегические инициативы" meta={[{ name: 'description', content: 'Партнерство в рамках стратегических инициатив ННЦРЗ.' }]} />
       
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">

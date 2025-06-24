@@ -6,7 +6,7 @@ import FilesAccord from '@/Components/FilesAccord';
 export default function Expert() {
   return (
     <>
-      <Head title="Экспертный совет | NNCRZ" />
+      <Head title="Экспертный совет | NNCRZ" meta={[{ name: 'description', content: 'Экспертный совет по стратегическим инициативам в здравоохранении.' }]} />
       <section className="text-gray-600 body-font">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-8'>

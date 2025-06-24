@@ -9,7 +9,7 @@ export default function Prevention() {
   
   return (
     <>
-    <Head title="Профилактика и скрининг" />
+    <Head title="Профилактика и скрининг" meta={[{ name: 'description', content: 'Профилактика заболеваний и скрининговые программы.' }]} />
     <section className="text-gray-600 body-font">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify'>

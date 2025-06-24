@@ -7,7 +7,7 @@ import FilesAccord from '@/Components/FilesAccord';
 export default function MedicalScience() {
   return (
     <>
-      <Head title="Медицинская наука" />
+      <Head title="Медицинская наука" meta={[{ name: 'description', content: 'Медицинская наука: исследования, разработки и достижения.' }]} />
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>

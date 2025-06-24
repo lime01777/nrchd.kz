@@ -20,7 +20,7 @@ export default function NewsShow({ news, relatedNews }) {
 
   return (
     <>
-      <Head title={news.title} />
+      <Head title={news.title} meta={[{ name: 'description', content: news.title + ' — новость на официальном сайте ННЦРЗ.' }]} />
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6">

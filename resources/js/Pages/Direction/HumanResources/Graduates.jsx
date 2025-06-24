@@ -23,7 +23,7 @@ export default function Graduates() {
 
   return (
     <>
-      <Head title="Выпускникам" />
+      <Head title="Выпускникам" meta={[{ name: 'description', content: 'Информация для выпускников медицинских вузов: документы, материалы и полезные ресурсы.' }]} />
 <br /><br />
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">

@@ -11,7 +11,7 @@ export default function MedicalEducation() {
 
   return (
     <>
-    <Head title="Медицинское образование" />
+    <Head title="Медицинское образование" meta={[{ name: 'description', content: 'Медицинское образование: программы, курсы и обучение в сфере здравоохранения.' }]} />
     <section className="text-gray-600 body-font pb-8">
       <div className="container px-5 py-12 mx-auto">
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">

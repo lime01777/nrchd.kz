@@ -27,7 +27,7 @@ export default function Clinical() {
 
   return (
     <>
-      <Head title="Клинические исследования" />
+      <Head title="Клинические исследования" meta={[{ name: 'description', content: 'Клинические исследования в области медицины и здравоохранения.' }]} />
 
       <section className="text-gray-600 body-font pb-2 bg-gray-200">
         <div className="container px-5 mx-auto">

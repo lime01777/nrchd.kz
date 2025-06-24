@@ -6,7 +6,7 @@ import FilesAccord from '@/Components/FilesAccord';
 export default function Tourism() {
   return (
     <>
-      <Head title="Медицинский туризм | NNCRZ" />
+      <Head title="Медицинский туризм | NNCRZ" meta={[{ name: 'description', content: 'Медицинский туризм: направления, услуги и возможности в Казахстане.' }]} />
       <section className="text-gray-600 body-font">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-8'>

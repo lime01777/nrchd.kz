@@ -25,7 +25,7 @@ export default function MedicalRating() {
 
   return (
     <>
-      <Head title="Рейтинг медицинских организаций" />
+      <Head title="Рейтинг медицинских организаций" meta={[{ name: 'description', content: 'Рейтинг медицинских организаций Казахстана: результаты и аналитика.' }]} />
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>

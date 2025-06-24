@@ -113,7 +113,7 @@ export default function AdsEvaluation() {
 
   return (
     <>
-      <Head title="Оценка рекламных материалов" />
+      <Head title="Оценка рекламных материалов" meta={[{ name: 'description', content: 'Оценка рекламных материалов для медицинских и фармацевтических услуг.' }]} />
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-2/3 px-4 mt-10">

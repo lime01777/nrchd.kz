@@ -24,7 +24,7 @@ export default function Research() {
 
   return (
     <>
-      <Head title="Перечень утвержденных научно-медицинских разработок" />
+      <Head title="Перечень утвержденных научно-медицинских разработок" meta={[{ name: 'description', content: 'Перечень утвержденных научно-медицинских разработок и исследований в области здравоохранения.' }]} />
       <br /><br />
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">

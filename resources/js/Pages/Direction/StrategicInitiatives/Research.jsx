@@ -64,7 +64,7 @@ export default function Research() {
 
     return (
         <>
-            <Head title="Стратегические исследования и инициативы" />
+            <Head title="Стратегические исследования и инициативы" meta={[{ name: 'description', content: 'Стратегические исследования и инициативы в сфере здравоохранения.' }]} />
             
             <section className="text-gray-600 body-font pb-8">
                 <div className="container px-5 py-12 mx-auto">

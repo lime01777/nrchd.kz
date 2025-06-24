@@ -9,7 +9,7 @@ export default function HumanResources() {
   
   return (
     <>
-    <Head title="Кадровые ресурсы" />
+    <Head title="Кадровые ресурсы" meta={[{ name: 'description', content: 'Кадровые ресурсы в сфере здравоохранения: информация для медработников, руководителей и выпускников.' }]} />
     <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify'>

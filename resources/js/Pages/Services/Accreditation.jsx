@@ -69,7 +69,7 @@ export default function Accreditation() {
 
   return (
     <>
-      <Head title="Аккредитация медицинских организаций и организаций здравоохранения" />
+      <Head title="Аккредитация медицинских организаций и организаций здравоохранения" meta={[{ name: 'description', content: 'Аккредитация медицинских организаций и организаций здравоохранения в Казахстане.' }]} />
 
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">

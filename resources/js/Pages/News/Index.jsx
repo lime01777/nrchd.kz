@@ -28,7 +28,7 @@ export default function NewsIndex({ news, categories, filters }) {
 
   return (
     <>
-      <Head title="Новости" />
+      <Head title="Новости" meta={[{ name: 'description', content: 'Последние новости Национального научного центра развития здравоохранения.' }]} />
       
       <div className="container mx-auto px-4 py-8">
         {/* Поиск и фильтры */}

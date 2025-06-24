@@ -12,7 +12,7 @@ import FAQ from '@/Components/FAQ';
 export default function HealthAccounts() {
   return (
     <>
-    <Head title="Национальные счета здравоохранения"/>
+    <Head title="Национальные счета здравоохранения" meta={[{ name: 'description', content: 'Национальные счета здравоохранения: статистические данные и мониторинг финансовых потоков в системе здравоохранения Казахстана.' }]} />
     
     <section className="text-gray-600 body-font pb-8">
       <div className="container px-5 py-12 mx-auto">

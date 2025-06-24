@@ -23,7 +23,7 @@ export default function MedicalWorkers() {
 
   return (
     <>
-      <Head title="Медработникам" />
+      <Head title="Медработникам" meta={[{ name: 'description', content: 'Информация для медицинских работников: документы, материалы и полезные ресурсы для специалистов здравоохранения.' }]} />
 
       {/* Документы для медработников */}
       <section className="text-gray-600 body-font pb-24">

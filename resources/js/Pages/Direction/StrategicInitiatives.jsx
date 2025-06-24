@@ -6,7 +6,7 @@ import FolderChlank from '@/Components/FolderChlank';
 export default function StrategicInitiatives() {
   return (
     <>
-      <Head title="NNCRZ" />
+      <Head title="NNCRZ" meta={[{ name: 'description', content: 'Стратегические инициативы ННЦРЗ: проекты, партнерства, экспертный совет, коалиция и ключевые направления развития.' }]} />
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>

@@ -27,7 +27,7 @@ export default function FAQExample() {
 
     return (
         <>
-            <Head title="Часто задаваемые вопросы" />
+            <Head title="Часто задаваемые вопросы" meta={[{ name: 'description', content: 'Ответы на часто задаваемые вопросы по работе и услугам центра.' }]} />
             <Header />
             
             <div className="container mx-auto px-4 py-12">

@@ -74,7 +74,7 @@ export default function TechCompetence() {
 
   return (
     <>
-      <Head title="Отраслевой центр технологических компетенций" />
+      <Head title="Отраслевой центр технологических компетенций" meta={[{ name: 'description', content: 'Отраслевой центр технологических компетенций в сфере здравоохранения: инновации, разработки и технологические решения.' }]} />
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">

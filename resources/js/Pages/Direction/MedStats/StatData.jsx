@@ -6,7 +6,7 @@ import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 export default function StatData() {
   return (
     <>
-      <Head title="Статистические данные" />
+      <Head title="Статистические данные" meta={[{ name: 'description', content: 'Статистические данные по здравоохранению.' }]} />
       
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">

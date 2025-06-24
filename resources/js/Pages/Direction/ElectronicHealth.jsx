@@ -8,7 +8,7 @@ export default function ElectronicHealth() {
   
   return (
     <>
-    <Head title='NNCRZ' />
+    <Head title='NNCRZ' meta={[{ name: 'description', content: 'Электронное здравоохранение: цифровые технологии, информационные системы и развитие цифровой медицины в Казахстане.' }]} />
     <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
             <div className='flex flex-wrap px-12 text-justify'>

@@ -7,7 +7,7 @@ import SliderImportantFile from '@/Components/SliderImportantFile';
 export default function Initiatives() {
   return (
     <>
-      <Head title="Инициативы | NNCRZ" />
+      <Head title="Инициативы | NNCRZ" meta={[{ name: 'description', content: 'Ключевые инициативы Национального научного центра развития здравоохранения.' }]} />
       <section className="text-gray-600 body-font">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-8'>

@@ -39,7 +39,7 @@ export default function HealthTechAssessment() {
 
   return (
     <>
-      <Head title="Оценка технологий здравоохранения" />
+      <Head title="Оценка технологий здравоохранения" meta={[{ name: 'description', content: 'Оценка технологий здравоохранения для медицинских организаций.' }]} />
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-2/3 px-4">

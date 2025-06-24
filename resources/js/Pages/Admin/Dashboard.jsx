@@ -1,6 +1,6 @@
 import React from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 
 export default function Dashboard() {
   // Моковые данные для статистики

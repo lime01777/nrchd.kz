@@ -12,7 +12,7 @@ export default function MedicalExpertise() {
 
   return (
     <>
-      <Head title="Научно-медицинская экспертиза" />
+      <Head title="Научно-медицинская экспертиза" meta={[{ name: 'description', content: 'Услуги научно-медицинской экспертизы.' }]} />
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-2/3 px-4">

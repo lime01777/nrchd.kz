@@ -11,7 +11,7 @@ export default function PrimaryHealthCare() {
   
   return (
     <>
-    <Head title="Первичная медико-санитарная помощь" />
+    <Head title="Первичная медико-санитарная помощь" meta={[{ name: 'description', content: 'Первичная медико-санитарная помощь: информация о развитии и организации первичной медицинской помощи.' }]} />
     <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify'>

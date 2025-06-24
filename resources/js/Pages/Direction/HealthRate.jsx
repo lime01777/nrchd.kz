@@ -12,7 +12,7 @@ export default function HealthRate() {
   
   return (
     <>
-    <Head title='Оценка технологий здравоохранения' />
+    <Head title='Оценка технологий здравоохранения' meta={[{ name: 'description', content: 'Оценка здоровья населения: методики, показатели и результаты мониторинга состояния здоровья.' }]} />
     <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
             <div className='flex flex-wrap px-12 text-justify mb-4'>

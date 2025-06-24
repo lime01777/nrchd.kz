@@ -6,7 +6,7 @@ import FilesAccord from '@/Components/FilesAccord';
 export default function Coalition() {
   return (
     <>
-      <Head title="Коалиция | NNCRZ" />
+      <Head title="Коалиция | NNCRZ" meta={[{ name: 'description', content: 'Коалиция в рамках стратегических инициатив центра.' }]} />
       <section className="text-gray-600 body-font">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-8'>

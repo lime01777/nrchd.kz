@@ -6,7 +6,7 @@ import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 export default function Reports() {
   return (
     <>
-      <Head title="Отчёты по медицинской статистике" />
+      <Head title="Отчёты по медицинской статистике" meta={[{ name: 'description', content: 'Отчёты по медицинской статистике.' }]} />
       
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
