@@ -65,7 +65,7 @@ function initializeTranslator(language) {
   console.log(`[language-initializer] Инициализация переводчика для языка: ${language}`);
   
   // Динамически загружаем переводчик
-  import('./translator-simple.js')
+  import('./new-translator.js')
     .then(translator => {
       // Применяем начальный перевод страницы
       translator.translatePage(language, {}, null, false);
@@ -283,7 +283,7 @@ function setupLanguageUrlHandler() {
     syncLanguageStorage(urlLang);
     
     // Загружаем и применяем новый переводчик
-    import('./translator-simple.js').then(translator => {
+    import('./new-translator.js').then(translator => {
       translator.translatePage(urlLang, {}, null, true); // Принудительный перевод
     }).catch(err => {
       console.error('[language-initializer] Ошибка применения языка из URL:', err);
@@ -306,7 +306,7 @@ function switchLanguage(language) {
     syncLanguageStorage(language);
     
     // Загружаем и применяем новый переводчик
-    return import('./translator-simple.js').then(translator => {
+    return import('./new-translator.js').then(translator => {
       return translator.translatePage(language, {}, null, true); // Принудительный перевод
     }).catch(err => {
       console.error('[language-initializer] Ошибка переключения языка:', err);

@@ -5,7 +5,7 @@
 
 // Импортируем только типы, чтобы избежать конфликтов
 // Сама функция translatePage будет импортирована динамически
-// import { translatePage } from './translator-simple';
+// import { translatePage } from './new-translator.js';
 
 // Доступные языки
 const AVAILABLE_LANGUAGES = ['ru', 'kz', 'en'];
@@ -381,7 +381,7 @@ class LanguageManager {
       console.log(`[LanguageManager] Translating page to ${this.currentLanguage} using cached translations`);
       try {
         // Явно импортируем translatePage в случае, если был конфликт
-        const { translatePage } = await import('./translator-simple');
+        const { translatePage } = await import('./new-translator.js');
         await translatePage(this.currentLanguage, localCache, () => {
           console.log('[LanguageManager] Translation completed');
           // Переводим специальные компоненты после основного перевода страницы
