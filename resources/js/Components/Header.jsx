@@ -10,6 +10,7 @@ export default function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [accessibilityMode, setAccessibilityMode] = useState(false);
 
     const branchesSubLinks = [
         { title: "г. Астана", url: "branches.astana" },
@@ -80,10 +81,31 @@ export default function Header() {
 
         window.addEventListener("scroll", handleScroll);
         
+        // Check if accessibility mode was previously enabled
+        const savedAccessibilityMode = localStorage.getItem('accessibilityMode');
+        if (savedAccessibilityMode === 'true') {
+            setAccessibilityMode(true);
+            document.body.classList.add('accessibility-mode');
+        }
+        
         return () => {
             window.removeEventListener("scroll", handleScroll);
         };
     }, []);
+    
+    // Toggle accessibility mode
+    const toggleAccessibilityMode = () => {
+        const newMode = !accessibilityMode;
+        setAccessibilityMode(newMode);
+        
+        if (newMode) {
+            document.body.classList.add('accessibility-mode');
+            localStorage.setItem('accessibilityMode', 'true');
+        } else {
+            document.body.classList.remove('accessibility-mode');
+            localStorage.setItem('accessibilityMode', 'false');
+        }
+    };
   return (
     <header className={`fixed top-0 text-gray-600 font-medium body-font z-50 w-full ease-in duration-150 ${ isScrolled
         ? "bg-white shadow-md" : "bg-transparent" }`}>
@@ -218,11 +240,15 @@ export default function Header() {
                     <div className="absolute inset-0 -top-8 -bottom-8 cursor-pointer"></div>
                 </div>
 
-                                {/* Новости */}
-                                <div className="mr-8">
-                    <Link href={route('news')} className="hover:text-gray-900">
+                {/* Новости */}
+                <div className="relative group mr-8">
+                    <button onClick={() => window.location.href = route('news')} className="group-hover:text-gray-900 focus:outline-none flex items-center cursor-pointer">
+
                         Новости
-                    </Link>
+                    </button>
+                    
+                    {/* Увеличенная зона интерактивности */}
+                    <div className="absolute inset-0 -top-8 -bottom-8 cursor-pointer"></div>
                 </div>
 
                 <a className="mr-8 hover:text-gray-900"></a>
@@ -285,6 +311,17 @@ export default function Header() {
                             });
                     }}
                 >KZ
+                </button>
+                {/* Кнопка версии для слабовидящих (десктоп) */}
+                <button
+                    className={`mx-1 inline-flex items-center ${accessibilityMode ? 'bg-blue-600 text-white' : 'bg-transparent text-gray-600'} border border-gray-300 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0`}
+                    onClick={toggleAccessibilityMode}
+                    title="Версия для слабовидящих"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
                 </button>
             </div>
 
@@ -424,12 +461,14 @@ export default function Header() {
                     
                     {/* Новости */}
                     <div className="w-full">
-                        <Link 
-                            href={route('news')}
-                            className="text-gray-800 hover:text-blue-600"
-                            onClick={() => setMenuOpen(false)}>
-                            Новости
-                        </Link>
+                        <button 
+                            onClick={() => {
+                                setMenuOpen(false);
+                                window.location.href = route('news');
+                            }}
+                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
+                            <span>Новости</span>
+                        </button>
                     </div>
                 </nav>
                 
@@ -485,6 +524,18 @@ export default function Header() {
                             }}
                         >
                             KZ
+                        </button>
+                        
+                        {/* Кнопка версии для слабовидящих (мобильная) */}
+                        <button 
+                            className={`px-2 py-1 rounded text-sm font-medium border ${accessibilityMode ? 'bg-blue-600 text-white border-blue-700' : 'bg-white text-blue-600 border-blue-500'}`}
+                            onClick={toggleAccessibilityMode}
+                            title="Версия для слабовидящих"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
                         </button>
                     </div>
                     

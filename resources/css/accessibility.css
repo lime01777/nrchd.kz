@@ -1,0 +1,166 @@
+/* Accessibility mode styles for visually impaired users */
+
+/* High contrast mode */
+body.accessibility-mode {
+    /* Increase base font size */
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+/* Increase contrast for text */
+body.accessibility-mode p,
+body.accessibility-mode h1,
+body.accessibility-mode h2,
+body.accessibility-mode h3,
+body.accessibility-mode h4,
+body.accessibility-mode h5,
+body.accessibility-mode h6,
+body.accessibility-mode span,
+body.accessibility-mode a,
+body.accessibility-mode li {
+    color: #000000 !important;
+    text-shadow: none !important;
+}
+
+/* Background color for better contrast */
+body.accessibility-mode {
+    background-color: #ffffff !important;
+}
+
+/* Make links more distinguishable */
+body.accessibility-mode a {
+    text-decoration: underline !important;
+    color: #0000EE !important;
+    font-weight: bold !important;
+}
+
+body.accessibility-mode a:visited {
+    color: #551A8B !important;
+}
+
+body.accessibility-mode a:hover,
+body.accessibility-mode a:focus {
+    background-color: #FFFF00 !important;
+    color: #000000 !important;
+    outline: 2px solid #000000 !important;
+}
+
+/* Increase contrast for buttons */
+body.accessibility-mode button,
+body.accessibility-mode .btn {
+    background-color: #000000 !important;
+    color: #FFFFFF !important;
+    border: 2px solid #FFFFFF !important;
+    font-weight: bold !important;
+    padding: 10px 15px !important;
+}
+
+/* Exception for the accessibility toggle button */
+body.accessibility-mode button[title="Версия для слабовидящих"] {
+    background-color: #0000EE !important;
+    color: #FFFFFF !important;
+}
+
+/* Increase focus indication */
+body.accessibility-mode *:focus {
+    outline: 3px solid #FFFF00 !important;
+    outline-offset: 2px !important;
+}
+
+/* Increase contrast for form elements */
+body.accessibility-mode input,
+body.accessibility-mode textarea,
+body.accessibility-mode select {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
+    font-size: 1.1em !important;
+}
+
+body.accessibility-mode input::placeholder,
+body.accessibility-mode textarea::placeholder {
+    color: #555555 !important;
+}
+
+/* Increase spacing between elements */
+body.accessibility-mode p,
+body.accessibility-mode h1,
+body.accessibility-mode h2,
+body.accessibility-mode h3,
+body.accessibility-mode h4,
+body.accessibility-mode h5,
+body.accessibility-mode h6,
+body.accessibility-mode ul,
+body.accessibility-mode ol,
+body.accessibility-mode li,
+body.accessibility-mode div {
+    margin-bottom: 1.2em !important;
+}
+
+/* Increase size of interactive elements */
+body.accessibility-mode button,
+body.accessibility-mode input[type="button"],
+body.accessibility-mode input[type="submit"],
+body.accessibility-mode .btn,
+body.accessibility-mode a.btn {
+    min-height: 44px !important;
+    min-width: 44px !important;
+}
+
+/* Improve table readability */
+body.accessibility-mode table {
+    border-collapse: separate !important;
+    border-spacing: 2px !important;
+}
+
+body.accessibility-mode th,
+body.accessibility-mode td {
+    border: 2px solid #000000 !important;
+    padding: 10px !important;
+}
+
+body.accessibility-mode th {
+    background-color: #000000 !important;
+    color: #FFFFFF !important;
+    font-weight: bold !important;
+}
+
+/* Improve readability of lists */
+body.accessibility-mode ul,
+body.accessibility-mode ol {
+    padding-left: 30px !important;
+}
+
+body.accessibility-mode li {
+    margin-bottom: 10px !important;
+}
+
+/* Improve card and box contrast */
+body.accessibility-mode .card,
+body.accessibility-mode .box,
+body.accessibility-mode .container {
+    border: 2px solid #000000 !important;
+    box-shadow: none !important;
+}
+
+/* Increase header contrast */
+body.accessibility-mode header {
+    background-color: #000000 !important;
+}
+
+body.accessibility-mode header a,
+body.accessibility-mode header span,
+body.accessibility-mode header button {
+    color: #FFFFFF !important;
+}
+
+/* Increase footer contrast */
+body.accessibility-mode footer {
+    background-color: #000000 !important;
+    color: #FFFFFF !important;
+}
+
+body.accessibility-mode footer a,
+body.accessibility-mode footer span {
+    color: #FFFFFF !important;
+}
