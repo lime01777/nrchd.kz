@@ -588,15 +588,13 @@ class LanguageManager {
   }
   
   /**
-   * Обновить URL, добавив параметр языка
+   * Обновить URL с языком (отключено, чтобы избежать добавления ?lang= в URL)
    */
   updateUrlWithLanguage() {
-    if (!history.pushState) return;
-    
-    const url = new URL(window.location.href);
-    url.searchParams.set('lang', this.currentLanguage);
-    
-    window.history.replaceState({}, '', url.toString());
+    // Отключаем функцию изменения URL с параметром language
+    // Вместо этого язык сохраняется в localStorage и cookies
+    console.log('[LanguageManager] URL update with language parameter is disabled');
+    return;
   }
   
   /**

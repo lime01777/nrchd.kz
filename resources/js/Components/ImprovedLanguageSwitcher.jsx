@@ -94,10 +94,9 @@ function ImprovedLanguageSwitcher() {
       // Обновляем состояние UI
       setIsTranslating(true);
       
-      // Обновляем URL с новым языком
-      const url = new URL(window.location);
-      url.searchParams.set('lang', lang);
-      window.history.pushState({}, '', url);
+      // Сохраняем выбранный язык без изменения URL
+      // Удаляем изменение URL с параметром ?lang=
+      // Вместо этого просто сохраняем язык локально
       
       // Используем улучшенный менеджер языка
       await languageManager.switchLanguage(lang);

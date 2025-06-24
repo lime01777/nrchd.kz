@@ -49,6 +49,14 @@ Route::get('/tabdocuments', [\App\Http\Controllers\FileController::class, 'getTa
 Route::post('/auto-translate', [\App\Http\Controllers\AutoTranslationController::class, 'translate']);
 Route::post('/auto-translate/bulk', [\App\Http\Controllers\AutoTranslationController::class, 'bulkTranslate']);
 Route::post('/auto-translate/update', [\App\Http\Controllers\AutoTranslationController::class, 'updateTranslation']);
+
+// Маршруты API для админки переводов
+Route::group(['prefix' => 'admin/translations', 'middleware' => ['auth']], function () {
+    Route::get('/stats', [\App\Http\Controllers\Admin\TranslationManagerController::class, 'getStats']);
+    Route::get('/site-urls', [\App\Http\Controllers\Admin\TranslationManagerController::class, 'getSiteUrls']);
+    Route::post('/translate-page', [\App\Http\Controllers\Admin\TranslationManagerController::class, 'translatePage']);
+    Route::post('/clear', [\App\Http\Controllers\Admin\TranslationManagerController::class, 'clearTranslations']);
+});
 Route::post('/auto-translate/delete', [\App\Http\Controllers\AutoTranslationController::class, 'deleteTranslation']);
 Route::get('/auto-translate', [\App\Http\Controllers\AutoTranslationController::class, 'getTranslation']);
 Route::get('/auto-translate/content', [\App\Http\Controllers\AutoTranslationController::class, 'getContentTranslations']);

@@ -2,6 +2,8 @@ import { Link, usePage } from '@inertiajs/react';
 import React, {useState, useEffect} from 'react';
 import DirectionsSubLinks from './DirectionsSubLinks';
 import LanguageSwitcher from './LanguageSwitcher';
+// Импортируем новый переводчик
+import Translator from '../Utils/new-translator';
 
 export default function Header() {
     const { auth } = usePage().props;
@@ -438,17 +440,15 @@ export default function Header() {
                         <button 
                             className="lang-btn px-2 py-1 rounded text-sm font-medium border border-blue-500" 
                             data-lang="en"
+                            data-no-translate="true"
                             style={{ backgroundColor: 'white', color: '#3b82f6' }} 
                             onClick={() => {
                                 console.log('EN button clicked directly');
-                                // Используем упрощенный переводчик
-                                import('../Utils/translator-simple.js')
-                                    .then(translator => {
-                                        translator.translatePage('en');
-                                    })
+                                // Используем новый переводчик
+                                Translator.translatePage('en')
                                     .catch(err => {
                                         console.error('Translator error:', err);
-                                        alert('Ошибка загрузки переводчика: ' + err.message);
+                                        alert('Ошибка переводчика: ' + err.message);
                                     });
                             }}
                         >
@@ -457,13 +457,15 @@ export default function Header() {
                         <button 
                             className="lang-btn px-2 py-1 rounded text-sm font-medium border border-blue-500" 
                             data-lang="ru"
+                            data-no-translate="true"
                             style={{ backgroundColor: '#3b82f6', color: 'white' }} 
                             onClick={() => {
                                 console.log('RU button clicked directly');
-                                // Используем упрощенный переводчик
-                                import('../Utils/translator-simple.js').then(translator => {
-                                    translator.translatePage('ru');
-                                });
+                                // Используем новый переводчик
+                                Translator.translatePage('ru')
+                                    .catch(err => {
+                                        console.error('Translator error:', err);
+                                    });
                             }}
                         >
                             RU
@@ -471,18 +473,36 @@ export default function Header() {
                         <button 
                             className="lang-btn px-2 py-1 rounded text-sm font-medium border border-blue-500" 
                             data-lang="kz"
+                            data-no-translate="true"
                             style={{ backgroundColor: 'white', color: '#3b82f6' }} 
                             onClick={() => {
                                 console.log('KZ button clicked directly');
-                                // Используем упрощенный переводчик
-                                import('../Utils/translator-simple.js').then(translator => {
-                                    translator.translatePage('kz');
-                                });
+                                // Используем новый переводчик
+                                Translator.translatePage('kz')
+                                    .catch(err => {
+                                        console.error('Translator error:', err);
+                                    });
                             }}
                         >
                             KZ
                         </button>
                     </div>
+                    
+                    {/* Кнопка очистки кэша переводов */}
+                    <button 
+                        className="px-2 py-1 ml-2 text-sm font-medium text-red-600 border border-red-500 rounded hover:bg-red-100"
+                        data-no-translate="true"
+                        onClick={() => {
+                            if (window.confirm('Очистить кэш переводов? Страница будет перезагружена.')) {
+                                Translator.clearAllCache();
+                                window.location.reload();
+                            }
+                        }}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
                     
                     {/* Admin panel link */}
                     {auth?.user && (

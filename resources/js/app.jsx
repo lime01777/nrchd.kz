@@ -1,8 +1,8 @@
 import '../css/app.css';
 import './bootstrap';
-import languageManager from './Utils/LanguageManager'; // Import language manager for site-wide translations
+// ВАЖНО: Полностью обновленная система перевода
 import './Utils/translation-blocker'; // Import blocker for translation information blocks
-import languageInitializer from './Utils/language-initializer'; // Import new robust language initializer
+import languageInitializer from './Utils/language-initializer-new'; // Новейший инициализатор языка
 
 // Скрываем все информационные блоки о переводе
 const hideTranslationInfo = () => {
@@ -31,9 +31,9 @@ const hideTranslationInfo = () => {
 // Добавляем стили для скрытия информационных блоков
 document.addEventListener('DOMContentLoaded', hideTranslationInfo);
 
-// Используем улучшенный инициализатор языка для более надежной работы
+// Используем новую систему перевода с подробным логированием
 document.addEventListener('DOMContentLoaded', () => {
-  languageInitializer.initialize();
+  languageInitializer.initialize(true); // Включаем подробное логирование
 });
 
 import { createInertiaApp } from '@inertiajs/react';
@@ -54,13 +54,14 @@ createInertiaApp({
 
         const render = props.initialPage.props.layout || ((page) => page);
         
-        // Применяем улучшенную обработку языковых настроек при загрузке приложения
-        setTimeout(() => {
-            // Даем время на рендер и применяем язык через новый инициализатор
-            languageInitializer.initialize();
-            // Дополнительно применяем язык на случай, если есть необходимость
-            languageManager.applyLanguage();
-        }, 500);
+        // Инициализируем языковую систему и применяем перевод через новый инициализатор
+        languageInitializer.initialize(true)
+            .then(currentLang => {
+                console.log('[App] Языковая система успешно инициализирована с языком:', currentLang);
+            })
+            .catch(err => {
+                console.error('[App] Ошибка инициализации языковой системы:', err);
+            });
 
         root.render(render(<App {...props} />));
     },

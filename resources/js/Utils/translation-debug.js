@@ -45,6 +45,19 @@ async function checkApiEndpoint(url, method) {
         const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
         if (!token) return false;
         
+        // Определяем правильные параметры для каждого типа запроса
+        let bodyData = { test: true, language: 'ru' };
+        
+        // Добавляем специфичные для эндпоинта параметры
+        if (url === '/api/page-translations') {
+            bodyData = {
+                ...bodyData,
+                page_url: window.location.pathname,
+                save_all: false
+            };
+            console.log('Синхронизируем язык с сервером...');
+        }
+        
         const response = await fetch(url, {
             method: method,
             headers: {
@@ -52,10 +65,7 @@ async function checkApiEndpoint(url, method) {
                 'X-CSRF-TOKEN': token,
                 'X-Requested-With': 'XMLHttpRequest'
             },
-            body: JSON.stringify({
-                test: true,
-                language: 'ru'
-            })
+            body: JSON.stringify(bodyData)
         });
         
         return response.status !== 404;
