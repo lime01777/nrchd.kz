@@ -50,7 +50,7 @@ body.accessibility-mode button,
 body.accessibility-mode .btn {
     background-color: #000000 !important;
     color: #FFFFFF !important;
-    border: 2px solid #FFFFFF !important;
+    border: none !important;
     font-weight: bold !important;
     padding: 10px 15px !important;
 }
@@ -63,8 +63,8 @@ body.accessibility-mode button[title="Версия для слабовидящи
 
 /* Increase focus indication */
 body.accessibility-mode *:focus {
-    outline: 3px solid #FFFF00 !important;
-    outline-offset: 2px !important;
+    outline: 2px solid #FFFF00 !important;
+    outline-offset: 1px !important;
 }
 
 /* Increase contrast for form elements */
@@ -73,7 +73,7 @@ body.accessibility-mode textarea,
 body.accessibility-mode select {
     background-color: #FFFFFF !important;
     color: #000000 !important;
-    border: 2px solid #000000 !important;
+    border: 1px solid #666666 !important;
     font-size: 1.1em !important;
 }
 
@@ -110,12 +110,12 @@ body.accessibility-mode a.btn {
 /* Improve table readability */
 body.accessibility-mode table {
     border-collapse: separate !important;
-    border-spacing: 2px !important;
+    border-spacing: 1px !important;
 }
 
 body.accessibility-mode th,
 body.accessibility-mode td {
-    border: 2px solid #000000 !important;
+    border: 1px solid #666666 !important;
     padding: 10px !important;
 }
 
@@ -139,8 +139,8 @@ body.accessibility-mode li {
 body.accessibility-mode .card,
 body.accessibility-mode .box,
 body.accessibility-mode .container {
-    border: 2px solid #000000 !important;
-    box-shadow: none !important;
+    border: none !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* Increase header contrast */
@@ -161,12 +161,100 @@ body.accessibility-mode header .flex.items-center.justify-between {
     font-weight: bold !important;
     padding: 8px 12px !important;
     margin: 4px 0 !important;
-    border: 2px solid #FFFFFF !important;
+    border: none !important;
     border-radius: 4px !important;
     background-color: #000000 !important;
     color: #FFFFFF !important;
     display: flex !important;
     align-items: center !important;
+}
+
+/* Высококонтрастные стили для выпадающих меню в мобильной версии */
+body.accessibility-mode .fixed.inset-0.bg-white {
+    background-color: #FFFFFF !important;
+}
+
+/* Стили для кнопок выпадающих меню */
+body.accessibility-mode .w-full button.flex.items-center.justify-between {
+    background-color: #000000 !important;
+    color: #FFFFFF !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+    padding: 12px !important;
+    margin: 6px 0 !important;
+    border: none !important;
+    border-radius: 6px !important;
+}
+
+/* Стили для выпадающих списков */
+body.accessibility-mode .w-full .border-l-2 {
+    border-left: 4px solid #000000 !important;
+    background-color: #FFFFFF !important;
+}
+
+/* Стили для элементов выпадающих списков */
+body.accessibility-mode .w-full .border-l-2 .py-2 {
+    border-bottom: 1px solid #CCCCCC !important;
+    padding: 10px 0 !important;
+}
+
+/* Стили для ссылок в выпадающих списках */
+body.accessibility-mode .w-full .border-l-2 a {
+    color: #000000 !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    display: block !important;
+    padding: 8px !important;
+}
+
+body.accessibility-mode .w-full .border-l-2 a:hover,
+body.accessibility-mode .w-full .border-l-2 a:focus {
+    background-color: #FFFF00 !important;
+    color: #000000 !important;
+    outline: none !important;
+    text-decoration: underline !important;
+}
+
+/* Стили для десктопных выпадающих меню */
+body.accessibility-mode .fixed.left-1\/2,
+body.accessibility-mode .absolute.left-1\/2,
+body.accessibility-mode .group-hover\:opacity-100,
+body.accessibility-mode .group-hover\:visible,
+body.accessibility-mode .group-hover\:scale-100 {
+    background-color: #000000 !important;
+    border: none !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.accessibility-mode .group-hover\:opacity-100 ul,
+body.accessibility-mode .group-hover\:visible ul,
+body.accessibility-mode .group-hover\:scale-100 ul,
+body.accessibility-mode .w-96 {
+    background-color: #000000 !important;
+    border-color: #333333 !important;
+}
+
+body.accessibility-mode .group-hover\:opacity-100 a,
+body.accessibility-mode .group-hover\:visible a,
+body.accessibility-mode .group-hover\:scale-100 a,
+body.accessibility-mode .group-hover\:opacity-100 span,
+body.accessibility-mode .group-hover\:visible span,
+body.accessibility-mode .group-hover\:scale-100 span {
+    color: #FFFFFF !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    padding: 8px !important;
+}
+
+body.accessibility-mode .group-hover\:opacity-100 a:hover,
+body.accessibility-mode .group-hover\:visible a:hover,
+body.accessibility-mode .group-hover\:scale-100 a:hover,
+body.accessibility-mode .group-hover\:opacity-100 a:focus,
+body.accessibility-mode .group-hover\:visible a:focus,
+body.accessibility-mode .group-hover\:scale-100 a:focus {
+    background-color: #333333 !important;
+    color: #FFFF00 !important;
+    text-decoration: underline !important;
 }
 
 /* Make sure icons in menu items are visible */

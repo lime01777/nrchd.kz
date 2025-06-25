@@ -347,7 +347,7 @@ export default function Header() {
                 </button>
             </div>
             {/* Мобильное меню на полный экран */}
-            <div className={`fixed inset-0 bg-white text-gray-800 flex flex-col items-center justify-center transform
+            <div className={`fixed inset-0 bg-white text-gray-800 flex flex-col items-start justify-start transform
                 transition-transform duration-300 ${ menuOpen ? "translate-x-0" : "-translate-x-full" } z-50 overflow-y-auto`}>
                 <button onClick={()=> setMenuOpen(false)}
                     className="absolute top-5 right-5 text-gray-800 hover:text-gray-600"
@@ -358,7 +358,7 @@ export default function Header() {
                     </svg>
                 </button>
                 
-                <nav className="flex flex-col items-start w-full px-8 py-12 space-y-8 text-xl">
+                <nav className="flex flex-col items-start w-full px-4 py-12 space-y-6 text-xl overflow-y-auto max-h-[80vh]">
                     {/* Направления - выпадающий список */}
                     <div className="w-full">
                         <button 
@@ -372,10 +372,10 @@ export default function Header() {
                             </svg>
                         </button>
                         {dropdownOpen === 'directions' && (
-                            <div className="ml-4 mt-2 space-y-2 text-base border-l-2 border-gray-200 pl-4">
+                            <div className="w-full mt-3 space-y-1 text-base border-l-2 border-gray-200 pl-4 max-h-[50vh] overflow-y-auto pb-4">
                                 {allDirectionsSubLinks.map((link, index) => (
-                                    <div key={index} className="py-1">
-                                        <Link href={route(link.url)} className="text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                    <div key={index} className="py-2 border-b border-gray-100">
+                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
                                             {link.title}
                                         </Link>
                                     </div>
@@ -397,10 +397,10 @@ export default function Header() {
                             </svg>
                         </button>
                         {dropdownOpen === 'services' && (
-                            <div className="ml-4 mt-2 space-y-2 text-base border-l-2 border-gray-200 pl-4">
+                            <div className="w-full mt-3 space-y-1 text-base border-l-2 border-gray-200 pl-4 max-h-[50vh] overflow-y-auto pb-4">
                                 {allServicesSubLinks.map((link, index) => (
-                                    <div key={index} className="py-1">
-                                        <Link href={route(link.url)} className="text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                    <div key={index} className="py-2 border-b border-gray-100">
+                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
                                             {link.title}
                                         </Link>
                                     </div>
@@ -422,10 +422,10 @@ export default function Header() {
                             </svg>
                         </button>
                         {dropdownOpen === 'about' && (
-                            <div className="ml-4 mt-2 space-y-2 text-base border-l-2 border-gray-200 pl-4">
+                            <div className="w-full mt-3 space-y-1 text-base border-l-2 border-gray-200 pl-4 max-h-[50vh] overflow-y-auto pb-4">
                                 {allAboutCentreSubLinks.map((link, index) => (
-                                    <div key={index} className="py-1">
-                                        <Link href={route(link.url)} className="text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                    <div key={index} className="py-2 border-b border-gray-100">
+                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
                                             {link.title}
                                         </Link>
                                     </div>
@@ -447,10 +447,10 @@ export default function Header() {
                             </svg>
                         </button>
                         {dropdownOpen === 'branches' && (
-                            <div className="ml-4 mt-2 space-y-2 text-base border-l-2 border-gray-200 pl-4">
+                            <div className="w-full mt-3 space-y-1 text-base border-l-2 border-gray-200 pl-4 max-h-[50vh] overflow-y-auto pb-4">
                                 {branchesSubLinks.map((link, index) => (
-                                    <div key={index} className="py-1">
-                                        <Link href={route(link.url)} className="text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                    <div key={index} className="py-2 border-b border-gray-100">
+                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
                                             {link.title}
                                         </Link>
                                     </div>
@@ -539,21 +539,7 @@ export default function Header() {
                         </button>
                     </div>
                     
-                    {/* Кнопка очистки кэша переводов */}
-                    <button 
-                        className="px-2 py-1 ml-2 text-sm font-medium text-red-600 border border-red-500 rounded hover:bg-red-100"
-                        data-no-translate="true"
-                        onClick={() => {
-                            if (window.confirm('Очистить кэш переводов? Страница будет перезагружена.')) {
-                                Translator.clearAllCache();
-                                window.location.reload();
-                            }
-                        }}
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                    </button>
+                    {/* Кнопка очистки кэша переводов удалена */}
                     
                     {/* Admin panel link */}
                     {auth?.user && (
