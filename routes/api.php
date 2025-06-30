@@ -65,3 +65,9 @@ Route::group(['prefix' => 'admin/translations', 'middleware' => ['auth']], funct
 Route::post('/auto-translate/delete', [\App\Http\Controllers\AutoTranslationController::class, 'deleteTranslation']);
 Route::get('/auto-translate', [\App\Http\Controllers\AutoTranslationController::class, 'getTranslation']);
 Route::get('/auto-translate/content', [\App\Http\Controllers\AutoTranslationController::class, 'getContentTranslations']);
+
+// Маршруты для обработки форм
+Route::post('/forms/submit', [\App\Http\Controllers\FormController::class, 'submitForm']);
+Route::post('/forms/contact', [\App\Http\Controllers\FormController::class, 'contactForm']);
+Route::post('/forms/accreditation', [\App\Http\Controllers\FormController::class, 'accreditationForm']);
+Route::post('/forms/service', [\App\Http\Controllers\FormController::class, 'serviceRequestForm']);

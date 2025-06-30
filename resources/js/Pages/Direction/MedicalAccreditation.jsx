@@ -9,22 +9,71 @@ import FilesAccord from '@/Components/FilesAccord';
 // Компонент формы аккредитации для связи с отделом
 const AccreditationForm = () => {
   const [files, setFiles] = useState([]);
+  const [formData, setFormData] = useState({
+    orgName: '',
+    email: '',
+    phone: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
   
   const handleFileChange = (e) => {
     if (e.target.files) {
       setFiles(Array.from(e.target.files));
     }
   };
+  
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Здесь будет логика отправки формы
-    alert('Форма отправлена');
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+    
+    try {
+      // Импортируем сервис для отправки форм динамически
+      const { default: FormService } = await import('@/Services/FormService');
+      
+      // Отправляем данные формы
+      const response = await FormService.submitForm('medical_accreditation', formData, files);
+      
+      // Обрабатываем успешный ответ
+      console.log('Форма успешно отправлена:', response.data);
+      setSubmitStatus({ success: true, message: 'Форма успешно отправлена. Мы свяжемся с вами в ближайшее время.' });
+      
+      // Очищаем форму
+      setFormData({
+        orgName: '',
+        email: '',
+        phone: '',
+        message: ''
+      });
+      setFiles([]);
+    } catch (error) {
+      console.error('Ошибка при отправке формы:', error);
+      setSubmitStatus({ success: false, message: 'Произошла ошибка при отправке формы. Пожалуйста, попробуйте позже.' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   return (
     <div className="bg-white rounded-lg shadow-lg p-4 border border-gray-200">
       <h2 className="text-lg font-semibold text-gray-800 mb-3 text-center">Свяжитесь с нами</h2>
+      
+      {submitStatus && (
+        <div className={`mb-4 p-3 rounded-md ${submitStatus.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+          {submitStatus.message}
+        </div>
+      )}
+      
       <form onSubmit={handleSubmit} className="text-sm">
         <div className="mb-2">
           <label htmlFor="orgName" className="block text-gray-700 text-xs font-medium mb-1">
@@ -35,6 +84,9 @@ const AccreditationForm = () => {
             id="orgName" 
             className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
             required
+            value={formData.orgName}
+            onChange={handleInputChange}
+            disabled={isSubmitting}
           />
         </div>
         
@@ -48,6 +100,9 @@ const AccreditationForm = () => {
               id="email" 
               className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
               required
+              value={formData.email}
+              onChange={handleInputChange}
+              disabled={isSubmitting}
             />
           </div>
           
@@ -60,6 +115,9 @@ const AccreditationForm = () => {
               id="phone" 
               className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
               required
+              value={formData.phone}
+              onChange={handleInputChange}
+              disabled={isSubmitting}
             />
           </div>
         </div>
@@ -72,6 +130,9 @@ const AccreditationForm = () => {
             id="message" 
             rows="2"
             className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
+            value={formData.message}
+            onChange={handleInputChange}
+            disabled={isSubmitting}
           ></textarea>
         </div>
         
@@ -81,6 +142,7 @@ const AccreditationForm = () => {
             id="consent" 
             className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             required
+            disabled={isSubmitting}
           />
           <label htmlFor="consent" className="ml-2 block text-xs text-gray-700">
             Я согласен на обработку персональных данных
@@ -90,9 +152,10 @@ const AccreditationForm = () => {
         <div className="flex justify-center">
           <button 
             type="submit"
-            className="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-1.5 px-4 rounded-md text-sm transition duration-300 w-auto"
+            className={`bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-1.5 px-4 rounded-md text-sm transition duration-300 w-auto ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={isSubmitting}
           >
-            Отправить
+            {isSubmitting ? 'Отправка...' : 'Отправить'}
           </button>
         </div>
       </form>
