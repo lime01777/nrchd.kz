@@ -5,6 +5,7 @@ import FilesAccord from '@/Components/FilesAccord';
 import FolderChlank from '@/Components/FolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import SwitchableChart from '@/Components/SwitchableChart';
+import DocumentCards from '@/Components/DocumentCards';
 
 export default function MedicalStatistics() {
     const [showFullText, setShowFullText] = useState(false);
@@ -92,16 +93,32 @@ export default function MedicalStatistics() {
                 </div>
             </section>
             
-            {/* Блок FilesAccord с двумя заголовками и двумя компонентами */}
+            {/* Карточки с приказами */}
       <section className="text-gray-600 body-font">
         <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
-            {/* Первый аккордеон */}
-            <FilesAccord 
-                folder="Медицинская статистика/Приказы"
+            <DocumentCards 
                 title="Приказы"
-                bgColor="bg-purple-200"
-                defaultOpen={true}
+                bgColor="bg-purple-100"
+                documents={[
+                    {
+                        title: "Приказ Министра здравоохранения Республики Казахстан от 31 июля 2020 года № КР ДСМ-64/2020",
+                        url: "https://adilet.zan.kz/rus/docs/V2000021579"
+                    },
+                    {
+                        title: "Приказ Министра здравоохранения Республики Казахстан от 21 августа 2020 года № КР ДСМ-96/2020",
+                        url: "https://adilet.zan.kz/rus/docs/V2000021879"
+                    },
+                    {
+                        title: "Приказ Министра здравоохранения Республики Казахстан от 14 августа 2020 года № КР ДСМ-92/2020",
+                        url: "https://adilet.zan.kz/rus/docs/V2000021769"
+                    },
+                    {
+                        title: "Приказ Министра здравоохранения Республики Казахстан от 11 августа 2020 года № КР ДСМ-89/2020",
+                        url: "https://adilet.zan.kz/rus/docs/V2000021698"
+                    },
+                ]}
             />
+            
             {/* Второй аккордеон */}
             <FilesAccord 
                 folder="Медицинская статистика/Методические рекомендации"
@@ -141,8 +158,8 @@ export default function MedicalStatistics() {
       <p className="text-gray-600">8-7172-648-951, вн: 1134</p>
     </div>
 
-        {/* Четвертый блок - Контакты */}
-        <div className="bg-white rounded-lg p-6 shadow-sm">
+    {/* Четвертый блок - Контакты */}
+    <div className="bg-white rounded-lg p-6 shadow-sm">
       <h3 className="text-lg font-semibold text-gray-800 mb-3">Эксперт в Бюро кодирования</h3>
       <p className="text-gray-600">Жаниязова Гульнур Ахметбековна</p>
       <p className="text-gray-600">8-7172-648-951, вн: 1073</p>
