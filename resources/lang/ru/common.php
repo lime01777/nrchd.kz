@@ -1,0 +1,142 @@
+<?php
+
+return [
+    // General navigation
+    'welcome' => 'Добро пожаловать',
+    'home' => 'Главная',
+    'about' => 'О нас',
+    'contacts' => 'Контакты',
+    'news' => 'Новости',
+    'documents' => 'Документы',
+    'more' => 'Подробнее',
+    'read_more' => 'Читать далее',
+    'search' => 'Поиск',
+    'all_news' => 'Все новости',
+    'all_documents' => 'Все документы',
+    
+    // Header menu
+    'directions' => 'Направления',
+    'services' => 'Услуги',
+    'about_center' => 'О центре',
+    'branches' => 'Филиалы',
+    'center_name' => 'Национальный научный центр развития здравоохранения им. Салидат Каирбековой',
+    
+    // Medical Directions
+    'medical_education' => 'Медицинское образование',
+    'medical_science' => 'Медицинская наука',
+    'medical_statistics' => 'Медицинская статистика',
+    'healthcare_quality' => 'Качество здравоохранения',
+    'medical_personnel' => 'Развитие кадров',
+    'healthcare_financing' => 'Финансирование здравоохранения',
+    'health_informatization' => 'Информатизация здравоохранения',
+    'pharmaceutical_policy' => 'Лекарственная политика',
+    'integrative_medicine' => 'Интегративная медицина',
+    'international_cooperation' => 'Международное сотрудничество',
+    'education_programs' => 'Образовательные программы',
+    'scientific_projects' => 'Научные проекты',
+    
+    // Services
+    'medical_expertise' => 'Медицинская экспертиза',
+    'expert_evaluation' => 'Экспертная оценка',
+    'scientific_support' => 'Научное сопровождение',
+    'educational_services' => 'Образовательные услуги',
+    'consulting_services' => 'Консультационные услуги',
+    'organizational_services' => 'Организационно-методические услуги',
+    
+    // About Center
+    'about_us' => 'О нас',
+    'mission_vision' => 'Миссия и видение',
+    'history' => 'История',
+    'leadership' => 'Руководство',
+    'structure' => 'Структура',
+    'partners' => 'Партнеры',
+    'projects' => 'Проекты',
+    'vacancies' => 'Вакансии',
+    'press_center' => 'Пресс-центр',
+    
+    // Accessibility
+    'accessibility' => 'Версия для слабовидящих',
+    'normal_view' => 'Обычная версия',
+    
+    // Footer
+    'address' => 'Адрес',
+    'phone' => 'Телефон',
+    'email' => 'Электронная почта',
+    'social_networks' => 'Социальные сети',
+    'copyright' => 'Все права защищены',
+    'privacy_policy' => 'Политика конфиденциальности',
+    'terms_of_use' => 'Условия использования',
+    
+    // UI Elements
+    'loading' => 'Загрузка...',
+    'error_occurred' => 'Произошла ошибка',
+    'try_again' => 'Попробуйте снова',
+    'back' => 'Назад',
+    'next' => 'Далее',
+    'previous' => 'Предыдущий',
+    'submit' => 'Отправить',
+    'cancel' => 'Отмена',
+    'save' => 'Сохранить',
+    'delete' => 'Удалить',
+    'edit' => 'Редактировать',
+    'view' => 'Просмотреть',
+    'download' => 'Скачать',
+    'uploads' => 'Загрузки',
+    'published_at' => 'Опубликовано',
+    'no_results' => 'Нет результатов',
+    'toggle_navigation' => 'Переключить навигацию',
+    'language' => 'Язык',
+    'language_ru' => 'Русский',
+    'language_kz' => 'Қазақша',
+    'language_en' => 'Английский',
+    
+    // News & Events
+    'recent_news' => 'Последние новости',
+    'events' => 'События',
+    'upcoming_events' => 'Предстоящие события',
+    'date' => 'Дата',
+    'time' => 'Время',
+    'location' => 'Место проведения',
+    'categories' => 'Категории',
+    
+    // Forms & Contact
+    'contact_us' => 'Связаться с нами',
+    'send_message' => 'Отправить сообщение',
+    'your_name' => 'Ваше имя',
+    'your_email' => 'Ваш email',
+    'subject' => 'Тема',
+    'message' => 'Сообщение',
+    'required_field' => 'Обязательное поле',
+    'form_submitted' => 'Форма отправлена',
+    'thank_you' => 'Спасибо',
+    
+    // Authentication
+    'login' => 'Вход',
+    'register' => 'Регистрация',
+    'logout' => 'Выход',
+    'password' => 'Пароль',
+    'forgot_password' => 'Забыли пароль?',
+    'remember_me' => 'Запомнить меня',
+    
+    // Statistics & Charts
+    'statistics' => 'Статистика',
+    'year' => 'Год',
+    'month' => 'Месяц',
+    'quarter' => 'Квартал',
+    'total' => 'Итого',
+    'chart_planned' => 'Плановые',
+    'chart_emergency' => 'Экстренные',
+    'chart_visits' => 'Число посещений в ПМСП',
+    'chart_diseases' => 'Заболеваемость по категориям',
+    'chart_hospitalizations' => 'Госпитализации',
+    'visits' => 'Посещения ПМСП',
+    'diseases' => 'Заболеваемость',
+    'hospitalizations' => 'Госпитализации',
+    'medical_statistics_description' => 'Медицинская статистика: данные, отчеты и аналитическая информация о состоянии здравоохранения.',
+    'medical_statistics_intro' => 'Национальный научный центр развития здравоохранения им. Салидат Каирбековой предоставляет актуальные статистические данные в области здравоохранения Республики Казахстан. Центр осуществляет сбор, анализ и публикацию различных статистических показателей, связанных с здоровьем населения.',
+    'medical_statistics_details' => 'Медицинская статистика является важным инструментом для планирования и оценки эффективности системы здравоохранения. Она позволяет отслеживать тенденции в области здоровья населения, распространенность заболеваний, факторы риска и эффективность медицинских вмешательств. Наш центр предоставляет следующие виды статистических данных:',
+    'medical_statistics_demographics' => '1. Демографические показатели - данные о рождаемости, смертности, ожидаемой продолжительности жизни.',
+    'period' => 'Период',
+    'indicators' => 'Показатели',
+    'dynamics' => 'Динамика',
+];

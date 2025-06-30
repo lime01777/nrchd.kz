@@ -2,9 +2,9 @@ import { Head, Link } from '@inertiajs/react';
 import React, { useState } from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
 import FilesAccord from '@/Components/FilesAccord';
-import ChartHead from '@/Components/ChartHead';
 import FolderChlank from '@/Components/FolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
+import SwitchableChart from '@/Components/SwitchableChart';
 
 export default function MedicalStatistics() {
     const [showFullText, setShowFullText] = useState(false);
@@ -100,34 +100,14 @@ export default function MedicalStatistics() {
             
             {/* Блок ActualFile с тремя документами */}
             
-            {/* Блок с двумя графиками как на главной странице */}
+            {/* Блок с переключаемым графиком */}
             <section className="text-gray-600 body-font py-16 bg-white">
                 <div className="container mx-auto px-5">
-                    <h2 className="text-3xl font-bold mb-12 text-gray-800">Статистика и аналитика</h2>
+                    <h2 className="text-3xl font-bold mb-12 text-gray-800"></h2>
                     
-                    <div className="flex flex-wrap -mx-4">
-                        {/* График травм */}
-                        <div className="w-full lg:w-1/2 px-4 mb-12 lg:mb-0">
-                            <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 h-full">
-                                <div className="h-80">
-                                    {/* Здесь будет график травм */}
-                                    <ChartHead 
-                                        chartType="injuries" 
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        
-                        {/* График аккредитаций */}
-                        <div className="w-full lg:w-1/2 px-4">
-                            <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 h-full">
-                                <div className="h-80">
-                                    {/* Здесь будет график аккредитаций */}
-                                    <ChartHead 
-                                        chartType="accreditation" 
-                                    />
-                                </div>
-                            </div>
+                    <div className="flex flex-wrap">
+                        <div className="w-full px-4">
+                            <SwitchableChart />
                         </div>
                     </div>
                 </div>
