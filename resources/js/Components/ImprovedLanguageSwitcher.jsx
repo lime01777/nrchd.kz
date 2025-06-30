@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import languageManager from '@/Utils/LanguageManager';
+import translationManager from '@/Utils/TranslationManager';
+import translationService from '@/Utils/TranslationService';
 
 function ImprovedLanguageSwitcher() {
   const [currentLang, setCurrentLang] = useState('ru');
@@ -22,19 +23,19 @@ function ImprovedLanguageSwitcher() {
   };
 
   useEffect(() => {
-    // Получаем текущий язык из менеджера или системы
-    const initialLang = languageManager.getCurrentLanguage() || 
+    // Получаем текущий язык из нового менеджера
+    const initialLang = translationManager.getCurrentLanguage() || 
                         localStorage.getItem('preferredLanguage') || 
                         document.documentElement.getAttribute('data-language') ||
                         'ru';
     
     setCurrentLang(initialLang);
     
-    // Принудительная инициализация LanguageManager при монтировании компонента
-    if (!languageManager.initialized) {
-      console.log('[LanguageSwitcher] Initializing LanguageManager...');
+    // Принудительная инициализация TranslationManager при монтировании компонента
+    if (!translationManager.initialized) {
+      console.log('[LanguageSwitcher] Initializing TranslationManager...');
       setTimeout(() => {
-        languageManager.init();
+        translationManager.init();
       }, 100);
     }
     
@@ -94,15 +95,37 @@ function ImprovedLanguageSwitcher() {
       // Обновляем состояние UI
       setIsTranslating(true);
       
-      // Сохраняем выбранный язык без изменения URL
-      // Удаляем изменение URL с параметром ?lang=
-      // Вместо этого просто сохраняем язык локально
+      // Показываем индикатор перевода
+      const translationIndicator = document.createElement('div');
+      translationIndicator.id = 'translation-indicator';
+      translationIndicator.className = 'fixed bottom-4 right-4 bg-white rounded-md shadow-lg p-4 z-50 flex items-center';
+      translationIndicator.innerHTML = `
+        <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 mr-3"></div>
+        <span>Переключение на ${lang === 'en' ? 'английский' : lang === 'kz' ? 'казахский' : 'русский'}...</span>
+      `;
+      document.body.appendChild(translationIndicator);
       
-      // Используем улучшенный менеджер языка
-      await languageManager.switchLanguage(lang);
+      // Используем новый менеджер переводов
+      if (lang === 'ru') {
+        // Для русского языка просто восстанавливаем оригинальные тексты
+        await translationManager.translateToLanguage(lang);
+      } else {
+        // Для других языков используем сервис перевода
+        await translationService.translatePage(lang);
+      }
       
-      // Обновляем состояние после смены языка (чтобы избежать рассинхрона)
+      // Сохраняем выбранный язык
+      translationManager.saveLanguagePreference(lang);
+      
+      // Обновляем состояние после смены языка
       setCurrentLang(lang);
+      
+      // Удаляем индикатор перевода
+      const indicator = document.getElementById('translation-indicator');
+      if (indicator) {
+        indicator.remove();
+      }
+      
     } catch (error) {
       console.error('[LanguageSwitcher] Translation error:', error);
       alert(`Ошибка при переключении языка: ${error.message}`);
@@ -167,13 +190,7 @@ function ImprovedLanguageSwitcher() {
         </div>
       )}
 
-      {/* Translation in progress indicator */}
-      {isTranslating && (
-        <div className="fixed bottom-4 right-4 bg-white rounded-md shadow-lg p-4 z-50 flex items-center">
-          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 mr-3"></div>
-          <span>Переключение языка...</span>
-        </div>
-      )}
+      {/* Translation in progress indicator removed - now shown dynamically */}
     </div>
   );
 }

@@ -50,6 +50,11 @@ Route::post('/auto-translate', [\App\Http\Controllers\AutoTranslationController:
 Route::post('/auto-translate/bulk', [\App\Http\Controllers\AutoTranslationController::class, 'bulkTranslate']);
 Route::post('/auto-translate/update', [\App\Http\Controllers\AutoTranslationController::class, 'updateTranslation']);
 
+// Новые маршруты для улучшенной системы перевода
+Route::post('/v2/translate', [\App\Http\Controllers\API\TranslationAPIController::class, 'translate']);
+Route::post('/v2/set-language', [\App\Http\Controllers\API\TranslationAPIController::class, 'setLanguage']);
+Route::post('/v2/get-translations', [\App\Http\Controllers\API\TranslationAPIController::class, 'getTranslations']);
+
 // Маршруты API для админки переводов
 Route::group(['prefix' => 'admin/translations', 'middleware' => ['auth']], function () {
     Route::get('/stats', [\App\Http\Controllers\Admin\TranslationManagerController::class, 'getStats']);

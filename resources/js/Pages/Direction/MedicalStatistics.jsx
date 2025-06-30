@@ -15,24 +15,26 @@ export default function MedicalStatistics() {
             
             {/* Блок с текстом и кнопкой "Читать далее" */}
             <div className="container px-5 py-12 mx-auto">
-                <p className="tracking-wide text-gray-700 leading-relaxed">
-                    Национальный научный центр развития здравоохранения им. Салидат Каирбековой предоставляет актуальные статистические данные в области здравоохранения Республики Казахстан. Центр осуществляет сбор, анализ и публикацию различных статистических показателей, связанных с здоровьем населения.  
-                </p>
-                
-                <div 
-                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                        showFullText ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                    }`}
-                >
-                    <p className="tracking-wide mt-4 text-gray-700 leading-relaxed">
-                        Медицинская статистика является важным инструментом для планирования и оценки эффективности системы здравоохранения. Она позволяет отслеживать тенденции в области здоровья населения, распространенность заболеваний, факторы риска и эффективность медицинских вмешательств. Наш центр предоставляет следующие виды статистических данных:
-                        <br/><br/>
-                        1. Демографические показатели - данные о рождаемости, смертности, ожидаемой продолжительности жизни.
-                        <br/>
-                        2. Показатели заболеваемости - статистика по распространенности различных заболеваний.
-                        <br/>
-                        3. Ресурсы здравоохранения - информация о медицинских учреждениях, кадрах и финансировании.
+                <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-100">
+                    <p className="tracking-wide text-gray-700 leading-relaxed text-lg mb-4">
+                        Департамент медико-статистического анализа осуществляет сбор, обработку и систематический анализ статистических данных в сфере здравоохранения Республики Казахстан. Его задачи включают изучение динамики показателей здоровья населения, эффективности деятельности медицинских организаций, а также прогнозирование потребностей системы здравоохранения в ресурсах.
                     </p>
+                    
+                    <div 
+                        className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                            showFullText ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                        }`}
+                    >
+                        <div className="border-t border-gray-100 pt-4 mb-4">
+                            <p className="tracking-wide text-gray-700 leading-relaxed text-lg mb-4">
+                                В рамках своей деятельности Департамент проводит эпидемиологические и демографические исследования, анализирует ключевые индикаторы по приоритетным направлениям здравоохранения, формирует статистические обзоры и обеспечивает методологическое сопровождение по расчету и интерпретации показателей.
+                            </p>
+                            
+                            <p className="tracking-wide text-gray-700 leading-relaxed text-lg">
+                                Вместе с тем, организовывает обучающие мероприятия, направленные на повышение качества статистического учета и аналитики в медицинских организациях.
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 
                 <div className="flex justify-center mt-4">
@@ -76,30 +78,7 @@ export default function MedicalStatistics() {
             </div>
         </div>
     </section>
-            
-            {/* Блок с графиком из примера */}
-
-            
-            {/* Блок ActualFile c слайдом документов */}
-            <div className="py-8">
-                <div className="container mx-auto px-5">
-                    <div className="bg-purple-100 p-6 rounded-lg shadow-md">
-                        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Действующие документы</h2>
-                        <SimpleFileDisplay 
-                            folder="Медицинская статистика/Актуальные документы"
-                            title=""
-                            bgColor="transparent"
-                            hideDownload={true}
-                            autoOpen={true}
-                            hideTitle={true}
-                            className="h-[400px] overflow-hidden"
-                        />
-                    </div>
-                </div>
-            </div>
-            
-            {/* Блок ActualFile с тремя документами */}
-            
+                        
             {/* Блок с переключаемым графиком */}
             <section className="text-gray-600 body-font py-16 bg-white">
                 <div className="container mx-auto px-5">
@@ -139,26 +118,34 @@ export default function MedicalStatistics() {
 <div className="mt-20">
   <h2 className="text-2xl font-semibold text-gray-900 mb-6">Контактная информация</h2>
   
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+  <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
     {/* Первый блок - Контакты */}
+    <div className="bg-white rounded-lg p-6 shadow-sm">
+      <h3 className="text-lg font-semibold text-gray-800 mb-3">Начальник управления статистического учета и отчетности в области здравоохранения</h3>
+      <p className="text-gray-600">Ильясова Жанагул Рахымбековна</p>
+      <p className="text-gray-600">8-7172-648-951, вн: 1110</p>
+    </div>
+    
+    {/* Второй блок - Контакты */}
+    <div className="bg-white rounded-lg p-6 shadow-sm">
+      <h3 className="text-lg font-semibold text-gray-800 mb-3">Начальник управления статистического наблюдения в области здравоохранения </h3>
+      <p className="text-gray-600">Ракишева Динара Муктаровна</p>
+      <p className="text-gray-600">8-7172-648-951, вн: 1076</p>
+    </div>
+
+    
+    {/* Третий блок - Контакты */}
     <div className="bg-white rounded-lg p-6 shadow-sm">
       <h3 className="text-lg font-semibold text-gray-800 mb-3">Директор департамента медицинской статистики</h3>
       <p className="text-gray-600">Карашутова Жадыра Нургалиевна</p>
       <p className="text-gray-600">8-7172-648-951, вн: 1134</p>
     </div>
-    
-    {/* Второй блок - График работы */}
-    <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-gray-800 mb-3">Начальник Управления статистического учета и отчетности в области здравоохранения</h3>
-      <p className="text-gray-600">Ильясова Жанагул Рахымбековна</p>
-      <p className="text-gray-600">8-7172-648-951, вн: 1110</p>
-    </div>
-    
-    {/* Третий блок - Документы */}
-    <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-gray-800 mb-3">Начальник Управления статистического наблюдения в области здравоохранения </h3>
-      <p className="text-gray-600">Ракишева Динара Муктаровна</p>
-      <p className="text-gray-600">8-7172-648-951, вн: 1076</p>
+
+        {/* Четвертый блок - Контакты */}
+        <div className="bg-white rounded-lg p-6 shadow-sm">
+      <h3 className="text-lg font-semibold text-gray-800 mb-3">Эксперт в Бюро кодирования</h3>
+      <p className="text-gray-600">Жаниязова Гульнур Ахметбековна</p>
+      <p className="text-gray-600">8-7172-648-951, вн: 1073</p>
     </div>
   </div>
 </div>

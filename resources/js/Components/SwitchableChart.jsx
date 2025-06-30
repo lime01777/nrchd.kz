@@ -37,6 +37,7 @@ const SwitchableChart = ({ t }) => {
         },
         discharged: {
             total: '1 406 627 чел.',
+            totalds: '1 632 935 чел.',
             discharged: '1 393 912',
             died: '12 715',
             date: 'Данные за май 2025 года'
@@ -129,7 +130,7 @@ const SwitchableChart = ({ t }) => {
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
                 {/* Блок о родившихся */}
                 <div className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-100">
-                    <h3 className="text-xl font-bold mb-4 text-purple-800">ЧИСЛО РОДИВШИХСЯ</h3>
+                    <h3 className="text-xl font-bold mb-4 text-purple-800">Число родившихся</h3>
                     <p className="text-3xl font-bold mb-1 text-gray-900">{statisticsData.births.total}</p>
                     <p className="text-xs mb-4 text-gray-500">{statisticsData.births.date}</p>
                     
@@ -156,7 +157,7 @@ const SwitchableChart = ({ t }) => {
                     </div>
                     
                     <div className="mt-4">
-                        <p className="text-sm text-gray-600">Число женщин, прошедших прегравидарную подготовку</p>
+                        <h3 className="text-xl font-bold text-purple-800">Число женщин, прошедших прегравидарную подготовку</h3>
                         <p className="text-2xl font-bold text-gray-900">{statisticsData.births.pregravid}</p>
                         <p className="text-xs text-gray-500">{statisticsData.births.date}</p>
                     </div>
@@ -164,25 +165,31 @@ const SwitchableChart = ({ t }) => {
                 
                 {/* Блок о выбывших */}
                 <div className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-100">
-                    <h3 className="text-xl font-bold mb-4 text-purple-800">ЧИСЛО ВЫБЫВШИХ</h3>
+                    <h3 className="text-xl font-bold mb-4 text-purple-800">Число пролеченных в круглосуточном стационаре</h3>
                     <p className="text-3xl font-bold mb-1 text-gray-900">{statisticsData.discharged.total}</p>
                     <p className="text-xs mb-4 text-gray-500">{statisticsData.discharged.date}</p>
                     
                     <div className="grid grid-cols-2 gap-4 mt-6">
                         <div>
-                            <p className="text-sm mb-1 text-gray-600">Выписано</p>
+                            <p className="text-sm mb-1 text-gray-600">Планово</p>
                             <p className="text-2xl font-bold text-gray-900">{statisticsData.discharged.discharged}</p>
                         </div>
                         <div>
-                            <p className="text-sm mb-1 text-gray-600">Умерло</p>
+                            <p className="text-sm mb-1 text-gray-600">Экстренно</p>
                             <p className="text-2xl font-bold text-gray-900">{statisticsData.discharged.died}</p>
                         </div>
+                    </div>
+                    <br />
+                    <div className="mt-2">
+                        <h3 className="text-xl font-bold mb-2 text-purple-800">Число пролеченных в дневном стационаре</h3>
+                        <p className="text-3xl font-bold mb-1 text-gray-900">{statisticsData.discharged.totalds}</p>
+                        <p className="text-xs mb-4 text-gray-500">{statisticsData.discharged.date}</p>
                     </div>
                 </div>
                 
                 {/* Блок об операциях */}
                 <div className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-100">
-                    <h3 className="text-xl font-bold mb-4 text-purple-800">ЧИСЛО ОПЕРИРОВАННЫХ</h3>
+                    <h3 className="text-xl font-bold mb-4 text-purple-800">Число оперированных</h3>
                     <p className="text-3xl font-bold mb-1 text-gray-900">{statisticsData.operations.total}</p>
                     <p className="text-xs mb-4 text-gray-500">{statisticsData.operations.date}</p>
                     
@@ -210,13 +217,13 @@ const SwitchableChart = ({ t }) => {
                     <p className="text-xs mb-4 text-gray-500">{statisticsData.patients.date}</p>
                     
                     <div className="mt-4">
-                        <p className="text-sm text-gray-600">Число пациентов, взятых на динамическое наблюдение</p>
+                        <h3 className="text-xl font-bold mb-4 text-purple-800">Число пациентов, взятых на динамическое наблюдение</h3>
                         <p className="text-2xl font-bold text-gray-900">{statisticsData.patients.dynamicObservation}</p>
                         <p className="text-xs text-gray-500">{statisticsData.patients.date}</p>
                     </div>
                     
                     <div className="mt-4">
-                        <p className="text-sm text-gray-600">Число пациентов на АЛО</p>
+                        <h3 className="text-xl font-bold mb-4 text-purple-800">Число пациентов на АЛО</h3>
                         <p className="text-2xl font-bold text-gray-900">{statisticsData.patients.alo}</p>
                         <p className="text-xs text-gray-500">{statisticsData.patients.date}</p>
                     </div>
