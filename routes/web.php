@@ -91,6 +91,14 @@ Route::get('/health-rate', function () {
     return Inertia::render('Direction/HealthRate');
 })->name('health.rate');
 
+Route::get('/health-rate/omt-reports', function () {
+    return Inertia::render('Direction/HealthRate/OmtReports');
+})->name('health.rate.omt.reports');
+
+Route::get('/health-rate/quality-commission', function () {
+    return Inertia::render('Direction/HealthRate/QualityCommission');
+})->name('health.rate.quality.commission');
+
 Route::get('/clinical-protocols', function () {
     return Inertia::render('Direction/ClinicalProtocols');
 })->name('clinical.protocols');

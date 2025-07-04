@@ -115,9 +115,18 @@ export default function HealthRate() {
     <section className="text-gray-600 body-font">
         <div className="container px-5 pt-8 mx-auto">
             <div className='flex md:flex-row flex-wrap'>
-                <FolderChlank h1="Отчеты ОМТ" color="bg-fuchsia-100" colorsec="bg-fuchsia-200" />
-                <FolderChlank h1="Объединенная комиссия по качеству медицинских услуг" color="bg-fuchsia-100"
-                    colorsec="bg-fuchsia-200" />
+                <FolderChlank 
+                    h1="Отчеты ОМТ" 
+                    color="bg-fuchsia-100" 
+                    colorsec="bg-fuchsia-200" 
+                    href={route('health.rate.omt.reports')} 
+                />
+                <FolderChlank 
+                    h1="Объединенная комиссия по качеству медицинских услуг" 
+                    color="bg-fuchsia-100"
+                    colorsec="bg-fuchsia-200" 
+                    href={route('health.rate.quality.commission')} 
+                />
             </div>
         </div>
     </section>
