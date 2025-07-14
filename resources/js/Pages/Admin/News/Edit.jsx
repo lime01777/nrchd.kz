@@ -15,6 +15,7 @@ export default function NewsEdit({ news = null }) {
     publishDate: news?.publishDate || new Date().toISOString().substr(0, 10),
   });
 
+<<<<<<< HEAD
   // --- Добавлено: состояние для предпросмотра ---
   const [preview, setPreview] = useState(null);
 
@@ -29,6 +30,8 @@ export default function NewsEdit({ news = null }) {
     }
   }, [data.image]);
 
+=======
+>>>>>>> 73384135ec5b0c3992d8db9734dc925da2a3c502
   // Автоматическое создание slug из заголовка
   useEffect(() => {
     if (!isEditing && data.title) {
@@ -192,6 +195,7 @@ export default function NewsEdit({ news = null }) {
                   Изображение
                 </label>
                 <div className="mt-1 flex items-center">
+<<<<<<< HEAD
                   {/* Предпросмотр нового изображения или уже загруженного */}
                   {(preview || (isEditing && news.image)) && (
                     <div className="mr-4">
@@ -200,6 +204,11 @@ export default function NewsEdit({ news = null }) {
                         alt={data.title || news?.title || 'Превью'}
                         className="h-32 w-auto object-cover rounded-md border"
                       />
+=======
+                  {isEditing && news.image && (
+                    <div className="mr-4">
+                      <img src={news.image} alt={news.title} className="h-32 w-auto object-cover rounded-md" />
+>>>>>>> 73384135ec5b0c3992d8db9734dc925da2a3c502
                     </div>
                   )}
                   <div className="flex-1">
@@ -216,12 +225,16 @@ export default function NewsEdit({ news = null }) {
                               name="file-upload" 
                               type="file" 
                               className="sr-only" 
+<<<<<<< HEAD
                               accept="image/*"
                               onChange={(e) => {
                                 if (e.target.files && e.target.files[0]) {
                                   setData('image', e.target.files[0]);
                                 }
                               }}
+=======
+                              onChange={(e) => setData('image', e.target.files[0])}
+>>>>>>> 73384135ec5b0c3992d8db9734dc925da2a3c502
                             />
                           </label>
                           <p className="pl-1">или перетащите сюда</p>
