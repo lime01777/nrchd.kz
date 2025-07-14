@@ -132,23 +132,22 @@ export default function HealthRate() {
     </section>
 
     <section className="text-gray-600 body-font">
-    <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
-
+        <div className="container px-5 pt-12 pb-12 mx-auto">
+            <div className="flex flex-wrap px-5 bg-fuchsia-100">
                 <FilesAccord 
                     folder="Оценка технологии здравоохранения/Набор — Методические рекомендации"
                     title="Методические рекомендации"
                     bgColor="bg-fuchsia-100"
-                    defaultOpen={true}
                 />
-
+            </div>
             
-
+            <div className="flex flex-wrap px-5 bg-fuchsia-100">
                 <FilesAccord 
                     folder="Оценка технологии здравоохранения/Набор — Приказы"
                     title="Приказы"
                     bgColor="bg-fuchsia-100"
                 />
-
+            </div>
         </div>
     </section>
     <PageAccordions bgColor="bg-fuchsia-100" />
@@ -156,4 +155,4 @@ export default function HealthRate() {
   )
 }
 
-HealthRate.layout = (page) => <LayoutDirection img={'healthrate'} h1={'Оценка медицинских технологий'} useVideo={true}>{page}</LayoutDirection>
+HealthRate.layout = (page) => <LayoutDirection img={'healthrate'} h1={'Оценка медицинских технологий'}>{page}</LayoutDirection>

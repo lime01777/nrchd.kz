@@ -15,6 +15,20 @@ export default function NewsEdit({ news = null }) {
     publishDate: news?.publishDate || new Date().toISOString().substr(0, 10),
   });
 
+  // --- Добавлено: состояние для предпросмотра ---
+  const [preview, setPreview] = useState(null);
+
+  // --- Обновление предпросмотра при выборе файла ---
+  useEffect(() => {
+    if (data.image && typeof data.image !== 'string') {
+      const objectUrl = URL.createObjectURL(data.image);
+      setPreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    } else {
+      setPreview(null);
+    }
+  }, [data.image]);
+
   // Автоматическое создание slug из заголовка
   useEffect(() => {
     if (!isEditing && data.title) {
@@ -178,9 +192,14 @@ export default function NewsEdit({ news = null }) {
                   Изображение
                 </label>
                 <div className="mt-1 flex items-center">
-                  {isEditing && news.image && (
+                  {/* Предпросмотр нового изображения или уже загруженного */}
+                  {(preview || (isEditing && news.image)) && (
                     <div className="mr-4">
-                      <img src={news.image} alt={news.title} className="h-32 w-auto object-cover rounded-md" />
+                      <img
+                        src={preview || news.image}
+                        alt={data.title || news?.title || 'Превью'}
+                        className="h-32 w-auto object-cover rounded-md border"
+                      />
                     </div>
                   )}
                   <div className="flex-1">
@@ -197,7 +216,12 @@ export default function NewsEdit({ news = null }) {
                               name="file-upload" 
                               type="file" 
                               className="sr-only" 
-                              onChange={(e) => setData('image', e.target.files[0])}
+                              accept="image/*"
+                              onChange={(e) => {
+                                if (e.target.files && e.target.files[0]) {
+                                  setData('image', e.target.files[0]);
+                                }
+                              }}
                             />
                           </label>
                           <p className="pl-1">или перетащите сюда</p>
