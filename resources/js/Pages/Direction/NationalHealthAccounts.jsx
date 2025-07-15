@@ -1,7 +1,11 @@
-import React from 'react';
 import { Head } from '@inertiajs/react';
-import MainLayout from '@/Layouts/MainLayout';
-import PageHeader from '@/Components/PageHeader';
+import React, { useState } from 'react';
+import FolderChlank from '@/Components/FolderChlank';
+import LayoutDirection from '@/Layouts/LayoutDirection';
+import FileAccordTitle from '@/Components/FileAccordTitle';
+import FileAccordChlank from '@/Components/FileAccordChlank';
+import FilesAccord from '@/Components/FilesAccord';
+import PageAccordions from "@/Components/PageAccordions";
 
 export default function NationalHealthAccounts() {
     return (
@@ -91,4 +95,4 @@ export default function NationalHealthAccounts() {
     );
 }
 
-NationalHealthAccounts.layout = page => <MainLayout children={page} />;
+NationalHealthAccounts.layout = (page) => <LayoutDirection img={'reiting'} h1={'Оценка медицинских технологий'}>{page}</LayoutDirection>
