@@ -3,65 +3,106 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\Document;
+use App\Models\News;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use GuzzleHttp\Client;
 
 class DashboardController extends Controller
 {
-    /**
-     * Display the dashboard.
-     */
     public function index()
     {
-        // Здесь будет логика получения данных для дашборда
-        // Пока возвращаем тестовые данные
-        $stats = [
-            'newsCount' => 15,
-            'documentsCount' => 42,
-            'usersCount' => 8,
-            'viewsCount' => 1250,
-        ];
+        $userCount = User::count();
+        $documentCount = Document::count();
+        $newsCount = News::count();
 
-        $recentNews = [
-            [
-                'id' => 1,
-                'title' => 'Новые методы лечения в кардиологии',
-                'created_at' => '2024-03-15',
-                'views' => 120
-            ],
-            [
-                'id' => 2,
-                'title' => 'Конференция по инновациям в здравоохранении',
-                'created_at' => '2024-03-10',
-                'views' => 85
-            ],
-            [
-                'id' => 3,
-                'title' => 'Новое оборудование для диагностики',
-                'created_at' => '2024-03-05',
-                'views' => 65
-            ],
-        ];
+        // Получаем число посетителей за сегодня через API Яндекс.Метрики
+        $visitorsToday = null;
+        try {
+            $token = env('YANDEX_METRIKA_TOKEN');
+            $counter = env('YANDEX_METRIKA_COUNTER');
+            if ($token && $counter) {
+                $client = new Client();
+                $date = now()->format('Y-m-d');
+                $response = $client->get('https://api-metrika.yandex.net/stat/v1/data', [
+                    'headers' => [
+                        'Authorization' => 'OAuth ' . $token,
+                    ],
+                    'query' => [
+                        'ids' => $counter,
+                        'metrics' => 'ym:s:visitors',
+                        'date1' => $date,
+                        'date2' => $date,
+                    ],
+                    'timeout' => 5,
+                ]);
+                $data = json_decode($response->getBody(), true);
+                if (isset($data['data'][0]['metrics'][0])) {
+                    $visitorsToday = $data['data'][0]['metrics'][0];
+                }
+            }
+        } catch (\Exception $e) {
+            // Можно залогировать ошибку, если нужно
+            $visitorsToday = null;
+        }
 
-        $recentDocuments = [
-            [
-                'id' => 1,
-                'title' => 'Стратегия развития здравоохранения',
-                'created_at' => '2024-03-15',
-                'downloads' => 45
-            ],
-            [
-                'id' => 2,
-                'title' => 'Отчет о медицинских исследованиях',
-                'created_at' => '2024-03-10',
-                'downloads' => 32
-            ],
-        ];
+        // Последние новости
+        $recentNews = News::orderBy('created_at', 'desc')
+            ->take(4)
+            ->get(['id', 'title', 'created_at', 'views']);
+
+        // Последние действия (MVP: создание пользователей, новостей, документов)
+        $userActions = User::orderBy('created_at', 'desc')->take(4)->get()->map(function($u) {
+            return [
+                'type' => 'user',
+                'user' => $u->name,
+                'action' => 'создал пользователя',
+                'target' => $u->email,
+                'time' => $u->created_at,
+            ];
+        });
+        $newsActions = News::orderBy('created_at', 'desc')->take(4)->get()->map(function($n) {
+            return [
+                'type' => 'news',
+                'user' => '—',
+                'action' => 'создал новость',
+                'target' => $n->title,
+                'time' => $n->created_at,
+            ];
+        });
+        $docActions = Document::orderBy('created_at', 'desc')->take(4)->get()->map(function($d) {
+            return [
+                'type' => 'document',
+                'user' => '—',
+                'action' => 'загрузил документ',
+                'target' => $d->description,
+                'time' => $d->created_at,
+            ];
+        });
+        // Объединяем, сортируем по времени, берем 4 последних
+        $recentActivities = collect()
+            ->merge($userActions)
+            ->merge($newsActions)
+            ->merge($docActions)
+            ->sortByDesc('time')
+            ->take(4)
+            ->map(function($a) {
+                $a['time'] = $a['time']->diffForHumans();
+                return $a;
+            })
+            ->values();
 
         return Inertia::render('Admin/Dashboard', [
-            'stats' => $stats,
+            'stats' => [
+                'users' => $userCount,
+                'documents' => $documentCount,
+                'news' => $newsCount,
+                'visitorsToday' => $visitorsToday,
+            ],
             'recentNews' => $recentNews,
-            'recentDocuments' => $recentDocuments,
+            'recentActivities' => $recentActivities,
         ]);
     }
-}
+} 

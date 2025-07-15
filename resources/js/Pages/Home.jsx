@@ -85,13 +85,6 @@ export default function Home({ auth, laravelVersion, phpVersion }) {
                                 доклад 
                                 <br className="hidden lg:inline-block" />о развитии здравоохранения  
                             </h1>
-<<<<<<< HEAD
-=======
-                            <div className="flex justify-center">
-                                <Link href="/direction/medical-statistics" 
-                                    className="inline-flex text-white bg-purple-500 border-0 py-2 px-6 focus:outline-none hover:bg-purple-600 rounded-xl text-lg shadow-lg mt-3">Посмотреть национальный доклад здравоохранения</Link>
-                            </div>
->>>>>>> 73384135ec5b0c3992d8db9734dc925da2a3c502
                         </div>
                     </div>
                 </div>

@@ -17,10 +17,6 @@ Route::middleware([LanguageMiddleware::class])->group(function () {
             'locale' => app()->getLocale(), // Добавляем текущий язык в пропсы
         ]);
     })->name('home');
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 }); // Конец мидлвара языка
 
 Route::get('/medical-education', function () {
@@ -327,7 +323,6 @@ Route::prefix('api')->group(function () {
 // Маршруты для админ-панели
 Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
-
     // Управление новостями
     Route::get('/news', [App\Http\Controllers\Admin\NewsController::class, 'index'])->name('admin.news');
     Route::get('/news/create', [App\Http\Controllers\Admin\NewsController::class, 'create'])->name('admin.news.create');
@@ -448,10 +443,6 @@ Route::get('/abay', function () {
 })->name('branches.abay');
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
     // Админ-панель
     Route::prefix('admin')->name('admin.')->group(function () {
         // Управление переводами
