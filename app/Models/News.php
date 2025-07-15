@@ -40,5 +40,6 @@ class News extends Model
     protected $casts = [
         'publish_date' => 'date',
         'views' => 'integer',
+        'category' => 'array',
     ];
 }

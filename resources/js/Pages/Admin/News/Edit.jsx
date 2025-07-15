@@ -1,35 +1,85 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
+import { Editor } from '@tinymce/tinymce-react';
+import Select from 'react-select';
+
+const DEFAULT_CATEGORIES = [
+  'Общие',
+  'Аккредитация',
+  'Обучение',
+  'Конференции',
+  'Методические материалы',
+  'Исследования',
+  'Анонсы',
+];
+
+function isValidJson(str) {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export default function NewsEdit({ news = null }) {
   const isEditing = !!news;
-  
   const { data, setData, post, put, processing, errors } = useForm({
     title: news?.title || '',
     slug: news?.slug || '',
-    category: news?.category || '',
+    category: Array.isArray(news?.category) ? news.category : (news?.category ? [news.category] : []),
     content: news?.content || '',
     image: null,
     status: news?.status || 'Черновик',
     publishDate: news?.publishDate || new Date().toISOString().substr(0, 10),
   });
 
-  // --- Добавлено: состояние для предпросмотра ---
-  const [preview, setPreview] = useState(null);
-
-  // --- Обновление предпросмотра при выборе файла ---
-  useEffect(() => {
-    if (data.image && typeof data.image !== 'string') {
-      const objectUrl = URL.createObjectURL(data.image);
-      setPreview(objectUrl);
-      return () => URL.revokeObjectURL(objectUrl);
-    } else {
-      setPreview(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [categories, setCategories] = useState(() => {
+    // Если есть категории из новости, добавляем их к дефолтным
+    if (news?.category) {
+      const arr = Array.isArray(news.category) ? news.category : [news.category];
+      return Array.from(new Set([...DEFAULT_CATEGORIES, ...arr]));
     }
-  }, [data.image]);
+    return DEFAULT_CATEGORIES;
+  });
+  const [selectedCategories, setSelectedCategories] = useState(Array.isArray(data.category) ? data.category : (data.category ? [data.category] : []));
+  const [newCategory, setNewCategory] = useState('');
+  const [editorInstance, setEditorInstance] = useState(null);
 
-  // Автоматическое создание slug из заголовка
+  // Drag&Drop для изображения
+  const handleImageDrop = (e) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setData('image', e.dataTransfer.files[0]);
+      setImageFile(e.dataTransfer.files[0]);
+    }
+  };
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setData('image', e.target.files[0]);
+      setImageFile(e.target.files[0]);
+    }
+  };
+  const handleRemoveImage = () => {
+    setData('image', null);
+    setImageFile(null);
+    setImagePreview(null);
+  };
+  useEffect(() => {
+    if (imageFile) {
+      const objectUrl = URL.createObjectURL(imageFile);
+      setImagePreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    } else if (isEditing && news.image) {
+      setImagePreview(news.image);
+    } else {
+      setImagePreview(null);
+    }
+  }, [imageFile, isEditing, news]);
+
   useEffect(() => {
     if (!isEditing && data.title) {
       const slug = data.title
@@ -40,12 +90,46 @@ export default function NewsEdit({ news = null }) {
     }
   }, [data.title, isEditing]);
 
+  // TinyMCE value handler
+  const handleContentChange = (content, editor) => {
+    setData('content', content);
+  };
+
+  // Multi-select обработка
+  const handleCategoryChange = (cat) => {
+    setSelectedCategories((prev) =>
+      prev.includes(cat)
+        ? prev.filter((c) => c !== cat)
+        : [...prev, cat]
+    );
+  };
+
+  // Добавление новой категории
+  const handleAddCategory = () => {
+    if (newCategory && !categories.includes(newCategory)) {
+      setCategories([...categories, newCategory]);
+      const updated = [...selectedCategories, newCategory];
+      setSelectedCategories(updated);
+      setData('category', updated);
+      setNewCategory('');
+    }
+  };
+
+  // Категории для react-select
+  const categoryOptions = categories.map((cat) => ({ value: cat, label: cat }));
+  const handleCategorySelect = (selected) => {
+    const values = selected ? selected.map((opt) => opt.value) : [];
+    setSelectedCategories(values);
+    setData('category', values);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    setData('category', selectedCategories);
     if (isEditing) {
-      put(route('admin.news.update', news.id));
+      put(route('admin.news.update', news.id), { forceFormData: true });
     } else {
-      post(route('admin.news.store'));
+      post(route('admin.news.store'), { forceFormData: true });
     }
   };
 
@@ -71,7 +155,7 @@ export default function NewsEdit({ news = null }) {
           <div className="px-4 py-5 sm:p-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-6">
               {/* Заголовок */}
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-6">
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700">
                   Заголовок
                 </label>
@@ -91,57 +175,42 @@ export default function NewsEdit({ news = null }) {
                 )}
               </div>
 
-              {/* Slug */}
-              <div className="sm:col-span-2">
-                <label htmlFor="slug" className="block text-sm font-medium text-gray-700">
-                  Slug
-                </label>
-                <div className="mt-1">
+              {/* Категории (react-select + добавление) */}
+              <div className="sm:col-span-6">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Категории</label>
+                <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center mb-2">
+                  <div className="w-full sm:w-2/3">
+                    <Select
+                      isMulti
+                      options={categoryOptions}
+                      value={categoryOptions.filter(opt => selectedCategories.includes(opt.value))}
+                      onChange={handleCategorySelect}
+                      classNamePrefix="react-select"
+                      placeholder="Выберите категории..."
+                      styles={{
+                        control: (base) => ({ ...base, minHeight: '42px', borderRadius: '8px', borderColor: '#cbd5e1', boxShadow: 'none' }),
+                        multiValue: (base) => ({ ...base, background: '#e0e7ff', color: '#3730a3' }),
+                        option: (base, state) => ({ ...base, background: state.isFocused ? '#f3f4f6' : 'white', color: '#1e293b' })
+                      }}
+                    />
+                  </div>
+                  <div className="flex gap-2 items-center w-full sm:w-auto">
                   <input
                     type="text"
-                    name="slug"
-                    id="slug"
-                    value={data.slug}
-                    onChange={(e) => setData('slug', e.target.value)}
-                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    required
-                  />
-                </div>
-                {errors.slug && (
-                  <p className="mt-2 text-sm text-red-600">{errors.slug}</p>
-                )}
+                      value={newCategory}
+                      onChange={e => setNewCategory(e.target.value)}
+                      placeholder="Новая категория"
+                      className="border rounded px-2 py-1 text-sm"
+                    />
+                    <button type="button" onClick={handleAddCategory} className="px-2 py-1 bg-blue-500 text-white rounded text-sm">Добавить</button>
               </div>
-
-              {/* Категория */}
-              <div className="sm:col-span-3">
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-                  Категория
-                </label>
-                <div className="mt-1">
-                  <select
-                    id="category"
-                    name="category"
-                    value={data.category}
-                    onChange={(e) => setData('category', e.target.value)}
-                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    required
-                  >
-                    <option value="">Выберите категорию</option>
-                    <option value="Общие">Общие</option>
-                    <option value="Аккредитация">Аккредитация</option>
-                    <option value="Обучение">Обучение</option>
-                    <option value="Конференции">Конференции</option>
-                    <option value="Методические материалы">Методические материалы</option>
-                    <option value="Исследования">Исследования</option>
-                    <option value="Анонсы">Анонсы</option>
-                  </select>
                 </div>
                 {errors.category && (
                   <p className="mt-2 text-sm text-red-600">{errors.category}</p>
                 )}
               </div>
 
-              {/* Статус */}
+              {/* Статус и дата публикации */}
               <div className="sm:col-span-3">
                 <label htmlFor="status" className="block text-sm font-medium text-gray-700">
                   Статус
@@ -164,8 +233,6 @@ export default function NewsEdit({ news = null }) {
                   <p className="mt-2 text-sm text-red-600">{errors.status}</p>
                 )}
               </div>
-
-              {/* Дата публикации */}
               <div className="sm:col-span-3">
                 <label htmlFor="publishDate" className="block text-sm font-medium text-gray-700">
                   Дата публикации
@@ -186,72 +253,89 @@ export default function NewsEdit({ news = null }) {
                 )}
               </div>
 
-              {/* Изображение */}
+              {/* Загрузка изображения (drag&drop, превью, удаление) */}
               <div className="sm:col-span-6">
-                <label htmlFor="image" className="block text-sm font-medium text-gray-700">
-                  Изображение
-                </label>
-                <div className="mt-1 flex items-center">
-                  {/* Предпросмотр нового изображения или уже загруженного */}
-                  {(preview || (isEditing && news.image)) && (
-                    <div className="mr-4">
-                      <img
-                        src={preview || news.image}
-                        alt={data.title || news?.title || 'Превью'}
-                        className="h-32 w-auto object-cover rounded-md border"
-                      />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Изображение</label>
+                <div
+                  className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition cursor-pointer relative"
+                  onDrop={handleImageDrop}
+                  onDragOver={e => e.preventDefault()}
+                  onClick={() => document.getElementById('image-upload-input').click()}
+                  style={{ minHeight: '120px' }}
+                >
+                  {imagePreview ? (
+                    <div className="relative group">
+                      <img src={imagePreview} alt="Превью" className="h-32 w-32 object-cover rounded-lg shadow" />
+                      <button
+                        type="button"
+                        onClick={e => { e.stopPropagation(); handleRemoveImage(); }}
+                        className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 shadow hover:bg-red-100 transition"
+                        title="Удалить изображение"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center">
+                      <svg className="h-10 w-10 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 48 48"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      <span className="text-blue-600 font-medium cursor-pointer">Загрузить файл</span>
+                      <span className="text-xs text-gray-400">или перетащите сюда<br/>PNG, JPG, GIF до 10MB</span>
                     </div>
                   )}
-                  <div className="flex-1">
-                    <div className="max-w-lg flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                      <div className="space-y-1 text-center">
-                        <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                          <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        <div className="flex text-sm text-gray-600">
-                          <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                            <span>Загрузить файл</span>
                             <input 
-                              id="file-upload" 
-                              name="file-upload" 
+                    id="image-upload-input"
                               type="file" 
-                              className="sr-only" 
                               accept="image/*"
-                              onChange={(e) => {
-                                if (e.target.files && e.target.files[0]) {
-                                  setData('image', e.target.files[0]);
-                                }
-                              }}
-                            />
-                          </label>
-                          <p className="pl-1">или перетащите сюда</p>
-                        </div>
-                        <p className="text-xs text-gray-500">
-                          PNG, JPG, GIF до 10MB
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
                 </div>
                 {errors.image && (
                   <p className="mt-2 text-sm text-red-600">{errors.image}</p>
                 )}
               </div>
 
-              {/* Содержание */}
+              {/* Содержимое TinyMCE */}
               <div className="sm:col-span-6">
-                <label htmlFor="content" className="block text-sm font-medium text-gray-700">
-                  Содержание
-                </label>
-                <div className="mt-1">
-                  <textarea
-                    id="content"
-                    name="content"
-                    rows={15}
+                <label className="block text-sm font-medium text-gray-700 mb-1">Содержимое</label>
+                <div className="bg-white border-2 border-blue-200 rounded-lg shadow-sm p-2 min-h-[220px] focus-within:ring-2 focus-within:ring-blue-400 transition-all" style={{ boxShadow: '0 2px 8px 0 #e0e7ff' }}>
+                  <Editor
+                    apiKey={'ckt2ux657iu8ehiz8mhzuy8zxnec6kv9bra5dtuif75nwdoq'}
                     value={data.content}
-                    onChange={(e) => setData('content', e.target.value)}
-                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    required
+                    init={{
+                      height: 350,
+                      menubar: true,
+                      plugins: [
+                        'advlist autolink lists link image charmap print preview anchor',
+                        'searchreplace visualblocks code fullscreen',
+                        'insertdatetime media table paste code help wordcount'
+                      ],
+                      toolbar:
+                        'undo redo | formatselect | bold italic backcolor | \
+                        alignleft aligncenter alignright alignjustify | \
+                        bullist numlist outdent indent | removeformat | help | image link',
+                      content_style: 'body { font-family:Inter,Arial,sans-serif; font-size:16px }',
+                      language: 'ru',
+                      images_upload_url: '/api/editor-upload',
+                      images_upload_handler: function (blobInfo, success, failure) {
+                        const formData = new FormData();
+                        formData.append('image', blobInfo.blob());
+                        fetch('/api/editor-upload', {
+                          method: 'POST',
+                          body: formData
+                        })
+                          .then(res => res.json())
+                          .then(data => {
+                            if (data.success && data.file && data.file.url) {
+                              success(data.file.url);
+                            } else {
+                              failure('Ошибка загрузки');
+                            }
+                          })
+                          .catch(() => failure('Ошибка загрузки'));
+                      },
+                    }}
+                    onEditorChange={handleContentChange}
                   />
                 </div>
                 {errors.content && (
@@ -263,10 +347,10 @@ export default function NewsEdit({ news = null }) {
           <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
             <button
               type="submit"
-              disabled={processing}
               className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              disabled={processing}
             >
-              {processing ? 'Сохранение...' : isEditing ? 'Сохранить изменения' : 'Создать новость'}
+              {isEditing ? 'Сохранить изменения' : 'Создать новость'}
             </button>
           </div>
         </form>
@@ -275,4 +359,4 @@ export default function NewsEdit({ news = null }) {
   );
 }
 
-NewsEdit.layout = page => <AdminLayout title={page.props.news ? 'Редактирование новости' : 'Создание новости'}>{page}</AdminLayout>;
+NewsEdit.layout = page => <AdminLayout title="Редактирование новости">{page}</AdminLayout>;

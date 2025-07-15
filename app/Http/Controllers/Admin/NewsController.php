@@ -63,7 +63,8 @@ class NewsController extends Controller
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:news',
             'content' => 'required|string',
-            'category' => 'required|string',
+            'category' => 'required|array|min:1',
+            'category.*' => 'string',
             'status' => 'required|string',
             'publishDate' => 'nullable|date',
             'image' => 'nullable|image|max:10240', // Максимум 10MB
@@ -122,7 +123,8 @@ class NewsController extends Controller
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:news,slug,' . $id,
             'content' => 'required|string',
-            'category' => 'required|string',
+            'category' => 'required|array|min:1',
+            'category.*' => 'string',
             'status' => 'required|string',
             'publishDate' => 'nullable|date',
             'image' => 'nullable|image|max:10240', // Максимум 10MB
@@ -169,5 +171,34 @@ class NewsController extends Controller
         $news->delete();
 
         return redirect()->route('admin.news')->with('success', 'Новость успешно удалена');
+    }
+
+    /**
+     * Массовые действия с новостями
+     */
+    public function bulk(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'action' => 'required|string|in:publish,draft,delete',
+        ]);
+        $ids = $request->input('ids');
+        $action = $request->input('action');
+
+        if ($action === 'delete') {
+            $newsList = News::whereIn('id', $ids)->get();
+            foreach ($newsList as $news) {
+                if ($news->image) {
+                    $path = str_replace('/storage/', '', $news->image);
+                    Storage::disk('public')->delete($path);
+                }
+                $news->delete();
+            }
+            return redirect()->route('admin.news')->with('success', 'Выбранные новости удалены');
+        }
+
+        $status = $action === 'publish' ? 'Опубликовано' : 'Черновик';
+        News::whereIn('id', $ids)->update(['status' => $status]);
+        return redirect()->route('admin.news')->with('success', 'Статус выбранных новостей обновлён');
     }
 }

@@ -105,4 +105,4 @@ class DashboardController extends Controller
             'recentActivities' => $recentActivities,
         ]);
     }
-} 
+}
