@@ -30,6 +30,8 @@ class News extends Model
         'publish_date',
         'image',
         'views',
+        'images',
+        'main_image',
     ];
 
     /**
@@ -41,5 +43,6 @@ class News extends Model
         'publish_date' => 'date',
         'views' => 'integer',
         'category' => 'array',
+        'images' => 'array',
     ];
 }

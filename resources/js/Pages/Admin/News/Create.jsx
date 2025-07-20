@@ -1,19 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
+import Select from 'react-select';
+import ImageGalleryUpload from '@/Components/ImageGalleryUpload';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import EditorJS from '@editorjs/editorjs';
-import Header from '@editorjs/header';
-import List from '@editorjs/list';
-import ImageTool from '@editorjs/image';
-import LinkTool from '@editorjs/link';
-import Paragraph from '@editorjs/paragraph';
-import Table from '@editorjs/table';
-import Quote from '@editorjs/quote';
-import Attaches from '@editorjs/attaches';
-import Select from 'react-select';
-import { Editor } from '@tinymce/tinymce-react';
 
 const DEFAULT_CATEGORIES = [
   'Общие',
@@ -25,98 +16,29 @@ const DEFAULT_CATEGORIES = [
   'Анонсы',
 ];
 
-function isValidJson(str) {
-  try {
-    JSON.parse(str);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 export default function NewsCreate() {
   const { data, setData, post, processing, errors } = useForm({
     title: '',
-    slug: '',
-    category: '',
+    category: [],
     content: '',
-    image: null,
+    images: [],
+    main_image: null,
     status: 'Черновик',
     publishDate: new Date().toISOString().substr(0, 10),
   });
 
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
   const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [newCategory, setNewCategory] = useState('');
-  const [editorInstance, setEditorInstance] = useState(null);
+  const [images, setImages] = useState([]);
+  const [mainImage, setMainImage] = useState(null);
 
-  useEffect(() => {
-    if (data.image && typeof data.image !== 'string') {
-      const objectUrl = URL.createObjectURL(data.image);
-      setImagePreview(objectUrl);
-      return () => URL.revokeObjectURL(objectUrl);
-    } else {
-      setImagePreview(null);
-    }
-  }, [data.image]);
-
-  useEffect(() => {
-    if (data.title) {
-      const slug = data.title
-        .toLowerCase()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/\s+/g, '-');
-      setData('slug', slug);
-    }
-  }, [data.title]);
-
-  // Editor.js инициализация
-  useEffect(() => {
-    if (!editorInstance) {
-      const editor = new EditorJS({
-        holder: 'editorjs',
-        tools: {
-          header: Header,
-          list: List,
-          image: {
-            class: ImageTool,
-            config: {
-              endpoints: {
-                byFile: '/api/editor-upload',
-              },
-              field: 'image',
-              types: 'image/*',
-            },
-          },
-          linkTool: LinkTool,
-          paragraph: Paragraph,
-          table: Table,
-          quote: Quote,
-          attaches: Attaches,
-        },
-        data: (data.content && isValidJson(data.content)) ? JSON.parse(data.content) : undefined,
-        onChange: async () => {
-          const outputData = await editor.save();
-          setData('content', JSON.stringify(outputData));
-        },
-      });
-      setEditorInstance(editor);
-    }
-    return () => {
-      if (editorInstance && editorInstance.destroy) editorInstance.destroy();
-    };
-    // eslint-disable-next-line
-  }, []);
-
-  // Multi-select обработка
-  const handleCategoryChange = (cat) => {
-    setSelectedCategories((prev) =>
-      prev.includes(cat)
-        ? prev.filter((c) => c !== cat)
-        : [...prev, cat]
-    );
+  // Категории для react-select
+  const categoryOptions = categories.map((cat) => ({ value: cat, label: cat }));
+  const handleCategorySelect = (selected) => {
+    const values = selected ? selected.map((opt) => opt.value) : [];
+    setSelectedCategories(values);
+    setData('category', values);
   };
 
   // Добавление новой категории
@@ -130,52 +52,41 @@ export default function NewsCreate() {
     }
   };
 
-  // Drag&Drop для изображения
-  const handleImageDrop = (e) => {
-    e.preventDefault();
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setData('image', e.dataTransfer.files[0]);
-      setImageFile(e.dataTransfer.files[0]);
-    }
-  };
-  const handleImageChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setData('image', e.target.files[0]);
-      setImageFile(e.target.files[0]);
-    }
-  };
-  const handleRemoveImage = () => {
-    setData('image', null);
-    setImageFile(null);
-    setImagePreview(null);
-  };
-  useEffect(() => {
-    if (imageFile) {
-      const objectUrl = URL.createObjectURL(imageFile);
-      setImagePreview(objectUrl);
-      return () => URL.revokeObjectURL(objectUrl);
-    } else {
-      setImagePreview(null);
-    }
-  }, [imageFile]);
-
-  // TinyMCE value handler
-  const handleContentChange = (content, editor) => {
-    setData('content', content);
-  };
-
-  // Категории для react-select
-  const categoryOptions = categories.map((cat) => ({ value: cat, label: cat }));
-  const handleCategorySelect = (selected) => {
-    const values = selected ? selected.map((opt) => opt.value) : [];
-    setSelectedCategories(values);
-    setData('category', values);
-  };
-
+  // Сохранение
   const handleSubmit = (e) => {
     e.preventDefault();
-    setData('category', selectedCategories);
+    // Гарантируем массив для category
+    const cat = Array.isArray(data.category) ? data.category : [data.category].filter(Boolean);
+    // Сериализуем для Laravel как category[]
+    cat.forEach((c, i) => setData(`category[${i}]`, c));
+
+    // Гарантируем строку для content
+    if (typeof data.content !== 'string') {
+      setData('content', String(data.content || ''));
+    }
+
+    // Гарантируем валидный статус
+    if (!['Черновик', 'Опубликовано', 'Запланировано'].includes(data.status)) {
+      setData('status', 'Черновик');
+    }
+
+    setData('images', images);
+    setData('main_image', mainImage);
+
+    if (!data.content || data.content.replace(/<(.|\n)*?>/g, '').trim().length < 10) {
+      alert('Содержимое должно содержать минимум 10 символов');
+      return;
+    }
+    if (cat.length === 0) {
+      alert('Выберите хотя бы одну категорию');
+      return;
+    }
     post(route('admin.news.store'), { forceFormData: true });
+  };
+
+  // React Quill onChange
+  const handleQuillChange = value => {
+    setData('content', value);
   };
 
   return (
@@ -200,7 +111,7 @@ export default function NewsCreate() {
               {/* Заголовок */}
               <div className="sm:col-span-6">
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-                  Заголовок
+                  Заголовок *
                 </label>
                 <div className="mt-1">
                   <input
@@ -211,6 +122,7 @@ export default function NewsCreate() {
                     onChange={(e) => setData('title', e.target.value)}
                     className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
                     required
+                    placeholder="Введите заголовок новости"
                   />
                 </div>
                 {errors.title && (
@@ -220,7 +132,7 @@ export default function NewsCreate() {
 
               {/* Категории (react-select + добавление) */}
               <div className="sm:col-span-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Категории</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Категории *</label>
                 <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center mb-2">
                   <div className="w-full sm:w-2/3">
                     <Select
@@ -238,15 +150,15 @@ export default function NewsCreate() {
                     />
                   </div>
                   <div className="flex gap-2 items-center w-full sm:w-auto">
-                    <input
-                      type="text"
+                  <input
+                    type="text"
                       value={newCategory}
                       onChange={e => setNewCategory(e.target.value)}
                       placeholder="Новая категория"
                       className="border rounded px-2 py-1 text-sm"
                     />
                     <button type="button" onClick={handleAddCategory} className="px-2 py-1 bg-blue-500 text-white rounded text-sm">Добавить</button>
-                  </div>
+              </div>
                 </div>
                 {errors.category && (
                   <p className="mt-2 text-sm text-red-600">{errors.category}</p>
@@ -256,7 +168,7 @@ export default function NewsCreate() {
               {/* Статус и дата публикации */}
               <div className="sm:col-span-3">
                 <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-                  Статус
+                  Статус *
                 </label>
                 <div className="mt-1">
                   <select
@@ -288,7 +200,6 @@ export default function NewsCreate() {
                     value={data.publishDate}
                     onChange={(e) => setData('publishDate', e.target.value)}
                     className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    required
                   />
                 </div>
                 {errors.publishDate && (
@@ -296,94 +207,34 @@ export default function NewsCreate() {
                 )}
               </div>
 
-              {/* Загрузка изображения (drag&drop, превью, удаление) */}
+              {/* Галерея изображений */}
               <div className="sm:col-span-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Изображение</label>
-                <div
-                  className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition cursor-pointer relative"
-                  onDrop={handleImageDrop}
-                  onDragOver={e => e.preventDefault()}
-                  onClick={() => document.getElementById('image-upload-input').click()}
-                  style={{ minHeight: '120px' }}
-                >
-                  {imagePreview ? (
-                    <div className="relative group">
-                      <img src={imagePreview} alt="Превью" className="h-32 w-32 object-cover rounded-lg shadow" />
-                      <button
-                        type="button"
-                        onClick={e => { e.stopPropagation(); handleRemoveImage(); }}
-                        className="absolute top-1 right-1 bg-white bg-opacity-80 rounded-full p-1 shadow hover:bg-red-100 transition"
-                        title="Удалить изображение"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center">
-                      <svg className="h-10 w-10 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 48 48"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                      <span className="text-blue-600 font-medium cursor-pointer">Загрузить файл</span>
-                      <span className="text-xs text-gray-400">или перетащите сюда<br/>PNG, JPG, GIF до 10MB</span>
-                    </div>
-                  )}
-                  <input
-                    id="image-upload-input"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange}
-                  />
-                </div>
-                {errors.image && (
-                  <p className="mt-2 text-sm text-red-600">{errors.image}</p>
-                )}
+                <label className="block text-sm font-medium text-gray-700 mb-1">Галерея изображений (до 18)</label>
+                <ImageGalleryUpload
+                  images={images}
+                  setImages={setImages}
+                  mainImage={mainImage}
+                  setMainImage={setMainImage}
+                  max={18}
+                />
               </div>
 
-              {/* Содержимое TinyMCE */}
+              {/* Содержимое (React Quill) */}
               <div className="sm:col-span-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Содержимое</label>
-                <div className="bg-white border-2 border-blue-200 rounded-lg shadow-sm p-2 min-h-[220px] focus-within:ring-2 focus-within:ring-blue-400 transition-all" style={{ boxShadow: '0 2px 8px 0 #e0e7ff' }}>
-                  <Editor
-                    apiKey={'ckt2ux657iu8ehiz8mhzuy8zxnec6kv9bra5dtuif75nwdoq'}
+                <label className="block text-sm font-medium text-gray-700 mb-1">Содержимое *</label>
+                <div className="bg-white border-2 border-blue-200 rounded-lg shadow-sm p-2 min-h-[220px] focus-within:ring-2 focus-within:ring-blue-400 transition-all">
+                  <ReactQuill
                     value={data.content}
-                    init={{
-                      height: 350,
-                      menubar: true,
-                      plugins: [
-                        'advlist autolink lists link image charmap print preview anchor',
-                        'searchreplace visualblocks code fullscreen',
-                        'insertdatetime media table paste code help wordcount'
-                      ],
-                      toolbar:
-                        'undo redo | formatselect | bold italic backcolor | \
-                        alignleft aligncenter alignright alignjustify | \
-                        bullist numlist outdent indent | removeformat | help | image link',
-                      content_style: 'body { font-family:Inter,Arial,sans-serif; font-size:16px }',
-                      language: 'ru',
-                      images_upload_url: '/api/editor-upload',
-                      images_upload_handler: function (blobInfo, success, failure) {
-                        const formData = new FormData();
-                        formData.append('image', blobInfo.blob());
-                        fetch('/api/editor-upload', {
-                          method: 'POST',
-                          body: formData
-                        })
-                          .then(res => res.json())
-                          .then(data => {
-                            if (data.success && data.file && data.file.url) {
-                              success(data.file.url);
-                            } else {
-                              failure('Ошибка загрузки');
-                            }
-                          })
-                          .catch(() => failure('Ошибка загрузки'));
-                      },
-                    }}
-                    onEditorChange={handleContentChange}
+                    onChange={handleQuillChange}
+                    theme="snow"
+                    placeholder="Введите текст новости..."
+                    className="min-h-[180px]"
                   />
                 </div>
                 {errors.content && (
                   <p className="mt-2 text-sm text-red-600">{errors.content}</p>
                 )}
+                <p className="mt-1 text-xs text-gray-500">Минимум 10 символов</p>
               </div>
             </div>
           </div>
@@ -393,21 +244,10 @@ export default function NewsCreate() {
               className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               disabled={processing}
             >
-              Создать новость
+              {processing ? 'Создание...' : 'Создать новость'}
             </button>
           </div>
         </form>
-      </div>
-
-      {/* Предпросмотр новости */}
-      <div className="mt-8 bg-gray-50 p-6 rounded shadow">
-        <h3 className="text-lg font-semibold mb-2">Предпросмотр</h3>
-        <div className="mb-2 text-xl font-bold">{data.title}</div>
-        <div className="mb-2 text-gray-500">{data.category} | {data.publishDate}</div>
-        {imagePreview && (
-          <img src={imagePreview} alt="Превью" className="mb-4 h-48 object-cover rounded" />
-        )}
-        <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: data.content }} />
       </div>
     </>
   );

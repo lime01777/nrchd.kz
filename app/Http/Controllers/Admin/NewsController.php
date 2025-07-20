@@ -61,30 +61,59 @@ class NewsController extends Controller
         // Валидация данных
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:news',
-            'content' => 'required|string',
+            'content' => 'required|string|min:10',
             'category' => 'required|array|min:1',
             'category.*' => 'string',
-            'status' => 'required|string',
+            'status' => 'required|string|in:Черновик,Опубликовано,Запланировано',
             'publishDate' => 'nullable|date',
-            'image' => 'nullable|image|max:10240', // Максимум 10MB
+            'images' => 'nullable|array|max:18',
+            'images.*' => 'nullable',
+            'main_image' => 'nullable',
         ]);
+
+        // Генерируем slug из заголовка
+        $slug = Str::slug($validated['title']);
+        $originalSlug = $slug;
+        $counter = 1;
+        while (News::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        // Обработка изображений
+        $imagePaths = [];
+        if ($request->has('images')) {
+            foreach ($request->file('images', []) as $img) {
+                if ($img && $img->isValid()) {
+                    $path = $img->store('news', 'public');
+                    $imagePaths[] = '/storage/' . $path;
+                }
+            }
+        }
+        // Если изображения уже были (например, при редактировании), добавляем их
+        if (is_array($request->images)) {
+            foreach ($request->images as $img) {
+                if (is_string($img) && !in_array($img, $imagePaths)) {
+                    $imagePaths[] = $img;
+                }
+            }
+        }
+        // Главное изображение
+        $mainImage = $request->main_image;
+        if ($mainImage && !in_array($mainImage, $imagePaths)) {
+            $mainImage = $imagePaths[0] ?? null;
+        }
 
         // Создаем новую запись
         $news = new News();
         $news->title = $validated['title'];
-        $news->slug = $validated['slug'];
+        $news->slug = $slug;
         $news->content = $validated['content'];
         $news->category = $validated['category'];
         $news->status = $validated['status'];
         $news->publish_date = $validated['publishDate'] ?? null;
-
-        // Обработка изображения, если оно загружено
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('news', 'public');
-            $news->image = '/storage/' . $path;
-        }
-
+        $news->images = $imagePaths;
+        $news->main_image = $mainImage;
         $news->save();
 
         return redirect()->route('admin.news')->with('success', 'Новость успешно создана');
@@ -106,7 +135,8 @@ class NewsController extends Controller
                 'category' => $news->category,
                 'status' => $news->status,
                 'publishDate' => $news->publish_date ? $news->publish_date->format('Y-m-d') : null,
-                'image' => $news->image,
+                'images' => $news->images,
+                'main_image' => $news->main_image,
             ],
         ]);
     }
@@ -121,35 +151,58 @@ class NewsController extends Controller
         // Валидация данных
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:news,slug,' . $id,
-            'content' => 'required|string',
+            'content' => 'required|string|min:10',
             'category' => 'required|array|min:1',
             'category.*' => 'string',
-            'status' => 'required|string',
+            'status' => 'required|string|in:Черновик,Опубликовано,Запланировано',
             'publishDate' => 'nullable|date',
-            'image' => 'nullable|image|max:10240', // Максимум 10MB
+            'images' => 'nullable|array|max:18',
+            'images.*' => 'nullable',
+            'main_image' => 'nullable',
         ]);
+
+        // Обработка изображений
+        $imagePaths = [];
+        if ($request->has('images')) {
+            foreach ($request->file('images', []) as $img) {
+                if ($img && $img->isValid()) {
+                    $path = $img->store('news', 'public');
+                    $imagePaths[] = '/storage/' . $path;
+                }
+            }
+        }
+        // Если изображения уже были (например, при редактировании), добавляем их
+        if (is_array($request->images)) {
+            foreach ($request->images as $img) {
+                if (is_string($img) && !in_array($img, $imagePaths)) {
+                    $imagePaths[] = $img;
+                }
+            }
+        }
+        // Главное изображение
+        $mainImage = $request->main_image;
+        if ($mainImage && !in_array($mainImage, $imagePaths)) {
+            $mainImage = $imagePaths[0] ?? null;
+        }
+
+        // Удаляем старые изображения, которых нет в новом списке
+        if (is_array($news->images)) {
+            foreach ($news->images as $oldImg) {
+                if (!in_array($oldImg, $imagePaths) && is_string($oldImg)) {
+                    $oldPath = str_replace('/storage/', '', $oldImg);
+                    Storage::disk('public')->delete($oldPath);
+                }
+            }
+        }
 
         // Обновляем запись
         $news->title = $validated['title'];
-        $news->slug = $validated['slug'];
         $news->content = $validated['content'];
         $news->category = $validated['category'];
         $news->status = $validated['status'];
         $news->publish_date = $validated['publishDate'] ?? null;
-
-        // Обработка изображения, если оно загружено
-        if ($request->hasFile('image')) {
-            // Удаляем старое изображение, если оно есть
-            if ($news->image) {
-                $oldPath = str_replace('/storage/', '', $news->image);
-                Storage::disk('public')->delete($oldPath);
-            }
-
-            $path = $request->file('image')->store('news', 'public');
-            $news->image = '/storage/' . $path;
-        }
-
+        $news->images = $imagePaths;
+        $news->main_image = $mainImage;
         $news->save();
 
         return redirect()->route('admin.news')->with('success', 'Новость успешно обновлена');
@@ -162,12 +215,15 @@ class NewsController extends Controller
     {
         $news = News::findOrFail($id);
 
-        // Удаляем изображение, если оно есть
-        if ($news->image) {
-            $path = str_replace('/storage/', '', $news->image);
-            Storage::disk('public')->delete($path);
+        // Удаляем все изображения
+        if (is_array($news->images)) {
+            foreach ($news->images as $img) {
+                if (is_string($img)) {
+                    $path = str_replace('/storage/', '', $img);
+                    Storage::disk('public')->delete($path);
+                }
+            }
         }
-
         $news->delete();
 
         return redirect()->route('admin.news')->with('success', 'Новость успешно удалена');
@@ -188,9 +244,13 @@ class NewsController extends Controller
         if ($action === 'delete') {
             $newsList = News::whereIn('id', $ids)->get();
             foreach ($newsList as $news) {
-                if ($news->image) {
-                    $path = str_replace('/storage/', '', $news->image);
-                    Storage::disk('public')->delete($path);
+                if (is_array($news->images)) {
+                    foreach ($news->images as $img) {
+                        if (is_string($img)) {
+                            $path = str_replace('/storage/', '', $img);
+                            Storage::disk('public')->delete($path);
+                        }
+                    }
                 }
                 $news->delete();
             }
