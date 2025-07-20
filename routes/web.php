@@ -362,6 +362,13 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     ]);
 });
 
+// API для просмотра и управления файлами в public/storage
+Route::prefix('admin/storage')->middleware(['auth'])->group(function () {
+    Route::get('list', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'list']);
+    Route::delete('delete', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'delete']);
+    Route::post('upload', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'upload']);
+});
+
 // Маршруты для филиалов
 Route::get('/astana', function () {
     return Inertia::render('Branches/Astana');
