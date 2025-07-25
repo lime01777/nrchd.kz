@@ -1,4 +1,5 @@
 import React from 'react';
+import route from '../Utils/routeWithLocale';
 import Header from '@/Components/Header';
 import Hero from '@/Components/Hero';
 import Footer from '@/Components/Footer';

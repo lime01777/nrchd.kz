@@ -1,0 +1,66 @@
+param (
+    [string]$Directory = "C:\xampp\htdocs\resources\js"
+)
+
+# Находим все файлы .jsx и .js, которые содержат вызовы route()
+$files = Get-ChildItem -Path $Directory -Recurse -Include "*.jsx", "*.js" | 
+         Select-String -Pattern "route\(" | 
+         Select-Object -ExpandProperty Path | 
+         Sort-Object -Unique
+
+# Исключаем файлы Utils/routeWithLocale.js, Utils/route.js и Utils/RouteHelper.js
+$files = $files | Where-Object { 
+    ($_ -notlike "*\Utils\routeWithLocale.js") -and 
+    ($_ -notlike "*\Utils\route.js") -and 
+    ($_ -notlike "*\Utils\RouteHelper.js") -and
+    ($_ -notlike "*\Utils\ziggyPatch.js")
+}
+
+Write-Host "Найдено $($files.Count) файлов с вызовами route()..."
+Write-Host ""
+
+foreach ($file in $files) {
+    # Определяем путь импорта на основе глубины файла
+    $relativeImport = "../Utils/routeWithLocale"
+    $pathDepth = ($file -split "\\").Count - ($Directory -split "\\").Count
+    
+    if ($pathDepth -gt 1) {
+        $relativeImport = ""
+        for ($i = 1; $i -lt $pathDepth; $i++) {
+            $relativeImport += "../"
+        }
+        $relativeImport += "Utils/routeWithLocale"
+    }
+    
+    $content = Get-Content -Path $file -Raw
+    
+    # Проверяем, не импортирован ли уже routeWithLocale
+    if ($content -notmatch "import\s+route\s+from\s+['\"].*routeWithLocale['\"]") {
+        # Проверяем, есть ли уже какие-то импорты для добавления после них
+        if ($content -match "import\s+.*from\s+['\"].*['\"];?\r?\n") {
+            # Находим последний импорт
+            $lastImport = [regex]::Matches($content, "import\s+.*from\s+['\"].*['\"];?\r?\n") | 
+                         Select-Object -Last 1
+                         
+            $lastImportEndPos = $lastImport.Index + $lastImport.Length
+            
+            # Добавляем наш импорт после последнего импорта
+            $newContent = $content.Substring(0, $lastImportEndPos) + 
+                         "import route from '$relativeImport';" + [Environment]::NewLine + 
+                         $content.Substring($lastImportEndPos)
+            
+            # Записываем обновленное содержимое в файл
+            Set-Content -Path $file -Value $newContent
+            Write-Host "✅ Добавлен импорт в $file"
+        }
+        else {
+            Write-Host "❌ Не найдены импорты в $file"
+        }
+    }
+    else {
+        Write-Host "ℹ️ Файл $file уже содержит импорт routeWithLocale"
+    }
+}
+
+Write-Host ""
+Write-Host "Обновление завершено! Проверьте изменения и запустите сборку."

@@ -1,7 +1,7 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
+import route from '../../Utils/routeWithLocale';
 import React from 'react';
 import LayoutNews from '@/Layouts/LayoutNews';
-import { Link } from '@inertiajs/react';
 
 export default function NewsShow({ news, relatedNews }) {
   if (!news) {

@@ -1,4 +1,5 @@
 import { Head } from '@inertiajs/react';
+import route from '../../Utils/routeWithLocale';
 import React, { useState } from 'react';
 import FolderChlank from '@/Components/FolderChlank';
 import LayoutDirection from '@/Layouts/LayoutDirection';

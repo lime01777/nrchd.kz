@@ -4,19 +4,22 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Middleware\LanguageMiddleware;
+use App\Http\Middleware\SetLocaleFromURL;
+use App\Services\TranslationService;
 
-// Применяем мидлвар языка ко всем маршрутам
-Route::middleware([LanguageMiddleware::class])->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('Home', [
-            'canLogin' => Route::has('login'),
-            'canRegister' => Route::has('register'),
-            'laravelVersion' => Application::VERSION,
-            'phpVersion' => PHP_VERSION,
-            'locale' => app()->getLocale(), // Добавляем текущий язык в пропсы
-        ]);
-    })->name('home');
+// Route without locale prefix for redirecting to default locale
+Route::get('/', function () {
+    return redirect(app()->getLocale());
+});
+
+// Routes with locale prefix
+Route::prefix('{locale}')
+    ->where(['locale' => 'ru|en|kz'])
+    ->middleware(SetLocaleFromURL::class)
+    ->group(function () {
+        // Include all localized routes
+        require __DIR__.'/localized.php';
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -346,6 +349,16 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 
     // Управление пользователями
     Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users');
+
+    // Translation Management
+    Route::get('/translations', [App\Http\Controllers\Admin\TranslationController::class, 'index'])->name('admin.translations.index');
+    Route::get('/translations/create', [App\Http\Controllers\Admin\TranslationController::class, 'create'])->name('admin.translations.create');
+    Route::post('/translations', [App\Http\Controllers\Admin\TranslationController::class, 'store'])->name('admin.translations.store');
+    Route::get('/translations/{translation}/edit', [App\Http\Controllers\Admin\TranslationController::class, 'edit'])->name('admin.translations.edit');
+    Route::put('/translations/{translation}', [App\Http\Controllers\Admin\TranslationController::class, 'update'])->name('admin.translations.update');
+    Route::delete('/translations/{translation}', [App\Http\Controllers\Admin\TranslationController::class, 'destroy'])->name('admin.translations.destroy');
+    Route::post('/translations/{translation}/auto-translate', [App\Http\Controllers\Admin\TranslationController::class, 'autoTranslate'])->name('admin.translations.auto-translate');
+    Route::post('/translations/auto-translate-group', [App\Http\Controllers\Admin\TranslationController::class, 'autoTranslateGroup'])->name('admin.translations.auto-translate-group');
     Route::get('/users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.users.create');
     Route::post('/users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store');
     Route::get('/users/{id}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('admin.users.edit');

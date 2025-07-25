@@ -4,6 +4,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
+import route from '../../../Utils/routeWithLocale';
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,

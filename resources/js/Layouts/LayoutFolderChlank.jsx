@@ -1,4 +1,5 @@
 import React from 'react';
+import route from '../Utils/routeWithLocale';
 import { Link } from '@inertiajs/react';
 import Footer from '@/Components/Footer';
 import Header from '@/Components/Header';

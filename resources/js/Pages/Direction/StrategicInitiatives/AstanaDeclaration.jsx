@@ -1,5 +1,6 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
+import route from '../../../Utils/routeWithLocale';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import PageAccordions from '@/Components/PageAccordions';
 

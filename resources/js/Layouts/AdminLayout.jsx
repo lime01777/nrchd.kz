@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Head, Link, usePage } from '@inertiajs/react';
+import route from '../Utils/routeWithLocale';
 import { Transition } from '@headlessui/react';
 
 export default function AdminLayout({ children, title }) {

@@ -1,4 +1,5 @@
-import { Head } from "@inertiajs/react";
+import { Head } from '@inertiajs/react';
+import route from '../../Utils/routeWithLocale';
 import React, { useState } from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
 import BannerCatalog from "@/Components/BannerCatalog";

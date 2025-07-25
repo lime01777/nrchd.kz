@@ -5,6 +5,7 @@ import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
 import { useForm } from '@inertiajs/react';
+import route from '../../../Utils/routeWithLocale';
 import { useRef, useState } from 'react';
 
 export default function DeleteUserForm({ className = '' }) {

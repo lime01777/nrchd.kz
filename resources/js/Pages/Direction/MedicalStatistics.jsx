@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import route from '../../Utils/routeWithLocale';
 import React, { useState } from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
 import FilesAccord from '@/Components/FilesAccord';

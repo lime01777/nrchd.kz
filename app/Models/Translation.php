@@ -5,46 +5,104 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class Translation extends Model
 {
     use HasFactory;
 
     /**
-     * Поля, которые можно массово присваивать
+     * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $fillable = [
-        'original_text',
-        'translated_text',
-        'source_language',
-        'target_language',
-        'content_type',
-        'content_id',
+        'key',
+        'ru',
+        'kk',
+        'en',
+        'group',
     ];
 
     /**
-     * Найти перевод по оригинальному тексту и языкам
+     * Get a translation by key, group and locale
      *
-     * @param string $text Оригинальный текст
-     * @param string $sourceLang Исходный язык
-     * @param string $targetLang Целевой язык
-     * @return string|Переведенный текст или null если не найден
+     * @param string $key The translation key
+     * @param string $group The group (usually page name)
+     * @param string $locale The language code (ru, en, kk)
+     * @return string|null The translated text or null if not found
      */
-    public static function findTranslation($text, $sourceLang, $targetLang)
+    public static function getTranslation(string $key, string $group, string $locale = 'ru')
     {
-        try {
-            $translation = self::where([
-                'original_text' => $text,
-                'source_language' => $sourceLang,
-                'target_language' => $targetLang
-            ])->first();
-
-            return $translation ? $translation->translated_text : null;
-        } catch (\Exception $e) {
-            Log::error('Error finding translation: ' . $e->getMessage());
-            return null;
+        $cacheKey = "translation:{$group}.{$key}.{$locale}";
+        
+        return Cache::remember($cacheKey, 3600, function () use ($key, $group, $locale) {
+            try {
+                $translation = self::where([
+                    'key' => $key,
+                    'group' => $group
+                ])->first();
+                
+                return $translation ? $translation->{$locale} : null;
+            } catch (\Exception $e) {
+                Log::error('Error finding translation: ' . $e->getMessage());
+                return null;
+            }
+        });
+    }
+    
+    /**
+     * Get all translations for a specific group and locale
+     *
+     * @param string $group The group (usually page name)
+     * @param string $locale The language code (ru, en, kk)
+     * @return array The translations as key-value pairs
+     */
+    public static function getGroupTranslations(string $group, string $locale = 'ru')
+    {
+        $cacheKey = "translations:{$group}.{$locale}";
+        
+        return Cache::remember($cacheKey, 3600, function () use ($group, $locale) {
+            try {
+                $translations = self::where('group', $group)->get();
+                $result = [];
+                
+                foreach ($translations as $translation) {
+                    $result[$translation->key] = $translation->{$locale};
+                }
+                
+                return $result;
+            } catch (\Exception $e) {
+                Log::error('Error getting group translations: ' . $e->getMessage());
+                return [];
+            }
+        });
+    }
+    
+    /**
+     * Clear the cache for a specific translation or group
+     *
+     * @param string|null $key The translation key
+     * @param string|null $group The group (usually page name)
+     * @param string|null $locale The language code (ru, en, kk)
+     */
+    public static function clearCache(?string $key = null, ?string $group = null, ?string $locale = null)
+    {
+        if ($key && $group && $locale) {
+            Cache::forget("translation:{$group}.{$key}.{$locale}");
+        } elseif ($group && $locale) {
+            Cache::forget("translations:{$group}.{$locale}");
+        } elseif ($group) {
+            foreach (['ru', 'en', 'kk'] as $loc) {
+                Cache::forget("translations:{$group}.{$loc}");
+            }
+        } else {
+            // Clear all translation cache if no params provided
+            $keys = Cache::get('translation_cache_keys', []);
+            foreach ($keys as $cacheKey) {
+                Cache::forget($cacheKey);
+            }
+            Cache::forget('translation_cache_keys');
         }
     }
 

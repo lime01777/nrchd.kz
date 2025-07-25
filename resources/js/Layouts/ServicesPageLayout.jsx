@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import route from '../Utils/routeWithLocale';
 import Header from '@/Components/Header';
 import Footer from '@/Components/Footer';
 import { Link } from '@inertiajs/react';

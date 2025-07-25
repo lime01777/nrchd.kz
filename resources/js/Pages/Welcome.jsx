@@ -1,4 +1,5 @@
-import { Head, Link } from '@inertiajs/react';
+import { Link, Head } from '@inertiajs/react';
+import route from '../Utils/routeWithLocale';
 
 export default function Welcome({ auth, laravelVersion, phpVersion }) {
     const handleImageError = () => {
