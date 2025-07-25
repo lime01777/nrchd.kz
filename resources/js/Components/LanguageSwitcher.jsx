@@ -1,158 +1,136 @@
 import React, { useState, useEffect } from 'react';
-import { Link, usePage } from '@inertiajs/react';
-import route from '../Utils/routeWithLocale';
+import languageManager from '@/Utils/LanguageManager';
 
 function LanguageSwitcher() {
-  const { locale } = usePage().props;
+  const [currentLang, setCurrentLang] = useState('ru');
+  const [isTranslating, setIsTranslating] = useState(false);
 
-  // Function to get the URL for a specific locale
-  const getUrlForLocale = (targetLocale) => {
+  // Initialize with language from LanguageManager
+  useEffect(() => {
+    // Получаем текущий язык из менеджера
+    const initialLang = languageManager.getCurrentLanguage();
+    setCurrentLang(initialLang);
+    
+    // Инициализируем LanguageManager при первой загрузке
+    if (!languageManager.initialized) {
+      languageManager.init();
+    }
+  }, []);
+
+  const handleLanguageChange = async (lang) => {
+    console.log(`[LanguageSwitcher] Button clicked: ${lang}, current language: ${currentLang}`);
+    if (lang === currentLang) return;
+    
+    // Создаем индикатор перевода за пределами блока try-catch
+    const indicator = document.createElement('div');
+    indicator.id = 'language-switch-indicator';
+    indicator.textContent = `Переключение на ${lang}...`;
+    indicator.style.position = 'fixed';
+    indicator.style.top = '50px';
+    indicator.style.right = '10px';
+    indicator.style.backgroundColor = 'rgba(0,0,0,0.7)';
+    indicator.style.color = 'white';
+    indicator.style.padding = '10px';
+    indicator.style.borderRadius = '5px';
+    indicator.style.zIndex = '9999';
+    document.body.appendChild(indicator);
+    
+    // Добавляем таймаут безопасности, чтобы при любой ошибке индикатор исчез
+    const safetyTimeout = setTimeout(() => {
+      try {
+        const existingIndicator = document.getElementById('language-switch-indicator');
+        if (existingIndicator && existingIndicator.parentNode) {
+          existingIndicator.parentNode.removeChild(existingIndicator);
+        }
+        setIsTranslating(false);
+      } catch (e) {}
+    }, 8000); // 8 секунд максимум для перевода
+    
     try {
-      // First try to use Ziggy route if available (best method)
-      const currentRoute = route().current();
-      if (currentRoute) {
-        // Get current route parameters
-        const params = route().params;
-        
-        // Add or update the locale parameter
-        return route(currentRoute, { ...params, locale: targetLocale });
-      }
+      // Update UI state
+      setIsTranslating(true);
+      
+      // Используем language manager для смены языка всего сайта
+      // Устанавливаем таймаут для предотвращения бесконечного ожидания
+      const translationPromise = Promise.race([
+        languageManager.switchLanguage(lang),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Таймаут перевода. Попробуйте еще раз.')), 7000)
+        )
+      ]);
+      
+      await translationPromise;
+      
+      // Обновляем состояние компонента после смены языка
+      setCurrentLang(lang);
+      
     } catch (error) {
-      console.warn('Failed to use Ziggy route for language switch:', error);
-    }
-    
-    // Fallback to manual URL manipulation if Ziggy route is not available
-    const currentPath = window.location.pathname;
-    const pathSegments = currentPath.split('/').filter(Boolean);
-    
-    // Check if we're on the homepage
-    if (pathSegments.length === 0 || (pathSegments.length === 1 && ['ru', 'en', 'kz'].includes(pathSegments[0]))) {
-      return `/${targetLocale}`;
-    }
-    
-    // For other pages: if the first segment is a locale, replace it
-    if (pathSegments.length > 0 && ['ru', 'en', 'kz'].includes(pathSegments[0])) {
-      pathSegments[0] = targetLocale;
-      return '/' + pathSegments.join('/');
-    } 
-    
-    // If no locale in URL, add it as the first segment
-    return '/' + targetLocale + currentPath;
-  };
-
-  const languageNames = {
-    'ru': 'Русский',
-    'en': 'English',
-    'kz': 'Қазақша'
-  };
-
-  // Для анимированного перехода при смене языка
-  const [transitioning, setTransitioning] = useState(false);
-  const [currentLocaleDisplay, setCurrentLocaleDisplay] = useState(locale);
-
-  // Состояния для управления показом меню и тултипа
-  const [showMenu, setShowMenu] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
-  
-  // Обновляем текущее отображаемое значение локали с анимацией
-  useEffect(() => {
-    if (locale !== currentLocaleDisplay) {
-      setTransitioning(true);
-      const timer = setTimeout(() => {
-        setCurrentLocaleDisplay(locale);
-        setTransitioning(false);
-      }, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [locale]);
-
-  // Закрываем меню при клике вне его
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (showMenu && !event.target.closest('.language-switcher-container')) {
-        setShowMenu(false);
+      console.error('[LanguageSwitcher] Translation error:', error);
+      // Отображаем сообщение об ошибке только если не таймаут
+      if (!error.message.includes('Таймаут')) {
+        alert(`Ошибка при переводе: ${error.message}`);
+      } else {
+        alert(`Перевод не удался из-за таймаута. Попробуйте обновить страницу и попытаться снова.`);
       }
+      
+      // Восстанавливаем видимость элементов, которые могли быть скрыты
+      const hiddenElements = document.querySelectorAll('[style*="display: none"]');
+      hiddenElements.forEach(el => {
+        if (el.getAttribute('data-translation-hidden')) {
+          el.style.display = '';
+          el.removeAttribute('data-translation-hidden');
+        }
+      });
+      
+      // Возвращаемся к предыдущему языку
+      languageManager.revertToLastLanguage();
+    } finally {
+      // Очищаем таймаут безопасности
+      clearTimeout(safetyTimeout);
+      
+      // Удаляем индикатор после завершения
+      try {
+        const existingIndicator = document.getElementById('language-switch-indicator');
+        if (existingIndicator && existingIndicator.parentNode) {
+          existingIndicator.parentNode.removeChild(existingIndicator);
+        }
+      } catch (e) {}
+      
+      setIsTranslating(false);
     }
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showMenu]);
+  };
 
   return (
-    <div className="language-switcher-container relative">
-      {/* Индикатор текущего языка с выпадающим меню */}
-      <div 
-        className="relative z-10 flex items-center"
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
+    <div className="flex space-x-2">
+      <button 
+        onClick={() => handleLanguageChange('en')} 
+        className={`lang-btn py-1 px-3 border border-gray-300 rounded-md hover:bg-gray-100 ${currentLang === 'en' ? 'bg-blue-100 font-medium' : ''}`}
+        disabled={isTranslating}
       >
-        <button 
-          onClick={() => setShowMenu(!showMenu)}
-          className={
-            `flex items-center bg-white border border-gray-200 rounded-full px-3 py-1.5 cursor-pointer shadow-sm hover:bg-gray-50
-            ${transitioning ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`
-          }
-          aria-label="Выбрать язык"
-          aria-expanded={showMenu}
-        >
-          <span className="w-5 h-5 flex items-center justify-center mr-1">
-            <span className="inline-block w-3.5 h-3.5 rounded-full bg-blue-500"></span>
-          </span>
-          <span className="font-medium mr-1">{currentLocaleDisplay.toUpperCase()}</span>
-          <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${showMenu ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-          </svg>
-        </button>
-
-        {/* Тултип с полным названием языка */}
-        {showTooltip && !showMenu && (
-          <div className="absolute top-full left-0 mt-1 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap z-30 opacity-75">
-            {languageNames[locale]}
-          </div>
-        )}
-      </div>
-
-      {/* Выпадающее меню с языками */}
-      {showMenu && (
-        <div 
-          className="absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg border border-gray-200 p-1 z-20 min-w-[140px] transform origin-top transition-transform duration-150 ease-in-out"
-          role="menu"
-        >
-          <Link
-            href={getUrlForLocale('ru')}
-            className={`flex items-center py-2 px-4 text-base hover:bg-gray-100 transition duration-150 rounded ${locale === 'ru' ? 'font-medium bg-gray-50' : 'text-gray-600'}`}
-            preserveState
-            preserveScroll
-            onClick={() => setShowMenu(false)}
-            role="menuitem"
-          >
-            <span className={`inline-block w-2 h-2 rounded-full mr-2.5 ${locale === 'ru' ? 'bg-blue-500' : 'bg-transparent border border-gray-300'}`}></span>
-            <span>Русский</span>
-          </Link>
-          <Link
-            href={getUrlForLocale('en')}
-            className={`flex items-center py-2 px-4 text-base hover:bg-gray-100 transition duration-150 rounded ${locale === 'en' ? 'font-medium bg-gray-50' : 'text-gray-600'}`}
-            preserveState
-            preserveScroll
-            onClick={() => setShowMenu(false)}
-            role="menuitem"
-          >
-            <span className={`inline-block w-2 h-2 rounded-full mr-2.5 ${locale === 'en' ? 'bg-blue-500' : 'bg-transparent border border-gray-300'}`}></span>
-            <span>English</span>
-          </Link>
-          <Link
-            href={getUrlForLocale('kz')}
-            className={`flex items-center py-2 px-4 text-base hover:bg-gray-100 transition duration-150 rounded ${locale === 'kz' ? 'font-medium bg-gray-50' : 'text-gray-600'}`}
-            preserveState
-            preserveScroll
-            onClick={() => setShowMenu(false)}
-            role="menuitem"
-          >
-            <span className={`inline-block w-2 h-2 rounded-full mr-2.5 ${locale === 'kz' ? 'bg-blue-500' : 'bg-transparent border border-gray-300'}`}></span>
-            <span>Қазақша</span>
-          </Link>
-        </div>
-      )}
+        EN
+      </button>
+      <button 
+        onClick={() => handleLanguageChange('ru')} 
+        className={`lang-btn py-1 px-3 border border-gray-300 rounded-md hover:bg-gray-100 ${currentLang === 'ru' ? 'bg-blue-100 font-medium' : ''}`}
+        disabled={isTranslating}
+      >
+        RU
+      </button>
+      <button 
+        onClick={() => handleLanguageChange('kz')} 
+        className={`lang-btn py-1 px-3 border border-gray-300 rounded-md hover:bg-gray-100 ${currentLang === 'kz' ? 'bg-blue-100 font-medium' : ''}`}
+        disabled={isTranslating}
+      >
+        KZ
+      </button>
+      
+      <style jsx>{`
+        @keyframes progress {
+          0% { width: 0; }
+          50% { width: 50%; }
+          100% { width: 100%; }
+        }
+      `}</style>
     </div>
   );
 }

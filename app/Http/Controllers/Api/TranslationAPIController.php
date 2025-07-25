@@ -68,12 +68,15 @@ class TranslationAPIController extends Controller
         ]);
 
         try {
-            // Получаем API ключ для Google Translate
-            $apiKey = env('GOOGLE_TRANSLATE_API_KEY');
-            
+            // Получаем экземпляр Google Translate API
             // Инициализируем переводчик
-            // Если есть API ключ, передаем его при создании экземпляра
-            $translator = $apiKey ? new GoogleTranslate('', '', ['key' => $apiKey]) : new GoogleTranslate();
+            $translator = new GoogleTranslate();
+            
+            // Проверяем, есть ли специальный метод для установки ключа
+            $apiKey = env('GOOGLE_TRANSLATE_API_KEY');
+            if ($apiKey && method_exists($translator, 'setApiKey')) {
+                $translator->setApiKey($apiKey);
+            }
             
             // Устанавливаем исходный и целевой языки
             $sourceCode = ($request->source_lang === 'kz') ? 'kk' : $request->source_lang;

@@ -73,84 +73,19 @@ export default function Header() {
         { title: "Постаккредитационный мониторинг", url: "services.postAccreditationMonitoring" },
     ];
 
-    // Function to safely generate route with locale
-    const getRouteUrl = (routeName, params = {}) => {
-        try {
-            // Check if window.currentLocale is defined
-            if (typeof window.currentLocale === 'undefined') {
-                console.warn('[Header] currentLocale is undefined, falling back to "ru"');
-                window.currentLocale = 'ru'; // Set Russian as default locale
-            }
-            
-            console.log(`[Header] Generating route for ${routeName} with locale: ${window.currentLocale}`);
-            
-            // Add locale to params if it's not there
-            const finalParams = { ...params };
-            if (!finalParams.locale) {
-                finalParams.locale = window.currentLocale;
-            }
-            
-            // Try to generate URL with Ziggy
-            const url = route(routeName, finalParams);
-            console.log(`[Header] Generated URL: ${url}`);
-            return url;
-        } catch (error) {
-            console.error(`[Header] Route generation error for ${routeName}:`, error);
-            // Manually construct URL with default locale 'ru' if Ziggy fails
-            const locale = window.currentLocale || 'ru';
-            return `/${locale}/${routeName}`;
-        }
-    };
-
-    // Функция для переключения языка
-    const switchLanguage = (lang) => {
-        console.log(`[Header] Switching language to: ${lang}`);
-        
-        // Обновляем текущую локаль
-        window.currentLocale = lang;
-        
-        // Получаем текущий URL
-        let currentPath = window.location.pathname;
-        
-        // Удаляем текущий префикс языка из пути, если он есть
-        const langPrefixMatch = currentPath.match(/^\/(ru|en|kz)/);
-        if (langPrefixMatch) {
-            currentPath = currentPath.replace(langPrefixMatch[0], '');
-        }
-        
-        // Добавляем новый префикс языка
-        const newPath = `/${lang}${currentPath}`;
-        console.log(`[Header] New path after language switch: ${newPath}`);
-        
-        // Перенаправляем на новый URL
-        window.location.href = newPath;
-    };
 
     useEffect(() => {
         const handleScroll = () => {
-            if (window.scrollY > 10) {
-                setIsScrolled(true);
-            } else {
-                setIsScrolled(false);
-            }
+            setIsScrolled(window.scrollY > 10);
         };
+
         window.addEventListener("scroll", handleScroll);
         
-        // Добавляем класс для accessibility режима, если он активен
-        if (localStorage.getItem('accessibilityMode') === 'true') {
+        // Check if accessibility mode was previously enabled
+        const savedAccessibilityMode = localStorage.getItem('accessibilityMode');
+        if (savedAccessibilityMode === 'true') {
+            setAccessibilityMode(true);
             document.body.classList.add('accessibility-mode');
-        }
-        
-        // Проверяем, есть ли локаль в URL
-        const pathname = window.location.pathname;
-        const localeMatch = pathname.match(/^\/(ru|en|kz)/);
-        const defaultLocale = localeMatch ? localeMatch[1] : 'ru'; // Устанавливаем 'ru' по умолчанию
-        
-        if (typeof window.currentLocale === 'undefined') {
-            console.log(`[Header] Setting default locale from URL or fallback: ${defaultLocale}`);
-            window.currentLocale = defaultLocale;
-        } else {
-            console.log(`[Header] Current locale already set: ${window.currentLocale}`);
         }
         
         return () => {
@@ -175,7 +110,7 @@ export default function Header() {
     <header className={`fixed top-0 text-gray-600 font-medium body-font z-50 w-full ease-in duration-150 ${ isScrolled
         ? "bg-white shadow-md" : "bg-transparent" }`}>
         <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
-            <Link href={getRouteUrl('home')}
+            <Link href={route('home')}
                 className="hidden lg:flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
             <span className="text-sm uppercase">национальный научный центр развития <br />здравоохранения им.
                 салидат
@@ -307,7 +242,7 @@ export default function Header() {
 
                 {/* Новости */}
                 <div className="relative group mr-8">
-                    <button onClick={() => window.location.href = getRouteUrl('news')} className="group-hover:text-gray-900 focus:outline-none flex items-center cursor-pointer">
+                    <button onClick={() => window.location.href = route('news')} className="group-hover:text-gray-900 focus:outline-none flex items-center cursor-pointer">
 
                         Новости
                     </button>
@@ -321,12 +256,12 @@ export default function Header() {
             <div className='hidden lg:flex flex-wrap items-end justify-end'>
                 {auth?.user && (
                     <Link
-                        href={getRouteUrl('admin.dashboard')}
+                        href={route('admin.dashboard')}
                         className="mx-1 inline-flex items-center py-1 px-3 focus:outline-none text-sm text-gray-900 mt-4 md:mt-0 transition-all ease-in duration-150 hover:text-blue-600"
                     >
                         <svg className="h-5 w-5 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                         Админ
                     </Link>
@@ -335,7 +270,15 @@ export default function Header() {
                     className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0"
                     onClick={() => {
                         console.log('EN button clicked (desktop)');
-                        switchLanguage('en');
+                        import('../Utils/LanguageManager.js')
+                            .then(module => {
+                                const languageManager = module.default;
+                                languageManager.switchLanguage('en');
+                            })
+                            .catch(err => {
+                                console.error('LanguageManager error:', err);
+                                alert('Ошибка при переключении языка: ' + err.message);
+                            });
                     }}
                 >EN
                 </button>
@@ -343,7 +286,14 @@ export default function Header() {
                     className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0"
                     onClick={() => {
                         console.log('RU button clicked (desktop)');
-                        switchLanguage('ru');
+                        import('../Utils/LanguageManager.js')
+                            .then(module => {
+                                const languageManager = module.default;
+                                languageManager.switchLanguage('ru');
+                            })
+                            .catch(err => {
+                                console.error('LanguageManager error:', err);
+                            });
                     }}
                 >RU
                 </button>
@@ -351,7 +301,14 @@ export default function Header() {
                     className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0"
                     onClick={() => {
                         console.log('KZ button clicked (desktop)');
-                        switchLanguage('kz');
+                        import('../Utils/LanguageManager.js')
+                            .then(module => {
+                                const languageManager = module.default;
+                                languageManager.switchLanguage('kz');
+                            })
+                            .catch(err => {
+                                console.error('LanguageManager error:', err);
+                            });
                     }}
                 >KZ
                 </button>
@@ -370,7 +327,7 @@ export default function Header() {
 
             {/* Бургер-меню (мобильная версия) */}
             <div className="lg:hidden flex justify-between w-full">
-                <Link href={getRouteUrl('home')} className="flex font-medium items-start text-gray-900 mb-4 md:mb-0">
+                <Link href={route('home')} className="flex font-medium items-start text-gray-900 mb-4 md:mb-0">
                 <span className="text-xs uppercase leading-tight" data-translate>национальный научный центр развития <br />здравоохранения им. салидат каирбековой</span>
                 </Link>
                 <button onClick={()=> setMenuOpen(!menuOpen)}
@@ -418,7 +375,7 @@ export default function Header() {
                             <div className="w-full mt-3 space-y-1 text-base border-l-2 border-gray-200 pl-4 max-h-[50vh] overflow-y-auto pb-4">
                                 {allDirectionsSubLinks.map((link, index) => (
                                     <div key={index} className="py-2 border-b border-gray-100">
-                                        <Link href={getRouteUrl(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
                                             {link.title}
                                         </Link>
                                     </div>
@@ -443,7 +400,7 @@ export default function Header() {
                             <div className="w-full mt-3 space-y-1 text-base border-l-2 border-gray-200 pl-4 max-h-[50vh] overflow-y-auto pb-4">
                                 {allServicesSubLinks.map((link, index) => (
                                     <div key={index} className="py-2 border-b border-gray-100">
-                                        <Link href={getRouteUrl(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
                                             {link.title}
                                         </Link>
                                     </div>
@@ -468,7 +425,7 @@ export default function Header() {
                             <div className="w-full mt-3 space-y-1 text-base border-l-2 border-gray-200 pl-4 max-h-[50vh] overflow-y-auto pb-4">
                                 {allAboutCentreSubLinks.map((link, index) => (
                                     <div key={index} className="py-2 border-b border-gray-100">
-                                        <Link href={getRouteUrl(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
                                             {link.title}
                                         </Link>
                                     </div>
@@ -493,7 +450,7 @@ export default function Header() {
                             <div className="w-full mt-3 space-y-1 text-base border-l-2 border-gray-200 pl-4 max-h-[50vh] overflow-y-auto pb-4">
                                 {branchesSubLinks.map((link, index) => (
                                     <div key={index} className="py-2 border-b border-gray-100">
-                                        <Link href={getRouteUrl(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
                                             {link.title}
                                         </Link>
                                     </div>
@@ -507,7 +464,7 @@ export default function Header() {
                         <button 
                             onClick={() => {
                                 setMenuOpen(false);
-                                window.location.href = getRouteUrl('news');
+                                window.location.href = route('news');
                             }}
                             className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
                             <span>Новости</span>
@@ -526,7 +483,12 @@ export default function Header() {
                             style={{ backgroundColor: 'white', color: '#3b82f6' }} 
                             onClick={() => {
                                 console.log('EN button clicked directly');
-                                switchLanguage('en');
+                                // Используем новый переводчик
+                                Translator.translatePage('en')
+                                    .catch(err => {
+                                        console.error('Translator error:', err);
+                                        alert('Ошибка переводчика: ' + err.message);
+                                    });
                             }}
                         >
                             EN
@@ -538,7 +500,11 @@ export default function Header() {
                             style={{ backgroundColor: '#3b82f6', color: 'white' }} 
                             onClick={() => {
                                 console.log('RU button clicked directly');
-                                switchLanguage('ru');
+                                // Используем новый переводчик
+                                Translator.translatePage('ru')
+                                    .catch(err => {
+                                        console.error('Translator error:', err);
+                                    });
                             }}
                         >
                             RU
@@ -550,7 +516,11 @@ export default function Header() {
                             style={{ backgroundColor: 'white', color: '#3b82f6' }} 
                             onClick={() => {
                                 console.log('KZ button clicked directly');
-                                switchLanguage('kz');
+                                // Используем новый переводчик
+                                Translator.translatePage('kz')
+                                    .catch(err => {
+                                        console.error('Translator error:', err);
+                                    });
                             }}
                         >
                             KZ
@@ -574,13 +544,13 @@ export default function Header() {
                     {/* Admin panel link */}
                     {auth?.user && (
                         <Link
-                            href={getRouteUrl('admin.dashboard')}
+                            href={route('admin.dashboard')}
                             className="flex items-center py-1 px-3 ml-2 focus:outline-none text-gray-800 hover:text-blue-600"
                             onClick={() => setMenuOpen(false)}
                         >
                             <svg className="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                             Админ
                         </Link>

@@ -2,7 +2,6 @@ import { Head, useForm } from '@inertiajs/react';
 import React, { useState, useEffect } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import { Link } from '@inertiajs/react';
-import route from '../../Utils/routeWithLocale';
 import LayoutNews from '@/Layouts/LayoutNews';
 
 export default function NewsIndex({ news, categories, filters }) {

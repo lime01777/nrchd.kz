@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\DocumentApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,3 +72,18 @@ Route::post('/forms/submit', [\App\Http\Controllers\FormController::class, 'subm
 Route::post('/forms/contact', [\App\Http\Controllers\FormController::class, 'contactForm']);
 Route::post('/forms/accreditation', [\App\Http\Controllers\FormController::class, 'accreditationForm']);
 Route::post('/forms/service', [\App\Http\Controllers\FormController::class, 'serviceRequestForm']);
+
+Route::post('/editor-upload', function (Request $request) {
+    if ($request->hasFile('image')) {
+        $file = $request->file('image');
+        $path = $file->store('editorjs', 'public');
+        $url = Storage::url($path);
+        return response()->json([
+            'success' => 1,
+            'file' => [
+                'url' => $url
+            ]
+        ]);
+    }
+    return response()->json(['success' => 0, 'message' => 'No file uploaded'], 400);
+});

@@ -6,9 +6,6 @@
  * - Safely handles missing routes with fallbacks
  * - Provides descriptive console warnings for debugging
  * - Handles edge cases like nested locale parameters
- * 
- * NOTE: As of version 2.0, this utility works in tandem with ziggyPatch.js, which globally
- * patches the route() function to automatically include locale parameter.
  */
 
 /**

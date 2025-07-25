@@ -5,14 +5,13 @@ import translationManager from './TranslationManager';
 
 class TranslationService {
   constructor() {
-    // Убедитесь, что используется полный URL с доменом, если сервер не на том же домене
-    this.apiEndpoint = window.location.origin + '/api/translate';
+    this.apiEndpoint = '/api/translate';
     this.maxTextLength = 5000; // Максимальная длина текста для одного запроса
     this.activeRequests = 0;
-    this.maxConcurrentRequests = 10; // Увеличиваем количество одновременных запросов
+    this.maxConcurrentRequests = 5;
     
     // Лимит запросов в секунду для предотвращения блокировки
-    this.requestsThrottle = 5; // Увеличиваем частоту запросов
+    this.requestsThrottle = 2;
     this.lastRequestTime = 0;
   }
 
@@ -28,45 +27,41 @@ class TranslationService {
     // Проверить в кэше перед запросом API
     const cachedTranslation = translationManager.getTranslation(text, targetLang);
     if (cachedTranslation) {
-      console.log(`[TranslationService] Using cached translation for text to ${targetLang}`);
       return cachedTranslation;
     }
     
     // Проверка на чрезмерное количество одновременных запросов
     if (this.activeRequests >= this.maxConcurrentRequests) {
-      console.log('[TranslationService] Too many concurrent requests, waiting...');
-      await new Promise(resolve => setTimeout(resolve, 500)); // Уменьшаем время ожидания
+      console.warn('[TranslationService] Too many concurrent requests. Waiting...');
+      await this.waitForActiveRequestsToDecrease();
     }
     
-    // Проверка на частоту запросов (защита от блокировки API)
-    const timeSinceLastRequest = Date.now() - this.lastRequestTime;
-    if (timeSinceLastRequest < (1000 / this.requestsThrottle)) {
-      await new Promise(resolve => setTimeout(resolve, (1000 / this.requestsThrottle) - timeSinceLastRequest));
-    }
-    
-    this.activeRequests++;
-    this.lastRequestTime = Date.now();
-    const startTime = Date.now();
+    // Троттлинг запросов
+    await this.throttleRequest();
     
     try {
-      console.log(`[TranslationService] Sending request to translate text to ${targetLang}`);
+      this.activeRequests++;
+      
+      // Получаем CSRF токен
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      
+      // Отправляем запрос на API перевода
       const response = await fetch(this.apiEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken,
+          'Accept': 'application/json'
         },
         body: JSON.stringify({
-          text,
-          targetLang,
-        }),
+          text: text,
+          source_lang: 'ru',
+          target_lang: targetLang
+        })
       });
       
-      const duration = Date.now() - startTime;
-      console.log(`[TranslationService] Response status from API: ${response.status}, took ${duration}ms`);
-      
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
       }
       
       const data = await response.json();

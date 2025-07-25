@@ -4,26 +4,19 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Middleware\SetLocaleFromURL;
-use App\Services\TranslationService;
+use App\Http\Middleware\LanguageMiddleware;
 
-// Route without locale prefix for redirecting to default locale
-Route::get('/', function () {
-    return redirect(app()->getLocale());
-});
-
-// Routes with locale prefix
-Route::prefix('{locale}')
-    ->where(['locale' => 'ru|en|kz'])
-    ->middleware(SetLocaleFromURL::class)
-    ->group(function () {
-        // Include all localized routes
-        require __DIR__.'/localized.php';
-
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Применяем мидлвар языка ко всем маршрутам
+Route::middleware([LanguageMiddleware::class])->group(function () {
+    Route::get('/', function () {
+        return Inertia::render('Home', [
+            'canLogin' => Route::has('login'),
+            'canRegister' => Route::has('register'),
+            'laravelVersion' => Application::VERSION,
+            'phpVersion' => PHP_VERSION,
+            'locale' => app()->getLocale(), // Добавляем текущий язык в пропсы
+        ]);
+    })->name('home');
 }); // Конец мидлвара языка
 
 Route::get('/medical-education', function () {
@@ -330,7 +323,6 @@ Route::prefix('api')->group(function () {
 // Маршруты для админ-панели
 Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
-
     // Управление новостями
     Route::get('/news', [App\Http\Controllers\Admin\NewsController::class, 'index'])->name('admin.news');
     Route::get('/news/create', [App\Http\Controllers\Admin\NewsController::class, 'create'])->name('admin.news.create');
@@ -338,6 +330,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/news/{id}/edit', [App\Http\Controllers\Admin\NewsController::class, 'edit'])->name('admin.news.edit');
     Route::put('/news/{id}', [App\Http\Controllers\Admin\NewsController::class, 'update'])->name('admin.news.update');
     Route::delete('/news/{id}', [App\Http\Controllers\Admin\NewsController::class, 'destroy'])->name('admin.news.destroy');
+    Route::post('/admin/news/bulk', [\App\Http\Controllers\Admin\NewsController::class, 'bulk'])->name('admin.news.bulk');
 
     // Управление документами
     Route::get('/documents', [App\Http\Controllers\Admin\DocumentController::class, 'index'])->name('admin.documents');
@@ -349,16 +342,6 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 
     // Управление пользователями
     Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users');
-
-    // Translation Management
-    Route::get('/translations', [App\Http\Controllers\Admin\TranslationController::class, 'index'])->name('admin.translations.index');
-    Route::get('/translations/create', [App\Http\Controllers\Admin\TranslationController::class, 'create'])->name('admin.translations.create');
-    Route::post('/translations', [App\Http\Controllers\Admin\TranslationController::class, 'store'])->name('admin.translations.store');
-    Route::get('/translations/{translation}/edit', [App\Http\Controllers\Admin\TranslationController::class, 'edit'])->name('admin.translations.edit');
-    Route::put('/translations/{translation}', [App\Http\Controllers\Admin\TranslationController::class, 'update'])->name('admin.translations.update');
-    Route::delete('/translations/{translation}', [App\Http\Controllers\Admin\TranslationController::class, 'destroy'])->name('admin.translations.destroy');
-    Route::post('/translations/{translation}/auto-translate', [App\Http\Controllers\Admin\TranslationController::class, 'autoTranslate'])->name('admin.translations.auto-translate');
-    Route::post('/translations/auto-translate-group', [App\Http\Controllers\Admin\TranslationController::class, 'autoTranslateGroup'])->name('admin.translations.auto-translate-group');
     Route::get('/users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.users.create');
     Route::post('/users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store');
     Route::get('/users/{id}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('admin.users.edit');
@@ -377,6 +360,13 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::resource('document-accordions', App\Http\Controllers\Admin\DocumentAccordionController::class, [
         'names' => 'admin.document-accordions'
     ]);
+});
+
+// API для просмотра и управления файлами в public/storage
+Route::prefix('admin/storage')->middleware(['auth'])->group(function () {
+    Route::get('list', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'list']);
+    Route::delete('delete', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'delete']);
+    Route::post('upload', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'upload']);
 });
 
 // Маршруты для филиалов
@@ -461,10 +451,6 @@ Route::get('/abay', function () {
 })->name('branches.abay');
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
     // Админ-панель
     Route::prefix('admin')->name('admin.')->group(function () {
         // Управление переводами

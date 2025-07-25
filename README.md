@@ -1,75 +1,94 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-# NNCRZ
-=======
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
->>>>>>> master
-=======
 # nrchd.kz
-nrchd.kz
->>>>>>> dced10bbd5d5deae2bceb45788974048f1716703
+
+Этот сайт разработан для Национального научного центра материнства и детства (ННЦРЗ) с целью предоставления актуальной информации о деятельности центра, его услугах, новостях, научных публикациях и документах. Проект реализован с учетом современных требований к удобству, безопасности и многоязычности.
+
+## О проекте
+
+Сайт nrchd.kz — это современный информационный портал, созданный для пациентов, сотрудников и партнеров ННЦРЗ. Он обеспечивает прозрачность деятельности центра, облегчает доступ к важной информации и способствует развитию научного сообщества.
+
+### Целевая аудитория
+- Пациенты и их семьи
+- Медицинские специалисты
+- Научные сотрудники
+- Партнерские организации
+- Все заинтересованные в деятельности ННЦРЗ
+
+### Ключевые возможности
+- Оперативное размещение новостей и объявлений центра
+- Доступ к нормативным и методическим документам
+- Представление информации о подразделениях, специалистах и услугах центра
+- Публикация научных статей, отчетов и исследований
+- Многоязычная поддержка (казахский, русский, английский)
+- Интеграция с внутренними сервисами центра
+- Адаптивный дизайн для корректной работы на всех устройствах
+- Безопасность хранения и передачи данных
+- Автоматический перевод контента для удобства пользователей
+- Удобная навигация и расширенный поиск по сайту
+- **Интеграция с Яндекс.Метрикой для отслеживания посещений**
+
+## Основные разделы сайта
+
+- **Новости** — свежие события, анонсы, достижения центра
+- **О центре** — история, миссия, структура, руководство
+- **Документы** — нормативные акты, методические рекомендации, внутренние положения
+- **Публикации** — научные статьи, отчеты, исследования
+- **Контакты** — адрес, телефоны, электронная почта, карта проезда
+
+## Административная панель
+
+Сайт включает в себя полнофункциональную административную панель с возможностями:
+
+- **Управление контентом**: создание, редактирование и удаление новостей, документов
+- **Управление пользователями**: регистрация, роли, права доступа
+- **Статистика посещений**: интеграция с Яндекс.Метрикой для отслеживания:
+  - Количество посетителей за день/неделю/месяц
+  - Количество просмотров страниц
+  - Средняя продолжительность сессии
+- **Система переводов**: автоматический перевод и управление многоязычным контентом
+- **Настройки сайта**: конфигурация основных параметров
+
+### Настройка метрики
+
+Для отображения статистики посещений необходимо настроить интеграцию с Яндекс.Метрикой:
+
+1. Создайте приложение в [Яндекс.OAuth](https://oauth.yandex.ru/)
+2. Получите ID счетчика из Яндекс.Метрики
+3. Добавьте переменные окружения в `.env`:
+   ```env
+   YANDEX_METRIKA_TOKEN=ваш_oauth_токен
+   YANDEX_METRIKA_COUNTER=ваш_id_счетчика
+   ```
+4. Подробные инструкции в файле `METRIKA_SETUP.md`
+
+## Технологии
+
+- Backend: Laravel (PHP)
+- Frontend: React (через Inertia.js)
+- База данных: MySQL
+- Email-уведомления, автоматический перевод контента
+- Интеграция с API Яндекс.Метрики
+
+## Команды для разработки
+
+```bash
+# Очистка кэша метрики
+php artisan metrika:clear-cache
+
+# Тестирование подключения к метрике
+php test_metrika.php
+```
+
+## Преимущества для пользователей и организации
+- Быстрый доступ к актуальной информации
+- Повышение прозрачности и открытости деятельности центра
+- Поддержка научной и образовательной деятельности
+- Современный и интуитивно понятный интерфейс
+- **Детальная аналитика посещений для принятия решений**
+
+## Автор
+
+Сайт разработан специально для организации ННЦРЗ.
+
+## Лицензия
+
+[MIT](LICENSE)

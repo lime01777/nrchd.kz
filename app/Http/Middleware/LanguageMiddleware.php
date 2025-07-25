@@ -13,7 +13,7 @@ class LanguageMiddleware
     /**
      * Доступные языки на сайте
      */
-    protected $availableLanguages = ['ru', 'kk', 'en'];
+    protected $availableLanguages = ['ru', 'kz', 'en'];
     
     /**
      * Язык по умолчанию

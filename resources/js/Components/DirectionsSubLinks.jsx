@@ -1,6 +1,5 @@
-import { Link, usePage } from '@inertiajs/react'
+import { Link } from '@inertiajs/react'
 import React from 'react'
-import route from '../Utils/routeWithLocale'
 
 function DirectionsSubLinks({ title, url }) {
   return (

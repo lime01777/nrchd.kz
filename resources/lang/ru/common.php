@@ -13,7 +13,6 @@ return [
     'search' => 'Поиск',
     'all_news' => 'Все новости',
     'all_documents' => 'Все документы',
-    'open' => 'Открыть',
     
     // Header menu
     'directions' => 'Направления',

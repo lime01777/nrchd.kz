@@ -85,7 +85,6 @@ export default function Home({ auth, laravelVersion, phpVersion }) {
                                 доклад 
                                 <br className="hidden lg:inline-block" />о развитии здравоохранения  
                             </h1>
-
                         </div>
                     </div>
                 </div>
