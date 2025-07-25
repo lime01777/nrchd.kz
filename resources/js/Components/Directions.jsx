@@ -15,7 +15,8 @@ const Directions = () => {
         { imgname: 9, title: "Медицинская наука", bgcolor: "bg-gray-100", bgborder: "border-gray-200", url: "/medical-science", hasRoute: false, path: "/medical-science"},
         { imgname: 10, title: "Лекарственная политика", bgcolor: "bg-yellow-100", bgborder: "border-yellow-200", url: "/drug-policy", hasRoute: false, path: "/drug-policy"},
         { imgname: 11, title: "Первичная медико-санитарная помощь", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "/primary-healthcare", hasRoute: false, path: "/primary-healthcare"},
-        { imgname: 12, title: "Национальные счета здравоохранения", bgcolor: "bg-purple-200", bgborder: "border-purple-200", url: "/national-health-accounts", hasRoute: false, path: "/national-health-accounts"}
+        { imgname: 12, title: "Национальные счета здравоохранения", bgcolor: "bg-purple-200", bgborder: "border-purple-200", url: "/national-health-accounts", hasRoute: false, path: "/national-health-accounts"},
+        { imgname: 13, title: "Центр профилактики и укрепления здоровья", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "/center-prevention", hasRoute: false, path: "/center-prevention"}
     ];
 
     const [ showMore, setShowMore ] = useState(false);

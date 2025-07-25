@@ -49,7 +49,8 @@ export default function Header() {
         { title: "Первичная медико-санитарная помощь", url: "primary.healthcare"},
         { title: "Национальные счета здравоохранения", url: "health.accounts"},
         { title: "Медицинская статистика", url: "medical.statistics"},
-        { title: "Отраслевой центр технологических компетенций", url: "direction.tech.competence"},
+        { title: "Отраслевой центр технологических компетенций", url: "direction.tech.competence" },
+        { title: "Центр профилактики и укрепления здоровья", url: "center.prevention" },
     ];
 
     const allAboutCentreSubLinks = [

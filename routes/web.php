@@ -87,6 +87,11 @@ Route::get('/health-rate', function () {
     return Inertia::render('Direction/HealthRate');
 })->name('health.rate');
 
+// Центр профилактики и укрепления здоровья
+Route::get('/center-prevention', function () {
+    return Inertia::render('Direction/CenterPrevention');
+})->name('center.prevention');
+
 Route::get('/health-rate/omt-reports', function () {
     return Inertia::render('Direction/HealthRate/OmtReports');
 })->name('health.rate.omt.reports');
