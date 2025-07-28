@@ -21,7 +21,6 @@ const HomeCharts = () => {
                     <div className="w-full lg:w-1/2 px-4 mb-12 lg:mb-0">
                         <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 h-full">
                             <div className="h-80">
-                                {/* Здесь будет график травм */}
                                 <ChartHead 
                                     chartType="injuries" 
                                 />
@@ -33,7 +32,6 @@ const HomeCharts = () => {
                     <div className="w-full lg:w-1/2 px-4">
                         <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 h-full">
                             <div className="h-80">
-                                {/* Здесь будет график аккредитаций */}
                                 <ChartHead 
                                     chartType="accreditation" 
                                 />
@@ -93,21 +91,9 @@ export default function Home({ auth, laravelVersion, phpVersion }) {
             <Directions />
             <Services />
             <BannerCatalog />
-            {/* Заменяем один ChartHead на наш новый компонент с двумя графиками */}
             <HomeCharts />
             <Sponsors />
             <Footer />
-            
-            {/* Закомментированный код
-            <div className="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
-                <div className="relative flex min-h-screen flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white">
-                    <div className="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-                        <header className="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
-                        </header>
-                    </div>
-                </div>
-            </div>
-            */}
         </>
     );
 }
