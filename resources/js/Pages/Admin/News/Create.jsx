@@ -58,7 +58,16 @@ export default function NewsCreate() {
   // Сохранение
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Гарантируем массив для category
+    setIsSubmitting(true);
+    try {
+      const cat = data.category || [];
+      // Проверяем наличие минимум одной категории
+      if (!data.title || data.title.trim().length === 0) {
+        alert('Заполните заголовок');
+        setIsSubmitting(false);
+        return;
+      }
+      // Гарантируем массив для category
 
       // Гарантируем строку для content
       if (typeof data.content !== 'string') {

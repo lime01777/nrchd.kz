@@ -18,6 +18,7 @@ const DEFAULT_CATEGORIES = [
 
 export default function NewsEdit({ news = null }) {
   const isEditing = !!news;
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { data, setData, post, put, processing, errors } = useForm({
     title: news?.title || '',
     category: Array.isArray(news?.category) ? news.category : (news?.category ? [news.category] : []),
@@ -62,36 +63,71 @@ export default function NewsEdit({ news = null }) {
   // Сохранение
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Гарантируем массив для category
-    const cat = Array.isArray(data.category) ? data.category : [data.category].filter(Boolean);
-    // Сериализуем для Laravel как category[]
-    cat.forEach((c, i) => setData(`category[${i}]`, c));
+    setIsSubmitting(true);
+    
+    try {
+      const cat = data.category || [];
+      
+      // Проверка заголовка
+      if (!data.title || data.title.trim().length === 0) {
+        alert('Заполните заголовок');
+        setIsSubmitting(false);
+        return;
+      }
 
-    // Гарантируем строку для content
-    if (typeof data.content !== 'string') {
-      setData('content', String(data.content || ''));
-    }
+      // Гарантируем массив для category
+      if (!Array.isArray(data.category)) {
+        setData('category', typeof data.category === 'string' ? [data.category] : []);
+      }
 
-    // Гарантируем валидный статус
-    if (!['Черновик', 'Опубликовано', 'Запланировано'].includes(data.status)) {
-      setData('status', 'Черновик');
-    }
+      // Гарантируем строку для content
+      if (typeof data.content !== 'string') {
+        setData('content', String(data.content || ''));
+      }
 
-    setData('images', images);
-    setData('main_image', mainImage);
+      // Гарантируем валидный статус
+      if (!['Черновик', 'Опубликовано', 'Запланировано'].includes(data.status)) {
+        setData('status', 'Черновик');
+      }
 
-    if (!data.content || data.content.replace(/<(.|\n)*?>/g, '').trim().length < 10) {
-      alert('Содержимое должно содержать минимум 10 символов');
-      return;
-    }
-    if (cat.length === 0) {
-      alert('Выберите хотя бы одну категорию');
-      return;
-    }
-    if (isEditing) {
-      put(route('admin.news.update', news.id), { forceFormData: true });
-    } else {
-      post(route('admin.news.store'), { forceFormData: true });
+      // Обработка изображений
+      // Проверка, что изображения не пустые и могут быть загружены
+      const validImages = images.filter(img => img && (typeof img === 'string' || (img instanceof File && img.size > 0)));
+      setData('images', validImages);
+      
+      // Проверка главного изображения
+      if (mainImage && (typeof mainImage === 'string' || (mainImage instanceof File && mainImage.size > 0))) {
+        setData('main_image', mainImage);
+      } else if (validImages.length > 0) {
+        // Если главное изображение недействительно, используем первое доступное
+        setData('main_image', validImages[0]);
+        setMainImage(validImages[0]);
+      } else {
+        // Если нет действительных изображений, устанавливаем null
+        setData('main_image', null);
+      }
+
+      // Проверка контента и категорий
+      if (!data.content || data.content.replace(/<(.|\n)*?>/g, '').trim().length < 10) {
+        alert('Содержимое должно содержать минимум 10 символов');
+        setIsSubmitting(false);
+        return;
+      }
+      if (cat.length === 0) {
+        alert('Выберите хотя бы одну категорию');
+        setIsSubmitting(false);
+        return;
+      }
+      
+      if (isEditing) {
+        put(route('admin.news.update', news.id), { forceFormData: true });
+      } else {
+        post(route('admin.news.store'), { forceFormData: true });
+      }
+    } catch (error) {
+      console.error('Ошибка при отправке формы:', error);
+      setIsSubmitting(false);
+      alert('Произошла ошибка при отправке формы');
     }
   };
 
@@ -254,10 +290,10 @@ export default function NewsEdit({ news = null }) {
           <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
             <button
               type="submit"
-              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              disabled={processing}
+              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300 disabled:cursor-not-allowed"
+              disabled={processing || isSubmitting}
             >
-              {processing ? 'Сохранение...' : (isEditing ? 'Сохранить изменения' : 'Создать новость')}
+              {processing || isSubmitting ? 'Сохранение...' : (isEditing ? 'Сохранить изменения' : 'Создать новость')}
             </button>
           </div>
         </form>

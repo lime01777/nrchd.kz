@@ -25,8 +25,7 @@ export default function Contacts() {
                                 </div>
                                 <div className="mb-4">
                                     <h3 className="text-gray-700 font-medium">Телефоны:</h3>
-                                    <p className="text-gray-600">+7 (7172) 70-95-10 (приемная)</p>
-                                    <p className="text-gray-600">+7 (7172) 70-95-01 (канцелярия)</p>
+                                    <p className="text-gray-600">+7 (7172) 648-951 (приемная) внутрений (1000, 1111)</p>
                                 </div>
                                 <div className="mb-4">
                                     <h3 className="text-gray-700 font-medium">E-mail:</h3>
@@ -46,12 +45,12 @@ export default function Contacts() {
                                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Обратная связь</h2>
                                 <div className="mb-4">
                                     <h3 className="text-gray-700 font-medium">Пресс-служба:</h3>
-                                    <p className="text-gray-600">+7 (7172) 70-95-20</p>
+                                    <p className="text-gray-600">+7 (7172) 648-951 (внутрений 1117)</p>
                                     <p className="text-gray-600">press@nrchd.kz</p>
                                 </div>
                                 <div className="mb-4">
                                     <h3 className="text-gray-700 font-medium">По вопросам сотрудничества:</h3>
-                                    <p className="text-gray-600">+7 (7172) 70-95-30</p>
+                                    <p className="text-gray-600">+7 (7172) 648-951 (внутрений 1111)</p>
                                     <p className="text-gray-600">cooperation@nrchd.kz</p>
                                 </div>
                                 <div>
