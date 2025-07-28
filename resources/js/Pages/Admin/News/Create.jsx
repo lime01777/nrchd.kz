@@ -17,6 +17,9 @@ const DEFAULT_CATEGORIES = [
 ];
 
 export default function NewsCreate() {
+  // Добавляем состояние для отслеживания процесса отправки
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const { data, setData, post, processing, errors } = useForm({
     title: '',
     category: [],
@@ -56,32 +59,36 @@ export default function NewsCreate() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Гарантируем массив для category
-    const cat = Array.isArray(data.category) ? data.category : [data.category].filter(Boolean);
-    // Сериализуем для Laravel как category[]
-    cat.forEach((c, i) => setData(`category[${i}]`, c));
 
-    // Гарантируем строку для content
-    if (typeof data.content !== 'string') {
-      setData('content', String(data.content || ''));
-    }
+      // Гарантируем строку для content
+      if (typeof data.content !== 'string') {
+        setData('content', String(data.content || ''));
+      }
 
-    // Гарантируем валидный статус
-    if (!['Черновик', 'Опубликовано', 'Запланировано'].includes(data.status)) {
-      setData('status', 'Черновик');
-    }
+      // Гарантируем валидный статус
+      if (!['Черновик', 'Опубликовано', 'Запланировано'].includes(data.status)) {
+        setData('status', 'Черновик');
+      }
 
-    setData('images', images);
-    setData('main_image', mainImage);
-
-    if (!data.content || data.content.replace(/<(.|\n)*?>/g, '').trim().length < 10) {
-      alert('Содержимое должно содержать минимум 10 символов');
-      return;
+      setData('images', images);
+      setData('main_image', mainImage);
+  
+      if (!data.content || data.content.replace(/<(.|\n)*?>/g, '').trim().length < 10) {
+        alert('Содержимое должно содержать минимум 10 символов');
+        setIsSubmitting(false);
+        return;
+      }
+      if (cat.length === 0) {
+        alert('Выберите хотя бы одну категорию');
+        setIsSubmitting(false);
+        return;
+      }
+      
+      post(route('admin.news.store'), { forceFormData: true });
+    } catch (error) {
+      console.error('Ошибка при отправке формы:', error);
+      setIsSubmitting(false);
     }
-    if (cat.length === 0) {
-      alert('Выберите хотя бы одну категорию');
-      return;
-    }
-    post(route('admin.news.store'), { forceFormData: true });
   };
 
   // React Quill onChange
@@ -242,9 +249,9 @@ export default function NewsCreate() {
             <button
               type="submit"
               className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              disabled={processing}
+              disabled={processing || isSubmitting}
             >
-              {processing ? 'Создание...' : 'Создать новость'}
+              {(processing || isSubmitting) ? 'Создание...' : 'Создать новость'}
             </button>
           </div>
         </form>

@@ -18,9 +18,12 @@ export default function VacancyShow({ vacancy }) {
 
     // Функция для отображения содержимого в Editor.js формате
     const renderEditorContent = (content) => {
-        if (!content || !Array.isArray(content.blocks)) return null;
+        // Проверяем, является ли content массивом (новый формат)
+        const blocks = Array.isArray(content) ? content : (content?.blocks || []);
         
-        return content.blocks.map((block, index) => {
+        if (!blocks || !blocks.length) return <p>Информация отсутствует</p>;
+        
+        return blocks.map((block, index) => {
             switch (block.type) {
                 case 'header':
                     const HeaderTag = `h${block.data.level}`;
@@ -48,7 +51,7 @@ export default function VacancyShow({ vacancy }) {
                         );
                     }
                 default:
-                    return <div key={index}>{block.data.text}</div>;
+                    return <div key={index}>{block.data.text || JSON.stringify(block.data)}</div>;
             }
         });
     };
