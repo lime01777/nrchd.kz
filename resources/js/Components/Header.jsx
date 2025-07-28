@@ -154,6 +154,8 @@ export default function Header() {
                     <div className="absolute inset-0 -top-8 -bottom-8 cursor-pointer"></div>
                 </div>
 
+
+
                 <div className="relative group mr-8">
                     <button className="group-hover:text-gray-900 focus:outline-none flex items-center cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg"
@@ -241,16 +243,11 @@ export default function Header() {
                     <div className="absolute inset-0 -top-8 -bottom-8 cursor-pointer"></div>
                 </div>
 
-                {/* Новости */}
-                <div className="relative group mr-8">
-                    <button onClick={() => window.location.href = route('news')} className="group-hover:text-gray-900 focus:outline-none flex items-center cursor-pointer">
 
-                        Новости
-                    </button>
-                    
-                    {/* Увеличенная зона интерактивности */}
-                    <div className="absolute inset-0 -top-8 -bottom-8 cursor-pointer"></div>
-                </div>
+                {/* Пункт меню Новости */}
+                <Link href={route('news')} className="mr-8 hover:text-gray-900 flex items-center cursor-pointer">
+                    Новости
+                </Link>
 
                 <a className="mr-8 hover:text-gray-900"></a>
             </nav>
