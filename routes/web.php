@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VacancyController;
+use App\Http\Controllers\Admin\VacancyController as AdminVacancyController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -474,6 +476,16 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/files', [App\Http\Controllers\GoogleDriveController::class, 'getFiles']);
         Route::get('/file-metadata', [App\Http\Controllers\GoogleDriveController::class, 'getFileMetadata']);
     });
+});
+
+// Маршруты для публичной страницы вакансий
+Route::get('/about-centre/vacancies', [VacancyController::class, 'index'])->name('vacancy.jobs');
+Route::get('/about-centre/vacancies/{slug}', [VacancyController::class, 'show'])->name('vacancy.show');
+Route::post('/about-centre/vacancies/{slug}/apply', [App\Http\Controllers\VacancyApplicationController::class, 'store'])->name('vacancy.apply');
+
+// Маршруты для админ-панели вакансий (требуют авторизации)
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::resource('vacancies', AdminVacancyController::class);
 });
 
 require __DIR__.'/auth.php';

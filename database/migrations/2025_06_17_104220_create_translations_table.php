@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('translations', function (Blueprint $table) {
+        if (!Schema::hasTable('translations')) {
+            Schema::create('translations', function (Blueprint $table) {
             $table->id();
             $table->text('original_text')->index();
             $table->text('translated_text');
@@ -28,6 +29,7 @@ return new class extends Migration
             // Используем длину индекса для текстового поля, так как MySQL имеет ограничение на длину индекса
             $table->unique(['original_text(190)', 'source_language', 'target_language'], 'unique_translation');
         });
+        }
     }
 
     /**
