@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
 import Select from 'react-select';
 import ImageGalleryUpload from '@/Components/ImageGalleryUpload';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import SimpleRichEditor from '@/Components/SimpleRichEditor';
 
 const DEFAULT_CATEGORIES = [
   'Общие',
@@ -79,8 +78,22 @@ export default function NewsCreate() {
         setData('status', 'Черновик');
       }
 
-      setData('images', images);
-      setData('main_image', mainImage);
+      // Обработка изображений
+      // Проверка, что изображения не пустые и могут быть загружены
+      const validImages = images.filter(img => img && (typeof img === 'string' || (img instanceof File && img.size > 0)));
+      setData('images', validImages);
+      
+      // Проверка главного изображения
+      if (mainImage && (typeof mainImage === 'string' || (mainImage instanceof File && mainImage.size > 0))) {
+        setData('main_image', mainImage);
+      } else if (validImages.length > 0) {
+        // Если главное изображение недействительно, используем первое доступное
+        setData('main_image', validImages[0]);
+        setMainImage(validImages[0]);
+      } else {
+        // Если нет действительных изображений, устанавливаем null
+        setData('main_image', null);
+      }
   
       if (!data.content || data.content.replace(/<(.|\n)*?>/g, '').trim().length < 10) {
         alert('Содержимое должно содержать минимум 10 символов');
@@ -238,13 +251,12 @@ export default function NewsCreate() {
               {/* Содержимое (React Quill) */}
               <div className="sm:col-span-6">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Содержимое *</label>
-                <div className="bg-white border-2 border-blue-200 rounded-lg shadow-sm p-2 min-h-[220px] focus-within:ring-2 focus-within:ring-blue-400 transition-all">
-                  <ReactQuill
+                <div className="bg-white rounded-lg shadow-sm min-h-[220px] transition-all">
+                  <SimpleRichEditor
                     value={data.content}
                     onChange={handleQuillChange}
-                    theme="snow"
                     placeholder="Введите текст новости..."
-                    className="min-h-[180px]"
+                    minHeight="180px"
                   />
                 </div>
                 {errors.content && (

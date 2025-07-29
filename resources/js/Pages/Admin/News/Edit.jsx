@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
 import Select from 'react-select';
 import ImageGalleryUpload from '@/Components/ImageGalleryUpload';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import SimpleRichEditor from '@/Components/SimpleRichEditor';
 
 const DEFAULT_CATEGORIES = [
   'Общие',
@@ -271,13 +270,12 @@ export default function NewsEdit({ news = null }) {
               {/* Содержимое (React Quill) */}
               <div className="sm:col-span-6">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Содержимое *</label>
-                <div className="bg-white border-2 border-blue-200 rounded-lg shadow-sm p-2 min-h-[220px] focus-within:ring-2 focus-within:ring-blue-400 transition-all">
-                  <ReactQuill
+                <div className="bg-white rounded-lg shadow-sm min-h-[220px] transition-all">
+                  <SimpleRichEditor
                     value={data.content}
                     onChange={handleQuillChange}
-                    theme="snow"
                     placeholder="Введите текст новости..."
-                    className="min-h-[180px]"
+                    minHeight="180px"
                   />
                 </div>
                 {errors.content && (
