@@ -58,6 +58,7 @@ export default function NewsCreate() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    
     try {
       const cat = data.category || [];
       // Проверяем наличие минимум одной категории
@@ -66,7 +67,6 @@ export default function NewsCreate() {
         setIsSubmitting(false);
         return;
       }
-      // Гарантируем массив для category
 
       // Гарантируем строку для content
       if (typeof data.content !== 'string') {
@@ -81,7 +81,8 @@ export default function NewsCreate() {
       // Обработка изображений
       // Проверка, что изображения не пустые и могут быть загружены
       const validImages = images.filter(img => img && (typeof img === 'string' || (img instanceof File && img.size > 0)));
-      setData('images', validImages);
+      // Не используем колонку 'images', так как ее нет в базе данных
+      // setData('images', validImages);
       
       // Проверка главного изображения
       if (mainImage && (typeof mainImage === 'string' || (mainImage instanceof File && mainImage.size > 0))) {
@@ -95,7 +96,7 @@ export default function NewsCreate() {
         setData('main_image', null);
       }
   
-      if (!data.content || data.content.replace(/<(.|\n)*?>/g, '').trim().length < 10) {
+      if (!data.content || data.content.replace(/<[^>]*?>/g, '').trim().length < 10) {
         alert('Содержимое должно содержать минимум 10 символов');
         setIsSubmitting(false);
         return;
@@ -106,7 +107,24 @@ export default function NewsCreate() {
         return;
       }
       
-      post(route('admin.news.store'), { forceFormData: true });
+      // Отправляем форму и обрабатываем ответ
+      post(route('admin.news.store'), { 
+        forceFormData: true,
+        preserveScroll: true,
+        onSuccess: () => {
+          setIsSubmitting(false);
+          // Сброс формы не нужен, так как Inertia перенаправит нас на другую страницу
+        },
+        onError: (errors) => {
+          console.error('Ошибки валидации:', errors);
+          setIsSubmitting(false);
+          // Ошибки валидации автоматически будут доступны через переменную errors
+        },
+        onFinish: () => {
+          // Этот колбэк выполнится всегда, независимо от успеха или ошибки
+          setIsSubmitting(false);
+        }
+      });
     } catch (error) {
       console.error('Ошибка при отправке формы:', error);
       setIsSubmitting(false);

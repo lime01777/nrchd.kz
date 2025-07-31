@@ -112,7 +112,8 @@ class NewsController extends Controller
         $news->category = $validated['category'];
         $news->status = $validated['status'];
         $news->publish_date = $validated['publishDate'] ?? null;
-        $news->images = $imagePaths;
+        // Убираем сохранение images, так как этой колонки нет в базе данных
+        // $news->images = $imagePaths;
         $news->main_image = $mainImage;
         $news->save();
 
@@ -201,7 +202,8 @@ class NewsController extends Controller
         $news->category = $validated['category'];
         $news->status = $validated['status'];
         $news->publish_date = $validated['publishDate'] ?? null;
-        $news->images = $imagePaths;
+        // Убираем сохранение images, так как этой колонки нет в базе данных
+        // $news->images = $imagePaths;
         $news->main_image = $mainImage;
         $news->save();
 

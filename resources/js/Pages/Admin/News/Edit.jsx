@@ -92,7 +92,8 @@ export default function NewsEdit({ news = null }) {
       // Обработка изображений
       // Проверка, что изображения не пустые и могут быть загружены
       const validImages = images.filter(img => img && (typeof img === 'string' || (img instanceof File && img.size > 0)));
-      setData('images', validImages);
+      // Не используем колонку 'images', так как ее нет в базе данных
+      // setData('images', validImages);
       
       // Проверка главного изображения
       if (mainImage && (typeof mainImage === 'string' || (mainImage instanceof File && mainImage.size > 0))) {
@@ -107,7 +108,7 @@ export default function NewsEdit({ news = null }) {
       }
 
       // Проверка контента и категорий
-      if (!data.content || data.content.replace(/<(.|\n)*?>/g, '').trim().length < 10) {
+      if (!data.content || data.content.replace(/<[^>]*?>/g, '').trim().length < 10) {
         alert('Содержимое должно содержать минимум 10 символов');
         setIsSubmitting(false);
         return;
@@ -118,10 +119,26 @@ export default function NewsEdit({ news = null }) {
         return;
       }
       
+      const options = {
+        forceFormData: true,
+        preserveScroll: true,
+        onSuccess: () => {
+          setIsSubmitting(false);
+          // Сброс формы не нужен, так как Inertia перенаправит нас на другую страницу
+        },
+        onError: (errors) => {
+          console.error('Ошибки валидации:', errors);
+          setIsSubmitting(false);
+        },
+        onFinish: () => {
+          setIsSubmitting(false);
+        }
+      };
+      
       if (isEditing) {
-        put(route('admin.news.update', news.id), { forceFormData: true });
+        put(route('admin.news.update', news.id), options);
       } else {
-        post(route('admin.news.store'), { forceFormData: true });
+        post(route('admin.news.store'), options);
       }
     } catch (error) {
       console.error('Ошибка при отправке формы:', error);

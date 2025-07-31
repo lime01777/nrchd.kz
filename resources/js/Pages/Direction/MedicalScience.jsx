@@ -74,6 +74,12 @@ export default function MedicalScience() {
                 bgColor="bg-gray-200"
                 defaultOpen={true}
             />
+                        <FilesAccord 
+                folder="Медицинская наука/Рейтинг"
+                title="Результаты рейтинговой оценки научных организаций и медицинских ВУЗов по показателям научной и инновационной деятельности"
+                bgColor="bg-gray-200"
+                defaultOpen={true}
+            />
         </div>
     </section>
     </>

@@ -138,7 +138,7 @@ const SimpleRichEditor = ({
       />
 
       {/* Стили для поддержки плейсхолдера */}
-      <style jsx>{`
+      <style>{`
         [contenteditable]:empty:before {
           content: attr(data-placeholder);
           color: #9ca3af;
