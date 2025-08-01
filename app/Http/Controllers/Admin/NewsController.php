@@ -112,8 +112,8 @@ class NewsController extends Controller
         $news->category = $validated['category'];
         $news->status = $validated['status'];
         $news->publish_date = $validated['publishDate'] ?? null;
-        // Убираем сохранение images, так как этой колонки нет в базе данных
-        // $news->images = $imagePaths;
+        // Сохраняем массив путей к изображениям в JSON-поле images
+        $news->images = $imagePaths;
         $news->main_image = $mainImage;
         $news->save();
 
@@ -202,8 +202,8 @@ class NewsController extends Controller
         $news->category = $validated['category'];
         $news->status = $validated['status'];
         $news->publish_date = $validated['publishDate'] ?? null;
-        // Убираем сохранение images, так как этой колонки нет в базе данных
-        // $news->images = $imagePaths;
+        // Сохраняем массив путей к изображениям в JSON-поле images
+        $news->images = $imagePaths;
         $news->main_image = $mainImage;
         $news->save();
 
@@ -254,13 +254,17 @@ class NewsController extends Controller
                         }
                     }
                 }
-                $news->delete();
             }
-            return redirect()->route('admin.news')->with('success', 'Выбранные новости удалены');
+            News::whereIn('id', $ids)->delete();
+            return redirect()->route('admin.news')->with('success', 'Выбранные новости успешно удалены');
+        } elseif ($action === 'publish') {
+            News::whereIn('id', $ids)->update(['status' => 'Опубликовано']);
+            return redirect()->route('admin.news')->with('success', 'Выбранные новости опубликованы');
+        } elseif ($action === 'draft') {
+            News::whereIn('id', $ids)->update(['status' => 'Черновик']);
+            return redirect()->route('admin.news')->with('success', 'Выбранные новости переведены в черновики');
         }
 
-        $status = $action === 'publish' ? 'Опубликовано' : 'Черновик';
-        News::whereIn('id', $ids)->update(['status' => $status]);
-        return redirect()->route('admin.news')->with('success', 'Статус выбранных новостей обновлён');
+        return redirect()->route('admin.news')->with('error', 'Неизвестное действие');
     }
 }

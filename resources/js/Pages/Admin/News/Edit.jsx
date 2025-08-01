@@ -92,8 +92,9 @@ export default function NewsEdit({ news = null }) {
       // Обработка изображений
       // Проверка, что изображения не пустые и могут быть загружены
       const validImages = images.filter(img => img && (typeof img === 'string' || (img instanceof File && img.size > 0)));
-      // Не используем колонку 'images', так как ее нет в базе данных
-      // setData('images', validImages);
+      
+      // Важно! Добавляем изображения в данные формы
+      setData('images', validImages);
       
       // Проверка главного изображения
       if (mainImage && (typeof mainImage === 'string' || (mainImage instanceof File && mainImage.size > 0))) {
@@ -119,8 +120,39 @@ export default function NewsEdit({ news = null }) {
         return;
       }
       
+      // Создаем FormData для корректной отправки файлов
+      const formData = new FormData();
+      
+      // Добавляем все текстовые поля
+      formData.append('title', data.title);
+      formData.append('content', data.content);
+      formData.append('status', data.status);
+      formData.append('publishDate', data.publishDate || '');
+      
+      // Добавляем категории как массив
+      cat.forEach((category, index) => {
+        formData.append(`category[${index}]`, category);
+      });
+      
+      // Добавляем изображения как файлы или строки
+      validImages.forEach((img, index) => {
+        if (img instanceof File) {
+          formData.append(`images[${index}]`, img);
+        } else if (typeof img === 'string') {
+          formData.append(`images[${index}]`, img);
+        }
+      });
+      
+      // Добавляем главное изображение
+      if (mainImage instanceof File) {
+        formData.append('main_image', mainImage);
+      } else if (typeof mainImage === 'string') {
+        formData.append('main_image', mainImage);
+      }
+      
+      // Опции для запроса
       const options = {
-        forceFormData: true,
+        forceFormData: true, // Это важно для отправки файлов
         preserveScroll: true,
         onSuccess: () => {
           setIsSubmitting(false);
@@ -135,10 +167,11 @@ export default function NewsEdit({ news = null }) {
         }
       };
       
+      // Отправляем форму с FormData
       if (isEditing) {
-        put(route('admin.news.update', news.id), options);
+        put(route('admin.news.update', news.id), formData, options);
       } else {
-        post(route('admin.news.store'), options);
+        post(route('admin.news.store'), formData, options);
       }
     } catch (error) {
       console.error('Ошибка при отправке формы:', error);
