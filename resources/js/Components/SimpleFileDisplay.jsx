@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 
-function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, limit, singleColumn = false, hideDownload = false, searchTerm = '' }) {
+function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, limit, singleColumn = false, hideDownload = false, searchTerm = '', medicine = '', mkb = '', category = '', year = '', fileType = '' }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,6 +10,7 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
   const [isLoading, setIsLoading] = useState(false);
   const [viewerUrl, setViewerUrl] = useState(null);
   const [modalError, setModalError] = useState(null);
+  const [copiedFileId, setCopiedFileId] = useState(null);
   const [fileInfos, setFileInfos] = useState({});
   
   // Форматирование даты
@@ -63,7 +64,39 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
           params.append('title', title);
         }
         
+        // Формируем строку поиска с учетом всех параметров фильтрации
+        let fullSearchTerm = searchTerm || '';
+        
+        // Добавляем раздел медицины в строку поиска, если он указан
+        if (medicine) {
+          fullSearchTerm += ` medicine:${medicine}`;
+        }
+        
+        // Добавляем категорию МКБ в строку поиска, если она указана
+        if (mkb) {
+          fullSearchTerm += ` mkb:${mkb}`;
+        }
+        
+        // Добавляем категорию протокола в строку поиска, если она указана
+        if (category) {
+          fullSearchTerm += ` category:${category}`;
+        }
+        
+        // Добавляем параметр поиска в URL
+        if (fullSearchTerm.trim() !== '') {
+          params.append('search', fullSearchTerm.trim());
+        }
+        
         console.log('Fetching files from:', `${baseUrl}/api/files?${params.toString()}`);
+        console.log('Search parameters:', { 
+          searchTerm, 
+          medicine, 
+          mkb, 
+          category, 
+          year, 
+          fileType, 
+          fullSearchTerm 
+        });
         
         const response = await axios.get(`${baseUrl}/api/files?${params.toString()}`);
         console.log('API response:', response.data);
@@ -151,7 +184,7 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
     };
 
     fetchFiles();
-  }, [folder, title, limit]);
+  }, [folder, title, limit, searchTerm, medicine, mkb]);
 
   // Определение иконки по типу файла
   const getFileTypeIcon = (fileName) => {
@@ -339,23 +372,74 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
     setIsLoading(false);
     setModalError(null);
   };
+  
+  // Функция для копирования информации о файле
+  const copyFileInfo = (file) => {
+    const fileInfo = [
+      `Название: ${file.description || file.name || 'Файл'}`,
+      file.category ? `Категория: ${file.category}` : '',
+      file.medicine ? `Раздел медицины: ${file.medicine}` : '',
+      file.mkb ? `МКБ: ${file.mkb}` : '',
+      file.year ? `Год: ${file.year}` : '',
+      file.filetype ? `Тип файла: ${file.filetype.toUpperCase()}` : '',
+      `Ссылка: ${file.url}`
+    ].filter(Boolean).join('\n');
+    
+    navigator.clipboard.writeText(fileInfo).then(() => {
+      setCopiedFileId(file.id || file.url);
+      setTimeout(() => setCopiedFileId(null), 2000);
+    });
+  };
 
-  // Filter files based on search term
+  // Фильтрация файлов на клиентской стороне
   const filteredFiles = useMemo(() => {
-    if (!searchTerm || searchTerm.trim() === '') {
+    // Если нет параметров фильтрации, возвращаем все файлы
+    if ((!searchTerm || searchTerm.trim() === '') && 
+        !medicine && !mkb && !category && !year && !fileType) {
       return files;
     }
     
-    const normalizedSearchTerm = searchTerm.toLowerCase().trim();
-    
     return files.filter(file => {
-      const fileName = (file.name || '').toLowerCase();
-      const fileDescription = (file.description || '').toLowerCase();
+      // Фильтрация по поисковому запросу
+      if (searchTerm && searchTerm.trim() !== '') {
+        const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+        const fileName = (file.name || '').toLowerCase();
+        const fileDescription = (file.description || '').toLowerCase();
+        
+        if (!fileName.includes(normalizedSearchTerm) && 
+            !fileDescription.includes(normalizedSearchTerm)) {
+          return false;
+        }
+      }
       
-      return fileName.includes(normalizedSearchTerm) || 
-             fileDescription.includes(normalizedSearchTerm);
+      // Фильтрация по разделу медицины
+      if (medicine && file.medicine !== medicine) {
+        return false;
+      }
+      
+      // Фильтрация по категории МКБ
+      if (mkb && file.mkb !== mkb) {
+        return false;
+      }
+      
+      // Фильтрация по категории протокола
+      if (category && file.category !== category) {
+        return false;
+      }
+      
+      // Фильтрация по году
+      if (year && file.year !== parseInt(year)) {
+        return false;
+      }
+      
+      // Фильтрация по типу файла
+      if (fileType && file.filetype !== fileType.toLowerCase()) {
+        return false;
+      }
+      
+      return true;
     });
-  }, [files, searchTerm]);
+  }, [files, searchTerm, medicine, mkb, category, year, fileType]);
 
   if (loading) {
     return (
@@ -399,9 +483,23 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
             
             return (
               <div className="w-full" key={index}>
-                <div className="flex flex-col h-[200px] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-200">
+                <div className="flex flex-col h-[250px] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-200">
                   <div className="flex-grow overflow-hidden">
-                    <h2 className="font-medium leading-normal text-gray-800 line-clamp-6 mb-3">{fileDescription}</h2>
+                    <h2 className="font-medium leading-normal text-gray-800 line-clamp-4 mb-3">{fileDescription}</h2>
+                    
+                    {/* Метки для файлов */}
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {file.medicine && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                          Раздел: {file.medicine}
+                        </span>
+                      )}
+                      {file.mkb && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
+                          МКБ: {file.mkb}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex mt-auto justify-between items-center">
                     <div className="flex space-x-2">

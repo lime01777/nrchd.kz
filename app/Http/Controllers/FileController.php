@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Document;
+use App\Models\Accordion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class FileController extends Controller
@@ -19,6 +22,52 @@ class FileController extends Controller
         $baseDirectory = public_path('storage/documents');
         $folderName = $request->input('folder', '');
         $title = $request->input('title', '');
+        $searchTerm = $request->input('search', '');
+        
+        // Парсим searchTerm для дополнительных параметров фильтрации
+        $category = '';
+        $year = '';
+        $fileType = '';
+        $medicine = ''; // Раздел медицины
+        $mkb = ''; // Категория МКБ
+        
+        // Извлекаем дополнительные параметры из строки поиска
+        if (preg_match('/category:(\S+)/', $searchTerm, $matches)) {
+            $category = $matches[1];
+            $searchTerm = trim(str_replace($matches[0], '', $searchTerm));
+        }
+        
+        if (preg_match('/year:(\S+)/', $searchTerm, $matches)) {
+            $year = $matches[1];
+            $searchTerm = trim(str_replace($matches[0], '', $searchTerm));
+        }
+        
+        if (preg_match('/type:(\S+)/', $searchTerm, $matches)) {
+            $fileType = $matches[1];
+            $searchTerm = trim(str_replace($matches[0], '', $searchTerm));
+        }
+        
+        // Новые параметры для клинических протоколов
+        if (preg_match('/medicine:(\S+)/', $searchTerm, $matches)) {
+            $medicine = $matches[1];
+            $searchTerm = trim(str_replace($matches[0], '', $searchTerm));
+        }
+        
+        if (preg_match('/mkb:(\S+)/', $searchTerm, $matches)) {
+            $mkb = $matches[1];
+            $searchTerm = trim(str_replace($matches[0], '', $searchTerm));
+        }
+        
+        // Логируем параметры поиска для отладки
+        Log::info('Параметры поиска файлов:', [
+            'folder' => $folderName,
+            'searchTerm' => $searchTerm,
+            'category' => $category,
+            'year' => $year,
+            'fileType' => $fileType,
+            'medicine' => $medicine,
+            'mkb' => $mkb
+        ]);
         
         // Если указана конкретная папка
         if ($folderName) {
@@ -33,7 +82,10 @@ class FileController extends Controller
                 ], 404);
             }
             
-            $files = File::files($fullPath);
+            // Получаем все файлы и подпапки рекурсивно
+            $files = [];
+            $this->getFilesRecursively($fullPath, $files, $category);
+            
             $documents = [];
             
             foreach ($files as $file) {
@@ -41,12 +93,128 @@ class FileController extends Controller
                 $fileExtension = $file->getExtension();
                 $fileSize = $file->getSize();
                 $lastModified = $file->getMTime();
+                $fileYear = date('Y', $lastModified);
                 
-                // Относительный путь к файлу для URL (всегда используем прямые слеши для URL)
-                $relativePath = 'storage/documents/' . str_replace(DIRECTORY_SEPARATOR, '/', $folderPath) . '/' . $fileName;
+                // Фильтрация по году
+                if ($year && $fileYear != $year) {
+                    continue;
+                }
+                
+                // Фильтрация по типу файла
+                if ($fileType && strtolower($fileExtension) != strtolower($fileType)) {
+                    continue;
+                }
+                
+                // Фильтрация по поисковому запросу
+                if ($searchTerm && stripos(pathinfo($fileName, PATHINFO_FILENAME), $searchTerm) === false) {
+                    continue;
+                }
+                
+                // Фильтрация по разделу медицины
+                if ($medicine) {
+                    // Проверяем наличие раздела медицины в имени файла или в пути
+                    $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
+                    $filePath = $file->getPathname();
+                    
+                    // Проверяем имя файла и путь на совпадение с разделом медицины
+                    if (stripos($fileContent, $medicine) === false && stripos($filePath, $medicine) === false) {
+                        continue;
+                    }
+                }
+                
+                // Фильтрация по категории МКБ
+                if ($mkb) {
+                    // Проверяем наличие кода МКБ в имени файла или в пути
+                    $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
+                    $filePath = $file->getPathname();
+                    
+                    // Проверяем имя файла и путь на совпадение с кодом МКБ
+                    if (stripos($fileContent, $mkb) === false && stripos($filePath, $mkb) === false) {
+                        continue;
+                    }
+                }
+                
+                // Относительный путь к файлу для URL
+                $relativePath = str_replace(public_path() . DIRECTORY_SEPARATOR, '', $file->getPathname());
+                $relativePath = str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
                 
                 // Определяем тип иконки на основе расширения файла
                 $imgType = $this->getImageTypeForExtension($fileExtension);
+                
+                // Получаем категорию из пути файла
+                $fileCategory = $this->getCategoryFromPath($file->getPathname(), $fullPath);
+                
+                // Определяем раздел медицины на основе имени файла и пути
+                $medicineSectionName = '';
+                $medicineSections = [
+                    'cardiology' => 'Кардиология',
+                    'gastroenterology' => 'Гастроэнтерология',
+                    'neurology' => 'Неврология',
+                    'pulmonology' => 'Пульмонология',
+                    'endocrinology' => 'Эндокринология',
+                    'oncology' => 'Онкология',
+                    'pediatrics' => 'Педиатрия',
+                    'surgery' => 'Хирургия',
+                    'obstetrics' => 'Акушерство и гинекология',
+                    'urology' => 'Урология',
+                    'ophthalmology' => 'Офтальмология',
+                    'otolaryngology' => 'Оториноларингология',
+                    'dermatology' => 'Дерматология',
+                    'infectious' => 'Инфекционные болезни',
+                    'psychiatry' => 'Психиатрия',
+                    'rheumatology' => 'Ревматология',
+                    'traumatology' => 'Травматология и ортопедия'
+                ];
+                
+                $fileNameLower = strtolower(pathinfo($fileName, PATHINFO_FILENAME));
+                $filePathLower = strtolower($file->getPathname());
+                
+                foreach ($medicineSections as $key => $value) {
+                    if (stripos($fileNameLower, $key) !== false || stripos($filePathLower, $key) !== false ||
+                        stripos($fileNameLower, $value) !== false || stripos($filePathLower, $value) !== false) {
+                        $medicineSectionName = $key;
+                        break;
+                    }
+                }
+                
+                // Определяем категорию МКБ на основе имени файла и пути
+                $mkbCategory = '';
+                $mkbPatterns = [
+                    'A\d+' => 'A00-B99',
+                    'B\d+' => 'A00-B99',
+                    'C\d+' => 'C00-D48',
+                    'D[0-4]\d' => 'C00-D48',
+                    'D[5-8]\d' => 'D50-D89',
+                    'E\d+' => 'E00-E90',
+                    'F\d+' => 'F00-F99',
+                    'G\d+' => 'G00-G99',
+                    'H[0-5]\d' => 'H00-H59',
+                    'H[6-9]\d' => 'H60-H95',
+                    'I\d+' => 'I00-I99',
+                    'J\d+' => 'J00-J99',
+                    'K\d+' => 'K00-K93',
+                    'L\d+' => 'L00-L99',
+                    'M\d+' => 'M00-M99',
+                    'N\d+' => 'N00-N99',
+                    'O\d+' => 'O00-O99',
+                    'P\d+' => 'P00-P96',
+                    'Q\d+' => 'Q00-Q99',
+                    'R\d+' => 'R00-R99',
+                    'S\d+' => 'S00-T98',
+                    'T\d+' => 'S00-T98',
+                    'V\d+' => 'V01-Y98',
+                    'W\d+' => 'V01-Y98',
+                    'X\d+' => 'V01-Y98',
+                    'Y\d+' => 'V01-Y98',
+                    'Z\d+' => 'Z00-Z99'
+                ];
+                
+                foreach ($mkbPatterns as $pattern => $category) {
+                    if (preg_match('/' . $pattern . '/', $fileNameLower) || preg_match('/' . $pattern . '/', $filePathLower)) {
+                        $mkbCategory = $category;
+                        break;
+                    }
+                }
                 
                 $documents[] = [
                     'description' => pathinfo($fileName, PATHINFO_FILENAME),
@@ -54,7 +222,11 @@ class FileController extends Controller
                     'img' => $imgType,
                     'filesize' => $this->formatFileSize($fileSize),
                     'date' => date('d.m.Y', $lastModified),
-                    'url' => asset($relativePath)
+                    'url' => asset($relativePath),
+                    'category' => $fileCategory,
+                    'year' => $fileYear,
+                    'medicine' => $medicineSectionName,  // Добавляем раздел медицины
+                    'mkb' => $mkbCategory  // Добавляем категорию МКБ
                 ];
             }
             
@@ -161,12 +333,68 @@ class FileController extends Controller
     /**
      * Форматирует имя раздела из имени папки
      */
-    private function formatSectionName($folderName)
+    private function formatSectionName($path)
     {
-        // Заменяем подчеркивания и дефисы на пробелы
-        $name = str_replace(['_', '-'], ' ', $folderName);
-        // Преобразуем первую букву каждого слова в верхний регистр
-        return ucwords($name);
+        // Получаем последний компонент пути (имя папки)
+        $parts = explode(DIRECTORY_SEPARATOR, $path);
+        $lastPart = end($parts);
+        
+        // Форматируем имя раздела, заменяя подчеркивания на пробелы и делая первую букву заглавной
+        return ucfirst(str_replace('_', ' ', $lastPart));
+    }
+    
+    /**
+     * Рекурсивно получает все файлы из указанной директории и её поддиректорий
+     * 
+     * @param string $directory Путь к директории
+     * @param array &$files Массив для хранения найденных файлов
+     * @param string $categoryFilter Фильтр по категории (поддиректории)
+     * @return void
+     */
+    private function getFilesRecursively($directory, &$files, $categoryFilter = '')
+    {
+        // Получаем все файлы в текущей директории
+        $directoryFiles = File::files($directory);
+        foreach ($directoryFiles as $file) {
+            $files[] = $file;
+        }
+        
+        // Получаем все поддиректории
+        $subdirectories = File::directories($directory);
+        foreach ($subdirectories as $subdirectory) {
+            // Получаем имя поддиректории для проверки категории
+            $dirName = basename($subdirectory);
+            
+            // Если задан фильтр категории и текущая поддиректория не соответствует ему, пропускаем
+            if ($categoryFilter && strtolower($dirName) !== strtolower($categoryFilter)) {
+                continue;
+            }
+            
+            // Рекурсивно обрабатываем поддиректорию
+            $this->getFilesRecursively($subdirectory, $files, $categoryFilter);
+        }
+    }
+    
+    /**
+     * Определяет категорию файла на основе его пути
+     * 
+     * @param string $filePath Полный путь к файлу
+     * @param string $basePath Базовый путь (корневая директория)
+     * @return string Категория файла
+     */
+    private function getCategoryFromPath($filePath, $basePath)
+    {
+        // Получаем относительный путь от базовой директории
+        $relativePath = str_replace($basePath . DIRECTORY_SEPARATOR, '', dirname($filePath));
+        
+        // Если файл находится в корневой директории, возвращаем 'Общие'
+        if (empty($relativePath)) {
+            return 'Общие';
+        }
+        
+        // Получаем первый компонент пути как категорию
+        $parts = explode(DIRECTORY_SEPARATOR, $relativePath);
+        return $parts[0];
     }
     
     /**
