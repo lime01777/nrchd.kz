@@ -169,9 +169,9 @@ export default function NewsIndex() {
                 className="absolute top-2 left-2 z-10 h-4 w-4 text-blue-600 form-checkbox bg-white border-gray-300 rounded shadow"
                 style={{ boxShadow: '0 1px 4px #cbd5e1' }}
               />
-              {newsItem.image && (
+              {newsItem.main_image && (
                 <img
-                  src={newsItem.image}
+                  src={newsItem.main_image}
                   alt={newsItem.title}
                   className="h-40 w-full object-cover rounded-t-lg"
                 />

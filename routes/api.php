@@ -27,6 +27,9 @@ Route::get('/documents/by-accordion/{accordionId}', [DocumentApiController::clas
 // Маршрут для получения файлов из storage
 Route::get('/files', [\App\Http\Controllers\FileController::class, 'getFiles']);
 
+// Маршрут для получения клинических протоколов из JSON-файла
+Route::get('/clinical-protocols', [\App\Http\Controllers\FileController::class, 'getClinicalProtocols']);
+
 // Маршрут для получения аккордеонов по маршруту страницы
 Route::get('/accordions-for-page', [\App\Http\Controllers\FileController::class, 'getAccordionsForPage']);
 
@@ -72,6 +75,9 @@ Route::post('/forms/submit', [\App\Http\Controllers\FormController::class, 'subm
 Route::post('/forms/contact', [\App\Http\Controllers\FormController::class, 'contactForm']);
 Route::post('/forms/accreditation', [\App\Http\Controllers\FormController::class, 'accreditationForm']);
 Route::post('/forms/service', [\App\Http\Controllers\FormController::class, 'serviceRequestForm']);
+
+// Маршрут для получения последних новостей
+Route::get('/latest-news', [\App\Http\Controllers\NewsController::class, 'getLatestNews']);
 
 Route::post('/editor-upload', function (Request $request) {
     if ($request->hasFile('image')) {

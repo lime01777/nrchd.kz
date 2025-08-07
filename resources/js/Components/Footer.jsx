@@ -7,14 +7,14 @@ const FooterLinks = () => {
         {label: 'Направления', url:'medical.education', translate: true}, // Начинаем с первого направления вместо общей страницы
         {label: 'Услуги', url:'services.training', translate: true}, // Первая услуга вместо общей страницы
         {label: 'Филиалы', url:'branches.astana', translate: true}, // Первый филиал вместо общей страницы
-        {label: 'Новости', url:'news.index', translate: true},
+        {label: 'Новости', url:'home', translate: true}, // Временно используем маршрут home вместо news.index
         {label: 'Вакансии', url:'vacancy.jobs', translate: true},
     ];
     
     const navLinks2 = [
-        {label: 'Новости ННЦРЗ', url:'news.index', translate: true},
-        {label: 'Новости по направлениям', url:'news.directions', translate: true},
-        {label: 'Новости филиалов', url:'news.branches', translate: true},
+        {label: 'Новости ННЦРЗ', url:'home', translate: true}, // Временно используем маршрут home вместо news.index
+        {label: 'Новости по направлениям', url:'home', translate: true}, // Временно используем маршрут home вместо news.directions
+        {label: 'Новости филиалов', url:'home', translate: true}, // Временно используем маршрут home вместо news.branches
         {label: 'Салидат Каирбекова', url:'salidat.kairbekova', translate: true},
     ];
     

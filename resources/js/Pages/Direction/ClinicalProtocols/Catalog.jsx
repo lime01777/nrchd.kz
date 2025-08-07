@@ -5,10 +5,38 @@ import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import axios from 'axios';
 
 export default function ClinicalProtocolsCatalog() {
+  console.log('Инициализация компонента ClinicalProtocolsCatalog');
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMedicine, setSelectedMedicine] = useState('');
   const [selectedMkb, setSelectedMkb] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Начинаем с состояния загрузки
+  const [error, setError] = useState(null); // Добавляем состояние для ошибок
+  const [availableCategories, setAvailableCategories] = useState([]);
+  
+  // Добавляем логирование при монтировании компонента
+  useEffect(() => {
+    console.log('Компонент ClinicalProtocolsCatalog смонтирован');
+    
+    // Проверяем доступность API клинических протоколов
+    const checkApiAvailability = async () => {
+      try {
+        console.log('Проверяем доступность API клинических протоколов');
+        const baseUrl = window.location.origin;
+        const response = await axios.get(`${baseUrl}/api/clinical-protocols`);
+        console.log('Ответ API:', response.data);
+      } catch (error) {
+        console.error('Ошибка при проверке API:', error);
+        setError(`Ошибка при проверке API: ${error.message}`);
+      }
+    };
+    
+    checkApiAvailability();
+    
+    return () => {
+      console.log('Компонент ClinicalProtocolsCatalog размонтирован');
+    };
+  }, []);
   
   // Разделы медицины
   const medicineSections = [
@@ -59,52 +87,74 @@ export default function ClinicalProtocolsCatalog() {
   ];
   
   
-  // Загрузка доступных категорий из файлов
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get('/api/files', {
-          params: {
-            folder: 'Клинические протоколы/Поток — клинические протоколы',
-            title: 'Клинические протоколы'
-          }
-        });
-        
-        // Извлекаем уникальные категории из файлов
-        if (response.data && response.data[0] && response.data[0].documents) {
-          const uniqueCategories = [...new Set(response.data[0].documents
-            .filter(doc => doc.category)
-            .map(doc => doc.category))];
-          
-          setAvailableCategories(uniqueCategories.map(cat => ({
-            value: cat,
-            label: cat
-          })));
-        }
-      } catch (error) {
-        console.error('Ошибка при загрузке категорий:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Дополнительные состояния для отображения количества найденных протоколов
+  const [totalProtocols, setTotalProtocols] = useState(0);
+  const [filteredProtocols, setFilteredProtocols] = useState(0);
+  
+  // Обработчик для обновления счетчика протоколов и доступных категорий
+  const handleFilesLoaded = (data) => {
+    console.log('handleFilesLoaded вызван с данными:', data);
+    console.log('Тип полученных данных:', typeof data, Array.isArray(data) ? 'массив' : 'не массив');
     
-    fetchCategories();
-  }, []);
+    if (data) {
+      console.log('Количество элементов в данных:', Array.isArray(data) ? data.length : 'не массив');
+      if (Array.isArray(data) && data.length > 0) {
+        console.log('Первый элемент данных:', data[0]);
+      }
+    }
+    
+    setLoading(false); // Данные загружены, скрываем индикатор загрузки
+    setError(null); // Сбрасываем ошибку, если она была
+    
+    try {
+      if (data && Array.isArray(data)) {
+        setFilteredProtocols(data.length);
+        
+        // Извлекаем уникальные категории из данных, если они есть
+        if (data.length > 0) {
+          if (data[0].categories) {
+            const uniqueCategories = [...new Set(data.map(item => item.categories).flat())];
+            setAvailableCategories(uniqueCategories);
+          } else if (data[0].category) {
+            // Если категории хранятся в поле category
+            const uniqueCategories = [...new Set(data.map(item => item.category).filter(Boolean))];
+            setAvailableCategories(uniqueCategories);
+          } else {
+            // Если категорий нет в данных, устанавливаем пустой массив
+            setAvailableCategories([]);
+          }
+        } else {
+          setAvailableCategories([]);
+        }
+      } else {
+        console.log('Получены некорректные данные:', data);
+        setFilteredProtocols(0);
+        setAvailableCategories([]);
+      }
+    } catch (error) {
+      console.error('Ошибка при обработке данных протоколов:', error);
+      setFilteredProtocols(0);
+      setAvailableCategories([]);
+      setError('Ошибка при обработке данных протоколов: ' + error.message);
+    }
+  };
   
   // Обработка изменения поискового запроса
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+    setLoading(true); // Показываем индикатор загрузки при изменении фильтров
   };
   
   // Обработка изменения раздела медицины
   const handleMedicineChange = (e) => {
     setSelectedMedicine(e.target.value);
+    setLoading(true); // Показываем индикатор загрузки при изменении фильтров
   };
   
   // Обработка изменения категории МКБ
   const handleMkbChange = (e) => {
     setSelectedMkb(e.target.value);
+    setLoading(true); // Показываем индикатор загрузки при изменении фильтров
   };
   
   // Сброс всех фильтров
@@ -112,6 +162,8 @@ export default function ClinicalProtocolsCatalog() {
     setSearchTerm('');
     setSelectedMedicine('');
     setSelectedMkb('');
+    setLoading(true); // Показываем индикатор загрузки при сбросе фильтров
+    setError(null); // Сбрасываем ошибку, если она была
   };
   
   // Формируем поисковый запрос для SimpleFileDisplay
@@ -195,26 +247,74 @@ export default function ClinicalProtocolsCatalog() {
                   </div>
                 </div>
 
+                {/* Информация о количестве найденных протоколов */}
+                {filteredProtocols > 0 && (
+                  <div className="text-center text-sm text-gray-600">
+                    Найдено протоколов: {filteredProtocols}
+                  </div>
+                )}
               </div>
               
-              <div className="mt-4 flex justify-end">
+              <div className="mt-4 flex justify-center">
                 <button
                   onClick={resetFilters}
-                  className="px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors duration-200"
+                  className="px-6 py-2.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200 flex items-center shadow-md"
                 >
-                  Сбросить фильтры
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Сбросить все фильтры
                 </button>
               </div>
             </div>
             
-            {/* Отображение файлов */}
-            <SimpleFileDisplay 
-              folder="Клинические протоколы\Поток — клинические протоколы" 
-              searchTerm={searchTerm}
-              medicine={selectedMedicine}
-              mkb={selectedMkb}
-              bgColor="bg-white"
-            />
+            {/* Индикатор загрузки */}
+            {loading && (
+              <div className="flex justify-center items-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                <span className="ml-3 text-gray-600">Загрузка протоколов...</span>
+              </div>
+            )}
+            
+            {/* Сообщение об ошибке */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <strong className="font-bold">Ошибка!</strong>
+                <span className="block sm:inline"> {error}</span>
+                <button 
+                  className="absolute top-0 bottom-0 right-0 px-4 py-3" 
+                  onClick={() => setError(null)}
+                >
+                  <svg className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Закрыть</title>
+                    <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+                  </svg>
+                </button>
+              </div>
+            )}
+            
+            {/* Список клинических протоколов */}
+            {!loading && !error ? (
+              <>
+                <div className="mb-4 p-2 bg-blue-50 border border-blue-200 rounded">
+                  <p className="text-sm text-blue-800">Статус: Загрузка протоколов...</p>
+                </div>
+                <SimpleFileDisplay 
+                  key={`${searchTerm}-${selectedMedicine}-${selectedMkb}`} // Добавляем key для пересоздания компонента при изменении фильтров
+                  searchTerm={searchTerm} 
+                  medicine={selectedMedicine}
+                  mkb={selectedMkb}
+                  bgColor="bg-white"
+                  useClinicalProtocols={true}
+                  onFilesLoaded={handleFilesLoaded}
+                  onError={(errorMsg) => {
+                    console.error('Ошибка в SimpleFileDisplay:', errorMsg);
+                    setError(errorMsg);
+                    setLoading(false);
+                  }}
+                />
+              </>
+            ) : null}
           </div>
         </div>
       </section>

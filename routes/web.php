@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VacancyController;
 use App\Http\Controllers\Admin\VacancyController as AdminVacancyController;
+use App\Http\Controllers\ConferenceRegistrationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -10,6 +11,53 @@ use App\Http\Middleware\LanguageMiddleware;
 
 // Применяем мидлвар языка ко всем маршрутам
 Route::middleware([LanguageMiddleware::class])->group(function () {
+    // Маршруты для конференции (субдомен conference.nrchd.kz)
+    Route::middleware(['conference.subdomain'])->group(function () {
+        // Если запрос поступил на субдомен conference.nrchd.kz
+        Route::get('/', function () {
+            return Inertia::render('Conference/Home', [
+                'locale' => app()->getLocale(),
+            ]);
+        })->name('conference.home');
+        
+        Route::get('/about', function () {
+            return Inertia::render('Conference/About', [
+                'locale' => app()->getLocale(),
+            ]);
+        })->name('conference.about');
+        
+        Route::get('/program', function () {
+            return Inertia::render('Conference/Program', [
+                'locale' => app()->getLocale(),
+            ]);
+        })->name('conference.program');
+        
+        Route::get('/speakers', function () {
+            return Inertia::render('Conference/Speakers', [
+                'locale' => app()->getLocale(),
+            ]);
+        })->name('conference.speakers');
+        
+        Route::get('/registration', function () {
+            return Inertia::render('Conference/Registration', [
+                'locale' => app()->getLocale(),
+            ]);
+        })->name('conference.registration');
+        
+        // Обработка формы регистрации
+        Route::post('/registration', [ConferenceRegistrationController::class, 'store'])->name('conference.registration.submit');
+        
+        // Страница успешной регистрации
+        Route::get('/registration/success', function () {
+            return Inertia::render('Conference/RegistrationSuccess', [
+                'registrationType' => session('registrationType', 'participant'),
+                'email' => session('registrationEmail', ''),
+                'locale' => app()->getLocale(),
+            ]);
+        })->name('conference.registration.success');
+    });
+    
+    // Маршруты основного сайта
     Route::get('/', function () {
         return Inertia::render('Home', [
             'canLogin' => Route::has('login'),
@@ -375,6 +423,14 @@ Route::prefix('admin/storage')->middleware(['auth'])->group(function () {
     Route::delete('delete', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'delete']);
     Route::post('upload', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'upload']);
 });
+
+// API для библиотеки изображений
+Route::prefix('admin/images')->middleware(['auth'])->group(function () {
+    Route::get('news', [\App\Http\Controllers\Admin\ImageLibraryController::class, 'getNewsImages']);
+});
+
+// Отладочный маршрут для новостей
+Route::post('admin/news/debug', [\App\Http\Controllers\Admin\NewsController::class, 'debug'])->middleware(['auth']);
 
 // Маршруты для филиалов
 Route::get('/astana', function () {

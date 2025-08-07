@@ -1,7 +1,21 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 
-function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, limit, singleColumn = false, hideDownload = false, searchTerm = '', medicine = '', mkb = '', category = '', year = '', fileType = '' }) {
+function SimpleFileDisplay({ 
+  folder = '', 
+  title = '', 
+  limit = 0, 
+  searchTerm = '', 
+  medicine = '',
+  mkb = '',
+  category = '',
+  year = '',
+  fileType = '',
+  bgColor = 'bg-green-100',
+  useClinicalProtocols = false,
+  onFilesLoaded = null,
+  onError = null // Добавляем проп для обработки ошибок
+}) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -55,56 +69,144 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
         setLoading(true);
         const baseUrl = window.location.origin;
         const params = new URLSearchParams();
-        if (folder) {
-          // Нормализуем путь, заменяя обратные слеши на прямые для корректной работы URL
-          const normalizedFolder = folder.replace(/\\/g, '/');
-          params.append('folder', normalizedFolder);
-        }
-        if (title) {
-          params.append('title', title);
+        
+        // Выбираем API-эндпоинт в зависимости от режима работы
+        let apiEndpoint = `${baseUrl}/api/files`;
+        
+        if (useClinicalProtocols) {
+          // Используем новый API-эндпоинт для клинических протоколов
+          apiEndpoint = `${baseUrl}/api/clinical-protocols`;
+          
+          // Добавляем параметры фильтрации для клинических протоколов
+          if (searchTerm) params.append('search', searchTerm);
+          if (medicine) params.append('medicine', medicine);
+          if (mkb) params.append('mkb', mkb);
+          if (category) params.append('category', category);
+          if (year) params.append('year', year);
+          if (fileType) params.append('filetype', fileType);
+        } else {
+          // Стандартный режим работы с файлами из папки
+          if (folder) {
+            // Нормализуем путь, заменяя обратные слеши на прямые для корректной работы URL
+            const normalizedFolder = folder.replace(/\\/g, '/');
+            params.append('folder', normalizedFolder);
+          }
+          if (title) {
+            params.append('title', title);
+          }
+          
+          // Формируем строку поиска с учетом всех параметров фильтрации
+          let fullSearchTerm = searchTerm || '';
+          
+          // Добавляем раздел медицины в строку поиска, если он указан
+          if (medicine) {
+            fullSearchTerm += ` medicine:${medicine}`;
+          }
+          
+          // Добавляем категорию МКБ в строку поиска, если она указана
+          if (mkb) {
+            fullSearchTerm += ` mkb:${mkb}`;
+          }
+          
+          // Добавляем категорию протокола в строку поиска, если она указана
+          if (category) {
+            fullSearchTerm += ` category:${category}`;
+          }
+          
+          // Добавляем параметр поиска в URL
+          if (fullSearchTerm.trim() !== '') {
+            params.append('search', fullSearchTerm.trim());
+          }
         }
         
-        // Формируем строку поиска с учетом всех параметров фильтрации
-        let fullSearchTerm = searchTerm || '';
-        
-        // Добавляем раздел медицины в строку поиска, если он указан
-        if (medicine) {
-          fullSearchTerm += ` medicine:${medicine}`;
-        }
-        
-        // Добавляем категорию МКБ в строку поиска, если она указана
-        if (mkb) {
-          fullSearchTerm += ` mkb:${mkb}`;
-        }
-        
-        // Добавляем категорию протокола в строку поиска, если она указана
-        if (category) {
-          fullSearchTerm += ` category:${category}`;
-        }
-        
-        // Добавляем параметр поиска в URL
-        if (fullSearchTerm.trim() !== '') {
-          params.append('search', fullSearchTerm.trim());
-        }
-        
-        console.log('Fetching files from:', `${baseUrl}/api/files?${params.toString()}`);
+        console.log(`Fetching files from: ${apiEndpoint}${params.toString() ? '?' + params.toString() : ''}`);
         console.log('Search parameters:', { 
           searchTerm, 
           medicine, 
           mkb, 
           category, 
           year, 
-          fileType, 
-          fullSearchTerm 
+          fileType,
+          useClinicalProtocols
         });
         
-        const response = await axios.get(`${baseUrl}/api/files?${params.toString()}`);
-        console.log('API response:', response.data);
+        console.log(`Выполняем запрос к API: ${apiEndpoint}${params.toString() ? '?' + params.toString() : ''}`);
+        
+        let response;
+        try {
+          response = await axios.get(`${apiEndpoint}${params.toString() ? '?' + params.toString() : ''}`);
+          console.log('API response получен:', response);
+          console.log('API response data:', response.data);
+          
+          if (!response.data) {
+            const errorMessage = 'Ответ API не содержит данных';
+            console.error(errorMessage);
+            setError('Ошибка при загрузке файлов: нет данных');
+            
+            // Передаем ошибку в родительский компонент, если проп предоставлен
+            if (onError) {
+              onError(errorMessage);
+            }
+            
+            setLoading(false);
+            return;
+          }
+          
+          // Проверяем наличие ошибки в ответе API
+          if (response.data.error) {
+            const errorMessage = `Ошибка API: ${response.data.error}`;
+            console.error(errorMessage);
+            setError(errorMessage);
+            
+            // Передаем ошибку в родительский компонент, если проп предоставлен
+            if (onError) {
+              onError(errorMessage);
+            }
+            
+            setLoading(false);
+            return;
+          }
+        } catch (error) {
+          const errorMessage = `Ошибка при загрузке файлов: ${error.message}`;
+          console.error('Ошибка при запросе к API:', error);
+          setError(errorMessage);
+          
+          // Передаем ошибку в родительский компонент, если проп предоставлен
+          if (onError) {
+            onError(errorMessage);
+          }
+          
+          setLoading(false);
+          return;
+        }
         
         // Обработка данных от API
         let filesData = [];
         
-        if (response.data && Array.isArray(response.data)) {
+        if (useClinicalProtocols) {
+          // Обработка данных из API клинических протоколов
+          console.log('Обрабатываем данные клинических протоколов:', response.data);
+          
+          if (response.data && response.data.documents) {
+            console.log('Найдены документы в response.data.documents:', response.data.documents);
+            filesData = response.data.documents;
+          } else if (response.data && response.data.protocols) {
+            // Если данные в формате clinical_protocols.json
+            console.log('Найдены протоколы в response.data.protocols:', response.data.protocols);
+            filesData = response.data.protocols;
+          } else {
+            const errorMessage = 'Не найдены ни documents, ни protocols в ответе API';
+            console.error(errorMessage);
+            
+            // Передаем ошибку в родительский компонент, если проп предоставлен
+            if (onError) {
+              onError(errorMessage);
+            }
+            
+            setLoading(false);
+            return;
+          }
+        } else if (response.data && Array.isArray(response.data)) {
           // Получаем файлы из секций, если данные в формате FilesAccord
           response.data.forEach(section => {
             if (section.files) {
@@ -140,6 +242,16 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
         // Получаем информацию о размере и дате для каждого файла
         const fileInfoPromises = limitedFiles.map(file => {
           if (file.url && file.url !== "#") {
+            // Для клинических протоколов не делаем HEAD-запрос, используем данные из JSON
+            if (useClinicalProtocols) {
+              return Promise.resolve({
+                id: file.id || file.url,
+                size: file.size || '1.2 MB', // Используем размер из JSON или значение по умолчанию
+                date: formatDate(file.date || file.created_at || '')
+              });
+            }
+            
+            // Для обычных файлов делаем HEAD-запрос
             return axios.head(file.url)
               .then(response => {
                 const contentLength = response.headers['content-length'];
@@ -156,6 +268,7 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
                 return {
                   id: file.id || file.url,
                   size: formatFileSize(file.size || 0),
+
                   date: formatDate(file.date || file.created_at || '')
                 };
               });
@@ -174,6 +287,24 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
             fileInfoMap[limitedFiles[index].id || limitedFiles[index].url] = info;
           });
           setFileInfos(fileInfoMap);
+          
+          // Вызываем обработчик onFilesLoaded, если он предоставлен
+          if (onFilesLoaded && Array.isArray(filesData)) {
+            try {
+              onFilesLoaded(filesData);
+            } catch (error) {
+              console.error('Ошибка при вызове onFilesLoaded:', error);
+              
+              // Передаем ошибку в родительский компонент, если проп предоставлен
+              if (onError) {
+                onError(`Ошибка при обработке данных: ${error.message}`);
+              }
+            }
+          }
+          setLoading(false);
+        }).catch(error => {
+          console.error('Ошибка при загрузке файлов:', error);
+          setError('Ошибка при загрузке файлов. Пожалуйста, попробуйте позже.');
           setLoading(false);
         });
       } catch (err) {
@@ -184,7 +315,7 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
     };
 
     fetchFiles();
-  }, [folder, title, limit, searchTerm, medicine, mkb]);
+  }, [folder, title, limit, searchTerm, medicine, mkb, category, year, fileType, useClinicalProtocols]);
 
   // Определение иконки по типу файла
   const getFileTypeIcon = (fileName) => {
@@ -460,9 +591,14 @@ function SimpleFileDisplay({ folder, title, bgColor = 'bg-white', onVideoClick, 
 
   return (
     <div className={`py-6 ${bgColor}`}>
-      {title && (
-        <h2 className="text-2xl font-semibold mb-6 text-gray-800">{title}</h2>
-      )}
+      <div className="flex justify-between items-center mb-4">
+        {title && (
+          <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
+        )}
+        <div className="text-sm font-medium text-gray-600">
+          Всего найдено: <span className="font-bold">{filteredFiles.length}</span>
+        </div>
+      </div>
       
       {filteredFiles.length === 0 ? (
         <div className="py-8 text-center text-gray-500 bg-white rounded-lg shadow border border-gray-200" data-translate>

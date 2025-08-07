@@ -103,6 +103,8 @@ function News() {
                             }
                         ]}
                         className="mx-2"
+                        adaptiveHeight={false}
+                        vertical={false}
                     >
                         {latestNews.slice(0, 10).map((news, index) => (
                             <div key={news.id || index} className="px-2">
@@ -110,6 +112,7 @@ function News() {
                                     date={new Date(news.publish_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}
                                     description={news.title}
                                     slug={news.slug}
+                                    image={news.image}
                                 />
                             </div>
                         ))}

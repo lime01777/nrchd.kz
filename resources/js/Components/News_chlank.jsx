@@ -1,9 +1,24 @@
 import React from 'react'
 import { Link } from '@inertiajs/react';
 
-function News_chlank({ date, description, slug }) {
+function News_chlank({ date, description, slug, image }) {
   return (
-    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 h-full">
+        {/* Добавляем отображение изображения */}
+        {image && (
+          <div className="h-40 overflow-hidden rounded-t-lg">
+            <img 
+              src={image} 
+              alt={description} 
+              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+              onError={(e) => {
+                console.error('Ошибка загрузки изображения:', image);
+                e.target.onerror = null;
+                e.target.src = '/img/placeholder.jpg'; // Заменяем на плейсхолдер при ошибке
+              }}
+            />
+          </div>
+        )}
         <div className="flex flex-col p-6 h-full">
             <div className="flex-grow">
                 <p className="text-gray-500 text-sm mb-2">{date}</p>

@@ -1,7 +1,9 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
+import ImageLibrary from './ImageLibrary';
 
 export default function ImageGalleryUpload({ images, setImages, mainImage, setMainImage, max = 18 }) {
   const inputRef = useRef();
+  const [showLibrary, setShowLibrary] = useState(false);
 
   // Drag&Drop обработка
   const handleDrop = (e) => {
@@ -38,9 +40,57 @@ export default function ImageGalleryUpload({ images, setImages, mainImage, setMa
   const handleSetMain = (img) => {
     setMainImage(img);
   };
+  
+  // Открытие библиотеки изображений
+  const openLibrary = () => {
+    setShowLibrary(true);
+  };
+  
+  // Обработка выбора изображений из библиотеки
+  const handleLibrarySelect = (selectedImages) => {
+    const newImages = Array.isArray(selectedImages) ? selectedImages : [selectedImages];
+    
+    // Добавляем только уникальные изображения, которых еще нет в списке
+    const uniqueNewImages = newImages.filter(newImg => 
+      !images.some(existingImg => 
+        typeof existingImg === 'string' && existingImg === newImg.url
+      )
+    );
+    
+    // Добавляем URL изображений в список
+    const newUrls = uniqueNewImages.map(img => img.url);
+    setImages([...images, ...newUrls]);
+    
+    // Если главное изображение не выбрано, устанавливаем первое из новых
+    if (!mainImage && newUrls.length > 0) {
+      setMainImage(newUrls[0]);
+    }
+  };
 
   return (
     <div>
+      {showLibrary && (
+        <ImageLibrary 
+          onSelect={handleLibrarySelect} 
+          onClose={() => setShowLibrary(false)} 
+          multiple={true} 
+        />
+      )}
+      
+      <div className="flex justify-between mb-4">
+        <h3 className="text-lg font-medium">Изображения</h3>
+        <button
+          type="button"
+          onClick={openLibrary}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          Выбрать из библиотеки
+        </button>
+      </div>
+      
       <div
         className="border-2 border-dashed border-gray-300 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition cursor-pointer mb-4"
         onDrop={handleDrop}

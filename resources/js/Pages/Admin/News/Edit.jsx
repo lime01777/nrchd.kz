@@ -27,6 +27,17 @@ export default function NewsEdit({ news = null }) {
     status: news?.status || 'Черновик',
     publishDate: news?.publishDate || new Date().toISOString().substr(0, 10),
   });
+  
+  // Логирование данных новости при загрузке компонента
+  useEffect(() => {
+    if (news) {
+      console.log('Загруженные данные новости:', {
+        title: news.title,
+        images: news.images,
+        main_image: news.main_image
+      });
+    }
+  }, [news]);
 
   const [categories, setCategories] = useState(() => {
     if (news?.category) {
@@ -67,6 +78,14 @@ export default function NewsEdit({ news = null }) {
     try {
       const cat = data.category || [];
       
+      // Отладочная информация о состоянии изображений перед отправкой формы
+      console.log('Изображения перед отправкой:', {
+        images: images,
+        mainImage: mainImage,
+        data_images: data.images,
+        data_main_image: data.main_image
+      });
+      
       // Проверка заголовка
       if (!data.title || data.title.trim().length === 0) {
         alert('Заполните заголовок');
@@ -93,18 +112,23 @@ export default function NewsEdit({ news = null }) {
       // Проверка, что изображения не пустые и могут быть загружены
       const validImages = images.filter(img => img && (typeof img === 'string' || (img instanceof File && img.size > 0)));
       
+      console.log('Валидные изображения:', validImages);
+      
       // Важно! Добавляем изображения в данные формы
       setData('images', validImages);
       
       // Проверка главного изображения
       if (mainImage && (typeof mainImage === 'string' || (mainImage instanceof File && mainImage.size > 0))) {
+        console.log('Используем выбранное главное изображение:', mainImage);
         setData('main_image', mainImage);
       } else if (validImages.length > 0) {
         // Если главное изображение недействительно, используем первое доступное
+        console.log('Используем первое изображение как главное:', validImages[0]);
         setData('main_image', validImages[0]);
         setMainImage(validImages[0]);
       } else {
         // Если нет действительных изображений, устанавливаем null
+        console.log('Нет действительных изображений, главное изображение установлено в null');
         setData('main_image', null);
       }
 
@@ -135,20 +159,41 @@ export default function NewsEdit({ news = null }) {
       });
       
       // Добавляем изображения как файлы или строки
+      let fileCounter = 0;
       validImages.forEach((img, index) => {
         if (img instanceof File) {
-          formData.append(`images[${index}]`, img);
+          // Для файлов используем массив файлов
+          formData.append(`images[]`, img);
+          console.log(`Добавлен файл изображения ${fileCounter}:`, img.name);
+          fileCounter++;
         } else if (typeof img === 'string') {
+          // Для URL используем имя поля с указанием индекса
           formData.append(`images[${index}]`, img);
+          console.log(`Добавлен URL изображения ${index}:`, img);
         }
       });
       
       // Добавляем главное изображение
       if (mainImage instanceof File) {
         formData.append('main_image', mainImage);
+        console.log('Добавлено главное изображение (файл):', mainImage.name);
       } else if (typeof mainImage === 'string') {
         formData.append('main_image', mainImage);
+        console.log('Добавлено главное изображение (URL):', mainImage);
+      } else {
+        console.log('Главное изображение не задано');
       }
+      
+      // Отладка - отправляем данные на отладочный маршрут
+      fetch('/admin/news/debug', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+      }).then(response => response.json())
+        .then(data => console.log('Отладочные данные:', data))
+        .catch(error => console.error('Ошибка отладки:', error));
       
       // Опции для запроса
       const options = {

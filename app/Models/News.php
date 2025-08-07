@@ -30,7 +30,7 @@ class News extends Model
         'publish_date',
         'image',
         'views',
-        // Удалена колонка 'images', так как ее нет в базе данных
+        'images',
         'main_image',
     ];
 
@@ -43,6 +43,6 @@ class News extends Model
         'publish_date' => 'date',
         'views' => 'integer',
         'category' => 'array',
-        // Удалена колонка 'images', так как ее нет в базе данных
+        'images' => 'array',
     ];
 }
