@@ -349,6 +349,11 @@ Route::get('/direction/tech-competence', function () {
 Route::get('/news', [App\Http\Controllers\NewsController::class, 'index'])->name('news');
 Route::get('/news/{slug}', [App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
 
+// Демонстрационная страница слайдера новостей
+Route::get('/news-slider-demo', function () {
+    return Inertia::render('News/SliderDemo');
+})->name('news.slider.demo');
+
 // API маршруты
 Route::prefix('api')->group(function () {
     Route::get('/news/{slug}', function ($slug) {
@@ -431,6 +436,13 @@ Route::prefix('admin/images')->middleware(['auth'])->group(function () {
 
 // Отладочный маршрут для новостей
 Route::post('admin/news/debug', [\App\Http\Controllers\Admin\NewsController::class, 'debug'])->middleware(['auth']);
+
+// Тестовый маршрут для загрузки изображений
+Route::get('admin/news/test-upload', function () {
+    return Inertia::render('Admin/News/TestImageUpload');
+})->middleware(['auth']);
+
+Route::post('admin/news/test-upload', [\App\Http\Controllers\Admin\NewsController::class, 'testUpload'])->middleware(['auth']);
 
 // Маршруты для филиалов
 Route::get('/astana', function () {

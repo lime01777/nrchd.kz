@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Test</h1>
+    <button onclick="testAPI()">Test API</button>
+    <div id="result"></div>
+
+    <script>
+        function testAPI() {
+            fetch('/api/latest-news')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('API Response:', data);
+                    document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('result').innerHTML = 'Error: ' + error.message;
+                });
+        }
+    </script>
+</body>
+</html>

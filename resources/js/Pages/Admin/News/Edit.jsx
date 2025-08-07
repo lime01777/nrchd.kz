@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
-import Select from 'react-select';
-import ImageGalleryUpload from '@/Components/ImageGalleryUpload';
+import AdvancedImageUploader from '@/Components/AdvancedImageUploader';
 import SimpleRichEditor from '@/Components/SimpleRichEditor';
 
 const DEFAULT_CATEGORIES = [
@@ -12,7 +11,8 @@ const DEFAULT_CATEGORIES = [
   'Конференции',
   'Методические материалы',
   'Исследования',
-  'Анонсы',
+  'Филиалы',
+  'Анонсы событий',
 ];
 
 export default function NewsEdit({ news = null }) {
@@ -48,26 +48,143 @@ export default function NewsEdit({ news = null }) {
   });
   const [selectedCategories, setSelectedCategories] = useState(Array.isArray(data.category) ? data.category : (data.category ? [data.category] : []));
   const [newCategory, setNewCategory] = useState('');
-  const [images, setImages] = useState(data.images);
-  const [mainImage, setMainImage] = useState(data.main_image);
+  const [images, setImages] = useState(data.images || []);
+  const [mainImage, setMainImage] = useState(data.main_image || null);
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
 
-  // Категории для react-select
-  const categoryOptions = categories.map((cat) => ({ value: cat, label: cat }));
-  const handleCategorySelect = (selected) => {
-    const values = selected ? selected.map((opt) => opt.value) : [];
-    setSelectedCategories(values);
-    setData('category', values);
+  // Отладочная информация
+  console.log('NewsEdit - данные новости:', {
+    news,
+    data,
+    images: data.images,
+    main_image: data.main_image,
+    imagesType: typeof data.images,
+    mainImageType: typeof data.main_image
+  });
+
+  // Инициализируем состояние изображений только один раз
+  useEffect(() => {
+    if (data.images && data.images.length > 0) {
+      setImages(data.images);
+    }
+    if (data.main_image) {
+      setMainImage(data.main_image);
+    }
+  }, []); // Пустой массив зависимостей - выполняется только при монтировании
+
+  // Обработчик изменения изображений
+  const handleImagesChange = (newImages) => {
+    console.log('Изменение изображений:', newImages);
+    setImages(newImages);
+    
+    // Разделяем файлы и URL
+    const files = [];
+    const urls = [];
+    
+    newImages.forEach(img => {
+      if (img instanceof File) {
+        files.push(img);
+      } else if (typeof img === 'string') {
+        urls.push(img);
+      }
+    });
+    
+    // Устанавливаем файлы в FormData
+    setData('images', urls); // URL изображения
+    setData('image_files', files); // Файлы для загрузки
+  };
+
+  // Обработчик изменения главного изображения
+  const handleMainImageChange = (newMainImage) => {
+    console.log('Изменение главного изображения:', newMainImage);
+    setMainImage(newMainImage);
+    setData('main_image', newMainImage);
+  };
+
+  // Обработчик изменения категорий через чекбоксы
+  const handleCategoryChange = (category, checked) => {
+    let updatedCategories;
+    if (checked) {
+      // Добавляем категорию
+      updatedCategories = [...selectedCategories, category];
+    } else {
+      // Удаляем категорию
+      updatedCategories = selectedCategories.filter(cat => cat !== category);
+    }
+    
+    setSelectedCategories(updatedCategories);
+    setData('category', updatedCategories);
   };
 
   // Добавление новой категории
   const handleAddCategory = () => {
-    if (newCategory && !categories.includes(newCategory)) {
-      setCategories([...categories, newCategory]);
-      const updated = [...selectedCategories, newCategory];
-      setSelectedCategories(updated);
-      setData('category', updated);
-      setNewCategory('');
+    const trimmedCategory = newCategory.trim();
+    
+    if (!trimmedCategory) {
+      alert('Введите название категории');
+      return;
     }
+    
+    if (categories.includes(trimmedCategory)) {
+      alert('Такая категория уже существует');
+      return;
+    }
+    
+    if (trimmedCategory.length < 2) {
+      alert('Название категории должно содержать минимум 2 символа');
+      return;
+    }
+    
+    if (trimmedCategory.length > 50) {
+      alert('Название категории не должно превышать 50 символов');
+      return;
+    }
+    
+    const updatedCategories = [...categories, trimmedCategory];
+    setCategories(updatedCategories);
+    
+    // Автоматически добавляем новую категорию в выбранные
+    const updatedSelected = [...selectedCategories, trimmedCategory];
+    setSelectedCategories(updatedSelected);
+    setData('category', updatedSelected);
+    
+    setNewCategory('');
+  };
+
+  // Удаление категории из списка (если она не выбрана)
+  const handleRemoveCategory = (categoryToRemove) => {
+    // Подтверждение удаления
+    if (!confirm(`Вы уверены, что хотите удалить категорию "${categoryToRemove}"?`)) {
+      return;
+    }
+    
+    // Удаляем из выбранных категорий
+    const updatedSelected = selectedCategories.filter(cat => cat !== categoryToRemove);
+    setSelectedCategories(updatedSelected);
+    setData('category', updatedSelected);
+    
+    // Удаляем из общего списка категорий
+    const updatedCategories = categories.filter(cat => cat !== categoryToRemove);
+    setCategories(updatedCategories);
+  };
+
+  // Выбрать все категории
+  const handleSelectAll = () => {
+    setSelectedCategories([...categories]);
+    setData('category', [...categories]);
+  };
+
+  // Снять выбор со всех категорий
+  const handleDeselectAll = () => {
+    setSelectedCategories([]);
+    setData('category', []);
+  };
+
+  // Инвертировать выбор
+  const handleInvertSelection = () => {
+    const newSelected = categories.filter(cat => !selectedCategories.includes(cat));
+    setSelectedCategories(newSelected);
+    setData('category', newSelected);
   };
 
   // Сохранение
@@ -108,30 +225,6 @@ export default function NewsEdit({ news = null }) {
         setData('status', 'Черновик');
       }
 
-      // Обработка изображений
-      // Проверка, что изображения не пустые и могут быть загружены
-      const validImages = images.filter(img => img && (typeof img === 'string' || (img instanceof File && img.size > 0)));
-      
-      console.log('Валидные изображения:', validImages);
-      
-      // Важно! Добавляем изображения в данные формы
-      setData('images', validImages);
-      
-      // Проверка главного изображения
-      if (mainImage && (typeof mainImage === 'string' || (mainImage instanceof File && mainImage.size > 0))) {
-        console.log('Используем выбранное главное изображение:', mainImage);
-        setData('main_image', mainImage);
-      } else if (validImages.length > 0) {
-        // Если главное изображение недействительно, используем первое доступное
-        console.log('Используем первое изображение как главное:', validImages[0]);
-        setData('main_image', validImages[0]);
-        setMainImage(validImages[0]);
-      } else {
-        // Если нет действительных изображений, устанавливаем null
-        console.log('Нет действительных изображений, главное изображение установлено в null');
-        setData('main_image', null);
-      }
-
       // Проверка контента и категорий
       if (!data.content || data.content.replace(/<[^>]*?>/g, '').trim().length < 10) {
         alert('Содержимое должно содержать минимум 10 символов');
@@ -144,60 +237,19 @@ export default function NewsEdit({ news = null }) {
         return;
       }
       
-      // Создаем FormData для корректной отправки файлов
-      const formData = new FormData();
-      
-      // Добавляем все текстовые поля
-      formData.append('title', data.title);
-      formData.append('content', data.content);
-      formData.append('status', data.status);
-      formData.append('publishDate', data.publishDate || '');
-      
-      // Добавляем категории как массив
-      cat.forEach((category, index) => {
-        formData.append(`category[${index}]`, category);
+      // Отладочная информация о финальных данных
+      console.log('Финальные данные для отправки:', {
+        title: data.title,
+        content: data.content,
+        category: data.category,
+        status: data.status,
+        publishDate: data.publishDate,
+        images: data.images,
+        main_image: data.main_image
       });
-      
-      // Добавляем изображения как файлы или строки
-      let fileCounter = 0;
-      validImages.forEach((img, index) => {
-        if (img instanceof File) {
-          // Для файлов используем массив файлов
-          formData.append(`images[]`, img);
-          console.log(`Добавлен файл изображения ${fileCounter}:`, img.name);
-          fileCounter++;
-        } else if (typeof img === 'string') {
-          // Для URL используем имя поля с указанием индекса
-          formData.append(`images[${index}]`, img);
-          console.log(`Добавлен URL изображения ${index}:`, img);
-        }
-      });
-      
-      // Добавляем главное изображение
-      if (mainImage instanceof File) {
-        formData.append('main_image', mainImage);
-        console.log('Добавлено главное изображение (файл):', mainImage.name);
-      } else if (typeof mainImage === 'string') {
-        formData.append('main_image', mainImage);
-        console.log('Добавлено главное изображение (URL):', mainImage);
-      } else {
-        console.log('Главное изображение не задано');
-      }
-      
-      // Отладка - отправляем данные на отладочный маршрут
-      fetch('/admin/news/debug', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
-      }).then(response => response.json())
-        .then(data => console.log('Отладочные данные:', data))
-        .catch(error => console.error('Ошибка отладки:', error));
       
       // Опции для запроса
       const options = {
-        forceFormData: true, // Это важно для отправки файлов
         preserveScroll: true,
         onSuccess: () => {
           setIsSubmitting(false);
@@ -212,11 +264,11 @@ export default function NewsEdit({ news = null }) {
         }
       };
       
-      // Отправляем форму с FormData
+      // Отправляем форму через Inertia
       if (isEditing) {
-        put(route('admin.news.update', news.id), formData, options);
+        put(route('admin.news.update', news.id), options);
       } else {
-        post(route('admin.news.store'), formData, options);
+        post(route('admin.news.store'), options);
       }
     } catch (error) {
       console.error('Ошибка при отправке формы:', error);
@@ -273,36 +325,139 @@ export default function NewsEdit({ news = null }) {
                 )}
               </div>
 
-              {/* Категории (react-select + добавление) */}
+              {/* Категории с чекбоксами */}
               <div className="sm:col-span-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Категории *</label>
-                <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center mb-2">
-                  <div className="w-full sm:w-2/3">
-                    <Select
-                      isMulti
-                      options={categoryOptions}
-                      value={categoryOptions.filter(opt => selectedCategories.includes(opt.value))}
-                      onChange={handleCategorySelect}
-                      classNamePrefix="react-select"
-                      placeholder="Выберите категории..."
-                      styles={{
-                        control: (base) => ({ ...base, minHeight: '42px', borderRadius: '8px', borderColor: '#cbd5e1', boxShadow: 'none' }),
-                        multiValue: (base) => ({ ...base, background: '#e0e7ff', color: '#3730a3' }),
-                        option: (base, state) => ({ ...base, background: state.isFocused ? '#f3f4f6' : 'white', color: '#1e293b' })
+                <label className="block text-sm font-medium text-gray-700 mb-3">Категории *</label>
+                
+                {/* Статистика выбранных категорий */}
+                <div className="mb-3 p-2 bg-blue-50 rounded-md">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-blue-700">
+                      Выбрано: {selectedCategories.length} из {categories.length} категорий
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={handleSelectAll}
+                        className="text-xs px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                      >
+                        Выбрать все
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleDeselectAll}
+                        className="text-xs px-2 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
+                      >
+                        Снять выбор
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleInvertSelection}
+                        className="text-xs px-2 py-1 bg-purple-500 text-white rounded hover:bg-purple-600"
+                      >
+                        Инвертировать
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Список существующих категорий */}
+                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 mb-4">
+                  <h4 className="text-sm font-medium text-gray-700 mb-3">Существующие категории</h4>
+                  
+                  {/* Стандартные категории */}
+                  <div className="mb-4">
+                    <h5 className="text-xs font-medium text-gray-600 mb-2 uppercase tracking-wide">Стандартные категории</h5>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {categories.filter(cat => DEFAULT_CATEGORIES.includes(cat)).map((category) => (
+                        <div key={category} className="flex items-center justify-between p-2 bg-white rounded border hover:border-blue-300 transition-colors">
+                          <div className="flex items-center space-x-2 flex-1">
+                            <input
+                              type="checkbox"
+                              id={`category-${category}`}
+                              checked={selectedCategories.includes(category)}
+                              onChange={(e) => handleCategoryChange(category, e.target.checked)}
+                              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                            />
+                            <label htmlFor={`category-${category}`} className="text-sm text-gray-700 flex-1 cursor-pointer">
+                              {category}
+                            </label>
+                          </div>
+                          <span className="text-xs text-gray-400 px-2 py-1 bg-gray-100 rounded">Стандартная</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Пользовательские категории */}
+                  {categories.filter(cat => !DEFAULT_CATEGORIES.includes(cat)).length > 0 && (
+                    <div>
+                      <h5 className="text-xs font-medium text-gray-600 mb-2 uppercase tracking-wide">Пользовательские категории</h5>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {categories.filter(cat => !DEFAULT_CATEGORIES.includes(cat)).map((category) => (
+                          <div key={category} className="flex items-center justify-between p-2 bg-white rounded border hover:border-blue-300 transition-colors">
+                            <div className="flex items-center space-x-2 flex-1">
+                              <input
+                                type="checkbox"
+                                id={`category-${category}`}
+                                checked={selectedCategories.includes(category)}
+                                onChange={(e) => handleCategoryChange(category, e.target.checked)}
+                                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                              />
+                              <label htmlFor={`category-${category}`} className="text-sm text-gray-700 flex-1 cursor-pointer">
+                                {category}
+                              </label>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveCategory(category)}
+                              className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors"
+                              title="Удалить категорию"
+                            >
+                              <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Добавление новой категории */}
+                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <h4 className="text-sm font-medium text-gray-700 mb-3">Добавить новую категорию</h4>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newCategory}
+                      onChange={(e) => setNewCategory(e.target.value)}
+                      placeholder="Введите название новой категории"
+                      className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddCategory();
+                        }
                       }}
                     />
+                    <button
+                      type="button"
+                      onClick={handleAddCategory}
+                      disabled={!newCategory.trim()}
+                      className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-500"
+                    >
+                      Добавить
+                    </button>
                   </div>
-                  <div className="flex gap-2 items-center w-full sm:w-auto">
-                  <input
-                    type="text"
-                      value={newCategory}
-                      onChange={e => setNewCategory(e.target.value)}
-                      placeholder="Новая категория"
-                      className="border rounded px-2 py-1 text-sm"
-                    />
-                    <button type="button" onClick={handleAddCategory} className="px-2 py-1 bg-blue-500 text-white rounded text-sm">Добавить</button>
-              </div>
+                  {newCategory.trim() && (
+                    <p className="mt-2 text-xs text-gray-500">
+                      Нажмите Enter или кнопку "Добавить" для создания категории "{newCategory}"
+                    </p>
+                  )}
                 </div>
+                
                 {errors.category && (
                   <p className="mt-2 text-sm text-red-600">{errors.category}</p>
                 )}
@@ -352,13 +507,18 @@ export default function NewsEdit({ news = null }) {
 
               {/* Галерея изображений */}
               <div className="sm:col-span-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Галерея изображений (до 18)</label>
-                <ImageGalleryUpload
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Галерея изображений
+                  <span className="text-xs text-gray-500 ml-2">
+                    - Перетащите изображения или выберите из папки
+                  </span>
+                </label>
+                <AdvancedImageUploader
                   images={images}
-                  setImages={setImages}
+                  setImages={handleImagesChange}
                   mainImage={mainImage}
-                  setMainImage={setMainImage}
-                  max={18}
+                  setMainImage={handleMainImageChange}
+                  maxImages={18}
                 />
               </div>
 

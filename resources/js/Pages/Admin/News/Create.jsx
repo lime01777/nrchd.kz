@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
 import Select from 'react-select';
-import ImageGalleryUpload from '@/Components/ImageGalleryUpload';
+import AdvancedImageUploader from '@/Components/AdvancedImageUploader';
 import SimpleRichEditor from '@/Components/SimpleRichEditor';
 
 const DEFAULT_CATEGORIES = [
@@ -34,6 +34,35 @@ export default function NewsCreate() {
   const [newCategory, setNewCategory] = useState('');
   const [images, setImages] = useState([]);
   const [mainImage, setMainImage] = useState(null);
+
+  // Обработчик изменения изображений
+  const handleImagesChange = (newImages) => {
+    console.log('Create - изменение изображений:', newImages);
+    setImages(newImages);
+    
+    // Разделяем файлы и URL
+    const files = [];
+    const urls = [];
+    
+    newImages.forEach(img => {
+      if (img instanceof File) {
+        files.push(img);
+      } else if (typeof img === 'string') {
+        urls.push(img);
+      }
+    });
+    
+    // Устанавливаем файлы в FormData
+    setData('images', urls); // URL изображения
+    setData('image_files', files); // Файлы для загрузки
+  };
+
+  // Обработчик изменения главного изображения
+  const handleMainImageChange = (newMainImage) => {
+    console.log('Create - изменение главного изображения:', newMainImage);
+    setMainImage(newMainImage);
+    setData('main_image', newMainImage);
+  };
 
   // Категории для react-select
   const categoryOptions = categories.map((cat) => ({ value: cat, label: cat }));
@@ -287,13 +316,18 @@ export default function NewsCreate() {
 
               {/* Галерея изображений */}
               <div className="sm:col-span-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Галерея изображений (до 18)</label>
-                <ImageGalleryUpload
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Галерея изображений
+                  <span className="text-xs text-gray-500 ml-2">
+                    - Перетащите изображения или выберите из папки
+                  </span>
+                </label>
+                <AdvancedImageUploader
                   images={images}
-                  setImages={setImages}
+                  setImages={handleImagesChange}
                   mainImage={mainImage}
-                  setMainImage={setMainImage}
-                  max={18}
+                  setMainImage={handleMainImageChange}
+                  maxImages={18}
                 />
               </div>
 

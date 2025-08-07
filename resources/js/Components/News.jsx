@@ -34,6 +34,7 @@ function News() {
             title: 'Важные изменения в системе здравоохранения',
             description: 'Новые методики и практики в системе здравоохранения Казахстана',
             image: '/img/news/news1.jpg',
+            images: ['/img/news/news1.jpg'],
             date: '2025-05-15',
             url: '/news/1'
           },
@@ -42,6 +43,7 @@ function News() {
             title: 'Конференция по развитию медицинского образования',
             description: 'Состоялась ежегодная конференция по вопросам медицинского образования',
             image: '/img/news/news2.jpg',
+            images: ['/img/news/news2.jpg'],
             date: '2025-04-28',
             url: '/news/2'
           }
@@ -109,10 +111,11 @@ function News() {
                         {latestNews.slice(0, 10).map((news, index) => (
                             <div key={news.id || index} className="px-2">
                                 <News_chlank
-                                    date={new Date(news.publish_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                    date={news.date || new Date(news.publish_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}
                                     description={news.title}
                                     slug={news.slug}
                                     image={news.image}
+                                    images={news.images || [news.image]}
                                 />
                             </div>
                         ))}

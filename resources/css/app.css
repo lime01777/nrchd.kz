@@ -1,9 +1,12 @@
+/* Import translation styles */
+@import 'translation.css';
+
+/* Import news slider styles */
+@import 'news-slider.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import translation styles */
-@import 'translation.css';
 
 /* Global font family setting */
 @layer base {

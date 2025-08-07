@@ -112,6 +112,17 @@ class NewsController extends Controller
                 }, $item->images);
             }
             
+            // Если main_image есть, но его нет в массиве images, добавляем его
+            if (!empty($item->main_image) && (!is_array($item->images) || empty($item->images))) {
+                $mainImageUrl = $this->getFullImageUrl($item->main_image);
+                $item->images = [$mainImageUrl];
+            } elseif (!empty($item->main_image) && is_array($item->images)) {
+                $mainImageUrl = $this->getFullImageUrl($item->main_image);
+                if (!in_array($mainImageUrl, $item->images)) {
+                    array_unshift($item->images, $mainImageUrl);
+                }
+            }
+            
             return $item;
         });
 
@@ -157,6 +168,17 @@ class NewsController extends Controller
                 return $this->getFullImageUrl($img);
             }, $news->images);
         }
+        
+        // Если main_image есть, но его нет в массиве images, добавляем его
+        if (!empty($news->main_image) && (!is_array($news->images) || empty($news->images))) {
+            $mainImageUrl = $this->getFullImageUrl($news->main_image);
+            $news->images = [$mainImageUrl];
+        } elseif (!empty($news->main_image) && is_array($news->images)) {
+            $mainImageUrl = $this->getFullImageUrl($news->main_image);
+            if (!in_array($mainImageUrl, $news->images)) {
+                array_unshift($news->images, $mainImageUrl);
+            }
+        }
 
         // Получаем связанные новости той же категории
         $relatedNews = News::where('category', $news->category)
@@ -201,6 +223,11 @@ class NewsController extends Controller
     public function getLatestNews(Request $request)
     {
         $limit = $request->input('limit', 10);
+        
+        Log::info('API getLatestNews called', [
+            'limit' => $limit,
+            'request_headers' => $request->headers->all()
+        ]);
         
         $news = News::where('status', 'Опубликовано')
             ->orderBy('publish_date', 'desc')
@@ -249,17 +276,43 @@ class NewsController extends Controller
             // Преобразуем путь в полный URL
             $fullImageUrl = $this->getFullImageUrl($imagePath);
             
+            // Преобразуем все изображения в массиве
+            $transformedImages = [];
+            if (is_array($item->images) && !empty($item->images)) {
+                $transformedImages = array_map(function($img) {
+                    return $this->getFullImageUrl($img);
+                }, $item->images);
+            } else {
+                // Если нет массива изображений, используем главное изображение
+                $transformedImages = [$fullImageUrl];
+            }
+            
+            // Если main_image есть, но его нет в массиве images, добавляем его
+            if (!empty($item->main_image) && !in_array($item->main_image, $transformedImages)) {
+                $mainImageUrl = $this->getFullImageUrl($item->main_image);
+                if (!in_array($mainImageUrl, $transformedImages)) {
+                    array_unshift($transformedImages, $mainImageUrl);
+                }
+            }
+            
             // Создаем новый объект с нужными полями
             return [
                 'id' => $item->id,
                 'title' => $item->title,
                 'description' => $item->title, // Используем заголовок как описание
                 'slug' => $item->slug,
-                'date' => $item->publish_date ? $item->publish_date->format('Y-m-d') : null,
+                'date' => $item->formatted_publish_date,
                 'image' => $fullImageUrl,
+                'images' => $transformedImages,
                 'url' => route('news.show', $item->slug)
             ];
         });
+        
+        // Логируем финальный результат
+        Log::info('Final API response', [
+            'transformed_count' => $transformedNews->count(),
+            'first_transformed' => $transformedNews->first()
+        ]);
         
         return response()->json($transformedNews);
     }

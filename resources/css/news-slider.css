@@ -1,0 +1,96 @@
+/* Стили для слайдера новостей */
+
+/* Плавные переходы для изображений */
+.news-slider-image {
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* Анимация для точек индикатора */
+.news-slider-dot {
+  transition: all 0.3s ease-in-out;
+}
+
+.news-slider-dot:hover {
+  transform: scale(1.2);
+}
+
+/* Стили для счетчика изображений */
+.news-slider-counter {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Стили для заглушки изображения */
+.news-slider-placeholder {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+}
+
+/* Анимация загрузки */
+.news-slider-loading {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
+
+/* Стили для мобильных устройств */
+@media (max-width: 768px) {
+  .news-slider-dot {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .news-slider-counter {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+/* Стили для планшетов */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .news-slider-dot {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+/* Стили для больших экранов */
+@media (min-width: 1025px) {
+  .news-slider-dot {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* Стили для темной темы (если понадобится) */
+@media (prefers-color-scheme: dark) {
+  .news-slider-placeholder {
+    background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+  }
+  
+  .news-slider-counter {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Стили для фокуса (доступность) */
+.news-slider-dot:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Стили для hover эффектов */
+.news-slider-container:hover .news-slider-counter {
+  opacity: 1;
+}
+
+.news-slider-counter {
+  opacity: 0.8;
+  transition: opacity 0.3s ease-in-out;
+}

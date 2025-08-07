@@ -73,7 +73,7 @@ class NewsController extends Controller
             'category.*' => 'string',
             'status' => 'required|string|in:Черновик,Опубликовано,Запланировано',
             'publishDate' => 'nullable|date',
-            'images' => 'nullable|array|max:18',
+            'images' => 'nullable|array',
             'images.*' => 'nullable',
             'main_image' => 'nullable',
         ]);
@@ -91,45 +91,45 @@ class NewsController extends Controller
         Log::info('Данные запроса при создании новости', [
             'has_images' => $request->has('images'),
             'images_files' => $request->hasFile('images'),
-            'main_image' => $request->input('main_image')
+            'main_image' => $request->input('main_image'),
+            'images_input' => $request->input('images'),
+            'all_data' => $request->all()
         ]);
 
         // Обработка изображений
         $imagePaths = [];
         
-        // Проверяем, есть ли в запросе изображения
-        if ($request->has('images')) {
-            // Проверяем, являются ли изображения файлами
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $key => $img) {
-                    if ($img && $img->isValid()) {
-                        // Генерируем уникальное имя файла
-                        $filename = time() . '_' . $key . '.' . $img->getClientOriginalExtension();
-                        
-                        // Сохраняем файл
-                        $img->storeAs('news', $filename, 'public');
-                        $path = '/storage/news/' . $filename;
-                        $imagePaths[] = $path;
-                        
-                        Log::info('Загружен файл изображения', ['path' => $path]);
-                    }
+        // Обрабатываем файлы изображений (если есть)
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $key => $img) {
+                if ($img && $img->isValid()) {
+                    // Генерируем уникальное имя файла
+                    $filename = time() . '_' . $key . '.' . $img->getClientOriginalExtension();
+                    
+                    // Сохраняем файл
+                    $img->storeAs('news', $filename, 'public');
+                    $path = '/storage/news/' . $filename;
+                    $imagePaths[] = $path;
+                    
+                    Log::info('Загружен файл изображения', ['path' => $path]);
                 }
-            } else {
-                // Обработка строковых URL изображений (из библиотеки или при редактировании)
-                $inputImages = $request->input('images');
-                if (is_array($inputImages)) {
-                    foreach ($inputImages as $img) {
-                        if (is_string($img) && !in_array($img, $imagePaths)) {
-                            $imagePaths[] = $img;
-                            Log::info('Добавлен URL изображения', ['url' => $img]);
-                        }
-                    }
+            }
+        }
+        
+        // Обрабатываем URL изображений из библиотеки или уже загруженные
+        $inputImages = $request->input('images');
+        if (is_array($inputImages)) {
+            foreach ($inputImages as $img) {
+                if (is_string($img) && !empty($img) && !in_array($img, $imagePaths)) {
+                    $imagePaths[] = $img;
+                    Log::info('Добавлен URL изображения', ['url' => $img]);
                 }
             }
         }
         
         // Обработка главного изображения
         $mainImage = $request->input('main_image');
+        
         // Если главное изображение не выбрано, но есть другие изображения, выбираем первое
         if (empty($mainImage) && !empty($imagePaths)) {
             $mainImage = $imagePaths[0];
@@ -139,6 +139,13 @@ class NewsController extends Controller
         if ($mainImage && !in_array($mainImage, $imagePaths) && !empty($imagePaths)) {
             $mainImage = $imagePaths[0];
         }
+        
+        // Логируем информацию о главном изображении
+        Log::info('Обработка главного изображения при создании', [
+            'main_image_input' => $request->input('main_image'),
+            'main_image_final' => $mainImage,
+            'image_paths' => $imagePaths
+        ]);
 
         // Создаем новую запись
         $news = new News();
@@ -171,6 +178,16 @@ class NewsController extends Controller
     {
         $news = News::findOrFail($id);
 
+        // Логируем данные новости для отладки
+        Log::info('Данные новости для редактирования', [
+            'id' => $news->id,
+            'title' => $news->title,
+            'images' => $news->images,
+            'main_image' => $news->main_image,
+            'images_type' => gettype($news->images),
+            'main_image_type' => gettype($news->main_image)
+        ]);
+
         return Inertia::render('Admin/News/Edit', [
             'news' => [
                 'id' => $news->id,
@@ -179,7 +196,7 @@ class NewsController extends Controller
                 'content' => $news->content,
                 'category' => $news->category,
                 'status' => $news->status,
-                'publishDate' => $news->publish_date ? $news->publish_date->format('Y-m-d') : null,
+                'publishDate' => $news->formatted_publish_date,
                 'images' => $news->images,
                 'main_image' => $news->main_image,
             ],
@@ -201,8 +218,10 @@ class NewsController extends Controller
             'category.*' => 'string',
             'status' => 'required|string|in:Черновик,Опубликовано,Запланировано',
             'publishDate' => 'nullable|date',
-            'images' => 'nullable|array|max:18',
+            'images' => 'nullable|array',
             'images.*' => 'nullable',
+            'image_files' => 'nullable|array',
+            'image_files.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'main_image' => 'nullable',
         ]);
 
@@ -223,7 +242,8 @@ class NewsController extends Controller
             'has_images' => $request->has('images'),
             'images_input' => $request->input('images'),
             'images_files' => $request->hasFile('images') ? 'есть файлы' : 'нет файлов',
-            'main_image' => $request->input('main_image')
+            'main_image' => $request->input('main_image'),
+            'all_data' => $request->all()
         ]);
 
         // Проверяем наличие директории для хранения изображений
@@ -234,39 +254,37 @@ class NewsController extends Controller
         // Обработка изображений
         $imagePaths = [];
         
-        // Проверяем, есть ли в запросе изображения
-        if ($request->has('images')) {
-            // Проверяем, являются ли изображения файлами
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $key => $img) {
-                    if ($img && $img->isValid()) {
-                        // Генерируем уникальное имя файла
-                        $filename = time() . '_' . $key . '.' . $img->getClientOriginalExtension();
-                        
-                        // Сохраняем файл
-                        $img->storeAs('news', $filename, 'public');
-                        $path = '/storage/news/' . $filename;
-                        $imagePaths[] = $path;
-                        
-                        Log::info('Загружен файл изображения', ['path' => $path]);
-                    }
+        // Обрабатываем файлы изображений (если есть)
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $key => $img) {
+                if ($img && $img->isValid()) {
+                    // Генерируем уникальное имя файла
+                    $filename = time() . '_' . $key . '.' . $img->getClientOriginalExtension();
+                    
+                    // Сохраняем файл
+                    $img->storeAs('news', $filename, 'public');
+                    $path = '/storage/news/' . $filename;
+                    $imagePaths[] = $path;
+                    
+                    Log::info('Загружен файл изображения', ['path' => $path]);
                 }
-            } else {
-                // Обработка строковых URL изображений (из библиотеки или при редактировании)
-                $inputImages = $request->input('images');
-                if (is_array($inputImages)) {
-                    foreach ($inputImages as $img) {
-                        if (is_string($img) && !in_array($img, $imagePaths)) {
-                            $imagePaths[] = $img;
-                            Log::info('Добавлен URL изображения', ['url' => $img]);
-                        }
-                    }
+            }
+        }
+        
+        // Обрабатываем URL изображений из библиотеки или уже загруженные
+        $inputImages = $request->input('images');
+        if (is_array($inputImages)) {
+            foreach ($inputImages as $img) {
+                if (is_string($img) && !empty($img) && !in_array($img, $imagePaths)) {
+                    $imagePaths[] = $img;
+                    Log::info('Добавлен URL изображения', ['url' => $img]);
                 }
             }
         }
         
         // Обработка главного изображения
         $mainImage = $request->input('main_image');
+        
         // Если главное изображение не выбрано, но есть другие изображения, выбираем первое
         if (empty($mainImage) && !empty($imagePaths)) {
             $mainImage = $imagePaths[0];
@@ -276,6 +294,13 @@ class NewsController extends Controller
         if ($mainImage && !in_array($mainImage, $imagePaths) && !empty($imagePaths)) {
             $mainImage = $imagePaths[0];
         }
+        
+        // Логируем информацию о главном изображении
+        Log::info('Обработка главного изображения при обновлении', [
+            'main_image_input' => $request->input('main_image'),
+            'main_image_final' => $mainImage,
+            'image_paths' => $imagePaths
+        ]);
 
         // Удаляем старые файлы, которые больше не используются
         if ($news->images) {
@@ -431,6 +456,32 @@ class NewsController extends Controller
             'content_length' => strlen($request->input('content')),
             'images' => $processedImages,
             'main_image' => $request->input('main_image'),
+        ]);
+    }
+
+    /**
+     * Тестовый метод для проверки загрузки изображений
+     */
+    public function testUpload(Request $request)
+    {
+        Log::info('Тестовый запрос загрузки изображений', [
+            'all_data' => $request->all(),
+            'has_images' => $request->has('images'),
+            'images_input' => $request->input('images'),
+            'main_image' => $request->input('main_image'),
+            'files' => $request->allFiles()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Тестовые данные получены',
+            'data' => [
+                'title' => $request->input('title'),
+                'content' => $request->input('content'),
+                'images' => $request->input('images'),
+                'main_image' => $request->input('main_image'),
+                'files_count' => count($request->allFiles())
+            ]
         ]);
     }
 }

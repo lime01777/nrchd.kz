@@ -79,6 +79,9 @@ Route::post('/forms/service', [\App\Http\Controllers\FormController::class, 'ser
 // Маршрут для получения последних новостей
 Route::get('/latest-news', [\App\Http\Controllers\NewsController::class, 'getLatestNews']);
 
+// Маршрут для получения изображений из библиотеки
+Route::get('/library-images', [\App\Http\Controllers\ImageLibraryController::class, 'getImages']);
+
 Route::post('/editor-upload', function (Request $request) {
     if ($request->hasFile('image')) {
         $file = $request->file('image');

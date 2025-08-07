@@ -2,6 +2,7 @@ import { Head } from '@inertiajs/react';
 import React from 'react';
 import LayoutNews from '@/Layouts/LayoutNews';
 import { Link } from '@inertiajs/react';
+import NewsSliderWithMain from '@/Components/NewsSliderWithMain';
 
 export default function NewsShow({ news, relatedNews }) {
   if (!news) {
@@ -18,6 +19,9 @@ export default function NewsShow({ news, relatedNews }) {
     );
   }
 
+  // Определяем изображения для отображения
+  const displayImages = news.images && news.images.length > 0 ? news.images : (news.image ? [news.image] : []);
+
   return (
     <>
       <Head title={news.title} meta={[{ name: 'description', content: news.title + ' — новость на официальном сайте ННЦРЗ.' }]} />
@@ -33,9 +37,19 @@ export default function NewsShow({ news, relatedNews }) {
           </div>
 
           <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-            {news.image && (
-              <div className="w-full h-64 overflow-hidden">
-                <img src={news.image} alt={news.title} className="w-full h-full object-cover" />
+            {/* Слайдер изображений */}
+            {displayImages.length > 0 && (
+              <div className="w-full h-96 overflow-hidden">
+                <NewsSliderWithMain 
+                  images={displayImages}
+                  mainImage={news.main_image}
+                  className="h-96"
+                  height="384px"
+                  showDots={true}
+                  showCounter={true}
+                  autoPlay={true}
+                  interval={3000}
+                />
               </div>
             )}
 
@@ -51,7 +65,7 @@ export default function NewsShow({ news, relatedNews }) {
                   <svg className="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                   </svg>
-                  {news.category}
+                  {Array.isArray(news.category) ? news.category.join(', ') : news.category}
                 </span>
               </div>
 
@@ -92,7 +106,19 @@ export default function NewsShow({ news, relatedNews }) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {relatedNews.map(item => (
                   <div key={item.id} className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                    {item.image && (
+                    {item.images && item.images.length > 0 ? (
+                      <div className="h-40 overflow-hidden">
+                        <NewsImageSlider 
+                          images={item.images}
+                          className="h-40"
+                          height="192px"
+                          showDots={true}
+                          showCounter={true}
+                          autoPlay={true}
+                          interval={3000}
+                        />
+                      </div>
+                    ) : item.image && (
                       <div className="h-40 overflow-hidden">
                         <img 
                           src={item.image} 
