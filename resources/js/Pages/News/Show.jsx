@@ -42,7 +42,6 @@ export default function NewsShow({ news, relatedNews }) {
               <div className="w-full h-96 overflow-hidden">
                 <NewsSliderWithMain 
                   images={displayImages}
-                  mainImage={news.main_image}
                   className="h-96"
                   height="384px"
                   showDots={true}

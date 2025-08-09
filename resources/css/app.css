@@ -4,6 +4,9 @@
 /* Import news slider styles */
 @import 'news-slider.css';
 
+/* Import modern editor styles */
+@import 'modern-editor.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

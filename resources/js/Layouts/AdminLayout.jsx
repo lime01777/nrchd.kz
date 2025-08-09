@@ -132,7 +132,7 @@ export default function AdminLayout({ children, title }) {
         </div>
       </div>
 
-      <div className="md:pl-64 flex flex-col flex-1">
+      <div className="md:pl-64 flex flex-col flex-1 h-screen overflow-hidden">
         <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">
           <button
             type="button"
@@ -158,8 +158,8 @@ export default function AdminLayout({ children, title }) {
           </div>
         </div>
 
-        <main className="flex-1">
-          <div className="py-6">
+        <main className="flex-1 overflow-y-auto">
+          <div className="py-6 pb-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
               {children}
             </div>

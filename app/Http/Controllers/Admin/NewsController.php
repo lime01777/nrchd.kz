@@ -90,8 +90,11 @@ class NewsController extends Controller
         // Логирование для отладки
         Log::info('Данные запроса при создании новости', [
             'has_images' => $request->has('images'),
-            'images_files' => $request->hasFile('images'),
-            'main_image' => $request->input('main_image'),
+            'images_files' => $request->hasFile('image_files'),
+            'title' => $request->input('title'),
+            'content' => $request->input('content'),
+            'category' => $request->input('category'),
+            'status' => $request->input('status'),
             'images_input' => $request->input('images'),
             'all_data' => $request->all()
         ]);
@@ -100,8 +103,8 @@ class NewsController extends Controller
         $imagePaths = [];
         
         // Обрабатываем файлы изображений (если есть)
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $key => $img) {
+        if ($request->hasFile('image_files')) {
+            foreach ($request->file('image_files') as $key => $img) {
                 if ($img && $img->isValid()) {
                     // Генерируем уникальное имя файла
                     $filename = time() . '_' . $key . '.' . $img->getClientOriginalExtension();
@@ -127,23 +130,8 @@ class NewsController extends Controller
             }
         }
         
-        // Обработка главного изображения
-        $mainImage = $request->input('main_image');
-        
-        // Если главное изображение не выбрано, но есть другие изображения, выбираем первое
-        if (empty($mainImage) && !empty($imagePaths)) {
-            $mainImage = $imagePaths[0];
-        }
-        
-        // Проверяем, существует ли главное изображение в списке изображений
-        if ($mainImage && !in_array($mainImage, $imagePaths) && !empty($imagePaths)) {
-            $mainImage = $imagePaths[0];
-        }
-        
-        // Логируем информацию о главном изображении
-        Log::info('Обработка главного изображения при создании', [
-            'main_image_input' => $request->input('main_image'),
-            'main_image_final' => $mainImage,
+        // Логируем информацию об изображениях
+        Log::info('Обработка изображений при создании', [
             'image_paths' => $imagePaths
         ]);
 
@@ -157,7 +145,6 @@ class NewsController extends Controller
         $news->publish_date = $validated['publishDate'] ?? null;
         // Сохраняем массив путей к изображениям в JSON-поле images
         $news->images = $imagePaths;
-        $news->main_image = $mainImage;
         $news->save();
         
         // Логируем результат
@@ -241,8 +228,11 @@ class NewsController extends Controller
         Log::info('Данные запроса при обновлении новости', [
             'has_images' => $request->has('images'),
             'images_input' => $request->input('images'),
-            'images_files' => $request->hasFile('images') ? 'есть файлы' : 'нет файлов',
-            'main_image' => $request->input('main_image'),
+            'images_files' => $request->hasFile('image_files') ? 'есть файлы' : 'нет файлов',
+            'title' => $request->input('title'),
+            'content' => $request->input('content'),
+            'category' => $request->input('category'),
+            'status' => $request->input('status'),
             'all_data' => $request->all()
         ]);
 
@@ -255,8 +245,8 @@ class NewsController extends Controller
         $imagePaths = [];
         
         // Обрабатываем файлы изображений (если есть)
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $key => $img) {
+        if ($request->hasFile('image_files')) {
+            foreach ($request->file('image_files') as $key => $img) {
                 if ($img && $img->isValid()) {
                     // Генерируем уникальное имя файла
                     $filename = time() . '_' . $key . '.' . $img->getClientOriginalExtension();
@@ -282,23 +272,8 @@ class NewsController extends Controller
             }
         }
         
-        // Обработка главного изображения
-        $mainImage = $request->input('main_image');
-        
-        // Если главное изображение не выбрано, но есть другие изображения, выбираем первое
-        if (empty($mainImage) && !empty($imagePaths)) {
-            $mainImage = $imagePaths[0];
-        }
-        
-        // Проверяем, существует ли главное изображение в списке изображений
-        if ($mainImage && !in_array($mainImage, $imagePaths) && !empty($imagePaths)) {
-            $mainImage = $imagePaths[0];
-        }
-        
-        // Логируем информацию о главном изображении
-        Log::info('Обработка главного изображения при обновлении', [
-            'main_image_input' => $request->input('main_image'),
-            'main_image_final' => $mainImage,
+        // Логируем информацию об изображениях
+        Log::info('Обработка изображений при обновлении', [
             'image_paths' => $imagePaths
         ]);
 
@@ -322,7 +297,6 @@ class NewsController extends Controller
         $news->status = $validated['status'];
         $news->publish_date = $validated['publishDate'] ?? null;
         $news->images = $imagePaths;
-        $news->main_image = $mainImage;
         $news->save();
 
         return redirect()->route('admin.news')->with('success', 'Новость успешно обновлена');

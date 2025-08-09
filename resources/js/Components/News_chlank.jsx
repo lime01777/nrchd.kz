@@ -12,7 +12,6 @@ function News_chlank({ date, description, slug, image, images = [] }) {
         <div className="h-40 overflow-hidden rounded-t-lg">
           <NewsSliderWithMain 
             images={displayImages}
-            mainImage={image}
             className="h-40"
             height="160px"
             showDots={true}

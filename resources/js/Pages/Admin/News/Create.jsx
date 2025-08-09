@@ -1,9 +1,8 @@
 import React, { useState, useRef } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
-import Select from 'react-select';
-import AdvancedImageUploader from '@/Components/AdvancedImageUploader';
-import SimpleRichEditor from '@/Components/SimpleRichEditor';
+import CompactImageGallery from '@/Components/CompactImageGallery';
+import ModernContentEditor from '@/Components/ModernContentEditor';
 
 const DEFAULT_CATEGORIES = [
   'Общие',
@@ -24,7 +23,6 @@ export default function NewsCreate() {
     category: [],
     content: '',
     images: [],
-    main_image: null,
     status: 'Черновик',
     publishDate: new Date().toISOString().substr(0, 10),
   });
@@ -32,8 +30,8 @@ export default function NewsCreate() {
   const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [newCategory, setNewCategory] = useState('');
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [images, setImages] = useState([]);
-  const [mainImage, setMainImage] = useState(null);
 
   // Обработчик изменения изображений
   const handleImagesChange = (newImages) => {
@@ -57,19 +55,41 @@ export default function NewsCreate() {
     setData('image_files', files); // Файлы для загрузки
   };
 
-  // Обработчик изменения главного изображения
-  const handleMainImageChange = (newMainImage) => {
-    console.log('Create - изменение главного изображения:', newMainImage);
-    setMainImage(newMainImage);
-    setData('main_image', newMainImage);
+
+
+  // Категории для выпадающего списка
+  const categoryOptions = categories.map((cat) => ({ value: cat, label: cat }));
+  
+  // Обработка изменения категории
+  const handleCategoryChange = (category, checked) => {
+    let updated;
+    if (checked) {
+      updated = [...selectedCategories, category];
+    } else {
+      updated = selectedCategories.filter(cat => cat !== category);
+    }
+    setSelectedCategories(updated);
+    setData('category', updated);
   };
 
-  // Категории для react-select
-  const categoryOptions = categories.map((cat) => ({ value: cat, label: cat }));
-  const handleCategorySelect = (selected) => {
-    const values = selected ? selected.map((opt) => opt.value) : [];
-    setSelectedCategories(values);
-    setData('category', values);
+  // Выбрать все категории
+  const handleSelectAll = () => {
+    const allCategories = categories.map(cat => cat);
+    setSelectedCategories(allCategories);
+    setData('category', allCategories);
+  };
+
+  // Снять выбор со всех категорий
+  const handleDeselectAll = () => {
+    setSelectedCategories([]);
+    setData('category', []);
+  };
+
+  // Инвертировать выбор
+  const handleInvertSelection = () => {
+    const inverted = categories.filter(cat => !selectedCategories.includes(cat));
+    setSelectedCategories(inverted);
+    setData('category', inverted);
   };
 
   // Добавление новой категории
@@ -82,6 +102,20 @@ export default function NewsCreate() {
       setNewCategory('');
     }
   };
+
+  // Закрытие выпадающего списка при клике вне его
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showCategoryDropdown && !event.target.closest('.category-dropdown')) {
+        setShowCategoryDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showCategoryDropdown]);
 
   // Сохранение
   const handleSubmit = (e) => {
@@ -113,18 +147,6 @@ export default function NewsCreate() {
       
       // Важно! Добавляем изображения в данные формы
       setData('images', validImages);
-      
-      // Проверка главного изображения
-      if (mainImage && (typeof mainImage === 'string' || (mainImage instanceof File && mainImage.size > 0))) {
-        setData('main_image', mainImage);
-      } else if (validImages.length > 0) {
-        // Если главное изображение недействительно, используем первое доступное
-        setData('main_image', validImages[0]);
-        setMainImage(validImages[0]);
-      } else {
-        // Если нет действительных изображений, устанавливаем null
-        setData('main_image', null);
-      }
   
       if (!data.content || data.content.replace(/<[^>]*?>/g, '').trim().length < 10) {
         alert('Содержимое должно содержать минимум 10 символов');
@@ -154,18 +176,11 @@ export default function NewsCreate() {
       // Добавляем изображения как файлы или строки
       validImages.forEach((img, index) => {
         if (img instanceof File) {
-          formData.append(`images[${index}]`, img);
+          formData.append(`image_files[${index}]`, img);
         } else if (typeof img === 'string') {
           formData.append(`images[${index}]`, img);
         }
       });
-      
-      // Добавляем главное изображение
-      if (mainImage instanceof File) {
-        formData.append('main_image', mainImage);
-      } else if (typeof mainImage === 'string') {
-        formData.append('main_image', mainImage);
-      }
       
       // Отправляем форму с FormData
       post(route('admin.news.store'), formData, { 
@@ -212,7 +227,7 @@ export default function NewsCreate() {
       </div>
 
       <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="min-h-full">
           <div className="px-4 py-5 sm:p-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-6">
               {/* Заголовок */}
@@ -237,35 +252,91 @@ export default function NewsCreate() {
                 )}
               </div>
 
-              {/* Категории (react-select + добавление) */}
+              {/* Категории (выпадающий список с чекбоксами) */}
               <div className="sm:col-span-6">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Категории *</label>
-                <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center mb-2">
-                  <div className="w-full sm:w-2/3">
-                    <Select
-                      isMulti
-                      options={categoryOptions}
-                      value={categoryOptions.filter(opt => selectedCategories.includes(opt.value))}
-                      onChange={handleCategorySelect}
-                      classNamePrefix="react-select"
-                      placeholder="Выберите категории..."
-                      styles={{
-                        control: (base) => ({ ...base, minHeight: '42px', borderRadius: '8px', borderColor: '#cbd5e1', boxShadow: 'none' }),
-                        multiValue: (base) => ({ ...base, background: '#e0e7ff', color: '#3730a3' }),
-                        option: (base, state) => ({ ...base, background: state.isFocused ? '#f3f4f6' : 'white', color: '#1e293b' })
-                      }}
-                    />
-                  </div>
-                  <div className="flex gap-2 items-center w-full sm:w-auto">
-                  <input
-                    type="text"
-                      value={newCategory}
-                      onChange={e => setNewCategory(e.target.value)}
-                      placeholder="Новая категория"
-                      className="border rounded px-2 py-1 text-sm"
-                    />
-                    <button type="button" onClick={handleAddCategory} className="px-2 py-1 bg-blue-500 text-white rounded text-sm">Добавить</button>
-              </div>
+                <div className="relative category-dropdown">
+                  <button
+                    type="button"
+                    onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+                    className="w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded-md bg-white text-left text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <span className={selectedCategories.length > 0 ? 'text-gray-900' : 'text-gray-500'}>
+                      {selectedCategories.length > 0 
+                        ? `Выбрано: ${selectedCategories.length} категорий` 
+                        : 'Выберите категории...'
+                      }
+                    </span>
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  {showCategoryDropdown && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                      <div className="p-2">
+                        {/* Кнопки управления */}
+                        <div className="flex gap-2 mb-3 pb-2 border-b border-gray-200">
+                          <button
+                            type="button"
+                            onClick={handleSelectAll}
+                            className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                          >
+                            Выбрать все
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleDeselectAll}
+                            className="px-2 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700"
+                          >
+                            Снять выбор
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleInvertSelection}
+                            className="px-2 py-1 text-xs bg-purple-500 text-white rounded hover:bg-purple-600"
+                          >
+                            Инвертировать
+                          </button>
+                        </div>
+                        
+                        {/* Список категорий */}
+                        <div className="space-y-1">
+                          {categoryOptions.map((category) => (
+                            <label key={category.value} className="flex items-center p-2 hover:bg-gray-50 rounded cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={selectedCategories.includes(category.value)}
+                                onChange={(e) => handleCategoryChange(category.value, e.target.checked)}
+                                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                              />
+                              <span className="ml-2 text-sm text-gray-700">{category.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                        
+                        {/* Добавление новой категории */}
+                        <div className="mt-3 pt-2 border-t border-gray-200">
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={newCategory}
+                              onChange={e => setNewCategory(e.target.value)}
+                              placeholder="Новая категория"
+                              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            />
+                            <button 
+                              type="button" 
+                              onClick={handleAddCategory} 
+                              className="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600"
+                            >
+                              Добавить
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 {errors.category && (
                   <p className="mt-2 text-sm text-red-600">{errors.category}</p>
@@ -316,32 +387,28 @@ export default function NewsCreate() {
 
               {/* Галерея изображений */}
               <div className="sm:col-span-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
                   Галерея изображений
                   <span className="text-xs text-gray-500 ml-2">
-                    - Перетащите изображения или выберите из папки
+                    - Добавьте до 10 изображений для слайдера
                   </span>
                 </label>
-                <AdvancedImageUploader
+                <CompactImageGallery
                   images={images}
                   setImages={handleImagesChange}
-                  mainImage={mainImage}
-                  setMainImage={handleMainImageChange}
-                  maxImages={18}
+                  maxImages={10}
                 />
               </div>
 
-              {/* Содержимое (React Quill) */}
+              {/* Содержимое */}
               <div className="sm:col-span-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Содержимое *</label>
-                <div className="bg-white rounded-lg shadow-sm min-h-[220px] transition-all">
-                  <SimpleRichEditor
-                    value={data.content}
-                    onChange={handleQuillChange}
-                    placeholder="Введите текст новости..."
-                    minHeight="180px"
-                  />
-                </div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">Содержимое *</label>
+                <ModernContentEditor
+                  value={data.content}
+                  onChange={handleQuillChange}
+                  placeholder="Начните писать содержимое новости..."
+                  minHeight="320px"
+                />
                 {errors.content && (
                   <p className="mt-2 text-sm text-red-600">{errors.content}</p>
                 )}

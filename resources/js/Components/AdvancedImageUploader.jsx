@@ -3,14 +3,12 @@ import { useDropzone } from 'react-dropzone';
 import NewsSliderWithMain from './NewsSliderWithMain';
 
 /**
- * Продвинутый компонент загрузки изображений
+ * Продвинутый компонент загрузки изображений для слайдера
  * Поддерживает drag & drop, выбор из папки, выбор из библиотеки, превью
  */
 export default function AdvancedImageUploader({ 
   images = [], 
   setImages, 
-  mainImage, 
-  setMainImage, 
   maxImages = 18 
 }) {
   const [isDragging, setIsDragging] = useState(false);
@@ -84,10 +82,14 @@ export default function AdvancedImageUploader({
 
   // Обработка drag & drop
   const onDrop = useCallback((acceptedFiles) => {
+    console.log('AdvancedImageUploader - onDrop вызван:', acceptedFiles);
+    
     const newFiles = acceptedFiles.filter(file => 
       file.type.startsWith('image/') && 
       processedImages.length < maxImages
     );
+
+    console.log('AdvancedImageUploader - отфильтрованные файлы:', newFiles);
 
     if (newFiles.length === 0) return;
 
@@ -103,27 +105,25 @@ export default function AdvancedImageUploader({
     const updatedImages = [...processedImages, ...newImageUrls];
     setProcessedImages(updatedImages);
     
+    // Обновляем родительский компонент
     const newImages = updatedImages.map(img => img.file || img.url);
+    console.log('AdvancedImageUploader - обновляем родительский компонент:', newImages);
     setImages(newImages);
-
-    if (!mainImage && newImageUrls.length > 0) {
-      setMainImage(newImageUrls[0].url);
-    }
-  }, [processedImages, setImages, mainImage, setMainImage, maxImages]);
+  }, [processedImages, maxImages, setImages]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp']
     },
-    maxFiles: maxImages - processedImages.length,
     disabled: processedImages.length >= maxImages
   });
 
-  // Обработка выбора файлов через кнопку
+  // Обработка выбора файлов через input
   const handleFileSelect = (event) => {
     const files = Array.from(event.target.files);
     onDrop(files);
+    event.target.value = ''; // Сбрасываем input
   };
 
   // Выбор изображения из библиотеки
@@ -135,19 +135,16 @@ export default function AdvancedImageUploader({
       url: imageUrl,
       name: `Изображение из библиотеки`,
       size: 0,
-      type: 'library'
+      type: 'url'
     };
 
     const updatedImages = [...processedImages, newImage];
     setProcessedImages(updatedImages);
     
+    // Обновляем родительский компонент
     const newImages = updatedImages.map(img => img.file || img.url);
     setImages(newImages);
-
-    if (!mainImage) {
-      setMainImage(imageUrl);
-    }
-
+    
     setShowLibrary(false);
   };
 
@@ -156,27 +153,18 @@ export default function AdvancedImageUploader({
     const updatedImages = processedImages.filter(img => img.id !== imageId);
     setProcessedImages(updatedImages);
     
+    // Обновляем родительский компонент
     const newImages = updatedImages.map(img => img.file || img.url);
     setImages(newImages);
-    
-    if (mainImage && !updatedImages.find(img => img.url === mainImage)) {
-      const newMainImage = updatedImages.length > 0 ? updatedImages[0].url : null;
-      setMainImage(newMainImage);
-    }
-  };
-
-  // Установка главного изображения
-  const setMainImageHandler = (imageUrl) => {
-    setMainImage(imageUrl);
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Drag & Drop зона */}
       <div
         {...getRootProps()}
         className={`
-          border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200 cursor-pointer
+          border-2 border-dashed rounded-lg p-6 text-center transition-all duration-200 cursor-pointer
           ${isDragActive 
             ? 'border-blue-500 bg-blue-50' 
             : 'border-gray-300 hover:border-gray-400 bg-gray-50 hover:bg-gray-100'
@@ -194,9 +182,9 @@ export default function AdvancedImageUploader({
           className="hidden"
         />
         
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="flex justify-center">
-            <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
           </div>
@@ -214,14 +202,14 @@ export default function AdvancedImageUploader({
               >
                 Выбрать файлы
               </button>
-                             <button
-                 type="button"
-                 onClick={openLibrary}
-                 className="text-green-600 hover:text-green-500 font-medium px-4 py-2 border border-green-600 rounded hover:bg-green-50"
-                 disabled={processedImages.length >= maxImages}
-               >
-                 Из библиотеки
-               </button>
+              <button
+                type="button"
+                onClick={openLibrary}
+                className="text-green-600 hover:text-green-500 font-medium px-4 py-2 border border-green-600 rounded hover:bg-green-50"
+                disabled={processedImages.length >= maxImages}
+              >
+                Из библиотеки
+              </button>
             </div>
             <p className="text-xs text-gray-400">
               Поддерживаемые форматы: JPG, PNG, GIF, WEBP (максимум {maxImages} файлов)
@@ -235,36 +223,11 @@ export default function AdvancedImageUploader({
         </div>
       </div>
 
-      {/* Превью главного изображения */}
-      {mainImage && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium text-gray-900">Превью новости</h3>
-          <div className="border rounded-lg overflow-hidden bg-white">
-            <div className="h-48 relative">
-              <img
-                src={mainImage}
-                alt="Превью новости"
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.target.src = '/img/placeholder.jpg';
-                }}
-              />
-              <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">
-                Главное изображение
-              </div>
-            </div>
-            <div className="p-4">
-              <p className="text-sm text-gray-600">Это изображение будет отображаться в карточке новости</p>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Список изображений */}
       {processedImages.length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium text-gray-900">Загруженные изображения</h3>
+            <h3 className="text-base font-medium text-gray-900">Изображения для слайдера</h3>
             <div className="text-sm text-gray-500">
               {processedImages.length} из {maxImages}
             </div>
@@ -274,11 +237,7 @@ export default function AdvancedImageUploader({
             {processedImages.map((image, index) => (
               <div
                 key={image.id}
-                className={`
-                  relative group border rounded-lg overflow-hidden bg-white shadow-sm
-                  ${mainImage === image.url ? 'ring-2 ring-blue-500' : 'hover:shadow-md'}
-                  transition-all duration-200
-                `}
+                className="relative group border rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-all duration-200"
               >
                 <div className="aspect-square relative">
                   <img
@@ -291,13 +250,7 @@ export default function AdvancedImageUploader({
                   />
                   
                   <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 space-y-2">
-                      <button
-                        onClick={() => setMainImageHandler(image.url)}
-                        className="bg-white text-gray-800 px-3 py-1 rounded text-xs font-medium hover:bg-gray-100"
-                      >
-                        {mainImage === image.url ? 'Главное' : 'Сделать главным'}
-                      </button>
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       <button
                         onClick={() => removeImage(image.id)}
                         className="bg-red-500 text-white px-3 py-1 rounded text-xs font-medium hover:bg-red-600"
@@ -306,12 +259,6 @@ export default function AdvancedImageUploader({
                       </button>
                     </div>
                   </div>
-
-                  {mainImage === image.url && (
-                    <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
-                      Главное
-                    </div>
-                  )}
 
                   <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-xs px-1.5 py-0.5 rounded">
                     {index + 1}
@@ -336,14 +283,13 @@ export default function AdvancedImageUploader({
 
       {/* Предварительный просмотр слайдера */}
       {processedImages.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium text-gray-900">Предварительный просмотр слайдера</h3>
-          <div className="h-64 rounded-lg overflow-hidden border">
+        <div className="space-y-3">
+          <h3 className="text-base font-medium text-gray-900">Предварительный просмотр слайдера</h3>
+          <div className="h-48 rounded-lg overflow-hidden border">
             <NewsSliderWithMain
               images={processedImages.map(img => img.url)}
-              mainImage={mainImage}
-              className="h-64"
-              height="256px"
+              className="h-48"
+              height="192px"
               showDots={true}
               showCounter={true}
               autoPlay={true}

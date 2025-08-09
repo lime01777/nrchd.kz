@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import { Link } from '@inertiajs/react';
 import LayoutNews from '@/Layouts/LayoutNews';
+import NewsImageSlider from '@/Components/NewsImageSlider';
 
 export default function NewsIndex({ news, categories, filters }) {
   const { data, setData, get, processing } = useForm({
@@ -77,17 +78,31 @@ export default function NewsIndex({ news, categories, filters }) {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {news.data.map((item) => (
-              <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                {item.image && (
-                  <div className="h-48 overflow-hidden">
-                    <img 
-                      src={item.image} 
-                      alt={item.title} 
-                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                    />
-                  </div>
-                )}
+            {news.data.map((item) => {
+              // Определяем изображения для отображения
+              const displayImages = [];
+              if (item.images && Array.isArray(item.images) && item.images.length > 0) {
+                displayImages.push(...item.images);
+              } else if (item.image) {
+                displayImages.push(item.image);
+              }
+
+              return (
+                <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  {displayImages.length > 0 && (
+                    <div className="h-48 overflow-hidden">
+                      <NewsImageSlider 
+                        images={displayImages}
+                        className="h-48"
+                        height="192px"
+                        showDots={displayImages.length > 1}
+                        showCounter={false}
+                        autoPlay={true}
+                        interval={4000}
+                        alt={item.title}
+                      />
+                    </div>
+                  )}
                 <div className="p-6">
                   <div className="flex justify-between items-center mb-2 text-sm text-gray-600">
                     <span>{new Date(item.publish_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
@@ -106,7 +121,8 @@ export default function NewsIndex({ news, categories, filters }) {
                   </Link>
                 </div>
               </div>
-            ))}
+              )
+            })}
           </div>
         )}
 

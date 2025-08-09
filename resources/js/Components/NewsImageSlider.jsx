@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 /**
  * Специализированный слайдер изображений для новостей
- * Автоматическая прокрутка каждые 3 секунды без стрелок управления
+ * Автоматическая прокрутка каждые 3 секунды без стрелок управления с ожиданием загрузки
  */
 export default function NewsImageSlider({ 
   images = [], 
@@ -14,20 +14,79 @@ export default function NewsImageSlider({
   interval = 3000 // 3 секунды по требованию
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loadedImages, setLoadedImages] = useState(new Set());
+  const [errorImages, setErrorImages] = useState(new Set());
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Автопрокрутка каждые 3 секунды
+  // Фильтруем изображения
+  const validImages = React.useMemo(() => {
+    if (!Array.isArray(images) || images.length === 0) return [];
+    return images.filter(img => img && typeof img === 'string');
+  }, [images]);
+
+  // Обработчик загрузки изображения
+  const handleImageLoad = useCallback((index) => {
+    setLoadedImages(prev => {
+      const newSet = new Set(prev);
+      newSet.add(index);
+      
+      // Проверяем, загружены ли все изображения
+      if (newSet.size >= validImages.length) {
+        setIsLoading(false);
+      }
+      
+      return newSet;
+    });
+  }, [validImages.length]);
+
+  // Обработчик ошибки загрузки изображения
+  const handleImageError = useCallback((index) => {
+    setErrorImages(prev => {
+      const newSet = new Set(prev);
+      newSet.add(index);
+      return newSet;
+    });
+    
+    // Считаем ошибку как "загруженное" изображение для логики завершения загрузки
+    setLoadedImages(prev => {
+      const newSet = new Set(prev);
+      newSet.add(index);
+      
+      // Проверяем, обработаны ли все изображения (загружены или с ошибкой)
+      if (newSet.size >= validImages.length) {
+        setIsLoading(false);
+      }
+      
+      return newSet;
+    });
+  }, [validImages.length]);
+
+  // Сброс состояний при изменении изображений
   useEffect(() => {
-    if (!autoPlay || images.length <= 1) return;
+    setLoadedImages(new Set());
+    setErrorImages(new Set());
+    setIsLoading(false); // Убираем общий индикатор загрузки
+    setCurrentIndex(0);
+  }, [validImages]);
+
+  // Автопрокрутка - запускается для всех изображений
+  useEffect(() => {
+    if (!autoPlay || validImages.length <= 1) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % validImages.length);
     }, interval);
 
     return () => clearInterval(timer);
-  }, [images.length, autoPlay, interval]);
+  }, [validImages.length, autoPlay, interval]);
+
+  // Функция для перехода к определенному слайду
+  const goToSlide = useCallback((index) => {
+    setCurrentIndex(index);
+  }, []);
 
   // Если нет изображений, возвращаем заглушку
-  if (!images || images.length === 0) {
+  if (!validImages || validImages.length === 0) {
     return (
       <div 
         className={`relative overflow-hidden rounded-lg bg-gray-200 flex items-center justify-center ${className}`} 
@@ -44,18 +103,18 @@ export default function NewsImageSlider({
   }
 
   // Если только одно изображение, показываем его без слайдера
-  if (images.length === 1) {
+  if (validImages.length === 1) {
     return (
       <div 
         className={`relative overflow-hidden rounded-lg ${className}`} 
         style={{ height }}
       >
         <img
-          src={images[0]}
+          src={validImages[0]}
           alt="Изображение новости"
           className="w-full h-full object-cover"
           onError={(e) => {
-            console.error('Ошибка загрузки изображения:', images[0]);
+            console.error('Ошибка загрузки изображения:', validImages[0]);
             e.target.onerror = null;
             e.target.src = '/img/placeholder.jpg';
           }}
@@ -63,10 +122,6 @@ export default function NewsImageSlider({
       </div>
     );
   }
-
-  const goToSlide = (index) => {
-    setCurrentIndex(index);
-  };
 
   return (
     <div 
@@ -76,20 +131,50 @@ export default function NewsImageSlider({
       {/* Основное изображение */}
       <div className="relative w-full h-full">
         <img
-          src={images[currentIndex]}
+          src={validImages[currentIndex]}
           alt={`Изображение новости ${currentIndex + 1}`}
-          className="w-full h-full object-cover transition-opacity duration-500"
+          className={`w-full h-full object-cover transition-opacity duration-500 ${
+            loadedImages.has(currentIndex) ? 'opacity-100' : 'opacity-0'
+          }`}
+          onLoad={() => handleImageLoad(currentIndex)}
           onError={(e) => {
-            console.error('Ошибка загрузки изображения:', images[currentIndex]);
+            console.error('Ошибка загрузки изображения:', validImages[currentIndex]);
+            handleImageError(currentIndex);
             e.target.onerror = null;
             e.target.src = '/img/placeholder.jpg';
           }}
         />
         
+        {/* Предварительная загрузка остальных изображений */}
+        {validImages.map((image, index) => 
+          index !== currentIndex && (
+            <img
+              key={index}
+              src={image}
+              alt=""
+              className="hidden"
+              onLoad={() => handleImageLoad(index)}
+              onError={() => handleImageError(index)}
+            />
+          )
+        )}
+        
+        {/* Индикатор ошибки загрузки текущего изображения */}
+        {errorImages.has(currentIndex) && (
+          <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+            <div className="text-center text-gray-500">
+              <svg className="w-6 h-6 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+              </svg>
+              <p className="text-xs">Ошибка</p>
+            </div>
+          </div>
+        )}
+        
         {/* Индикаторы (точки) - только если больше одного изображения */}
-        {showDots && images.length > 1 && (
+        {showDots && validImages.length > 1 && (
           <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 z-10">
-            {images.map((_, index) => (
+            {validImages.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
@@ -106,9 +191,9 @@ export default function NewsImageSlider({
       </div>
 
       {/* Счетчик изображений (опционально) */}
-      {showCounter && images.length > 1 && (
+      {showCounter && validImages.length > 1 && (
         <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-xs z-10">
-          {currentIndex + 1} / {images.length}
+          {currentIndex + 1} / {validImages.length}
         </div>
       )}
     </div>
