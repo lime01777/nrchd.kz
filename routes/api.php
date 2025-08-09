@@ -36,6 +36,9 @@ Route::get('/accordions-for-page', [\App\Http\Controllers\FileController::class,
 // Маршрут для перевода текста через Google Translate API
 Route::post('/translate', [\App\Http\Controllers\FixedTranslationController::class, 'translate']);
 
+// Маршрут для быстрых переводов из БД
+Route::post('/translate-batch', [\App\Http\Controllers\TranslationController::class, 'translateBatch']);
+
 // Test endpoint for the translation API
 Route::post('/test-translation', [\App\Http\Controllers\FixedTranslationController::class, 'testTranslation']);
 

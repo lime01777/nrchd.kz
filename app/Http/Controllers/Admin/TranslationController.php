@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Translation;
 use App\Services\TranslationService;
+use App\Models\StoredTranslation;
+use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -12,235 +13,245 @@ use Inertia\Inertia;
 class TranslationController extends Controller
 {
     /**
-     * Display a listing of the translations.
+     * Показать панель управления переводами
      */
-    public function index(Request $request)
+    public function index()
     {
-        $query = Translation::query();
-        
-        // Filter by group if provided
-        if ($request->has('group')) {
-            $query->where('group', $request->group);
-        }
-        
-        // Filter by search term if provided
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('key', 'like', "%{$search}%")
-                  ->orWhere('ru', 'like', "%{$search}%")
-                  ->orWhere('en', 'like', "%{$search}%")
-                  ->orWhere('kk', 'like', "%{$search}%");
-            });
-        }
-        
-        // Get all unique groups for the dropdown filter
-        $groups = Translation::select('group')->distinct()->pluck('group');
-        
-        // Paginate results
-        $translations = $query->paginate(20);
+        $stats = TranslationService::getTranslationStats();
         
         return Inertia::render('Admin/Translations/Index', [
-            'translations' => $translations,
-            'groups' => $groups,
-            'filters' => $request->only(['search', 'group']),
+            'stats' => $stats,
+            'languages' => ['en', 'kz'],
+            'recentTranslations' => StoredTranslation::latest()
+                                                    ->limit(50)
+                                                    ->get()
+                                                    ->groupBy('target_language')
         ]);
     }
 
     /**
-     * Show the form for creating a new translation.
+     * Запустить массовый перевод всего контента
      */
-    public function create()
+    public function translateAll(Request $request)
     {
-        $groups = Translation::select('group')->distinct()->pluck('group');
-        
-        return Inertia::render('Admin/Translations/Create', [
-            'groups' => $groups,
+        $request->validate([
+            'target_language' => 'required|in:en,kz'
         ]);
+
+        $targetLanguage = $request->target_language;
+        $stats = [
+            'total_found' => 0,
+            'already_translated' => 0,
+            'newly_translated' => 0,
+            'errors' => 0
+        ];
+
+        try {
+            // Собираем тексты из новостей
+            $newsTexts = $this->extractNewsTexts();
+            $stats['total_found'] += count($newsTexts);
+
+            // Собираем тексты из других источников
+            $otherTexts = $this->extractOtherTexts();
+            $stats['total_found'] += count($otherTexts);
+
+            // Объединяем все тексты
+            $allTexts = array_merge($newsTexts, $otherTexts);
+
+            foreach ($allTexts as $text) {
+                // Пропускаем пустые тексты и HTML теги
+                if (empty(trim($text)) || strlen(trim($text)) < 3) {
+                    continue;
+                }
+
+                // Проверяем есть ли уже перевод
+                if (TranslationService::hasTranslation($text, $targetLanguage)) {
+                    $stats['already_translated']++;
+                    continue;
+                }
+
+                // Переводим текст
+                try {
+                    $translated = TranslationService::translate($text, $targetLanguage, url()->current());
+                    if ($translated !== $text) {
+                        $stats['newly_translated']++;
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Ошибка перевода текста: ' . $e->getMessage(), [
+                        'text' => substr($text, 0, 100),
+                        'target_language' => $targetLanguage
+                    ]);
+                    $stats['errors']++;
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Массовый перевод завершен',
+                'stats' => $stats
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Ошибка массового перевода: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Произошла ошибка при массовом переводе: ' . $e->getMessage(),
+                'stats' => $stats
+            ], 500);
+        }
     }
 
     /**
-     * Store a newly created translation.
+     * Извлечь тексты из новостей
      */
-    public function store(Request $request)
+    private function extractNewsTexts(): array
     {
-        $validated = $request->validate([
-            'key' => 'required|string|max:255',
-            'group' => 'required|string|max:255',
-            'ru' => 'required|string',
-            'en' => 'nullable|string',
-            'kk' => 'nullable|string',
-        ]);
+        $texts = [];
         
-        $translation = Translation::updateOrCreate(
-            ['key' => $validated['key'], 'group' => $validated['group']],
-            $validated
+        News::chunk(100, function ($news) use (&$texts) {
+            foreach ($news as $item) {
+                // Заголовки
+                if (!empty($item->title)) {
+                    $texts[] = $item->title;
+                }
+
+                // Контент (очищаем от HTML и берем предложения)
+                if (!empty($item->content)) {
+                    $cleanContent = strip_tags($item->content);
+                    $sentences = preg_split('/[.!?]+/', $cleanContent, -1, PREG_SPLIT_NO_EMPTY);
+                    
+                    foreach ($sentences as $sentence) {
+                        $sentence = trim($sentence);
+                        if (strlen($sentence) > 10) {
+                            $texts[] = $sentence;
+                        }
+                    }
+                }
+
+                // Категории
+                if (is_array($item->category)) {
+                    foreach ($item->category as $category) {
+                        if (!empty($category)) {
+                            $texts[] = $category;
+                        }
+                    }
+                } elseif (!empty($item->category)) {
+                    $texts[] = $item->category;
+                }
+            }
+        });
+
+        return array_unique($texts);
+    }
+
+    /**
+     * Извлечь тексты из других источников (меню, статические тексты и т.д.)
+     */
+    private function extractOtherTexts(): array
+    {
+        // Здесь можно добавить извлечение текстов из других моделей
+        // Пока возвращаем базовые тексты интерфейса
+        return [
+            'Главная',
+            'О центре',
+            'Новости',
+            'Услуги',
+            'Документы',
+            'Контакты',
+            'Поиск',
+            'Читать далее',
+            'Подробнее',
+            'Назад',
+            'Далее',
+            'Сохранить',
+            'Отмена',
+            'Редактировать',
+            'Удалить',
+            'Добавить',
+            'Опубликовано',
+            'Черновик',
+            'Дата публикации',
+            'Категория',
+            'Просмотры',
+            'Администрирование',
+            'Пользователи',
+            'Настройки'
+        ];
+    }
+
+    /**
+     * Получить переводы для конкретной страницы
+     */
+    public function getPageTranslations(Request $request)
+    {
+        $request->validate([
+            'page_url' => 'required|string',
+            'target_language' => 'required|in:en,kz'
+        ]);
+
+        $translations = TranslationService::getPageTranslations(
+            $request->page_url,
+            $request->target_language
         );
-        
-        // Clear cache for this translation
-        Translation::clearCache($validated['key'], $validated['group']);
-        
-        return redirect()->route('admin.translations.index')
-            ->with('success', 'Translation created successfully.');
-    }
 
-    /**
-     * Show the form for editing the specified translation.
-     */
-    public function edit(Translation $translation)
-    {
-        $groups = Translation::select('group')->distinct()->pluck('group');
-        
-        return Inertia::render('Admin/Translations/Edit', [
-            'translation' => $translation,
-            'groups' => $groups,
+        return response()->json([
+            'success' => true,
+            'translations' => $translations
         ]);
     }
 
     /**
-     * Update the specified translation.
+     * Удалить перевод
      */
-    public function update(Request $request, Translation $translation)
+    public function deleteTranslation(Request $request)
     {
-        $validated = $request->validate([
-            'key' => 'required|string|max:255',
-            'group' => 'required|string|max:255',
-            'ru' => 'required|string',
-            'en' => 'nullable|string',
-            'kk' => 'nullable|string',
+        $request->validate([
+            'id' => 'required|exists:stored_translations,id'
         ]);
-        
-        // Check if the key or group has changed
-        $oldKey = $translation->key;
-        $oldGroup = $translation->group;
-        $keyOrGroupChanged = $oldKey !== $validated['key'] || $oldGroup !== $validated['group'];
-        
-        // Update the translation
-        $translation->update($validated);
-        
-        // Clear cache for both the old and new key/group if they have changed
-        Translation::clearCache($validated['key'], $validated['group']);
-        if ($keyOrGroupChanged) {
-            Translation::clearCache($oldKey, $oldGroup);
-        }
-        
-        return redirect()->route('admin.translations.index')
-            ->with('success', 'Translation updated successfully.');
-    }
 
-    /**
-     * Remove the specified translation.
-     */
-    public function destroy(Translation $translation)
-    {
-        // Clear cache before deleting
-        Translation::clearCache($translation->key, $translation->group);
-        
-        $translation->delete();
-        
-        return redirect()->route('admin.translations.index')
-            ->with('success', 'Translation deleted successfully.');
-    }
-
-    /**
-     * Auto-translate missing translations for a specific translation record.
-     */
-    public function autoTranslate(Translation $translation)
-    {
         try {
-            // Make sure we have the Russian text to translate from
-            if (!$translation->ru) {
-                return redirect()->route('admin.translations.edit', $translation)
-                    ->with('error', 'Russian text is required for auto-translation.');
-            }
+            StoredTranslation::destroy($request->id);
             
-            $updated = false;
-            
-            // Auto-translate to English if missing
-            if (!$translation->en) {
-                $translation->en = TranslationService::translateText($translation->ru, 'ru', 'en');
-                $updated = true;
-            }
-            
-            // Auto-translate to Kazakh if missing
-            if (!$translation->kk) {
-                $translation->kk = TranslationService::translateText($translation->ru, 'ru', 'kk');
-                $updated = true;
-            }
-            
-            if ($updated) {
-                $translation->save();
-                
-                // Clear cache for this translation
-                Translation::clearCache($translation->key, $translation->group);
-                
-                return redirect()->route('admin.translations.edit', $translation)
-                    ->with('success', 'Translation auto-translated successfully.');
-            }
-            
-            return redirect()->route('admin.translations.edit', $translation)
-                ->with('info', 'No translations were missing.');
-            
+            return response()->json([
+                'success' => true,
+                'message' => 'Перевод удален'
+            ]);
         } catch (\Exception $e) {
-            Log::error('Error auto-translating: ' . $e->getMessage());
-            
-            return redirect()->route('admin.translations.edit', $translation)
-                ->with('error', 'Failed to auto-translate: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка удаления: ' . $e->getMessage()
+            ], 500);
         }
     }
 
     /**
-     * Auto-translate all missing translations for a specific group.
+     * Обновить перевод
      */
-    public function autoTranslateGroup(Request $request)
+    public function updateTranslation(Request $request)
     {
-        $group = $request->input('group');
-        
-        if (!$group) {
-            return redirect()->route('admin.translations.index')
-                ->with('error', 'Group is required for auto-translation.');
-        }
-        
+        $request->validate([
+            'id' => 'required|exists:stored_translations,id',
+            'translated_text' => 'required|string',
+            'is_verified' => 'boolean'
+        ]);
+
         try {
-            $translations = Translation::where('group', $group)->get();
-            $translatedCount = 0;
+            $translation = StoredTranslation::findOrFail($request->id);
+            $translation->update([
+                'translated_text' => $request->translated_text,
+                'is_verified' => $request->is_verified ?? false
+            ]);
             
-            foreach ($translations as $translation) {
-                if (!$translation->ru) {
-                    continue; // Skip if no Russian text
-                }
-                
-                $updated = false;
-                
-                // Auto-translate to English if missing
-                if (!$translation->en) {
-                    $translation->en = TranslationService::translateText($translation->ru, 'ru', 'en');
-                    $updated = true;
-                }
-                
-                // Auto-translate to Kazakh if missing
-                if (!$translation->kk) {
-                    $translation->kk = TranslationService::translateText($translation->ru, 'ru', 'kk');
-                    $updated = true;
-                }
-                
-                if ($updated) {
-                    $translation->save();
-                    $translatedCount++;
-                }
-            }
-            
-            // Clear cache for the entire group
-            Translation::clearCache(null, $group);
-            
-            return redirect()->route('admin.translations.index', ['group' => $group])
-                ->with('success', "Auto-translated {$translatedCount} translations in group '{$group}'.");
-            
+            return response()->json([
+                'success' => true,
+                'message' => 'Перевод обновлен'
+            ]);
         } catch (\Exception $e) {
-            Log::error('Error auto-translating group: ' . $e->getMessage());
-            
-            return redirect()->route('admin.translations.index', ['group' => $group])
-                ->with('error', 'Failed to auto-translate group: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка обновления: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

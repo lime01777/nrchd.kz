@@ -2,156 +2,194 @@
 
 namespace App\Services;
 
-use App\Models\Translation;
+use App\Models\StoredTranslation;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Stichoza\GoogleTranslate\GoogleTranslate;
+use Exception;
 
 class TranslationService
 {
-    /**
-     * Get translations for a specific page or component
-     *
-     * @param string $group The group/page name
-     * @param string $locale The locale code (ru, en, kk)
-     * @return array The translations
-     */
-    public static function getForPage(string $group, string $locale = 'ru'): array
-    {
-        return Translation::getGroupTranslations($group, $locale);
-    }
+    protected static $supportedLanguages = ['ru', 'en', 'kz'];
+    protected static $sourceLanguage = 'ru';
 
     /**
-     * Get a specific translation by key
+     * Быстрый перевод текста с использованием БД кэша
      *
-     * @param string $key The translation key
-     * @param string $group The group/page name
-     * @param string $locale The locale code (ru, en, kk)
-     * @return string|null The translation or null if not found
+     * @param string $text Текст для перевода
+     * @param string $targetLanguage Целевой язык
+     * @param string $pageUrl URL страницы для контекста
+     * @return string Переведенный текст
      */
-    public static function get(string $key, string $group, string $locale = 'ru'): ?string
+    public static function translate(string $text, string $targetLanguage, string $pageUrl = null): string
     {
-        return Translation::getTranslation($key, $group, $locale);
-    }
+        // Если целевой язык русский или текст пустой, возвращаем как есть
+        if ($targetLanguage === self::$sourceLanguage || empty(trim($text))) {
+            return $text;
+        }
 
-    /**
-     * Translate and save a single key
-     *
-     * @param string $key The translation key
-     * @param string $group The group/page name
-     * @param string $ruText The Russian text (source language)
-     * @return bool Success status
-     */
-    public static function translateAndSaveKey(string $key, string $group, string $ruText): bool
-    {
+        // Проверяем поддерживается ли язык
+        if (!in_array($targetLanguage, self::$supportedLanguages)) {
+            Log::warning("Неподдерживаемый язык: $targetLanguage");
+            return $text;
+        }
+
+        // Сначала проверяем БД
+        $cachedTranslation = StoredTranslation::findTranslation($text, $targetLanguage);
+        if ($cachedTranslation) {
+            return $cachedTranslation;
+        }
+
+        // Если нет в БД, делаем новый перевод
         try {
-            $translation = Translation::firstOrNew([
-                'key' => $key,
-                'group' => $group
+            $translator = new GoogleTranslate();
+            $googleLangCode = $targetLanguage === 'kz' ? 'kk' : $targetLanguage;
+            
+            $translatedText = $translator->setSource(self::$sourceLanguage)
+                                        ->setTarget($googleLangCode)
+                                        ->translate($text);
+
+            // Сохраняем в БД
+            self::saveTranslation($text, $translatedText, $targetLanguage, $pageUrl);
+
+            return $translatedText;
+        } catch (Exception $e) {
+            Log::error('Ошибка Google Translate: ' . $e->getMessage(), [
+                'text' => $text,
+                'target_language' => $targetLanguage
             ]);
+            return $text;
+        }
+    }
 
-            $translation->ru = $ruText;
+    /**
+     * Сохранить перевод в БД
+     *
+     * @param string $originalText Оригинальный текст
+     * @param string $translatedText Переведенный текст
+     * @param string $targetLanguage Целевой язык
+     * @param string|null $pageUrl URL страницы
+     * @return bool Успех операции
+     */
+    public static function saveTranslation(
+        string $originalText, 
+        string $translatedText, 
+        string $targetLanguage, 
+        string $pageUrl = null
+    ): bool {
+        try {
+            $hash = StoredTranslation::generateHash($originalText, $targetLanguage);
             
-            // Translate to other languages if not already translated
-            if (!$translation->en) {
-                $translation->en = self::translateText($ruText, 'ru', 'en');
-            }
-            
-            if (!$translation->kk) {
-                $translation->kk = self::translateText($ruText, 'ru', 'kk');
-            }
-            
-            $translation->save();
-            
-            // Clear cache for this translation
-            Translation::clearCache($key, $group);
-            
+            StoredTranslation::updateOrCreate(
+                [
+                    'hash' => $hash,
+                    'target_language' => $targetLanguage
+                ],
+                [
+                    'original_text' => $originalText,
+                    'translated_text' => $translatedText,
+                    'page_url' => $pageUrl,
+                    'is_verified' => false
+                ]
+            );
+
             return true;
-        } catch (\Exception $e) {
-            Log::error('Error translating key: ' . $e->getMessage());
+        } catch (Exception $e) {
+            Log::error('Ошибка сохранения перевода: ' . $e->getMessage());
             return false;
         }
     }
 
     /**
-     * Translate all content for a page or component
+     * Получить все переводы для конкретной страницы
      *
-     * @param array $items Array of key => text pairs
-     * @param string $group The group/page name
-     * @return bool Success status
+     * @param string $pageUrl URL страницы
+     * @param string $targetLanguage Целевой язык
+     * @return array Массив переводов
      */
-    public static function translatePage(array $items, string $group): bool
+    public static function getPageTranslations(string $pageUrl, string $targetLanguage): array
     {
-        try {
-            foreach ($items as $key => $text) {
-                self::translateAndSaveKey($key, $group, $text);
-            }
-            
-            // Clear the entire group cache
-            Translation::clearCache(null, $group);
-            
-            return true;
-        } catch (\Exception $e) {
-            Log::error('Error translating page: ' . $e->getMessage());
-            return false;
-        }
+        return StoredTranslation::where('page_url', $pageUrl)
+                                ->where('target_language', $targetLanguage)
+                                ->pluck('translated_text', 'original_text')
+                                ->toArray();
     }
 
     /**
-     * Update a translation manually
+     * Массовый перевод текстов
      *
-     * @param string $key The translation key
-     * @param string $group The group/page name
-     * @param array $translations Array of locale => text pairs
-     * @return bool Success status
+     * @param array $texts Массив текстов для перевода
+     * @param string $targetLanguage Целевой язык
+     * @param string|null $pageUrl URL страницы
+     * @return array Массив переводов [original => translated]
      */
-    public static function updateTranslation(string $key, string $group, array $translations): bool
+    public static function translateBatch(array $texts, string $targetLanguage, string $pageUrl = null): array
     {
-        try {
-            $translation = Translation::firstOrNew([
-                'key' => $key,
-                'group' => $group
-            ]);
-            
-            foreach ($translations as $locale => $text) {
-                if (in_array($locale, ['ru', 'en', 'kk'])) {
-                    $translation->{$locale} = $text;
-                }
+        $translations = [];
+        $textsToTranslate = [];
+
+        // Сначала проверяем что есть в БД
+        foreach ($texts as $text) {
+            $cached = StoredTranslation::findTranslation($text, $targetLanguage);
+            if ($cached) {
+                $translations[$text] = $cached;
+            } else {
+                $textsToTranslate[] = $text;
             }
-            
-            $translation->save();
-            
-            // Clear cache for this translation in all locales
-            foreach (['ru', 'en', 'kk'] as $locale) {
-                Translation::clearCache($key, $group, $locale);
-            }
-            
-            return true;
-        } catch (\Exception $e) {
-            Log::error('Error updating translation: ' . $e->getMessage());
-            return false;
         }
+
+        // Переводим оставшиеся тексты
+        foreach ($textsToTranslate as $text) {
+            $translated = self::translate($text, $targetLanguage, $pageUrl);
+            $translations[$text] = $translated;
+        }
+
+        return $translations;
     }
 
     /**
-     * Use Google Translate to translate text
+     * Получить статистику переводов
      *
-     * @param string $text The text to translate
-     * @param string $from Source language
-     * @param string $to Target language
-     * @return string The translated text
+     * @return array Статистика по языкам
      */
-    public static function translateText(string $text, string $from = 'ru', string $to = 'en'): string
+    public static function getTranslationStats(): array
     {
-        try {
-            $tr = new GoogleTranslate();
-            $tr->setSource($from);
-            $tr->setTarget($to);
+        $stats = [];
+        foreach (self::$supportedLanguages as $language) {
+            if ($language === self::$sourceLanguage) continue;
             
-            return $tr->translate($text);
-        } catch (\Exception $e) {
-            Log::error('Google Translate error: ' . $e->getMessage());
-            return $text; // Return original text on error
+            $stats[$language] = [
+                'total' => StoredTranslation::where('target_language', $language)->count(),
+                'verified' => StoredTranslation::where('target_language', $language)
+                                             ->where('is_verified', true)
+                                             ->count()
+            ];
         }
+        return $stats;
+    }
+
+    /**
+     * Сканировать контент сайта и найти новые тексты для перевода
+     *
+     * @param string $targetLanguage Целевой язык
+     * @return array Массив новых текстов
+     */
+    public static function scanForNewContent(string $targetLanguage): array
+    {
+        // Здесь будет логика сканирования контента
+        // Пока возвращаем пустой массив, реализуем позже
+        return [];
+    }
+
+    /**
+     * Проверить является ли текст переведенным
+     *
+     * @param string $text Текст для проверки
+     * @param string $targetLanguage Целевой язык
+     * @return bool
+     */
+    public static function hasTranslation(string $text, string $targetLanguage): bool
+    {
+        return StoredTranslation::findTranslation($text, $targetLanguage) !== null;
     }
 }

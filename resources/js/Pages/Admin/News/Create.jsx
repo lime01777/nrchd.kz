@@ -182,21 +182,47 @@ export default function NewsCreate() {
         }
       });
       
-      // Отправляем форму с FormData
+      console.log('Отправка формы с данными:', {
+        title: data.title,
+        content_length: data.content ? data.content.length : 0,
+        categories: cat,
+        images_count: validImages.length,
+        status: data.status
+      });
+
+      // Отправляем форму с FormData и тайм-аутом
       post(route('admin.news.store'), formData, { 
         forceFormData: true, // Это важно для отправки файлов
         preserveScroll: true,
-        onSuccess: () => {
+        timeout: 60000, // Тайм-аут 60 секунд
+        onStart: () => {
+          console.log('Начинаем отправку формы...');
+        },
+        onProgress: (progress) => {
+          console.log('Прогресс загрузки:', progress);
+        },
+        onSuccess: (response) => {
+          console.log('Успешная отправка:', response);
           setIsSubmitting(false);
           // Сброс формы не нужен, так как Inertia перенаправит нас на другую страницу
         },
         onError: (errors) => {
           console.error('Ошибки валидации:', errors);
           setIsSubmitting(false);
-          // Ошибки валидации автоматически будут доступны через переменную errors
+          
+          // Показываем пользователю детали ошибки
+          if (errors.error) {
+            alert('Ошибка сохранения: ' + errors.error);
+          } else {
+            const errorMessages = Object.values(errors).flat();
+            if (errorMessages.length > 0) {
+              alert('Ошибки валидации:\n' + errorMessages.join('\n'));
+            }
+          }
         },
         onFinish: () => {
           // Этот колбэк выполнится всегда, независимо от успеха или ошибки
+          console.log('Завершение отправки формы');
           setIsSubmitting(false);
         }
       });

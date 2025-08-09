@@ -414,7 +414,11 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::post('/settings/backup', [App\Http\Controllers\Admin\SettingController::class, 'createBackup'])->name('admin.settings.backup');
     
     // Управление переводами
-    Route::get('/translations', [App\Http\Controllers\Admin\TranslationManagerController::class, 'index'])->name('admin.translations');
+    Route::get('/translations', [App\Http\Controllers\Admin\TranslationController::class, 'index'])->name('admin.translations');
+    Route::post('/translations/translate-all', [App\Http\Controllers\Admin\TranslationController::class, 'translateAll'])->name('admin.translations.translate-all');
+    Route::get('/translations/page', [App\Http\Controllers\Admin\TranslationController::class, 'getPageTranslations'])->name('admin.translations.page');
+    Route::delete('/translations/{id}', [App\Http\Controllers\Admin\TranslationController::class, 'deleteTranslation'])->name('admin.translations.delete');
+    Route::put('/translations/{id}', [App\Http\Controllers\Admin\TranslationController::class, 'updateTranslation'])->name('admin.translations.update');
 
     // Маршруты для управления аккордеонами документов
     Route::resource('document-accordions', App\Http\Controllers\Admin\DocumentAccordionController::class, [

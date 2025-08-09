@@ -1,198 +1,183 @@
 import React, { useState, useEffect, useRef } from 'react';
-import translationManager from '@/Utils/TranslationManager';
-import translationService from '@/Utils/TranslationService';
+import TranslationService from '@/Services/SimpleFastTranslationService';
 
-function ImprovedLanguageSwitcher() {
+const ImprovedLanguageSwitcher = () => {
   const [currentLang, setCurrentLang] = useState('ru');
-  const [isTranslating, setIsTranslating] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Определяем названия языков для отображения
-  const languageNames = {
-    'ru': 'Русский',
-    'kz': 'Қазақ',
-    'en': 'English'
-  };
+  const languages = [
+    { code: 'ru', name: 'Русский' },
+    { code: 'en', name: 'English' },
+    { code: 'kz', name: 'Қазақша' }
+  ];
 
-  // Определяем коды флагов для языков
-  const languageFlags = {
-    'ru': '🇷🇺',
-    'kz': '🇰🇿',
-    'en': '🇬🇧'
-  };
+  const currentLanguage = languages.find(lang => lang.code === currentLang);
 
+  // Инициализация языка
   useEffect(() => {
-    // Получаем текущий язык из нового менеджера
-    const initialLang = translationManager.getCurrentLanguage() || 
-                        localStorage.getItem('preferredLanguage') || 
-                        document.documentElement.getAttribute('data-language') ||
-                        'ru';
-    
-    setCurrentLang(initialLang);
-    
-    // Принудительная инициализация TranslationManager при монтировании компонента
-    if (!translationManager.initialized) {
-      console.log('[LanguageSwitcher] Initializing TranslationManager...');
-      setTimeout(() => {
-        translationManager.init();
-      }, 100);
-    }
-    
-    // Проверяем наличие CSRF токена
-    const csrfToken = document.querySelector('meta[name="csrf-token"]');
-    if (!csrfToken) {
-      console.warn('[LanguageSwitcher] CSRF token not found, adding...');
-      const meta = document.createElement('meta');
-      meta.setAttribute('name', 'csrf-token');
-      meta.setAttribute('content', window.Laravel?.csrfToken || '');
-      document.head.appendChild(meta);
-    }
-    
-    // Устанавливаем обработчик URL для языка
-    const urlParams = new URLSearchParams(window.location.search);
-    const langParam = urlParams.get('lang');
-    if (langParam && ['ru', 'en', 'kz'].includes(langParam) && langParam !== initialLang) {
-      console.log(`[LanguageSwitcher] URL contains language ${langParam}, switching...`);
-      setTimeout(() => {
-        handleLanguageChange(langParam);
-      }, 500);
-    }
-    
-    // Слушаем клики вне дропдауна для его закрытия
+    const savedLang = localStorage.getItem('selectedLanguage') || 'ru';
+    setCurrentLang(savedLang);
+  }, []);
+
+  // Закрытие выпадающего списка при клике вне
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
       }
     };
-    
+
     document.addEventListener('mousedown', handleClickOutside);
-    
-    // Слушаем событие изменения языка для обновления состояния
-    const handleLanguageChanged = (e) => {
-      if (e.detail?.language) {
-        setCurrentLang(e.detail.language);
-        setIsTranslating(false);
-      }
-    };
-    
-    document.addEventListener('language-changed', handleLanguageChanged);
-    
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('language-changed', handleLanguageChanged);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLanguageChange = async (lang) => {
-    console.log(`[LanguageSwitcher] Button clicked: ${lang}, current language: ${currentLang}`);
-    if (lang === currentLang || isTranslating) return;
-    
+  // Быстрое переключение языка
+  const handleLanguageChange = async (langCode) => {
+    if (langCode === currentLang || isTranslating) return;
+
+    setIsTranslating(true);
+    setIsDropdownOpen(false);
+
     try {
-      // Закрываем дропдаун после выбора языка
-      setIsDropdownOpen(false);
-      
-      // Обновляем состояние UI
-      setIsTranslating(true);
-      
-      // Показываем индикатор перевода
-      const translationIndicator = document.createElement('div');
-      translationIndicator.id = 'translation-indicator';
-      translationIndicator.className = 'fixed bottom-4 right-4 bg-white rounded-md shadow-lg p-4 z-50 flex items-center';
-      translationIndicator.innerHTML = `
-        <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 mr-3"></div>
-        <span>Переключение на ${lang === 'en' ? 'английский' : lang === 'kz' ? 'казахский' : 'русский'}...</span>
-      `;
-      document.body.appendChild(translationIndicator);
-      
-      // Используем новый менеджер переводов
-      if (lang === 'ru') {
-        // Для русского языка просто восстанавливаем оригинальные тексты
-        await translationManager.translateToLanguage(lang);
-      } else {
-        // Для других языков используем сервис перевода
-        await translationService.translatePage(lang);
-      }
-      
+      // Показываем индикатор загрузки
+      const loadingIndicator = showLoadingIndicator(langCode);
+
+      // Используем новый быстрый сервис переводов
+      await TranslationService.translatePage(langCode);
+
       // Сохраняем выбранный язык
-      translationManager.saveLanguagePreference(lang);
-      
-      // Обновляем состояние после смены языка
-      setCurrentLang(lang);
-      
-      // Удаляем индикатор перевода
-      const indicator = document.getElementById('translation-indicator');
-      if (indicator) {
-        indicator.remove();
-      }
-      
+      localStorage.setItem('selectedLanguage', langCode);
+      setCurrentLang(langCode);
+
+      // Обновляем активные кнопки
+      updateActiveLanguageButtons(langCode);
+
+      // Скрываем индикатор
+      hideLoadingIndicator(loadingIndicator);
+
+      console.log(`Язык успешно переключен на: ${langCode}`);
     } catch (error) {
-      console.error('[LanguageSwitcher] Translation error:', error);
-      alert(`Ошибка при переключении языка: ${error.message}`);
+      console.error('Ошибка переключения языка:', error);
+      
+      // Показываем ошибку пользователю
+      showErrorNotification('Не удалось переключить язык. Попробуйте еще раз.');
     } finally {
       setIsTranslating(false);
     }
   };
-  
-  // Обработчик клика по кнопке переключателя
-  const toggleDropdown = () => {
-    if (isTranslating) return;
-    setIsDropdownOpen(!isDropdownOpen);
+
+  // Показать индикатор загрузки
+  const showLoadingIndicator = (langCode) => {
+    const indicator = document.createElement('div');
+    indicator.id = 'lang-loading-indicator';
+    indicator.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center space-x-2';
+    indicator.innerHTML = `
+      <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+      <span>Переключение на ${languages.find(l => l.code === langCode)?.name}...</span>
+    `;
+    document.body.appendChild(indicator);
+    return indicator;
+  };
+
+  // Скрыть индикатор загрузки
+  const hideLoadingIndicator = (indicator) => {
+    if (indicator && indicator.parentNode) {
+      indicator.parentNode.removeChild(indicator);
+    }
+  };
+
+  // Показать уведомление об ошибке
+  const showErrorNotification = (message) => {
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 3000);
+  };
+
+  // Обновить активные кнопки языков
+  const updateActiveLanguageButtons = (langCode) => {
+    // Обновляем все кнопки языков на странице
+    const langButtons = document.querySelectorAll('.lang-btn');
+    langButtons.forEach(button => {
+      const buttonLang = button.getAttribute('data-lang');
+      if (buttonLang === langCode) {
+        button.style.backgroundColor = '#3b82f6';
+        button.style.color = 'white';
+      } else {
+        button.style.backgroundColor = 'white';
+        button.style.color = '#3b82f6';
+      }
+    });
   };
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* GitHub-style language switcher button */}
-      <button 
-        onClick={toggleDropdown} 
-        className={`flex items-center px-3 py-1.5 text-sm font-medium border rounded-md ${isTranslating ? 'opacity-70 cursor-not-allowed' : 'hover:bg-gray-50'} transition-all duration-200`}
+      {/* Основная кнопка */}
+      <button
+        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         disabled={isTranslating}
-        aria-expanded={isDropdownOpen}
+        className={`flex items-center space-x-1 px-3 py-1 bg-transparent border-0 focus:outline-none hover:bg-gray-200 rounded text-xs transition-all duration-200 ${
+          isTranslating ? 'cursor-not-allowed opacity-50' : ''
+        }`}
+        aria-label="Выбрать язык"
+        title="Переключить язык"
       >
-        <span className="flex items-center">
-          <span className="mr-1">{languageFlags[currentLang]}</span>
-          <span className="hidden sm:inline">{languageNames[currentLang]}</span>
-          <span className="sm:hidden">{currentLang.toUpperCase()}</span>
-        </span>
+        <span className="font-medium">{currentLanguage?.code.toUpperCase()}</span>
         <svg 
-          className={`ml-2 h-4 w-4 transition-transform duration-200 ${isDropdownOpen ? 'transform rotate-180' : ''}`} 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 20 20" 
-          fill="currentColor"
+          className={`w-3 h-3 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
         >
-          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
 
-      {/* Dropdown menu */}
+      {/* Выпадающий список */}
       {isDropdownOpen && (
-        <div className="absolute right-0 mt-1 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-1 z-50">
-          <div className="py-1">
-            {Object.keys(languageNames).map(lang => (
-              <button
-                key={lang}
-                onClick={() => handleLanguageChange(lang)}
-                className={`w-full text-left px-4 py-2 text-sm flex items-center justify-between ${currentLang === lang ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50'}`}
-                disabled={isTranslating}
-              >
-                <div className="flex items-center">
-                  <span className="mr-2">{languageFlags[lang]}</span>
-                  <span>{languageNames[lang]}</span>
-                </div>
-                {currentLang === lang && (
-                  <svg className="h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                )}
-              </button>
-            ))}
-          </div>
+        <div className="absolute top-full mt-1 right-0 bg-white border border-gray-300 rounded shadow-lg z-50 min-w-[100px]">
+          {languages.map((language) => (
+            <button
+              key={language.code}
+              onClick={() => handleLanguageChange(language.code)}
+              disabled={isTranslating}
+              className={`w-full flex items-center justify-between px-3 py-2 text-xs hover:bg-gray-100 transition-colors duration-150 ${
+                language.code === currentLang 
+                  ? 'bg-gray-100 font-medium' 
+                  : 'text-gray-700'
+              } ${
+                language.code === languages[0].code ? 'rounded-t' : ''
+              } ${
+                language.code === languages[languages.length - 1].code ? 'rounded-b' : ''
+              }`}
+            >
+              <span className="font-medium">{language.code.toUpperCase()}</span>
+              {language.code === currentLang && (
+                <svg className="w-3 h-3 ml-2 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              )}
+            </button>
+          ))}
         </div>
       )}
 
-      {/* Translation in progress indicator removed - now shown dynamically */}
+      {/* Индикатор загрузки */}
+      {isTranslating && (
+        <div className="absolute -top-1 -right-1">
+          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-500"></div>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default ImprovedLanguageSwitcher;

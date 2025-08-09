@@ -488,4 +488,47 @@ class TranslationController extends Controller
             'page_url' => $pageUrl
         ]);
     }
+
+    /**
+     * Получить переводы для страницы из БД (быстрый API для фронтенда)
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function translateBatch(Request $request)
+    {
+        $request->validate([
+            'target_language' => 'required|string|in:en,kz',
+            'page_url' => 'string|nullable'
+        ]);
+
+        try {
+            $targetLanguage = $request->target_language;
+            $pageUrl = $request->page_url ?? '/';
+
+            // Получаем переводы из БД для данной страницы
+            $translations = \App\Models\StoredTranslation::where('target_language', $targetLanguage)
+                ->when($pageUrl, function($query, $pageUrl) {
+                    return $query->where('page_url', $pageUrl);
+                })
+                ->pluck('translated_text', 'original_text')
+                ->toArray();
+
+            return response()->json([
+                'success' => true,
+                'translations' => $translations,
+                'target_language' => $targetLanguage,
+                'count' => count($translations)
+            ]);
+
+        } catch (Exception $e) {
+            Log::error('Batch translation error: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка получения переводов',
+                'translations' => []
+            ], 500);
+        }
+    }
 }

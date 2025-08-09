@@ -2,8 +2,9 @@ import { Link, usePage } from '@inertiajs/react';
 import React, {useState, useEffect} from 'react';
 import DirectionsSubLinks from './DirectionsSubLinks';
 import LanguageSwitcher from './LanguageSwitcher';
-// Импортируем новый переводчик
-import Translator from '../Utils/new-translator';
+import ImprovedLanguageSwitcher from './ImprovedLanguageSwitcher';
+// Импортируем новый быстрый сервис переводов
+import TranslationService from '../Services/SimpleFastTranslationService';
 
 export default function Header() {
     const { auth } = usePage().props;
@@ -264,52 +265,8 @@ export default function Header() {
                         Админ
                     </Link>
                 )}
-                <button
-                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0"
-                    onClick={() => {
-                        console.log('EN button clicked (desktop)');
-                        import('../Utils/LanguageManager.js')
-                            .then(module => {
-                                const languageManager = module.default;
-                                languageManager.switchLanguage('en');
-                            })
-                            .catch(err => {
-                                console.error('LanguageManager error:', err);
-                                alert('Ошибка при переключении языка: ' + err.message);
-                            });
-                    }}
-                >EN
-                </button>
-                <button
-                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0"
-                    onClick={() => {
-                        console.log('RU button clicked (desktop)');
-                        import('../Utils/LanguageManager.js')
-                            .then(module => {
-                                const languageManager = module.default;
-                                languageManager.switchLanguage('ru');
-                            })
-                            .catch(err => {
-                                console.error('LanguageManager error:', err);
-                            });
-                    }}
-                >RU
-                </button>
-                <button
-                    className="mx-1 inline-flex items-center bg-transparent border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0"
-                    onClick={() => {
-                        console.log('KZ button clicked (desktop)');
-                        import('../Utils/LanguageManager.js')
-                            .then(module => {
-                                const languageManager = module.default;
-                                languageManager.switchLanguage('kz');
-                            })
-                            .catch(err => {
-                                console.error('LanguageManager error:', err);
-                            });
-                    }}
-                >KZ
-                </button>
+                {/* Новый улучшенный переключатель языков */}
+                <ImprovedLanguageSwitcher />
                 {/* Кнопка версии для слабовидящих (десктоп) */}
                 <button
                     className={`mx-1 inline-flex items-center ${accessibilityMode ? 'bg-blue-600 text-white' : 'bg-transparent text-gray-600'} border border-gray-300 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0`}
@@ -472,57 +429,8 @@ export default function Header() {
                 
                 {/* Языки и админ-панель */}
                 <div className="flex items-center space-x-2 ml-4">
-                    {/* Direct language buttons with visual feedback */}
-                    <div className="flex space-x-2">
-                        <button 
-                            className="lang-btn px-2 py-1 rounded text-sm font-medium border border-blue-500" 
-                            data-lang="en"
-                            data-no-translate="true"
-                            style={{ backgroundColor: 'white', color: '#3b82f6' }} 
-                            onClick={() => {
-                                console.log('EN button clicked directly');
-                                // Используем новый переводчик
-                                Translator.translatePage('en')
-                                    .catch(err => {
-                                        console.error('Translator error:', err);
-                                        alert('Ошибка переводчика: ' + err.message);
-                                    });
-                            }}
-                        >
-                            EN
-                        </button>
-                        <button 
-                            className="lang-btn px-2 py-1 rounded text-sm font-medium border border-blue-500" 
-                            data-lang="ru"
-                            data-no-translate="true"
-                            style={{ backgroundColor: '#3b82f6', color: 'white' }} 
-                            onClick={() => {
-                                console.log('RU button clicked directly');
-                                // Используем новый переводчик
-                                Translator.translatePage('ru')
-                                    .catch(err => {
-                                        console.error('Translator error:', err);
-                                    });
-                            }}
-                        >
-                            RU
-                        </button>
-                        <button 
-                            className="lang-btn px-2 py-1 rounded text-sm font-medium border border-blue-500" 
-                            data-lang="kz"
-                            data-no-translate="true"
-                            style={{ backgroundColor: 'white', color: '#3b82f6' }} 
-                            onClick={() => {
-                                console.log('KZ button clicked directly');
-                                // Используем новый переводчик
-                                Translator.translatePage('kz')
-                                    .catch(err => {
-                                        console.error('Translator error:', err);
-                                    });
-                            }}
-                        >
-                            KZ
-                        </button>
+                    {/* Улучшенный переключатель языков для мобильной версии */}
+                    <ImprovedLanguageSwitcher />
                         
                         {/* Кнопка версии для слабовидящих (мобильная) */}
                         <button 
@@ -555,7 +463,6 @@ export default function Header() {
                     )}
                 </div>
             </div>
-        </div>
-    </header>
-  );
+        </header>
+    );
 }

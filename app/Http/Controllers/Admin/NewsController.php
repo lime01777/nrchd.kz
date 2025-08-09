@@ -60,23 +60,34 @@ class NewsController extends Controller
      */
     public function store(Request $request)
     {
-        // Проверяем наличие директории для хранения изображений
-        if (!Storage::disk('public')->exists('news')) {
-            Storage::disk('public')->makeDirectory('news');
+        // Установка тайм-аута для предотвращения зависания
+        set_time_limit(300); // 5 минут
+        
+        try {
+            // Проверяем наличие директории для хранения изображений
+            if (!Storage::disk('public')->exists('news')) {
+                Storage::disk('public')->makeDirectory('news');
+            }
+        } catch (\Exception $e) {
+            Log::error('Ошибка создания директории: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Ошибка создания директории для изображений']);
         }
 
-        // Валидация данных
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string|min:10',
-            'category' => 'required|array|min:1',
-            'category.*' => 'string',
-            'status' => 'required|string|in:Черновик,Опубликовано,Запланировано',
-            'publishDate' => 'nullable|date',
-            'images' => 'nullable|array',
-            'images.*' => 'nullable',
-            'main_image' => 'nullable',
-        ]);
+        try {
+            // Валидация данных
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'content' => 'required|string|min:10',
+                'category' => 'required|array|min:1',
+                'category.*' => 'string',
+                'status' => 'required|string|in:Черновик,Опубликовано,Запланировано',
+                'publishDate' => 'nullable|date',
+                'images' => 'nullable|array',
+                'images.*' => 'nullable',
+                'image_files' => 'nullable|array',
+                'image_files.*' => 'nullable|file|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+                'main_image' => 'nullable',
+            ]);
 
         // Генерируем slug из заголовка
         $slug = Str::slug($validated['title']);
@@ -155,7 +166,29 @@ class NewsController extends Controller
             'main_image' => $news->main_image
         ]);
 
-        return redirect()->route('admin.news')->with('success', 'Новость успешно создана');
+            return redirect()->route('admin.news')->with('success', 'Новость успешно создана');
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Ошибки валидации - возвращаем их как есть
+            Log::error('Ошибка валидации при создании новости', [
+                'errors' => $e->errors(),
+                'title' => $request->input('title', 'не указан')
+            ]);
+            throw $e;
+            
+        } catch (\Exception $e) {
+            // Любые другие ошибки
+            Log::error('Критическая ошибка при создании новости', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'title' => $request->input('title', 'не указан'),
+                'request_data' => $request->except(['image_files']) // Исключаем файлы из лога
+            ]);
+            
+            return back()->withErrors([
+                'error' => 'Произошла ошибка при сохранении новости: ' . $e->getMessage()
+            ])->withInput();
+        }
     }
 
     /**
