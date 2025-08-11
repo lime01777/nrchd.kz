@@ -3,6 +3,7 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
 import CompactImageGallery from '@/Components/CompactImageGallery';
 import ModernContentEditor from '@/Components/ModernContentEditor';
+import ImageFileManager from '@/Components/FileManager/ImageFileManager';
 
 const DEFAULT_CATEGORIES = [
   'Общие',
@@ -405,6 +406,19 @@ export default function NewsCreate() {
                     - Добавьте до 10 изображений для слайдера
                   </span>
                 </label>
+                
+                {/* Файловый менеджер */}
+                <div className="mb-4">
+                  <ImageFileManager
+                    onSelect={(image) => {
+                      const newImages = [...images, image.path];
+                      handleImagesChange(newImages);
+                    }}
+                    selectedImages={images.map(img => ({ path: img }))}
+                  />
+                </div>
+                
+                {/* Текущие изображения */}
                 <CompactImageGallery
                   images={images}
                   setImages={handleImagesChange}

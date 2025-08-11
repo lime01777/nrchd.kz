@@ -83,6 +83,17 @@ export default function NewsImageSlider({
     });
   }, [validImages.length]);
 
+  // Функция для получения fallback изображения
+  const getFallbackImage = useCallback(() => {
+    // Пробуем разные варианты fallback
+    const fallbacks = [
+      '/img/placeholder.jpg',
+      '/storage/news/placeholder.jpg',
+      'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04MCAxMDBDODAgODkuNTQ0IDg4LjU0NCA4MSA5OSA4MUgxMDFDMTExLjQ1NiA4MSAxMjAgODkuNTQ0IDEyMCAxMDBWMTEwQzEyMCAxMjAuNDU2IDExMS40NTYgMTI5IDEwMSAxMjlIOTlDODguNTQ0IDEyOSA4MCAxMjAuNDU2IDgwIDExMFYxMDBaIiBmaWxsPSIjOUI5QkEwIi8+CjxwYXRoIGQ9Ik0xMDAgMTQwQzExMC40NTYgMTQwIDEyMCAxMzAuNDU2IDEyMCAxMjBIMTgwQzE4MCAxMzAuNDU2IDE3MC40NTYgMTQwIDE2MCAxNDBIMTAwWiIgZmlsbD0iIzlCOUJBMCIvPgo8L3N2Zz4K'
+    ];
+    return fallbacks[0]; // Возвращаем первый доступный
+  }, []);
+
   // Сброс состояний при изменении изображений
   useEffect(() => {
     setLoadedImages(new Set());
@@ -139,7 +150,7 @@ export default function NewsImageSlider({
           onError={(e) => {
             handleImageError(0, validImages[0]);
             e.target.onerror = null;
-            e.target.src = '/img/placeholder.jpg';
+            e.target.src = getFallbackImage();
           }}
         />
       </div>
@@ -163,7 +174,7 @@ export default function NewsImageSlider({
           onError={(e) => {
             handleImageError(currentIndex, validImages[currentIndex]);
             e.target.onerror = null;
-            e.target.src = '/img/placeholder.jpg';
+            e.target.src = getFallbackImage();
           }}
         />
         

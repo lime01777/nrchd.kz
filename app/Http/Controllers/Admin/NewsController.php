@@ -133,8 +133,16 @@ class NewsController extends Controller
                         // Генерируем уникальное имя файла
                         $filename = time() . '_' . $key . '.' . $img->getClientOriginalExtension();
                         
-                        // Сохраняем файл
-                        $img->storeAs('news', $filename, 'public');
+                        // Сохраняем файл в public/storage/news напрямую
+                        $destinationPath = public_path('storage/news');
+                        
+                        // Создаем папку если не существует
+                        if (!file_exists($destinationPath)) {
+                            mkdir($destinationPath, 0755, true);
+                        }
+                        
+                        // Перемещаем файл
+                        $img->move($destinationPath, $filename);
                         $path = '/storage/news/' . $filename;
                         $imagePaths[] = $path;
                         

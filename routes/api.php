@@ -105,3 +105,42 @@ Route::post('/editor-upload', function (Request $request) {
     }
     return response()->json(['success' => 0, 'message' => 'No file uploaded'], 400);
 });
+
+// API для файлового менеджера изображений
+Route::get('/admin/images', function () {
+    $imagesPath = public_path('storage/news');
+    $images = [];
+    
+    if (is_dir($imagesPath)) {
+        $files = scandir($imagesPath);
+        
+        foreach ($files as $file) {
+            if ($file !== '.' && $file !== '..') {
+                $filePath = $imagesPath . '/' . $file;
+                
+                // Проверяем, что это изображение
+                $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+                $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+                
+                if (in_array($extension, $imageExtensions) && is_file($filePath)) {
+                    $images[] = [
+                        'name' => $file,
+                        'path' => '/storage/news/' . $file,
+                        'size' => filesize($filePath),
+                        'modified' => filemtime($filePath)
+                    ];
+                }
+            }
+        }
+        
+        // Сортируем по дате изменения (новые сначала)
+        usort($images, function($a, $b) {
+            return $b['modified'] - $a['modified'];
+        });
+    }
+    
+    return response()->json([
+        'success' => true,
+        'images' => $images
+    ]);
+})->middleware('auth');
