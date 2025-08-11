@@ -3,7 +3,7 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
 import CompactImageGallery from '@/Components/CompactImageGallery';
 import ModernContentEditor from '@/Components/ModernContentEditor';
-import ImageFileManager from '@/Components/FileManager/ImageFileManager';
+import SimpleImageManager from '@/Components/FileManager/SimpleImageManager';
 
 const DEFAULT_CATEGORIES = [
   'Общие',
@@ -407,16 +407,14 @@ export default function NewsCreate() {
                   </span>
                 </label>
                 
-                {/* Файловый менеджер */}
-                <div className="mb-4">
-                  <ImageFileManager
-                    onSelect={(image) => {
-                      const newImages = [...images, image.path];
-                      handleImagesChange(newImages);
-                    }}
-                    selectedImages={images.map(img => ({ path: img }))}
-                  />
-                </div>
+                {/* Упрощенный файловый менеджер */}
+                <SimpleImageManager
+                  onSelect={(image) => {
+                    const newImages = [...images, image.path];
+                    handleImagesChange(newImages);
+                  }}
+                  selectedImages={images.map(img => ({ path: img }))}
+                />
                 
                 {/* Текущие изображения */}
                 <CompactImageGallery
