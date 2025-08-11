@@ -14,7 +14,9 @@ function SimpleFileDisplay({
   bgColor = 'bg-green-100',
   useClinicalProtocols = false,
   onFilesLoaded = null,
-  onError = null // Добавляем проп для обработки ошибок
+  onError = null, // Добавляем проп для обработки ошибок
+  singleColumn = false, // Добавляем проп для отображения в одну колонку
+  hideDownload = false // Добавляем проп для скрытия кнопки скачивания
 }) {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -14,22 +14,22 @@ export default function SimpleImageManager({
   const staticImages = [
     {
       name: 'placeholder.jpg',
-      path: '/storage/news/placeholder.jpg',
+      path: '/img/news/placeholder.jpg',
       size: '305 байт'
     },
     {
       name: '1700550154_pictures-pibig-info-p-gerb-kazakhstana-risunok-krasivo-67.jpg',
-      path: '/storage/news/1700550154_pictures-pibig-info-p-gerb-kazakhstana-risunok-krasivo-67.jpg',
+      path: '/img/news/1700550154_pictures-pibig-info-p-gerb-kazakhstana-risunok-krasivo-67.jpg',
       size: '269 KB'
     },
     {
       name: '3HKPGskY-wallha.com.png',
-      path: '/storage/news/3HKPGskY-wallha.com.png',
+      path: '/img/news/3HKPGskY-wallha.com.png',
       size: '8.4 MB'
     },
     {
       name: 'mlPAlHD6wpdfvaksa4KgiaqUnrfz6Uez0kTC4IZS.jpg',
-      path: '/storage/news/mlPAlHD6wpdfvaksa4KgiaqUnrfz6Uez0kTC4IZS.jpg',
+      path: '/img/news/mlPAlHD6wpdfvaksa4KgiaqUnrfz6Uez0kTC4IZS.jpg',
       size: '443 KB'
     }
   ];

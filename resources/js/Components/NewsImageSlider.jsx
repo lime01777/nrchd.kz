@@ -29,20 +29,24 @@ export default function NewsImageSlider({
       return trimmedPath;
     }
     
-    // Если это путь к storage, преобразуем в маршрут контроллера
-    if (trimmedPath.startsWith('/storage/')) {
-      const relativePath = trimmedPath.replace('/storage/', '');
-      return `/images/${relativePath}`;
+    // Если это старый путь к storage, преобразуем в новый путь к img
+    if (trimmedPath.startsWith('/storage/news/')) {
+      return trimmedPath.replace('/storage/news/', '/img/news/');
     }
     
-    // Если это относительный путь без /storage/, добавляем /storage/news/
-    if (trimmedPath.startsWith('/') && !trimmedPath.startsWith('/storage/')) {
-      return `/images/news${trimmedPath}`;
+    // Если это новый путь к img, оставляем как есть
+    if (trimmedPath.startsWith('/img/news/')) {
+      return trimmedPath;
+    }
+    
+    // Если это относительный путь без /storage/ или /img/, добавляем /img/news/
+    if (trimmedPath.startsWith('/') && !trimmedPath.startsWith('/storage/') && !trimmedPath.startsWith('/img/')) {
+      return `/img/news${trimmedPath}`;
     }
     
     // Если это просто имя файла, добавляем путь к новостям
     if (!trimmedPath.startsWith('/')) {
-      return `/images/news/${trimmedPath}`;
+      return `/img/news/${trimmedPath}`;
     }
     
     return trimmedPath;
@@ -120,7 +124,7 @@ export default function NewsImageSlider({
   const getFallbackImage = useCallback(() => {
     // Пробуем разные варианты fallback
     const fallbacks = [
-      '/images/news/placeholder.jpg',
+      '/img/news/placeholder.jpg',
       '/img/placeholder.jpg',
       'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04MCAxMDBDODAgODkuNTQ0IDg4LjU0NCA4MSA5OSA4MUgxMDFDMTExLjQ1NiA4MSAxMjAgODkuNTQ0IDEyMCAxMDBWMTEwQzEyMCAxMjAuNDU2IDExMS40NTYgMTI5IDEwMSAxMjlIOTlDODguNTQ0IDEyOSA4MCAxMjAuNDU2IDgwIDExMFYxMDBaIiBmaWxsPSIjOUI5QkEwIi8+CjxwYXRoIGQ9Ik0xMDAgMTQwQzExMC40NTYgMTQwIDEyMCAxMzAuNDU2IDEyMCAxMjBIMTgwQzE4MCAxMzAuNDU2IDE3MC40NTYgMTQwIDE2MCAxNDBIMTAwWiIgZmlsbD0iIzlCOUJBMCIvPgo8L3N2Zz4K'
     ];

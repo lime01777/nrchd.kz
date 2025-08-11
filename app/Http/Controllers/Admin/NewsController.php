@@ -133,8 +133,8 @@ class NewsController extends Controller
                         // Генерируем уникальное имя файла
                         $filename = time() . '_' . $key . '.' . $img->getClientOriginalExtension();
                         
-                        // Сохраняем файл в public/storage/news напрямую
-                        $destinationPath = public_path('storage/news');
+                        // Сохраняем файл в public/img/news напрямую
+                        $destinationPath = public_path('img/news');
                         
                         // Создаем папку если не существует
                         if (!file_exists($destinationPath)) {
@@ -143,7 +143,7 @@ class NewsController extends Controller
                         
                         // Перемещаем файл
                         $img->move($destinationPath, $filename);
-                        $path = '/storage/news/' . $filename;
+                        $path = '/img/news/' . $filename;
                         $imagePaths[] = $path;
                         
                         Log::info('Загружен файл изображения', [
@@ -331,9 +331,17 @@ class NewsController extends Controller
                     // Генерируем уникальное имя файла
                     $filename = time() . '_' . $key . '.' . $img->getClientOriginalExtension();
                     
-                    // Сохраняем файл
-                    $img->storeAs('news', $filename, 'public');
-                    $path = '/storage/news/' . $filename;
+                    // Сохраняем файл в public/img/news напрямую
+                    $destinationPath = public_path('img/news');
+                    
+                    // Создаем папку если не существует
+                    if (!file_exists($destinationPath)) {
+                        mkdir($destinationPath, 0755, true);
+                    }
+                    
+                    // Перемещаем файл
+                    $img->move($destinationPath, $filename);
+                    $path = '/img/news/' . $filename;
                     $imagePaths[] = $path;
                     
                     Log::info('Загружен файл изображения', ['path' => $path]);
@@ -360,11 +368,22 @@ class NewsController extends Controller
         // Удаляем старые файлы, которые больше не используются
         if ($news->images) {
             foreach ($news->images as $oldImg) {
-                if (is_string($oldImg) && !in_array($oldImg, $imagePaths) && strpos($oldImg, '/storage/news/') === 0) {
-                    $filePath = str_replace('/storage/', '', $oldImg);
-                    if (Storage::disk('public')->exists($filePath)) {
-                        Storage::disk('public')->delete($filePath);
-                        Log::info('Удален старый файл', ['path' => $filePath]);
+                if (is_string($oldImg) && !in_array($oldImg, $imagePaths)) {
+                    // Обрабатываем старые пути /storage/news/
+                    if (strpos($oldImg, '/storage/news/') === 0) {
+                        $filePath = public_path('storage' . str_replace('/storage', '', $oldImg));
+                        if (file_exists($filePath)) {
+                            unlink($filePath);
+                            Log::info('Удален старый файл из storage', ['path' => $filePath]);
+                        }
+                    }
+                    // Обрабатываем новые пути /img/news/
+                    elseif (strpos($oldImg, '/img/news/') === 0) {
+                        $filePath = public_path(str_replace('/img', 'img', $oldImg));
+                        if (file_exists($filePath)) {
+                            unlink($filePath);
+                            Log::info('Удален старый файл из img', ['path' => $filePath]);
+                        }
                     }
                 }
             }
@@ -392,10 +411,20 @@ class NewsController extends Controller
         // Удаляем связанные файлы
         if ($news->images) {
             foreach ($news->images as $img) {
-                if (is_string($img) && strpos($img, '/storage/news/') === 0) {
-                    $filePath = str_replace('/storage/', '', $img);
-                    if (Storage::disk('public')->exists($filePath)) {
-                        Storage::disk('public')->delete($filePath);
+                if (is_string($img)) {
+                    // Обрабатываем старые пути /storage/news/
+                    if (strpos($img, '/storage/news/') === 0) {
+                        $filePath = public_path('storage' . str_replace('/storage', '', $img));
+                        if (file_exists($filePath)) {
+                            unlink($filePath);
+                        }
+                    }
+                    // Обрабатываем новые пути /img/news/
+                    elseif (strpos($img, '/img/news/') === 0) {
+                        $filePath = public_path(str_replace('/img', 'img', $img));
+                        if (file_exists($filePath)) {
+                            unlink($filePath);
+                        }
                     }
                 }
             }
