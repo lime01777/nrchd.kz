@@ -221,7 +221,7 @@ class LanguageManager {
    * @param {boolean} [showLoader=true] - Показывать ли индикатор загрузки
    * @returns {Promise<void>}
    */
-  async switchLanguage(language, showLoader = true) {
+  async switchLanguage(language, showLoader = false) {
     console.time('switchLanguage');
     
     if (!AVAILABLE_LANGUAGES.includes(language)) {

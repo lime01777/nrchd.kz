@@ -4,7 +4,6 @@ import TranslationService from '@/Services/SimpleFastTranslationService';
 const ImprovedLanguageSwitcher = () => {
   const [currentLang, setCurrentLang] = useState('ru');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isTranslating, setIsTranslating] = useState(false);
   const dropdownRef = useRef(null);
 
   const languages = [
@@ -35,15 +34,11 @@ const ImprovedLanguageSwitcher = () => {
 
   // Быстрое переключение языка
   const handleLanguageChange = async (langCode) => {
-    if (langCode === currentLang || isTranslating) return;
+    if (langCode === currentLang) return;
 
-    setIsTranslating(true);
     setIsDropdownOpen(false);
 
     try {
-      // Показываем индикатор загрузки
-      const loadingIndicator = showLoadingIndicator(langCode);
-
       // Используем новый быстрый сервис переводов
       await TranslationService.translatePage(langCode);
 
@@ -54,39 +49,16 @@ const ImprovedLanguageSwitcher = () => {
       // Обновляем активные кнопки
       updateActiveLanguageButtons(langCode);
 
-      // Скрываем индикатор
-      hideLoadingIndicator(loadingIndicator);
-
       console.log(`Язык успешно переключен на: ${langCode}`);
     } catch (error) {
       console.error('Ошибка переключения языка:', error);
       
       // Показываем ошибку пользователю
       showErrorNotification('Не удалось переключить язык. Попробуйте еще раз.');
-    } finally {
-      setIsTranslating(false);
     }
   };
 
-  // Показать индикатор загрузки
-  const showLoadingIndicator = (langCode) => {
-    const indicator = document.createElement('div');
-    indicator.id = 'lang-loading-indicator';
-    indicator.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center space-x-2';
-    indicator.innerHTML = `
-      <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-      <span>Переключение на ${languages.find(l => l.code === langCode)?.name}...</span>
-    `;
-    document.body.appendChild(indicator);
-    return indicator;
-  };
 
-  // Скрыть индикатор загрузки
-  const hideLoadingIndicator = (indicator) => {
-    if (indicator && indicator.parentNode) {
-      indicator.parentNode.removeChild(indicator);
-    }
-  };
 
   // Показать уведомление об ошибке
   const showErrorNotification = (message) => {
@@ -123,10 +95,7 @@ const ImprovedLanguageSwitcher = () => {
       {/* Основная кнопка */}
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        disabled={isTranslating}
-        className={`flex items-center space-x-1 px-3 py-1 bg-transparent border-0 focus:outline-none hover:bg-gray-200 rounded text-xs transition-all duration-200 ${
-          isTranslating ? 'cursor-not-allowed opacity-50' : ''
-        }`}
+        className="flex items-center space-x-1 px-3 py-1 bg-transparent border-0 focus:outline-none hover:bg-gray-200 rounded text-xs transition-all duration-200"
         aria-label="Выбрать язык"
         title="Переключить язык"
       >
@@ -148,7 +117,6 @@ const ImprovedLanguageSwitcher = () => {
             <button
               key={language.code}
               onClick={() => handleLanguageChange(language.code)}
-              disabled={isTranslating}
               className={`w-full flex items-center justify-between px-3 py-2 text-xs hover:bg-gray-100 transition-colors duration-150 ${
                 language.code === currentLang 
                   ? 'bg-gray-100 font-medium' 
@@ -170,12 +138,7 @@ const ImprovedLanguageSwitcher = () => {
         </div>
       )}
 
-      {/* Индикатор загрузки */}
-      {isTranslating && (
-        <div className="absolute -top-1 -right-1">
-          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-500"></div>
-        </div>
-      )}
+
     </div>
   );
 };

@@ -39,6 +39,12 @@ Route::post('/translate', [\App\Http\Controllers\FixedTranslationController::cla
 // Маршрут для быстрых переводов из БД
 Route::post('/translate-batch', [\App\Http\Controllers\TranslationController::class, 'translateBatch']);
 
+// Маршруты для файлового менеджера
+Route::post('/file-manager/browse', [\App\Http\Controllers\FileManagerController::class, 'browse']);
+Route::post('/file-manager/upload', [\App\Http\Controllers\FileManagerController::class, 'upload']);
+Route::post('/file-manager/create-folder', [\App\Http\Controllers\FileManagerController::class, 'createFolder']);
+Route::delete('/file-manager/delete', [\App\Http\Controllers\FileManagerController::class, 'delete']);
+
 // Test endpoint for the translation API
 Route::post('/test-translation', [\App\Http\Controllers\FixedTranslationController::class, 'testTranslation']);
 

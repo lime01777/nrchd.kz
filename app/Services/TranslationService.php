@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\StoredTranslation;
+use App\Services\TranslationExceptionsService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Stichoza\GoogleTranslate\GoogleTranslate;
@@ -32,6 +33,14 @@ class TranslationService
         if (!in_array($targetLanguage, self::$supportedLanguages)) {
             Log::warning("Неподдерживаемый язык: $targetLanguage");
             return $text;
+        }
+
+        // Проверяем исключения переводов
+        $exceptionTranslation = TranslationExceptionsService::checkException($text, $targetLanguage);
+        if ($exceptionTranslation !== null) {
+            // Сохраняем исключение в БД для кэширования
+            self::saveTranslation($text, $exceptionTranslation, $targetLanguage, $pageUrl);
+            return $exceptionTranslation;
         }
 
         // Сначала проверяем БД

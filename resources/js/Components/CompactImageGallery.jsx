@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
+import FileManager from './FileManager';
 
 /**
  * Компактная галерея изображений для админки
@@ -12,10 +13,7 @@ export default function CompactImageGallery({
   className = ''
 }) {
   const [processedImages, setProcessedImages] = useState([]);
-  const [showLibrary, setShowLibrary] = useState(false);
-  const [libraryImages, setLibraryImages] = useState([]);
-  const [loadingLibrary, setLoadingLibrary] = useState(false);
-  const [selectedLibraryImages, setSelectedLibraryImages] = useState([]);
+  const [showFileManager, setShowFileManager] = useState(false);
   const fileInputRef = useRef(null);
 
   // Обработка существующих изображений
@@ -58,9 +56,20 @@ export default function CompactImageGallery({
   // Drag & Drop обработка
   const onDrop = useCallback((acceptedFiles) => {
     try {
-      const validFiles = acceptedFiles.filter(file => 
-        file.type.startsWith('image/') && file.size > 0
-      );
+      const maxFileSize = 5 * 1024 * 1024; // 5MB максимум
+      
+      const validFiles = acceptedFiles.filter(file => {
+        if (!file.type.startsWith('image/') || file.size === 0) {
+          return false;
+        }
+        
+        if (file.size > maxFileSize) {
+          alert(`Файл "${file.name}" слишком большой. Максимальный размер: 5MB`);
+          return false;
+        }
+        
+        return true;
+      });
 
       if (validFiles.length === 0) {
         console.warn('Нет корректных изображений для загрузки');
@@ -93,39 +102,16 @@ export default function CompactImageGallery({
     multiple: true
   });
 
-  // Загрузка библиотеки изображений
-  const loadLibraryImages = useCallback(async () => {
-    setLoadingLibrary(true);
-    try {
-      const response = await fetch('/api/library-images');
-      if (response.ok) {
-        const data = await response.json();
-        setLibraryImages(data.images || []);
-      }
-    } catch (error) {
-      console.error('Ошибка загрузки библиотеки:', error);
-      // Временная заглушка с тестовыми изображениями
-      setLibraryImages([
-        '/img/HeroImg/hero1.png',
-        '/img/HeroImg/hero2.png',
-        '/img/HeroImg/hero3.png',
-        '/img/banner.png'
-      ]);
-    } finally {
-      setLoadingLibrary(false);
-    }
-  }, []);
+
 
   // Открытие файлового диалога
   const handleUploadClick = () => {
     fileInputRef.current?.click();
   };
 
-  // Открытие библиотеки
+  // Открытие файлового менеджера
   const handleSelectClick = () => {
-    setShowLibrary(true);
-    setSelectedLibraryImages([]);
-    loadLibraryImages();
+    setShowFileManager(true);
   };
 
   // Обработка выбора файлов
@@ -161,20 +147,13 @@ export default function CompactImageGallery({
     }
   };
 
-  // Переключение выбора в библиотеке
-  const toggleLibraryImage = (imageUrl) => {
-    setSelectedLibraryImages(prev => 
-      prev.includes(imageUrl)
-        ? prev.filter(url => url !== imageUrl)
-        : [...prev, imageUrl]
-    );
-  };
-
-  // Добавление выбранных изображений из библиотеки
-  const addSelectedLibraryImages = () => {
+  // Обработка выбора изображений из файлового менеджера
+  const handleFileManagerSelect = (selectedImages) => {
     try {
-      if (selectedLibraryImages.length === 0) {
-        setShowLibrary(false);
+      const imagesArray = Array.isArray(selectedImages) ? selectedImages : [selectedImages];
+      
+      if (imagesArray.length === 0) {
+        setShowFileManager(false);
         return;
       }
 
@@ -182,20 +161,30 @@ export default function CompactImageGallery({
       const currentFiles = images ? images.filter(img => img instanceof File) : [];
       
       // Добавляем только те, которых еще нет
-      const newImages = selectedLibraryImages.filter(url => !currentUrls.includes(url));
-      const totalImages = currentUrls.length + currentFiles.length + newImages.length;
+      const newImages = imagesArray.filter(img => !currentUrls.includes(img.url));
       
-      if (totalImages <= maxImages) {
-        const updatedImages = [...currentUrls, ...newImages, ...currentFiles];
-        console.log('CompactImageGallery: Добавление из библиотеки', newImages);
-        setImages(updatedImages);
-        setShowLibrary(false);
-        setSelectedLibraryImages([]);
-      } else {
-        alert(`Максимальное количество изображений: ${maxImages}. Можно добавить еще ${maxImages - (currentUrls.length + currentFiles.length)}`);
+      if (newImages.length === 0) {
+        setShowFileManager(false);
+        return;
       }
+
+      const currentImagesCount = images ? images.length : 0;
+      const availableSlots = maxImages - currentImagesCount;
+      
+      if (availableSlots <= 0) {
+        alert(`Достигнуто максимальное количество изображений: ${maxImages}`);
+        setShowFileManager(false);
+        return;
+      }
+
+      const imagesToAdd = newImages.slice(0, availableSlots).map(img => img.url);
+      const updatedImages = images ? [...images, ...imagesToAdd] : imagesToAdd;
+      
+      console.log('CompactImageGallery: Добавление из файлового менеджера', imagesToAdd);
+      setImages(updatedImages);
+      setShowFileManager(false);
     } catch (error) {
-      console.error('Ошибка при добавлении изображений из библиотеки:', error);
+      console.error('Ошибка при добавлении из файлового менеджера:', error);
     }
   };
 
@@ -304,82 +293,15 @@ export default function CompactImageGallery({
         </div>
       )}
 
-      {/* Модальное окно библиотеки */}
-      {showLibrary && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowLibrary(false)}>
-          <div className="bg-white rounded-lg p-6 max-w-4xl max-h-[80vh] overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium text-gray-900">Выбрать из библиотеки</h3>
-              <button
-                onClick={() => setShowLibrary(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
-            </div>
-
-            {loadingLibrary ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-4 gap-3 max-h-96 overflow-y-auto mb-4">
-                  {libraryImages.map((imageUrl, index) => (
-                    <div
-                      key={index}
-                      onClick={() => toggleLibraryImage(imageUrl)}
-                      className={`relative cursor-pointer border-2 rounded-lg overflow-hidden transition-all ${
-                        selectedLibraryImages.includes(imageUrl)
-                          ? 'border-blue-500 ring-2 ring-blue-200'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="aspect-square bg-gray-100">
-                        <img
-                          src={imageUrl}
-                          alt={`Библиотека ${index + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      
-                      {selectedLibraryImages.includes(imageUrl) && (
-                        <div className="absolute inset-0 bg-blue-500 bg-opacity-20 flex items-center justify-center">
-                          <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/>
-                          </svg>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">
-                    Выбрано: {selectedLibraryImages.length}
-                  </span>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => setShowLibrary(false)}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-                    >
-                      Отмена
-                    </button>
-                    <button
-                      onClick={addSelectedLibraryImages}
-                      disabled={selectedLibraryImages.length === 0}
-                      className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                    >
-                      Добавить ({selectedLibraryImages.length})
-                    </button>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
+      {/* Файловый менеджер */}
+      {showFileManager && (
+        <FileManager
+          onSelect={handleFileManagerSelect}
+          onClose={() => setShowFileManager(false)}
+          multiple={true}
+          initialPath="/storage/news"
+          allowedExtensions={['.jpg', '.jpeg', '.png', '.gif', '.webp']}
+        />
       )}
     </div>
   );
