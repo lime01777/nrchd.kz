@@ -18,10 +18,30 @@ export default function NewsImageSlider({
   const [errorImages, setErrorImages] = useState(new Set());
   const [isLoading, setIsLoading] = useState(true);
 
-  // Фильтруем изображения
+  // Фильтруем изображения и проверяем их валидность
   const validImages = React.useMemo(() => {
     if (!Array.isArray(images) || images.length === 0) return [];
-    return images.filter(img => img && typeof img === 'string');
+    
+    return images.filter(img => {
+      if (!img || typeof img !== 'string') return false;
+      
+      // Проверяем, что это валидный URL или путь к изображению
+      const trimmedImg = img.trim();
+      if (trimmedImg === '') return false;
+      
+      // Проверяем расширения файлов
+      const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+      const hasValidExtension = validExtensions.some(ext => 
+        trimmedImg.toLowerCase().includes(ext)
+      );
+      
+      // Если нет расширения, но это похоже на URL, считаем валидным
+      if (!hasValidExtension && (trimmedImg.startsWith('http') || trimmedImg.startsWith('/'))) {
+        return true;
+      }
+      
+      return hasValidExtension;
+    });
   }, [images]);
 
   // Обработчик загрузки изображения
@@ -40,7 +60,9 @@ export default function NewsImageSlider({
   }, [validImages.length]);
 
   // Обработчик ошибки загрузки изображения
-  const handleImageError = useCallback((index) => {
+  const handleImageError = useCallback((index, imageUrl) => {
+    console.error('Ошибка загрузки изображения:', imageUrl);
+    
     setErrorImages(prev => {
       const newSet = new Set(prev);
       newSet.add(index);
@@ -65,7 +87,7 @@ export default function NewsImageSlider({
   useEffect(() => {
     setLoadedImages(new Set());
     setErrorImages(new Set());
-    setIsLoading(false); // Убираем общий индикатор загрузки
+    setIsLoading(validImages.length > 0); // Показываем загрузку только если есть изображения
     setCurrentIndex(0);
   }, [validImages]);
 
@@ -113,8 +135,9 @@ export default function NewsImageSlider({
           src={validImages[0]}
           alt="Изображение новости"
           className="w-full h-full object-cover"
+          onLoad={() => handleImageLoad(0)}
           onError={(e) => {
-            console.error('Ошибка загрузки изображения:', validImages[0]);
+            handleImageError(0, validImages[0]);
             e.target.onerror = null;
             e.target.src = '/img/placeholder.jpg';
           }}
@@ -138,8 +161,7 @@ export default function NewsImageSlider({
           }`}
           onLoad={() => handleImageLoad(currentIndex)}
           onError={(e) => {
-            console.error('Ошибка загрузки изображения:', validImages[currentIndex]);
-            handleImageError(currentIndex);
+            handleImageError(currentIndex, validImages[currentIndex]);
             e.target.onerror = null;
             e.target.src = '/img/placeholder.jpg';
           }}
@@ -154,7 +176,7 @@ export default function NewsImageSlider({
               alt=""
               className="hidden"
               onLoad={() => handleImageLoad(index)}
-              onError={() => handleImageError(index)}
+              onError={() => handleImageError(index, image)}
             />
           )
         )}
@@ -166,7 +188,7 @@ export default function NewsImageSlider({
               <svg className="w-6 h-6 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
               </svg>
-              <p className="text-xs">Ошибка</p>
+              <p className="text-xs">Ошибка загрузки</p>
             </div>
           </div>
         )}

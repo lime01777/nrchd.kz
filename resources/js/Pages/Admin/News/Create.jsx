@@ -159,28 +159,16 @@ export default function NewsCreate() {
         return;
       }
       
-      // Создаем FormData для корректной отправки файлов
-      const formData = new FormData();
-      
-      // Добавляем все текстовые поля
-      formData.append('title', data.title);
-      formData.append('content', data.content);
-      formData.append('status', data.status);
-      formData.append('publishDate', data.publishDate || '');
-      
-      // Добавляем категории как массив
-      cat.forEach((category, index) => {
-        formData.append(`category[${index}]`, category);
-      });
-      
-      // Добавляем изображения как файлы или строки
-      validImages.forEach((img, index) => {
-        if (img instanceof File) {
-          formData.append(`image_files[${index}]`, img);
-        } else if (typeof img === 'string') {
-          formData.append(`images[${index}]`, img);
-        }
-      });
+      // Подготавливаем данные для отправки
+      const submitData = {
+        title: data.title,
+        content: data.content,
+        status: data.status,
+        publishDate: data.publishDate || '',
+        category: cat,
+        images: validImages.filter(img => typeof img === 'string'), // Только URL
+        image_files: validImages.filter(img => img instanceof File) // Только файлы
+      };
       
       console.log('Отправка формы с данными:', {
         title: data.title,
@@ -190,9 +178,8 @@ export default function NewsCreate() {
         status: data.status
       });
 
-      // Отправляем форму с FormData и тайм-аутом
-      post(route('admin.news.store'), formData, { 
-        forceFormData: true, // Это важно для отправки файлов
+      // Отправляем форму с правильными данными
+      post(route('admin.news.store'), submitData, { 
         preserveScroll: true,
         timeout: 60000, // Тайм-аут 60 секунд
         onStart: () => {
@@ -204,7 +191,6 @@ export default function NewsCreate() {
         onSuccess: (response) => {
           console.log('Успешная отправка:', response);
           setIsSubmitting(false);
-          // Сброс формы не нужен, так как Inertia перенаправит нас на другую страницу
         },
         onError: (errors) => {
           console.error('Ошибки валидации:', errors);

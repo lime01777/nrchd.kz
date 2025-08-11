@@ -110,6 +110,7 @@ class NewsController extends Controller
             'category' => $request->input('category'),
             'status' => $request->input('status'),
             'images_input' => $request->input('images'),
+            'image_files_count' => $request->hasFile('image_files') ? count($request->file('image_files')) : 0,
             'all_data' => $request->all()
         ]);
 
@@ -118,28 +119,63 @@ class NewsController extends Controller
         
         // Обрабатываем файлы изображений (если есть)
         if ($request->hasFile('image_files')) {
-            foreach ($request->file('image_files') as $key => $img) {
+            $imageFiles = $request->file('image_files');
+            Log::info('Обработка файлов изображений', [
+                'count' => count($imageFiles),
+                'files' => array_map(function($file) {
+                    return $file ? $file->getClientOriginalName() : 'null';
+                }, $imageFiles)
+            ]);
+            
+            foreach ($imageFiles as $key => $img) {
                 if ($img && $img->isValid()) {
-                    // Генерируем уникальное имя файла
-                    $filename = time() . '_' . $key . '.' . $img->getClientOriginalExtension();
-                    
-                    // Сохраняем файл
-                    $img->storeAs('news', $filename, 'public');
-                    $path = '/storage/news/' . $filename;
-                    $imagePaths[] = $path;
-                    
-                    Log::info('Загружен файл изображения', ['path' => $path]);
+                    try {
+                        // Генерируем уникальное имя файла
+                        $filename = time() . '_' . $key . '.' . $img->getClientOriginalExtension();
+                        
+                        // Сохраняем файл
+                        $img->storeAs('news', $filename, 'public');
+                        $path = '/storage/news/' . $filename;
+                        $imagePaths[] = $path;
+                        
+                        Log::info('Загружен файл изображения', [
+                            'original_name' => $img->getClientOriginalName(),
+                            'path' => $path,
+                            'size' => $img->getSize()
+                        ]);
+                    } catch (\Exception $e) {
+                        Log::error('Ошибка сохранения файла изображения', [
+                            'file' => $img->getClientOriginalName(),
+                            'error' => $e->getMessage()
+                        ]);
+                    }
+                } else {
+                    Log::warning('Невалидный файл изображения', [
+                        'key' => $key,
+                        'file' => $img ? $img->getClientOriginalName() : 'null'
+                    ]);
                 }
             }
         }
         
         // Обрабатываем URL изображений из библиотеки или уже загруженные
         $inputImages = $request->input('images');
+        Log::info('Обработка URL изображений', [
+            'input_images' => $inputImages,
+            'is_array' => is_array($inputImages)
+        ]);
+        
         if (is_array($inputImages)) {
             foreach ($inputImages as $img) {
-                if (is_string($img) && !empty($img) && !in_array($img, $imagePaths)) {
+                if (is_string($img) && !empty(trim($img)) && !in_array($img, $imagePaths)) {
                     $imagePaths[] = $img;
                     Log::info('Добавлен URL изображения', ['url' => $img]);
+                } else {
+                    Log::warning('Пропущен невалидный URL изображения', [
+                        'url' => $img,
+                        'type' => gettype($img),
+                        'empty' => empty($img)
+                    ]);
                 }
             }
         }
