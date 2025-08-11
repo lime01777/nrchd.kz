@@ -18,11 +18,41 @@ export default function NewsImageSlider({
   const [errorImages, setErrorImages] = useState(new Set());
   const [isLoading, setIsLoading] = useState(true);
 
+  // Функция для преобразования путей к изображениям
+  const transformImagePath = useCallback((imagePath) => {
+    if (!imagePath || typeof imagePath !== 'string') return imagePath;
+    
+    const trimmedPath = imagePath.trim();
+    
+    // Если это уже полный URL, оставляем как есть
+    if (trimmedPath.startsWith('http')) {
+      return trimmedPath;
+    }
+    
+    // Если это путь к storage, преобразуем в маршрут контроллера
+    if (trimmedPath.startsWith('/storage/')) {
+      const relativePath = trimmedPath.replace('/storage/', '');
+      return `/images/${relativePath}`;
+    }
+    
+    // Если это относительный путь без /storage/, добавляем /storage/news/
+    if (trimmedPath.startsWith('/') && !trimmedPath.startsWith('/storage/')) {
+      return `/images/news${trimmedPath}`;
+    }
+    
+    // Если это просто имя файла, добавляем путь к новостям
+    if (!trimmedPath.startsWith('/')) {
+      return `/images/news/${trimmedPath}`;
+    }
+    
+    return trimmedPath;
+  }, []);
+
   // Фильтруем изображения и проверяем их валидность
   const validImages = React.useMemo(() => {
     if (!Array.isArray(images) || images.length === 0) return [];
     
-    return images.filter(img => {
+    const filteredImages = images.filter(img => {
       if (!img || typeof img !== 'string') return false;
       
       // Проверяем, что это валидный URL или путь к изображению
@@ -42,7 +72,10 @@ export default function NewsImageSlider({
       
       return hasValidExtension;
     });
-  }, [images]);
+    
+    // Преобразуем пути к изображениям
+    return filteredImages.map(transformImagePath);
+  }, [images, transformImagePath]);
 
   // Обработчик загрузки изображения
   const handleImageLoad = useCallback((index) => {
@@ -87,8 +120,8 @@ export default function NewsImageSlider({
   const getFallbackImage = useCallback(() => {
     // Пробуем разные варианты fallback
     const fallbacks = [
+      '/images/news/placeholder.jpg',
       '/img/placeholder.jpg',
-      '/storage/news/placeholder.jpg',
       'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04MCAxMDBDODAgODkuNTQ0IDg4LjU0NCA4MSA5OSA4MUgxMDFDMTExLjQ1NiA4MSAxMjAgODkuNTQ0IDEyMCAxMDBWMTEwQzEyMCAxMjAuNDU2IDExMS40NTYgMTI5IDEwMSAxMjlIOTlDODguNTQ0IDEyOSA4MCAxMjAuNDU2IDgwIDExMFYxMDBaIiBmaWxsPSIjOUI5QkEwIi8+CjxwYXRoIGQ9Ik0xMDAgMTQwQzExMC40NTYgMTQwIDEyMCAxMzAuNDU2IDEyMCAxMjBIMTgwQzE4MCAxMzAuNDU2IDE3MC40NTYgMTQwIDE2MCAxNDBIMTAwWiIgZmlsbD0iIzlCOUJBMCIvPgo8L3N2Zz4K'
     ];
     return fallbacks[0]; // Возвращаем первый доступный

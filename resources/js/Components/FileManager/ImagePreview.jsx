@@ -13,12 +13,42 @@ export default function ImagePreview({
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Функция для преобразования путей к изображениям
+  const transformImagePath = (imagePath) => {
+    if (!imagePath || typeof imagePath !== 'string') return imagePath;
+    
+    const trimmedPath = imagePath.trim();
+    
+    // Если это уже полный URL, оставляем как есть
+    if (trimmedPath.startsWith('http')) {
+      return trimmedPath;
+    }
+    
+    // Если это путь к storage, преобразуем в маршрут контроллера
+    if (trimmedPath.startsWith('/storage/')) {
+      const relativePath = trimmedPath.replace('/storage/', '');
+      return `/images/${relativePath}`;
+    }
+    
+    // Если это относительный путь без /storage/, добавляем /storage/news/
+    if (trimmedPath.startsWith('/') && !trimmedPath.startsWith('/storage/')) {
+      return `/images/news${trimmedPath}`;
+    }
+    
+    // Если это просто имя файла, добавляем путь к новостям
+    if (!trimmedPath.startsWith('/')) {
+      return `/images/news/${trimmedPath}`;
+    }
+    
+    return trimmedPath;
+  };
+
   useEffect(() => {
     if (!file) return;
 
     // Если это URL (строка)
     if (typeof file === 'string') {
-      setPreview(file);
+      setPreview(transformImagePath(file));
       setLoading(false);
       return;
     }

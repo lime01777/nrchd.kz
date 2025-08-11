@@ -9,6 +9,11 @@
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
+    # Разрешаем прямой доступ к статическим файлам в storage
+    RewriteCond %{REQUEST_URI} ^/storage/.*\.(jpg|jpeg|png|gif|webp|svg|ico|pdf|doc|docx|xls|xlsx|txt)$
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^(.*)$ $1 [L]
+
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
