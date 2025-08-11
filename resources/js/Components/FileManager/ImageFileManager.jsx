@@ -26,13 +26,29 @@ export default function ImageFileManager({
       setError(null);
       
       // Получаем список изображений с сервера
-      const response = await fetch('/api/admin/images');
+      const response = await fetch('/api/admin/images', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        credentials: 'same-origin' // Включаем cookies для аутентификации
+      });
+      
       if (!response.ok) {
-        throw new Error('Ошибка загрузки изображений');
+        const errorText = await response.text();
+        console.error('API Error:', response.status, errorText);
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
       
       const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Неизвестная ошибка');
+      }
+      
       setImages(data.images || []);
+      console.log('Загружено изображений:', data.images?.length || 0);
     } catch (err) {
       console.error('Ошибка загрузки изображений:', err);
       setError(err.message);

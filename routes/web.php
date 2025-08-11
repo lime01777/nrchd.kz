@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Middleware\LanguageMiddleware;
 
+// API маршруты для файлового менеджера изображений (должны быть доступны без аутентификации)
+Route::get('/api/admin/images', [\App\Http\Controllers\Api\ImageController::class, 'getImages']);
+Route::post('/api/admin/images/upload', [\App\Http\Controllers\Api\ImageController::class, 'uploadImage']);
+Route::delete('/api/admin/images/delete', [\App\Http\Controllers\Api\ImageController::class, 'deleteImage']);
+
 // Применяем мидлвар языка ко всем маршрутам
 Route::middleware([LanguageMiddleware::class])->group(function () {
     // Маршруты для конференции (субдомен conference.nrchd.kz)

@@ -107,40 +107,8 @@ Route::post('/editor-upload', function (Request $request) {
 });
 
 // API для файлового менеджера изображений
-Route::get('/admin/images', function () {
-    $imagesPath = public_path('storage/news');
-    $images = [];
-    
-    if (is_dir($imagesPath)) {
-        $files = scandir($imagesPath);
-        
-        foreach ($files as $file) {
-            if ($file !== '.' && $file !== '..') {
-                $filePath = $imagesPath . '/' . $file;
-                
-                // Проверяем, что это изображение
-                $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-                $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
-                
-                if (in_array($extension, $imageExtensions) && is_file($filePath)) {
-                    $images[] = [
-                        'name' => $file,
-                        'path' => '/storage/news/' . $file,
-                        'size' => filesize($filePath),
-                        'modified' => filemtime($filePath)
-                    ];
-                }
-            }
-        }
-        
-        // Сортируем по дате изменения (новые сначала)
-        usort($images, function($a, $b) {
-            return $b['modified'] - $a['modified'];
-        });
-    }
-    
-    return response()->json([
-        'success' => true,
-        'images' => $images
-    ]);
-})->middleware('auth');
+Route::group(['prefix' => 'admin', 'middleware' => ['web']], function () {
+    Route::get('/images', [\App\Http\Controllers\Api\ImageController::class, 'getImages']);
+    Route::post('/images/upload', [\App\Http\Controllers\Api\ImageController::class, 'uploadImage']);
+    Route::delete('/images/delete', [\App\Http\Controllers\Api\ImageController::class, 'deleteImage']);
+});
