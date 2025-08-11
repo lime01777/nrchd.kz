@@ -456,12 +456,19 @@ class NewsController extends Controller
                         // Удаляем связанные файлы
                         if ($news->images) {
                             foreach ($news->images as $img) {
-                                if (is_string($img) && strpos($img, '/storage/news/') === 0) {
-                                    $filePath = str_replace('/storage/', '', $img);
-                                    if (Storage::disk('public')->exists($filePath)) {
-                                        Storage::disk('public')->delete($filePath);
-                                    }
+                                if (is_string($img)) {
+                            if (strpos($img, '/storage/news/') === 0) {
+                                $filePath = public_path('storage' . str_replace('/storage', '', $img));
+                                if (file_exists($filePath)) {
+                                    unlink($filePath);
                                 }
+                            } elseif (strpos($img, '/img/news/') === 0) {
+                                $filePath = public_path(str_replace('/img', 'img', $img));
+                                if (file_exists($filePath)) {
+                                    unlink($filePath);
+                                }
+                            }
+                        }
                             }
                         }
                         

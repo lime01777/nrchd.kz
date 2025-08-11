@@ -76,9 +76,13 @@ class OptimizedNewsController extends Controller
                             // Генерируем уникальное имя файла
                             $filename = time() . '_' . $i . '.' . $img->getClientOriginalExtension();
                             
-                            // Сохраняем файл напрямую для ускорения
-                            $img->move(storage_path('app/public/news'), $filename);
-                            $path = '/storage/news/' . $filename;
+                            // Сохраняем файл в новую папку
+                            $destinationPath = public_path('img/news');
+                            if (!is_dir($destinationPath)) {
+                                mkdir($destinationPath, 0755, true);
+                            }
+                            $img->move($destinationPath, $filename);
+                            $path = '/img/news/' . $filename;
                             $imagePaths[] = $path;
                             
                             Log::info('Загружен файл изображения', [

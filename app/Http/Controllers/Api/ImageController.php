@@ -14,7 +14,7 @@ class ImageController extends Controller
     public function getImages(Request $request)
     {
         try {
-            $imagesPath = public_path('storage/news');
+            $imagesPath = public_path('img/news');
             $images = [];
             
             if (is_dir($imagesPath)) {
@@ -29,13 +29,13 @@ class ImageController extends Controller
                         $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
                         
                         if (in_array($extension, $imageExtensions) && is_file($filePath)) {
-                            $images[] = [
-                                'name' => $file,
-                                'path' => '/storage/news/' . $file,
-                                'size' => filesize($filePath),
-                                'modified' => filemtime($filePath),
-                                'url' => url('/storage/news/' . $file)
-                            ];
+                                                               $images[] = [
+                                       'name' => $file,
+                                       'path' => '/img/news/' . $file,
+                                       'size' => filesize($filePath),
+                                       'modified' => filemtime($filePath),
+                                       'url' => url('/img/news/' . $file)
+                                   ];
                         }
                     }
                 }
@@ -99,7 +99,7 @@ class ImageController extends Controller
                 ], 400);
             }
 
-            $imagesPath = public_path('storage/news');
+            $imagesPath = public_path('img/news');
             
             // Создаем папку если не существует
             if (!is_dir($imagesPath)) {
@@ -122,8 +122,8 @@ class ImageController extends Controller
                 'success' => true,
                 'image' => [
                     'name' => $filename,
-                    'path' => '/storage/news/' . $filename,
-                    'url' => url('/storage/news/' . $filename),
+                    'path' => '/img/news/' . $filename,
+                    'url' => url('/img/news/' . $filename),
                     'size' => filesize($filePath)
                 ]
             ]);
@@ -156,7 +156,7 @@ class ImageController extends Controller
                 ], 400);
             }
 
-            $filePath = public_path('storage/news/' . $filename);
+            $filePath = public_path('img/news/' . $filename);
             
             if (!file_exists($filePath)) {
                 return response()->json([

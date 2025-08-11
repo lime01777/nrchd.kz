@@ -18,12 +18,48 @@ export default function NewsSliderWithMain({
   const [errorImages, setErrorImages] = useState(new Set());
   const [isLoading, setIsLoading] = useState(true);
   
+  // Функция для преобразования путей к изображениям
+  const transformImagePath = useCallback((imagePath) => {
+    if (!imagePath || typeof imagePath !== 'string') return imagePath;
+    
+    const trimmedPath = imagePath.trim();
+    
+    // Если это уже полный URL, оставляем как есть
+    if (trimmedPath.startsWith('http')) {
+      return trimmedPath;
+    }
+    
+    // Если это старый путь к storage, преобразуем в новый путь к img
+    if (trimmedPath.startsWith('/storage/news/')) {
+      return trimmedPath.replace('/storage/news/', '/img/news/');
+    }
+    
+    // Если это новый путь к img, оставляем как есть
+    if (trimmedPath.startsWith('/img/news/')) {
+      return trimmedPath;
+    }
+    
+    // Если это относительный путь без /storage/ или /img/, добавляем /img/news/
+    if (trimmedPath.startsWith('/') && !trimmedPath.startsWith('/storage/') && !trimmedPath.startsWith('/img/')) {
+      return `/img/news${trimmedPath}`;
+    }
+    
+    // Если это просто имя файла, добавляем путь к новостям
+    if (!trimmedPath.startsWith('/')) {
+      return `/img/news/${trimmedPath}`;
+    }
+    
+    return trimmedPath;
+  }, []);
+
   // Проверяем и обрабатываем изображения
   const processedImages = React.useMemo(() => {
     if (!Array.isArray(images) || images.length === 0) return [];
     
-    // Фильтруем пустые/недействительные изображения
-    const validImages = images.filter(img => img && (typeof img === 'string' || img instanceof File));
+    // Фильтруем пустые/недействительные изображения и преобразуем пути
+    const validImages = images
+      .filter(img => img && (typeof img === 'string' || img instanceof File))
+      .map(img => transformImagePath(img));
     
     console.log('NewsSliderWithMain - обработка изображений:', {
       images,
@@ -33,7 +69,7 @@ export default function NewsSliderWithMain({
     });
     
     return validImages;
-  }, [images]);
+  }, [images, transformImagePath]);
 
   // Обработчик загрузки изображения
   const handleImageLoad = useCallback((index) => {
@@ -190,7 +226,7 @@ export default function NewsSliderWithMain({
             console.error('Ошибка загрузки изображения:', processedImages[currentIndex]);
             handleImageError(currentIndex);
             e.target.onerror = null;
-            e.target.src = '/img/placeholder.jpg';
+            e.target.src = '/img/news/placeholder.jpg';
           }}
         />
         

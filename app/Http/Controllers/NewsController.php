@@ -60,8 +60,8 @@ class NewsController extends Controller
             return $result;
         }
         
-        // В остальных случаях добавляем /storage/news/
-        $result = asset('storage/news/' . basename($path));
+        // В остальных случаях добавляем /img/news/
+        $result = '/img/news/' . basename($path);
         
         // Логируем результат преобразования
         Log::info('Converted image URL (default case)', ['original' => $path, 'result' => $result]);
