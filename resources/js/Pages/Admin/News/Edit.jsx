@@ -317,7 +317,7 @@ export default function NewsEdit({ news = null }) {
       // Опции для запроса
       const options = {
         preserveScroll: true,
-        forceFormData: files.length > 0, // Используем FormData только если есть файлы
+        forceFormData: (imageFiles.length > 0 || videoFiles.length > 0), // Используем FormData только если есть файлы
         onSuccess: (page) => {
           console.log('Успешное сохранение:', page);
           setIsSubmitting(false);

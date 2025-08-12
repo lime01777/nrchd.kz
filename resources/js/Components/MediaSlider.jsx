@@ -180,11 +180,6 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
           {currentIndex + 1} / {normalizedMedia.length}
         </div>
       )}
-
-      {/* Название файла */}
-      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white p-2">
-        <div className="text-sm truncate">{currentMedia.name}</div>
-      </div>
     </div>
   );
 }

@@ -54,8 +54,8 @@ export default function NewsCreate() {
     });
     
     // Устанавливаем файлы в FormData
-    setData('media', urls); // URL медиа
-    setData('media_files', files); // Файлы для загрузки
+    setData('images', urls); // URL медиа
+    setData('image_files', files); // Файлы для загрузки
   };
 
 
@@ -155,7 +155,7 @@ export default function NewsCreate() {
       });
       
       // Важно! Добавляем медиа в данные формы
-      setData('media', validMedia);
+      setData('images', validMedia);
   
       if (!data.content || data.content.replace(/<[^>]*?>/g, '').trim().length < 10) {
         alert('Содержимое должно содержать минимум 10 символов');

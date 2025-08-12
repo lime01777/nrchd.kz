@@ -469,7 +469,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     // Управление новостями
     Route::get('/news', [App\Http\Controllers\Admin\NewsController::class, 'index'])->name('admin.news');
     Route::get('/news/create', [App\Http\Controllers\Admin\NewsController::class, 'create'])->name('admin.news.create');
-    Route::post('/news', [App\Http\Controllers\Admin\OptimizedNewsController::class, 'store'])->name('admin.news.store');
+    Route::post('/news', [App\Http\Controllers\Admin\NewsController::class, 'store'])->name('admin.news.store');
     Route::get('/news/{id}/edit', [App\Http\Controllers\Admin\NewsController::class, 'edit'])->name('admin.news.edit');
     Route::put('/news/{id}', [App\Http\Controllers\Admin\NewsController::class, 'update'])->name('admin.news.update');
     Route::delete('/news/{id}', [App\Http\Controllers\Admin\NewsController::class, 'destroy'])->name('admin.news.destroy');

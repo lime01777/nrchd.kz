@@ -267,8 +267,19 @@ class NewsController extends Controller
         $news->category = $validated['category'];
         $news->status = $validated['status'];
         $news->publish_date = $validated['publishDate'] ?? null;
+        
+        // Преобразуем новые структуры данных в старый формат для совместимости
+        $compatibleImages = [];
+        foreach ($imagePaths as $item) {
+            if (is_array($item)) {
+                $compatibleImages[] = $item['path'];
+            } else {
+                $compatibleImages[] = $item;
+            }
+        }
+        
         // Сохраняем массив путей к изображениям в JSON-поле images
-        $news->images = $imagePaths;
+        $news->images = $compatibleImages;
         $news->save();
         
         // Логируем результат
@@ -523,7 +534,18 @@ class NewsController extends Controller
         $news->category = $validated['category'];
         $news->status = $validated['status'];
         $news->publish_date = $validated['publishDate'] ?? null;
-        $news->images = $imagePaths;
+        
+        // Преобразуем новые структуры данных в старый формат для совместимости
+        $compatibleImages = [];
+        foreach ($imagePaths as $item) {
+            if (is_array($item)) {
+                $compatibleImages[] = $item['path'];
+            } else {
+                $compatibleImages[] = $item;
+            }
+        }
+        
+        $news->images = $compatibleImages;
         $news->save();
 
         Log::info('Новость успешно обновлена', [
