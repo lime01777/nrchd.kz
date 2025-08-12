@@ -432,6 +432,13 @@ Route::get('/bioethics/composition', function () {
 Route::get('/news', [App\Http\Controllers\NewsController::class, 'index'])->name('news');
 Route::get('/news/{slug}', [App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
 
+// Скрытая страница конференции по медицинскому туризму (без публичных ссылок)
+Route::get('/medical-tourism-conference', function () {
+    return Inertia::render('Conference/MedicalTourism', [
+        'locale' => app()->getLocale(),
+    ]);
+})->name('medical.tourism.conference');
+
 // Демонстрационная страница слайдера новостей
 Route::get('/news-slider-demo', function () {
     return Inertia::render('News/SliderDemo');
