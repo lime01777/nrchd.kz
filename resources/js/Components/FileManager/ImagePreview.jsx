@@ -24,20 +24,24 @@ export default function ImagePreview({
       return trimmedPath;
     }
     
-    // Если это путь к storage, преобразуем в маршрут контроллера
-    if (trimmedPath.startsWith('/storage/')) {
-      const relativePath = trimmedPath.replace('/storage/', '');
-      return `/images/${relativePath}`;
+    // Если это старый путь к storage, преобразуем в новый путь к img
+    if (trimmedPath.startsWith('/storage/news/')) {
+      return trimmedPath.replace('/storage/news/', '/img/news/');
     }
     
-    // Если это относительный путь без /storage/, добавляем /storage/news/
-    if (trimmedPath.startsWith('/') && !trimmedPath.startsWith('/storage/')) {
-      return `/images/news${trimmedPath}`;
+    // Если это новый путь к img, оставляем как есть
+    if (trimmedPath.startsWith('/img/news/')) {
+      return trimmedPath;
+    }
+    
+    // Если это относительный путь без /storage/ или /img/, добавляем /img/news/
+    if (trimmedPath.startsWith('/') && !trimmedPath.startsWith('/storage/') && !trimmedPath.startsWith('/img/')) {
+      return `/img/news${trimmedPath}`;
     }
     
     // Если это просто имя файла, добавляем путь к новостям
     if (!trimmedPath.startsWith('/')) {
-      return `/images/news/${trimmedPath}`;
+      return `/img/news/${trimmedPath}`;
     }
     
     return trimmedPath;

@@ -52,6 +52,7 @@ export default function Header() {
         { title: "Медицинская статистика", url: "medical.statistics"},
         { title: "Отраслевой центр технологических компетенций", url: "direction.tech.competence" },
         { title: "Центр профилактики и укрепления здоровья", url: "center.prevention" },
+        { title: "Центральная комиссия по биоэтике", url: "bioethics" },
     ];
 
     const allAboutCentreSubLinks = [

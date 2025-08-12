@@ -275,7 +275,15 @@ class NewsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $news = News::findOrFail($id);
+        try {
+            Log::info('Начало обновления новости', [
+                'id' => $id,
+                'method' => $request->method(),
+                'has_method_override' => $request->has('_method'),
+                'method_override' => $request->input('_method')
+            ]);
+            
+            $news = News::findOrFail($id);
 
         // Валидация данных
         $validated = $request->validate([
@@ -398,7 +406,25 @@ class NewsController extends Controller
         $news->images = $imagePaths;
         $news->save();
 
+        Log::info('Новость успешно обновлена', [
+            'id' => $news->id,
+            'title' => $news->title,
+            'images_count' => count($imagePaths)
+        ]);
+
         return redirect()->route('admin.news')->with('success', 'Новость успешно обновлена');
+        
+        } catch (\Exception $e) {
+            Log::error('Ошибка при обновлении новости', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return back()->withErrors([
+                'error' => 'Произошла ошибка при обновлении новости: ' . $e->getMessage()
+            ])->withInput();
+        }
     }
 
     /**

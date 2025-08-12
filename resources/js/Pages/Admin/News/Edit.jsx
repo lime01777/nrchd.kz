@@ -288,8 +288,7 @@ export default function NewsEdit({ news = null }) {
         status: data.status,
         publishDate: data.publishDate || '',
         category: cat,
-        images: urls,
-        _method: isEditing ? 'PUT' : 'POST' // Добавляем метод для Laravel
+        images: urls
       };
 
       // Добавляем файлы если есть
@@ -333,8 +332,8 @@ export default function NewsEdit({ news = null }) {
       
       // Отправляем форму через Inertia
       if (isEditing) {
-        // Для редактирования используем POST с _method=PUT
-        post(route('admin.news.update', news.id), submitData, options);
+        // Для редактирования используем PUT
+        put(route('admin.news.update', news.id), submitData, options);
       } else {
         post(route('admin.news.store'), submitData, options);
       }

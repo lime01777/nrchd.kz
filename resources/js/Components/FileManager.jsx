@@ -57,38 +57,38 @@ export default function FileManager({
         { 
           name: 'hero1.png', 
           type: 'file', 
-          path: '/storage/news/hero1.png',
+          path: '/img/news/hero1.png',
           size: '245 KB',
           modified: '2025-01-15 10:30:00',
-          url: '/storage/news/hero1.png'
+          url: '/img/news/hero1.png'
         },
         { 
           name: 'hero2.png', 
           type: 'file', 
-          path: '/storage/news/hero2.png',
+          path: '/img/news/hero2.png',
           size: '312 KB',
           modified: '2025-01-15 10:35:00',
-          url: '/storage/news/hero2.png'
+          url: '/img/news/hero2.png'
         },
         { 
           name: 'banner.png', 
           type: 'file', 
-          path: '/storage/news/banner.png',
+          path: '/img/news/banner.png',
           size: '156 KB',
           modified: '2025-01-15 10:40:00',
-          url: '/storage/news/banner.png'
+          url: '/img/news/banner.png'
         },
         { 
           name: 'subfolder', 
           type: 'directory', 
-          path: '/storage/news/subfolder',
+          path: '/img/news/subfolder',
           size: '-',
           modified: '2025-01-15 10:45:00'
         }
       ]);
       setBreadcrumbs([
-        { name: 'storage', path: '/storage' },
-        { name: 'news', path: '/storage/news' }
+        { name: 'img', path: '/img' },
+        { name: 'news', path: '/img/news' }
       ]);
     } finally {
       setLoading(false);
