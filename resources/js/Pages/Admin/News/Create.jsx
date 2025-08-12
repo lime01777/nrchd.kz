@@ -168,6 +168,32 @@ export default function NewsCreate() {
         return;
       }
       
+      // Разделяем изображения и видео
+      const imageFiles = [];
+      const videoFiles = [];
+      const imageUrls = [];
+      const videoUrls = [];
+      
+      validMedia.forEach(item => {
+        if (item instanceof File || (item && item.file)) {
+          const file = item.file || item;
+          if (file.type.startsWith('video/')) {
+            videoFiles.push(file);
+          } else {
+            imageFiles.push(file);
+          }
+        } else if (typeof item === 'string' || (item && item.path)) {
+          const path = item.path || item;
+          const extension = path.split('.').pop()?.toLowerCase();
+          const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'];
+          if (videoExtensions.includes(extension)) {
+            videoUrls.push(path);
+          } else {
+            imageUrls.push(path);
+          }
+        }
+      });
+      
       // Подготавливаем данные для отправки
       const submitData = {
         title: data.title,
@@ -175,8 +201,9 @@ export default function NewsCreate() {
         status: data.status,
         publishDate: data.publishDate || '',
         category: cat,
-        media: validMedia.filter(item => typeof item === 'string' || (item && item.path)), // Только URL
-        media_files: validMedia.filter(item => item instanceof File || (item && item.file)) // Только файлы
+        images: [...imageUrls, ...videoUrls], // Все URL
+        image_files: imageFiles, // Только изображения
+        video_files: videoFiles // Только видео
       };
       
       console.log('Отправка формы с данными:', {

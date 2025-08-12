@@ -89,6 +89,8 @@ class NewsController extends Controller
                 'images.*' => 'nullable',
                 'image_files' => 'nullable|array',
                 'image_files.*' => 'nullable|file|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+                'video_files' => 'nullable|array',
+                'video_files.*' => 'nullable|file|mimes:mp4,avi,mov,wmv,flv,webm|max:51200',
                 'main_image' => 'nullable',
             ]);
 
@@ -133,18 +135,14 @@ class NewsController extends Controller
                         // Генерируем уникальное имя файла
                         $filename = time() . '_' . $key . '.' . $img->getClientOriginalExtension();
                         
-                        // Сохраняем файл в public/img/news напрямую
-                        $destinationPath = public_path('img/news');
-                        
-                        // Создаем папку если не существует
-                        if (!file_exists($destinationPath)) {
-                            mkdir($destinationPath, 0755, true);
-                        }
-                        
-                        // Перемещаем файл
-                        $img->move($destinationPath, $filename);
-                        $path = '/img/news/' . $filename;
-                        $imagePaths[] = $path;
+                        // Сохраняем файл в storage/app/public/news
+                        $path = $img->store('news', 'public');
+                        $path = '/storage/' . $path;
+                        $imagePaths[] = [
+                            'path' => $path,
+                            'type' => 'image',
+                            'name' => $img->getClientOriginalName()
+                        ];
                         
                         Log::info('Загружен файл изображения', [
                             'original_name' => $img->getClientOriginalName(),
@@ -166,6 +164,51 @@ class NewsController extends Controller
             }
         }
         
+        // Обрабатываем файлы видео (если есть)
+        if ($request->hasFile('video_files')) {
+            $videoFiles = $request->file('video_files');
+            Log::info('Обработка файлов видео', [
+                'count' => count($videoFiles),
+                'files' => array_map(function($file) {
+                    return $file ? $file->getClientOriginalName() : 'null';
+                }, $videoFiles)
+            ]);
+            
+            foreach ($videoFiles as $key => $video) {
+                if ($video && $video->isValid()) {
+                    try {
+                        // Генерируем уникальное имя файла
+                        $filename = time() . '_video_' . $key . '.' . $video->getClientOriginalExtension();
+                        
+                        // Сохраняем файл в storage/app/public/videos
+                        $path = $video->store('videos', 'public');
+                        $path = '/storage/' . $path;
+                        $imagePaths[] = [
+                            'path' => $path,
+                            'type' => 'video',
+                            'name' => $video->getClientOriginalName()
+                        ];
+                        
+                        Log::info('Загружен файл видео', [
+                            'original_name' => $video->getClientOriginalName(),
+                            'path' => $path,
+                            'size' => $video->getSize()
+                        ]);
+                    } catch (\Exception $e) {
+                        Log::error('Ошибка сохранения файла видео', [
+                            'file' => $video->getClientOriginalName(),
+                            'error' => $e->getMessage()
+                        ]);
+                    }
+                } else {
+                    Log::warning('Невалидный файл видео', [
+                        'key' => $key,
+                        'file' => $video ? $video->getClientOriginalName() : 'null'
+                    ]);
+                }
+            }
+        }
+        
         // Обрабатываем URL изображений из библиотеки или уже загруженные
         $inputImages = $request->input('images');
         Log::info('Обработка URL изображений', [
@@ -175,9 +218,32 @@ class NewsController extends Controller
         
         if (is_array($inputImages)) {
             foreach ($inputImages as $img) {
-                if (is_string($img) && !empty(trim($img)) && !in_array($img, $imagePaths)) {
-                    $imagePaths[] = $img;
-                    Log::info('Добавлен URL изображения', ['url' => $img]);
+                if (is_string($img) && !empty(trim($img))) {
+                    // Проверяем, не добавлен ли уже этот путь
+                    $exists = false;
+                    foreach ($imagePaths as $existingPath) {
+                        if (is_array($existingPath) && $existingPath['path'] === $img) {
+                            $exists = true;
+                            break;
+                        } elseif (is_string($existingPath) && $existingPath === $img) {
+                            $exists = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!$exists) {
+                        // Определяем тип по расширению
+                        $extension = strtolower(pathinfo($img, PATHINFO_EXTENSION));
+                        $videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'];
+                        $type = in_array($extension, $videoExtensions) ? 'video' : 'image';
+                        
+                        $imagePaths[] = [
+                            'path' => $img,
+                            'type' => $type,
+                            'name' => basename($img)
+                        ];
+                        Log::info('Добавлен URL медиа', ['url' => $img, 'type' => $type]);
+                    }
                 } else {
                     Log::warning('Пропущен невалидный URL изображения', [
                         'url' => $img,
@@ -296,7 +362,9 @@ class NewsController extends Controller
             'images' => 'nullable|array',
             'images.*' => 'nullable',
             'image_files' => 'nullable|array',
-            'image_files.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image_files.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'video_files' => 'nullable|array',
+            'video_files.*' => 'nullable|file|mimes:mp4,avi,mov,wmv,flv,webm|max:51200',
             'main_image' => 'nullable',
         ]);
 
@@ -339,20 +407,37 @@ class NewsController extends Controller
                     // Генерируем уникальное имя файла
                     $filename = time() . '_' . $key . '.' . $img->getClientOriginalExtension();
                     
-                    // Сохраняем файл в public/img/news напрямую
-                    $destinationPath = public_path('img/news');
-                    
-                    // Создаем папку если не существует
-                    if (!file_exists($destinationPath)) {
-                        mkdir($destinationPath, 0755, true);
-                    }
-                    
-                    // Перемещаем файл
-                    $img->move($destinationPath, $filename);
-                    $path = '/img/news/' . $filename;
-                    $imagePaths[] = $path;
+                    // Сохраняем файл в storage/app/public/news
+                    $path = $img->store('news', 'public');
+                    $path = '/storage/' . $path;
+                    $imagePaths[] = [
+                        'path' => $path,
+                        'type' => 'image',
+                        'name' => $img->getClientOriginalName()
+                    ];
                     
                     Log::info('Загружен файл изображения', ['path' => $path]);
+                }
+            }
+        }
+        
+        // Обрабатываем файлы видео (если есть)
+        if ($request->hasFile('video_files')) {
+            foreach ($request->file('video_files') as $key => $video) {
+                if ($video && $video->isValid()) {
+                    // Генерируем уникальное имя файла
+                    $filename = time() . '_video_' . $key . '.' . $video->getClientOriginalExtension();
+                    
+                    // Сохраняем файл в storage/app/public/videos
+                    $path = $video->store('videos', 'public');
+                    $path = '/storage/' . $path;
+                    $imagePaths[] = [
+                        'path' => $path,
+                        'type' => 'video',
+                        'name' => $video->getClientOriginalName()
+                    ];
+                    
+                    Log::info('Загружен файл видео', ['path' => $path]);
                 }
             }
         }
@@ -361,9 +446,32 @@ class NewsController extends Controller
         $inputImages = $request->input('images');
         if (is_array($inputImages)) {
             foreach ($inputImages as $img) {
-                if (is_string($img) && !empty($img) && !in_array($img, $imagePaths)) {
-                    $imagePaths[] = $img;
-                    Log::info('Добавлен URL изображения', ['url' => $img]);
+                if (is_string($img) && !empty($img)) {
+                    // Проверяем, не добавлен ли уже этот путь
+                    $exists = false;
+                    foreach ($imagePaths as $existingPath) {
+                        if (is_array($existingPath) && $existingPath['path'] === $img) {
+                            $exists = true;
+                            break;
+                        } elseif (is_string($existingPath) && $existingPath === $img) {
+                            $exists = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!$exists) {
+                        // Определяем тип по расширению
+                        $extension = strtolower(pathinfo($img, PATHINFO_EXTENSION));
+                        $videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'];
+                        $type = in_array($extension, $videoExtensions) ? 'video' : 'image';
+                        
+                        $imagePaths[] = [
+                            'path' => $img,
+                            'type' => $type,
+                            'name' => basename($img)
+                        ];
+                        Log::info('Добавлен URL медиа', ['url' => $img, 'type' => $type]);
+                    }
                 }
             }
         }
@@ -376,21 +484,33 @@ class NewsController extends Controller
         // Удаляем старые файлы, которые больше не используются
         if ($news->images) {
             foreach ($news->images as $oldImg) {
-                if (is_string($oldImg) && !in_array($oldImg, $imagePaths)) {
-                    // Обрабатываем старые пути /storage/news/
-                    if (strpos($oldImg, '/storage/news/') === 0) {
-                        $filePath = public_path('storage' . str_replace('/storage', '', $oldImg));
+                $oldPath = is_array($oldImg) ? $oldImg['path'] : $oldImg;
+                $shouldDelete = true;
+                
+                // Проверяем, используется ли еще этот файл
+                foreach ($imagePaths as $newPath) {
+                    $newPathStr = is_array($newPath) ? $newPath['path'] : $newPath;
+                    if ($oldPath === $newPathStr) {
+                        $shouldDelete = false;
+                        break;
+                    }
+                }
+                
+                if ($shouldDelete && is_string($oldPath)) {
+                    // Обрабатываем пути /storage/news/
+                    if (strpos($oldPath, '/storage/news/') === 0) {
+                        $filePath = public_path('storage' . str_replace('/storage', '', $oldPath));
                         if (file_exists($filePath)) {
                             unlink($filePath);
                             Log::info('Удален старый файл из storage', ['path' => $filePath]);
                         }
                     }
-                    // Обрабатываем новые пути /img/news/
-                    elseif (strpos($oldImg, '/img/news/') === 0) {
-                        $filePath = public_path(str_replace('/img', 'img', $oldImg));
+                    // Обрабатываем пути /storage/videos/
+                    elseif (strpos($oldPath, '/storage/videos/') === 0) {
+                        $filePath = public_path('storage' . str_replace('/storage', '', $oldPath));
                         if (file_exists($filePath)) {
                             unlink($filePath);
-                            Log::info('Удален старый файл из img', ['path' => $filePath]);
+                            Log::info('Удален старый видео файл из storage', ['path' => $filePath]);
                         }
                     }
                 }
@@ -437,17 +557,18 @@ class NewsController extends Controller
         // Удаляем связанные файлы
         if ($news->images) {
             foreach ($news->images as $img) {
-                if (is_string($img)) {
-                    // Обрабатываем старые пути /storage/news/
-                    if (strpos($img, '/storage/news/') === 0) {
-                        $filePath = public_path('storage' . str_replace('/storage', '', $img));
+                $imgPath = is_array($img) ? $img['path'] : $img;
+                if (is_string($imgPath)) {
+                    // Обрабатываем пути /storage/news/
+                    if (strpos($imgPath, '/storage/news/') === 0) {
+                        $filePath = public_path('storage' . str_replace('/storage', '', $imgPath));
                         if (file_exists($filePath)) {
                             unlink($filePath);
                         }
                     }
-                    // Обрабатываем новые пути /img/news/
-                    elseif (strpos($img, '/img/news/') === 0) {
-                        $filePath = public_path(str_replace('/img', 'img', $img));
+                    // Обрабатываем пути /storage/videos/
+                    elseif (strpos($imgPath, '/storage/videos/') === 0) {
+                        $filePath = public_path('storage' . str_replace('/storage', '', $imgPath));
                         if (file_exists($filePath)) {
                             unlink($filePath);
                         }

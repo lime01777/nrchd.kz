@@ -2,7 +2,7 @@ import { Head } from '@inertiajs/react';
 import React from 'react';
 import LayoutNews from '@/Layouts/LayoutNews';
 import { Link } from '@inertiajs/react';
-import NewsSliderWithMain from '@/Components/NewsSliderWithMain';
+import MediaSlider from '@/Components/MediaSlider';
 
 export default function NewsShow({ news, relatedNews }) {
   if (!news) {
@@ -37,17 +37,14 @@ export default function NewsShow({ news, relatedNews }) {
           </div>
 
           <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-            {/* Слайдер изображений */}
+            {/* Слайдер медиа */}
             {displayImages.length > 0 && (
-              <div className="w-full h-96 overflow-hidden">
-                <NewsSliderWithMain 
-                  images={displayImages}
-                  className="h-96"
-                  height="384px"
-                  showDots={true}
-                  showCounter={true}
+              <div className="w-full">
+                <MediaSlider 
+                  media={displayImages}
+                  className="w-full"
                   autoPlay={true}
-                  interval={3000}
+                  interval={5000}
                 />
               </div>
             )}

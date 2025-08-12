@@ -265,21 +265,33 @@ export default function NewsEdit({ news = null }) {
       
       console.log('Валидные изображения:', validImages);
       
-      // Разделяем файлы и URL
-      const files = [];
-      const urls = [];
+      // Разделяем изображения и видео
+      const imageFiles = [];
+      const videoFiles = [];
+      const imageUrls = [];
+      const videoUrls = [];
       
       validImages.forEach(img => {
         if (img instanceof File) {
           console.log('Добавляем файл:', img.name, img.size);
-          files.push(img);
+          if (img.type.startsWith('video/')) {
+            videoFiles.push(img);
+          } else {
+            imageFiles.push(img);
+          }
         } else if (typeof img === 'string') {
           console.log('Добавляем URL:', img);
-          urls.push(img);
+          const extension = img.split('.').pop()?.toLowerCase();
+          const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'];
+          if (videoExtensions.includes(extension)) {
+            videoUrls.push(img);
+          } else {
+            imageUrls.push(img);
+          }
         }
       });
       
-      console.log('Финальное разделение:', { files, urls });
+      console.log('Финальное разделение:', { imageFiles, videoFiles, imageUrls, videoUrls });
       
       // Подготавливаем данные для отправки
       const submitData = {
@@ -288,12 +300,15 @@ export default function NewsEdit({ news = null }) {
         status: data.status,
         publishDate: data.publishDate || '',
         category: cat,
-        images: urls
+        images: [...imageUrls, ...videoUrls]
       };
 
       // Добавляем файлы если есть
-      if (files.length > 0) {
-        submitData.image_files = files;
+      if (imageFiles.length > 0) {
+        submitData.image_files = imageFiles;
+      }
+      if (videoFiles.length > 0) {
+        submitData.video_files = videoFiles;
       }
       
       // Отладочная информация о финальных данных

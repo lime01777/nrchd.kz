@@ -64,6 +64,55 @@ Route::middleware([LanguageMiddleware::class])->group(function () {
                 'locale' => app()->getLocale(),
             ]);
         })->name('conference.registration.success');
+        
+        // Новые страницы конференции
+        Route::get('/organizers', function () {
+            return Inertia::render('Conference/Organizers', [
+                'locale' => app()->getLocale(),
+            ]);
+        })->name('conference.organizers');
+        
+        Route::get('/co-organizers', function () {
+            return Inertia::render('Conference/CoOrganizers', [
+                'locale' => app()->getLocale(),
+            ]);
+        })->name('conference.co-organizers');
+        
+        Route::get('/supporters', function () {
+            return Inertia::render('Conference/Supporters', [
+                'locale' => app()->getLocale(),
+            ]);
+        })->name('conference.supporters');
+        
+        Route::get('/sponsors', function () {
+            return Inertia::render('Conference/Sponsors', [
+                'locale' => app()->getLocale(),
+            ]);
+        })->name('conference.sponsors');
+        
+        Route::get('/partners', function () {
+            return Inertia::render('Conference/Partners', [
+                'locale' => app()->getLocale(),
+            ]);
+        })->name('conference.partners');
+        
+        Route::get('/info-partners', function () {
+            return Inertia::render('Conference/InfoPartners', [
+                'locale' => app()->getLocale(),
+            ]);
+        })->name('conference.info-partners');
+        
+        Route::get('/fees', function () {
+            return Inertia::render('Conference/Fees', [
+                'locale' => app()->getLocale(),
+            ]);
+        })->name('conference.fees');
+        
+        Route::get('/sponsor-packages', function () {
+            return Inertia::render('Conference/SponsorPackages', [
+                'locale' => app()->getLocale(),
+            ]);
+        })->name('conference.sponsor-packages');
     });
     
     // Маршруты основного сайта
@@ -221,7 +270,7 @@ Route::get('/about-centre', function () {
 
 Route::get('/vacancy-jobs', function () {
     return Inertia::render('AboutCentre/Vacancy');
-})->name('vacancy.jobs');
+})->name('about.vacancy');
 
 Route::get('/about-faq', function () {
     return Inertia::render('AboutCentre/FAQ');

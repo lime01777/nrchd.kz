@@ -17,25 +17,25 @@ export default function MediaManager({
   const staticImages = [
     {
       name: 'placeholder.jpg',
-      path: '/img/news/placeholder.jpg',
+      path: '/storage/news/placeholder.jpg',
       size: '305 байт',
       type: 'image'
     },
     {
       name: '1700550154_pictures-pibig-info-p-gerb-kazakhstana-risunok-krasivo-67.jpg',
-      path: '/img/news/1700550154_pictures-pibig-info-p-gerb-kazakhstana-risunok-krasivo-67.jpg',
+      path: '/storage/news/1700550154_pictures-pibig-info-p-gerb-kazakhstana-risunok-krasivo-67.jpg',
       size: '269 KB',
       type: 'image'
     },
     {
       name: '3HKPGskY-wallha.com.png',
-      path: '/img/news/3HKPGskY-wallha.com.png',
+      path: '/storage/news/3HKPGskY-wallha.com.png',
       size: '8.4 MB',
       type: 'image'
     },
     {
       name: 'mlPAlHD6wpdfvaksa4KgiaqUnrfz6Uez0kTC4IZS.jpg',
-      path: '/img/news/mlPAlHD6wpdfvaksa4KgiaqUnrfz6Uez0kTC4IZS.jpg',
+      path: '/storage/news/mlPAlHD6wpdfvaksa4KgiaqUnrfz6Uez0kTC4IZS.jpg',
       size: '443 KB',
       type: 'image'
     }
@@ -49,7 +49,7 @@ export default function MediaManager({
       size: '15.2 MB',
       type: 'video',
       duration: '2:34',
-      thumbnail: '/img/news/video-thumbnail-1.jpg'
+      thumbnail: '/storage/news/video-thumbnail-1.jpg'
     },
     {
       name: 'interview.mp4',
@@ -57,7 +57,7 @@ export default function MediaManager({
       size: '8.7 MB',
       type: 'video',
       duration: '1:45',
-      thumbnail: '/img/news/video-thumbnail-2.jpg'
+      thumbnail: '/storage/news/video-thumbnail-2.jpg'
     }
   ];
 
@@ -89,7 +89,7 @@ export default function MediaManager({
           type: isVideo ? 'video' : 'image',
           file: file,
           duration: isVideo ? '0:00' : null,
-          thumbnail: isVideo ? '/img/news/video-thumbnail-default.jpg' : null
+          thumbnail: isVideo ? '/storage/news/video-thumbnail-default.jpg' : null
         };
         
         handleMediaSelect(media);
@@ -211,7 +211,7 @@ export default function MediaManager({
                     {media.type === 'video' ? (
                       <>
                         <img
-                          src={media.thumbnail || '/img/news/video-thumbnail-default.jpg'}
+                                                     src={media.thumbnail || '/storage/news/video-thumbnail-default.jpg'}
                           alt={media.name}
                           className="w-full h-full object-cover"
                           onError={(e) => {
