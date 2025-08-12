@@ -59,57 +59,116 @@ class OptimizedNewsController extends Controller
             }
 
             // Обработка изображений - оптимизированная версия
-            $imagePaths = [];
+            $mediaPaths = [];
             
-            // Обрабатываем файлы изображений
-            if ($request->hasFile('image_files')) {
-                $files = $request->file('image_files');
-                $maxFiles = min(count($files), 5); // Ограничиваем до 5 файлов
+            // Обрабатываем медиа файлы (изображения и видео)
+            if ($request->hasFile('media_files')) {
+                $files = $request->file('media_files');
+                $maxFiles = min(count($files), 10); // Ограничиваем до 10 файлов
                 
-                Log::info('Начало обработки файлов', ['total_files' => count($files), 'max_files' => $maxFiles]);
+                Log::info('Начало обработки медиа файлов', ['total_files' => count($files), 'max_files' => $maxFiles]);
                 
                 for ($i = 0; $i < $maxFiles; $i++) {
-                    $img = $files[$i];
+                    $file = $files[$i];
                     
-                    if ($img && $img->isValid() && $img->getSize() <= 5 * 1024 * 1024) { // Максимум 5MB
-                        try {
-                            // Генерируем уникальное имя файла
-                            $filename = time() . '_' . $i . '.' . $img->getClientOriginalExtension();
-                            
-                            // Сохраняем файл в новую папку
-                            $destinationPath = public_path('img/news');
-                            if (!is_dir($destinationPath)) {
-                                mkdir($destinationPath, 0755, true);
+                    if ($file && $file->isValid()) {
+                        $fileSize = $file->getSize();
+                        $maxSize = 50 * 1024 * 1024; // 50MB для видео, 5MB для изображений
+                        
+                        // Определяем тип файла
+                        $mimeType = $file->getMimeType();
+                        $isVideo = strpos($mimeType, 'video/') === 0;
+                        $isImage = strpos($mimeType, 'image/') === 0;
+                        
+                        if ($isVideo && $fileSize <= $maxSize) {
+                            // Обрабатываем видео
+                            try {
+                                $filename = time() . '_' . $i . '.' . $file->getClientOriginalExtension();
+                                $destinationPath = public_path('videos/news');
+                                if (!is_dir($destinationPath)) {
+                                    mkdir($destinationPath, 0755, true);
+                                }
+                                $file->move($destinationPath, $filename);
+                                $path = '/videos/news/' . $filename;
+                                $mediaPaths[] = [
+                                    'path' => $path,
+                                    'type' => 'video',
+                                    'name' => $file->getClientOriginalName(),
+                                    'size' => $fileSize
+                                ];
+                                
+                                Log::info('Загружен видео файл', [
+                                    'index' => $i,
+                                    'path' => $path,
+                                    'size' => $fileSize,
+                                    'memory_usage' => memory_get_usage(true) / 1024 / 1024 . ' MB'
+                                ]);
+                            } catch (\Exception $e) {
+                                Log::error('Ошибка загрузки видео файла', [
+                                    'index' => $i,
+                                    'error' => $e->getMessage()
+                                ]);
+                                continue;
                             }
-                            $img->move($destinationPath, $filename);
-                            $path = '/img/news/' . $filename;
-                            $imagePaths[] = $path;
-                            
-                            Log::info('Загружен файл изображения', [
+                        } elseif ($isImage && $fileSize <= 5 * 1024 * 1024) {
+                            // Обрабатываем изображения
+                            try {
+                                $filename = time() . '_' . $i . '.' . $file->getClientOriginalExtension();
+                                $destinationPath = public_path('img/news');
+                                if (!is_dir($destinationPath)) {
+                                    mkdir($destinationPath, 0755, true);
+                                }
+                                $file->move($destinationPath, $filename);
+                                $path = '/img/news/' . $filename;
+                                $mediaPaths[] = [
+                                    'path' => $path,
+                                    'type' => 'image',
+                                    'name' => $file->getClientOriginalName(),
+                                    'size' => $fileSize
+                                ];
+                                
+                                Log::info('Загружен файл изображения', [
+                                    'index' => $i,
+                                    'path' => $path,
+                                    'size' => $fileSize,
+                                    'memory_usage' => memory_get_usage(true) / 1024 / 1024 . ' MB'
+                                ]);
+                            } catch (\Exception $e) {
+                                Log::error('Ошибка загрузки файла изображения', [
+                                    'index' => $i,
+                                    'error' => $e->getMessage()
+                                ]);
+                                continue;
+                            }
+                        } else {
+                            Log::warning('Файл пропущен', [
                                 'index' => $i,
-                                'path' => $path, 
-                                'size' => $img->getSize(),
-                                'memory_usage' => memory_get_usage(true) / 1024 / 1024 . ' MB'
+                                'mime_type' => $mimeType,
+                                'size' => $fileSize,
+                                'max_size' => $maxSize
                             ]);
-                        } catch (\Exception $e) {
-                            Log::error('Ошибка загрузки файла', [
-                                'index' => $i,
-                                'error' => $e->getMessage()
-                            ]);
-                            continue;
                         }
                     }
                 }
                 
-                Log::info('Завершена обработка файлов', ['processed_count' => count($imagePaths)]);
+                Log::info('Завершена обработка медиа файлов', ['processed_count' => count($mediaPaths)]);
             }
             
-            // Обрабатываем URL изображений
-            $inputImages = $request->input('images');
-            if (is_array($inputImages)) {
-                foreach ($inputImages as $img) {
-                    if (is_string($img) && !empty($img) && !in_array($img, $imagePaths)) {
-                        $imagePaths[] = $img;
+            // Обрабатываем URL медиа
+            $inputMedia = $request->input('media');
+            if (is_array($inputMedia)) {
+                foreach ($inputMedia as $mediaItem) {
+                    if (is_string($mediaItem) && !empty($mediaItem)) {
+                        // Определяем тип по расширению
+                        $extension = pathinfo($mediaItem, PATHINFO_EXTENSION);
+                        $videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'];
+                        $type = in_array(strtolower($extension), $videoExtensions) ? 'video' : 'image';
+                        
+                        $mediaPaths[] = [
+                            'path' => $mediaItem,
+                            'type' => $type,
+                            'name' => basename($mediaItem)
+                        ];
                     }
                 }
             }
@@ -124,14 +183,14 @@ class OptimizedNewsController extends Controller
             $news->category = $validated['category'];
             $news->status = $validated['status'];
             $news->publish_date = $validated['publishDate'] ?? null;
-            $news->images = $imagePaths;
+            $news->images = $mediaPaths;
             
             $news->save();
             
             Log::info('Новость успешно создана', [
                 'id' => $news->id,
                 'title' => $news->title,
-                'images_count' => count($imagePaths),
+                'media_count' => count($mediaPaths),
                 'memory_usage' => memory_get_usage(true) / 1024 / 1024 . ' MB'
             ]);
 

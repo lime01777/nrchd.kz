@@ -13,10 +13,13 @@ const Directions = () => {
         { imgname: 7, title: "Стратегические инициативы и международное сотрудничество", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "/strategic-initiatives", hasRoute: false, path: "/strategic-initiatives"},
         { imgname: 8, title: "Рейтинг медицинских организаций", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "/rating", hasRoute: false, path: "/rating"},
         { imgname: 9, title: "Медицинская наука", bgcolor: "bg-gray-100", bgborder: "border-gray-200", url: "/medical-science", hasRoute: false, path: "/medical-science"},
-        { imgname: 10, title: "Лекарственная политика", bgcolor: "bg-yellow-100", bgborder: "border-yellow-200", url: "/drug-policy", hasRoute: false, path: "/drug-policy"},
-        { imgname: 11, title: "Первичная медико-санитарная помощь", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "/primary-healthcare", hasRoute: false, path: "/primary-healthcare"},
-        { imgname: 12, title: "Национальные счета здравоохранения", bgcolor: "bg-purple-200", bgborder: "border-purple-200", url: "/national-health-accounts", hasRoute: false, path: "/national-health-accounts"},
-        { imgname: 13, title: "Центр профилактики и укрепления здоровья", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "/center-prevention", hasRoute: false, path: "/center-prevention"}
+        { imgname: 10, title: "Центральная комиссия по биоэтике", bgcolor: "bg-indigo-100", bgborder: "border-indigo-200", url: "/bioethics", hasRoute: false, path: "/bioethics"},
+        { imgname: 11, title: "Лекарственная политика", bgcolor: "bg-yellow-100", bgborder: "border-yellow-200", url: "/drug-policy", hasRoute: false, path: "/drug-policy"},
+        { imgname: 12, title: "Первичная медико-санитарная помощь", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "/primary-healthcare", hasRoute: false, path: "/primary-healthcare"},
+        { imgname: 13, title: "Национальные счета здравоохранения", bgcolor: "bg-purple-200", bgborder: "border-purple-200", url: "/national-health-accounts", hasRoute: false, path: "/national-health-accounts"},
+        { imgname: 14, title: "Медицинская статистика", bgcolor: "bg-teal-100", bgborder: "border-teal-200", url: "/medical-statistics", hasRoute: false, path: "/medical-statistics"},
+        { imgname: 15, title: "Отраслевой центр технологических компетенций", bgcolor: "bg-orange-100", bgborder: "border-orange-200", url: "/tech-competence", hasRoute: false, path: "/tech-competence"},
+        { imgname: 16, title: "Центр профилактики и укрепления здоровья", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "/center-prevention", hasRoute: false, path: "/center-prevention"}
     ];
 
     const [ showMore, setShowMore ] = useState(false);

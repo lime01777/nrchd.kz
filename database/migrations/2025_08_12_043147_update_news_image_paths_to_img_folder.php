@@ -41,33 +41,45 @@ return new class extends Migration
             }
         }
 
-        // Обновляем пути в поле main_image
-        DB::table('news')
-            ->whereNotNull('main_image')
-            ->where('main_image', 'like', '%/storage/news/%')
-            ->update([
-                'main_image' => DB::raw("REPLACE(main_image, '/storage/news/', '/img/news/')")
-            ]);
+        // Проверяем существование колонки main_image и обновляем пути
+        $hasMainImageColumn = Schema::hasColumn('news', 'main_image');
+        if ($hasMainImageColumn) {
+            DB::table('news')
+                ->whereNotNull('main_image')
+                ->where('main_image', 'like', '%/storage/news/%')
+                ->update([
+                    'main_image' => DB::raw("REPLACE(main_image, '/storage/news/', '/img/news/')")
+                ]);
+        }
 
-        // Обновляем пути в поле image
-        DB::table('news')
-            ->whereNotNull('image')
-            ->where('image', 'like', '%/storage/news/%')
-            ->update([
-                'image' => DB::raw("REPLACE(image, '/storage/news/', '/img/news/')")
-            ]);
+        // Проверяем существование колонки image и обновляем пути
+        $hasImageColumn = Schema::hasColumn('news', 'image');
+        if ($hasImageColumn) {
+            DB::table('news')
+                ->whereNotNull('image')
+                ->where('image', 'like', '%/storage/news/%')
+                ->update([
+                    'image' => DB::raw("REPLACE(image, '/storage/news/', '/img/news/')")
+                ]);
+        }
 
         // Логируем результат
-        $updatedCount = DB::table('news')
-            ->where(function($query) {
-                $query->where('images', 'like', '%/img/news/%')
-                      ->orWhere('main_image', 'like', '%/img/news/%')
-                      ->orWhere('image', 'like', '%/img/news/%');
-            })
-            ->count();
+        $query = DB::table('news')->where('images', 'like', '%/img/news/%');
+        
+        if ($hasMainImageColumn) {
+            $query->orWhere('main_image', 'like', '%/img/news/%');
+        }
+        
+        if ($hasImageColumn) {
+            $query->orWhere('image', 'like', '%/img/news/%');
+        }
+        
+        $updatedCount = $query->count();
 
         Log::info('Миграция: Обновлены пути к изображениям', [
             'updated_records' => $updatedCount,
+            'has_main_image_column' => $hasMainImageColumn,
+            'has_image_column' => $hasImageColumn,
             'migration' => 'update_news_image_paths_to_img_folder'
         ]);
     }
@@ -105,21 +117,27 @@ return new class extends Migration
             }
         }
 
-        // Возвращаем старые пути в поле main_image
-        DB::table('news')
-            ->whereNotNull('main_image')
-            ->where('main_image', 'like', '%/img/news/%')
-            ->update([
-                'main_image' => DB::raw("REPLACE(main_image, '/img/news/', '/storage/news/')")
-            ]);
+        // Проверяем существование колонки main_image и возвращаем старые пути
+        $hasMainImageColumn = Schema::hasColumn('news', 'main_image');
+        if ($hasMainImageColumn) {
+            DB::table('news')
+                ->whereNotNull('main_image')
+                ->where('main_image', 'like', '%/img/news/%')
+                ->update([
+                    'main_image' => DB::raw("REPLACE(main_image, '/img/news/', '/storage/news/')")
+                ]);
+        }
 
-        // Возвращаем старые пути в поле image
-        DB::table('news')
-            ->whereNotNull('image')
-            ->where('image', 'like', '%/img/news/%')
-            ->update([
-                'image' => DB::raw("REPLACE(image, '/img/news/', '/storage/news/')")
-            ]);
+        // Проверяем существование колонки image и возвращаем старые пути
+        $hasImageColumn = Schema::hasColumn('news', 'image');
+        if ($hasImageColumn) {
+            DB::table('news')
+                ->whereNotNull('image')
+                ->where('image', 'like', '%/img/news/%')
+                ->update([
+                    'image' => DB::raw("REPLACE(image, '/img/news/', '/storage/news/')")
+                ]);
+        }
 
         Log::info('Миграция: Откат путей к изображениям', [
             'migration' => 'update_news_image_paths_to_img_folder'

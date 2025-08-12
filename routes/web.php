@@ -355,25 +355,29 @@ Route::get('/direction/tech-competence', function () {
 })->name('direction.tech.competence');
 
 // Маршруты для Центральной комиссии по биоэтике
-Route::get('/direction/bioethics', function () {
+Route::get('/bioethics', function () {
     return Inertia::render('Direction/Bioethics');
 })->name('bioethics');
 
-Route::get('/direction/bioethics/expertise', function () {
+Route::get('/bioethics/expertise', function () {
     return Inertia::render('Direction/Bioethics/Expertise');
 })->name('bioethics.expertise');
 
-Route::get('/direction/bioethics/certification', function () {
+Route::get('/bioethics/certification', function () {
     return Inertia::render('Direction/Bioethics/Certification');
 })->name('bioethics.certification');
 
-Route::get('/direction/bioethics/biobanks', function () {
+Route::get('/bioethics/biobanks', function () {
     return Inertia::render('Direction/Bioethics/Biobanks');
 })->name('bioethics.biobanks');
 
-Route::get('/direction/bioethics/local-commissions', function () {
+Route::get('/bioethics/local-commissions', function () {
     return Inertia::render('Direction/Bioethics/LocalCommissions');
 })->name('bioethics.local-commissions');
+
+Route::get('/bioethics/composition', function () {
+    return Inertia::render('Direction/Bioethics/Composition');
+})->name('bioethics.composition');
 
 // Маршруты для новостей
 Route::get('/news', [App\Http\Controllers\NewsController::class, 'index'])->name('news');

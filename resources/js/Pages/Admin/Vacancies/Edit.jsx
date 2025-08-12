@@ -15,11 +15,28 @@ export default function VacancyEdit({ vacancy }) {
         }).join('\n\n');
     };
     
+    // Функция для преобразования любого массива в текст
+    const convertArrayToText = (array) => {
+        if (!array || !Array.isArray(array)) return '';
+        
+        return array.map(block => {
+            if (block.type === 'paragraph' && block.data && block.data.text) {
+                return block.data.text;
+            }
+            return '';
+        }).join('\n\n');
+    };
+    
     // Состояние для управления формой
     const [isSubmitting, setIsSubmitting] = useState(false);
     
     // Храним текст из textarea в отдельном состоянии
     const [bodyText, setBodyText] = useState(convertBodyToText(vacancy.body) || '');
+    
+    // Состояния для новых полей
+    const [functionalResponsibilitiesText, setFunctionalResponsibilitiesText] = useState(convertArrayToText(vacancy.functional_responsibilities) || '');
+    const [qualificationRequirementsText, setQualificationRequirementsText] = useState(convertArrayToText(vacancy.qualification_requirements) || '');
+    const [applicationProcedureText, setApplicationProcedureText] = useState(convertArrayToText(vacancy.application_procedure) || '');
     
     // Инициализация формы с useForm и существующими данными
     const { data, setData, put, processing, errors } = useForm({
@@ -27,10 +44,13 @@ export default function VacancyEdit({ vacancy }) {
         slug: vacancy.slug || '',
         excerpt: vacancy.excerpt || '',
         body: Array.isArray(vacancy.body) ? vacancy.body : [], // Сохраняем как массив для валидатора
+        functional_responsibilities: Array.isArray(vacancy.functional_responsibilities) ? vacancy.functional_responsibilities : [],
+        qualification_requirements: Array.isArray(vacancy.qualification_requirements) ? vacancy.qualification_requirements : [],
+        application_procedure: Array.isArray(vacancy.application_procedure) ? vacancy.application_procedure : [],
         city: vacancy.city || '',
         department: vacancy.department || '',
         employment_type: vacancy.employment_type || '',
-        status: vacancy.status || 'draft',
+        status: vacancy.status || 'published', // Изменено с 'draft' на 'published' - вакансии по умолчанию публикуются
         published_at: vacancy.published_at ? new Date(vacancy.published_at).toISOString().substr(0, 10) : ''
     });
     
@@ -46,6 +66,20 @@ export default function VacancyEdit({ vacancy }) {
         
         setData('body', bodyContent);
         setBodyText(text);
+    };
+    
+    // Функция для обновления любого текстового поля в массив
+    const updateArrayFromText = (text, fieldName, setTextState) => {
+        const paragraphs = text.split('\n').filter(p => p.trim() !== '');
+        const content = paragraphs.map(paragraph => ({
+            type: "paragraph",
+            data: {
+                text: paragraph.trim()
+            }
+        }));
+        
+        setData(fieldName, content);
+        setTextState(text);
     };
     
     // При создании вакансии из черновика в опубликованную, устанавливаем дату публикации
@@ -98,6 +132,19 @@ export default function VacancyEdit({ vacancy }) {
             if (data.body.length === 0 && bodyText.trim() !== '') {
                 // Если массив пуст, но есть текст, обновим массив
                 updateBodyFromText(bodyText);
+            }
+            
+            // Проверка и обновление новых полей
+            if (data.functional_responsibilities.length === 0 && functionalResponsibilitiesText.trim() !== '') {
+                updateArrayFromText(functionalResponsibilitiesText, 'functional_responsibilities', setFunctionalResponsibilitiesText);
+            }
+            
+            if (data.qualification_requirements.length === 0 && qualificationRequirementsText.trim() !== '') {
+                updateArrayFromText(qualificationRequirementsText, 'qualification_requirements', setQualificationRequirementsText);
+            }
+            
+            if (data.application_procedure.length === 0 && applicationProcedureText.trim() !== '') {
+                updateArrayFromText(applicationProcedureText, 'application_procedure', setApplicationProcedureText);
             }
             
             // Если статус опубликовано и нет даты публикации, устанавливаем текущую дату
@@ -291,6 +338,54 @@ export default function VacancyEdit({ vacancy }) {
                                         required
                                     ></textarea>
                                     {errors.body && <div className="text-red-500 text-sm mt-1">{errors.body}</div>}
+                                </div>
+                                
+                                {/* Функциональные обязанности */}
+                                <div className="mb-4">
+                                    <label htmlFor="functional_responsibilities" className="block text-sm font-medium text-gray-700 mb-1">
+                                        Функциональные обязанности
+                                    </label>
+                                    <textarea
+                                        id="functional_responsibilities"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                        value={functionalResponsibilitiesText}
+                                        onChange={e => updateArrayFromText(e.target.value, 'functional_responsibilities', setFunctionalResponsibilitiesText)}
+                                        rows="8"
+                                        placeholder="Введите функциональные обязанности. Каждый пункт с новой строки."
+                                    ></textarea>
+                                    {errors.functional_responsibilities && <div className="text-red-500 text-sm mt-1">{errors.functional_responsibilities}</div>}
+                                </div>
+                                
+                                {/* Квалификационные требования */}
+                                <div className="mb-4">
+                                    <label htmlFor="qualification_requirements" className="block text-sm font-medium text-gray-700 mb-1">
+                                        Квалификационные требования
+                                    </label>
+                                    <textarea
+                                        id="qualification_requirements"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                        value={qualificationRequirementsText}
+                                        onChange={e => updateArrayFromText(e.target.value, 'qualification_requirements', setQualificationRequirementsText)}
+                                        rows="8"
+                                        placeholder="Введите квалификационные требования. Каждый пункт с новой строки."
+                                    ></textarea>
+                                    {errors.qualification_requirements && <div className="text-red-500 text-sm mt-1">{errors.qualification_requirements}</div>}
+                                </div>
+                                
+                                {/* Порядок подачи заявки */}
+                                <div className="mb-4">
+                                    <label htmlFor="application_procedure" className="block text-sm font-medium text-gray-700 mb-1">
+                                        Порядок подачи заявки
+                                    </label>
+                                    <textarea
+                                        id="application_procedure"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                        value={applicationProcedureText}
+                                        onChange={e => updateArrayFromText(e.target.value, 'application_procedure', setApplicationProcedureText)}
+                                        rows="6"
+                                        placeholder="Введите порядок подачи заявки. Каждый шаг с новой строки."
+                                    ></textarea>
+                                    {errors.application_procedure && <div className="text-red-500 text-sm mt-1">{errors.application_procedure}</div>}
                                 </div>
                                 
                                 {/* Кнопки действий */}

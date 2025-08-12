@@ -1,9 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
-import CompactImageGallery from '@/Components/CompactImageGallery';
+import CompactMediaGallery from '@/Components/CompactMediaGallery';
 import ModernContentEditor from '@/Components/ModernContentEditor';
-import SimpleImageManager from '@/Components/FileManager/SimpleImageManager';
+import MediaManager from '@/Components/FileManager/MediaManager';
 
 const DEFAULT_CATEGORIES = [
   'Общие',
@@ -32,28 +32,30 @@ export default function NewsCreate() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [newCategory, setNewCategory] = useState('');
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
-  const [images, setImages] = useState([]);
+  const [media, setMedia] = useState([]);
 
-  // Обработчик изменения изображений
-  const handleImagesChange = (newImages) => {
-    console.log('Create - изменение изображений:', newImages);
-    setImages(newImages);
+  // Обработчик изменения медиа
+  const handleMediaChange = (newMedia) => {
+    console.log('Create - изменение медиа:', newMedia);
+    setMedia(newMedia);
     
     // Разделяем файлы и URL
     const files = [];
     const urls = [];
     
-    newImages.forEach(img => {
-      if (img instanceof File) {
-        files.push(img);
-      } else if (typeof img === 'string') {
-        urls.push(img);
+    newMedia.forEach(item => {
+      if (item instanceof File || (item && item.file)) {
+        files.push(item.file || item);
+      } else if (typeof item === 'string') {
+        urls.push(item);
+      } else if (item && item.path) {
+        urls.push(item.path);
       }
     });
     
     // Устанавливаем файлы в FormData
-    setData('images', urls); // URL изображения
-    setData('image_files', files); // Файлы для загрузки
+    setData('media', urls); // URL медиа
+    setData('media_files', files); // Файлы для загрузки
   };
 
 
@@ -142,12 +144,18 @@ export default function NewsCreate() {
         setData('status', 'Черновик');
       }
 
-      // Обработка изображений
-      // Проверка, что изображения не пустые и могут быть загружены
-      const validImages = images.filter(img => img && (typeof img === 'string' || (img instanceof File && img.size > 0)));
+      // Обработка медиа
+      // Проверка, что медиа не пустые и могут быть загружены
+      const validMedia = media.filter(item => {
+        if (typeof item === 'string') return item;
+        if (item instanceof File) return item.size > 0;
+        if (item && item.file) return item.file.size > 0;
+        if (item && item.path) return item.path;
+        return false;
+      });
       
-      // Важно! Добавляем изображения в данные формы
-      setData('images', validImages);
+      // Важно! Добавляем медиа в данные формы
+      setData('media', validMedia);
   
       if (!data.content || data.content.replace(/<[^>]*?>/g, '').trim().length < 10) {
         alert('Содержимое должно содержать минимум 10 символов');
@@ -167,15 +175,15 @@ export default function NewsCreate() {
         status: data.status,
         publishDate: data.publishDate || '',
         category: cat,
-        images: validImages.filter(img => typeof img === 'string'), // Только URL
-        image_files: validImages.filter(img => img instanceof File) // Только файлы
+        media: validMedia.filter(item => typeof item === 'string' || (item && item.path)), // Только URL
+        media_files: validMedia.filter(item => item instanceof File || (item && item.file)) // Только файлы
       };
       
       console.log('Отправка формы с данными:', {
         title: data.title,
         content_length: data.content ? data.content.length : 0,
         categories: cat,
-        images_count: validImages.length,
+        media_count: validMedia.length,
         status: data.status
       });
 
@@ -398,29 +406,30 @@ export default function NewsCreate() {
                 )}
               </div>
 
-              {/* Галерея изображений */}
+              {/* Галерея медиа */}
               <div className="sm:col-span-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Галерея изображений
+                  🎥 Медиа галерея (НОВАЯ ВЕРСИЯ)
                   <span className="text-xs text-gray-500 ml-2">
-                    - Добавьте до 10 изображений для слайдера
+                    - Добавьте изображения или видео (до 10 файлов)
                   </span>
                 </label>
                 
-                {/* Упрощенный файловый менеджер */}
-                <SimpleImageManager
-                  onSelect={(image) => {
-                    const newImages = [...images, image.path];
-                    handleImagesChange(newImages);
+                {/* Медиа менеджер */}
+                <MediaManager
+                  onSelect={(mediaItem) => {
+                    const newMedia = [...media, mediaItem];
+                    handleMediaChange(newMedia);
                   }}
-                  selectedImages={images.map(img => ({ path: img }))}
+                  selectedMedia={media}
+                  maxFiles={10}
                 />
                 
-                {/* Текущие изображения */}
-                <CompactImageGallery
-                  images={images}
-                  setImages={handleImagesChange}
-                  maxImages={10}
+                {/* Текущие медиа */}
+                <CompactMediaGallery
+                  media={media}
+                  setMedia={handleMediaChange}
+                  maxFiles={10}
                 />
               </div>
 

@@ -44,6 +44,9 @@ class VacancyController extends Controller
             'slug' => 'nullable|string|max:255|unique:vacancies,slug',
             'excerpt' => 'nullable|string',
             'body' => 'required|array',
+            'functional_responsibilities' => 'nullable|array',
+            'qualification_requirements' => 'nullable|array',
+            'application_procedure' => 'nullable|array',
             'city' => 'required|string|max:255',
             'department' => 'required|string|max:255',
             'employment_type' => 'required|string|max:255',
@@ -58,6 +61,11 @@ class VacancyController extends Controller
         // Если статус "published", устанавливаем дату публикации
         if ($validated['status'] === 'published' && !$request->has('published_at')) {
             $validated['published_at'] = now();
+        }
+        
+        // Если статус не указан, устанавливаем по умолчанию 'published'
+        if (empty($validated['status'])) {
+            $validated['status'] = 'published';
         }
 
         // Создаем новую вакансию
@@ -101,6 +109,9 @@ class VacancyController extends Controller
             'slug' => 'nullable|string|max:255|unique:vacancies,slug,' . $id,
             'excerpt' => 'nullable|string',
             'body' => 'required|array',
+            'functional_responsibilities' => 'nullable|array',
+            'qualification_requirements' => 'nullable|array',
+            'application_procedure' => 'nullable|array',
             'city' => 'required|string|max:255',
             'department' => 'required|string|max:255',
             'employment_type' => 'required|string|max:255',

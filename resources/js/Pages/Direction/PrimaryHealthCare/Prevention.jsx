@@ -70,4 +70,12 @@ export default function Prevention() {
   )
 }
 
-Prevention.layout = (page) => <LayoutFolderChlank img={'pmsp_prevention'} h1={'Профилактика и скрининг'}>{page}</LayoutFolderChlank>;
+Prevention.layout = (page) => <LayoutFolderChlank 
+  h1={'Профилактика и скрининг'}
+  parentRoute={route('primary.healthcare')}
+  parentName="Первичная медико-санитарная помощь"
+  heroBgColor="bg-green-100"
+  buttonBgColor="bg-green-100"
+  buttonHoverBgColor="hover:bg-green-200"
+  buttonBorderColor="border-green-200"
+>{page}</LayoutFolderChlank>;

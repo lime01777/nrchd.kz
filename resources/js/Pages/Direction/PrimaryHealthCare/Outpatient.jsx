@@ -65,4 +65,12 @@ export default function Outpatient() {
   )
 }
 
-Outpatient.layout = (page) => <LayoutFolderChlank h1={'Амбулаторная помощь'}>{page}</LayoutFolderChlank>;
+Outpatient.layout = (page) => <LayoutFolderChlank 
+  h1={'Амбулаторная помощь'}
+  parentRoute={route('primary.healthcare')}
+  parentName="Первичная медико-санитарная помощь"
+  heroBgColor="bg-green-100"
+  buttonBgColor="bg-green-100"
+  buttonHoverBgColor="hover:bg-green-200"
+  buttonBorderColor="border-green-200"
+>{page}</LayoutFolderChlank>;
