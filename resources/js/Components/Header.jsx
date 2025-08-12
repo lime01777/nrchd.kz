@@ -46,13 +46,13 @@ export default function Header() {
         { title: "Стратегические инициативы и международное сотрудничество", url: "strategic.initiatives"},
         { title: "Рейтинг медицинских организаций", url: "medical.rating"},
         { title: "Медицинская наука", url: "medical.science"},
+        { title: "Центральная комиссия по биоэтике", url: "bioethics" },
         { title: "Лекарственная политика", url: "drug.policy"},
         { title: "Первичная медико-санитарная помощь", url: "primary.healthcare"},
         { title: "Национальные счета здравоохранения", url: "health.accounts"},
         { title: "Медицинская статистика", url: "medical.statistics"},
         { title: "Отраслевой центр технологических компетенций", url: "direction.tech.competence" },
         { title: "Центр профилактики и укрепления здоровья", url: "center.prevention" },
-        { title: "Центральная комиссия по биоэтике", url: "bioethics" },
     ];
 
     const allAboutCentreSubLinks = [
@@ -137,7 +137,7 @@ export default function Header() {
                         style={{ transformOrigin: "top center" }}>
                         {/* Первое меню */}
                         <ul className="w-96 py-2 border-r border-gray-100">
-                            {allDirectionsSubLinks.slice(0, 7).map((directionsublink, index) =>(
+                            {allDirectionsSubLinks.slice(0, 8).map((directionsublink, index) =>(
                             <DirectionsSubLinks key={index} title={directionsublink.title} url={directionsublink.url} />
 
                             ))}
@@ -145,7 +145,7 @@ export default function Header() {
 
                         {/* Второе меню */}
                         <ul className="w-96 py-2">
-                            {allDirectionsSubLinks.slice(7).map((directionsublink, index) =>(
+                            {allDirectionsSubLinks.slice(8).map((directionsublink, index) =>(
                             <DirectionsSubLinks key={index} title={directionsublink.title} url={directionsublink.url} />
                             ))}
 
