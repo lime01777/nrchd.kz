@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Middleware\LanguageMiddleware;
 
+// Подключаем локализованные маршруты
+require __DIR__.'/localized.php';
+
 // API маршруты для файлового менеджера изображений (должны быть доступны без аутентификации)
 Route::get('/api/admin/images', [\App\Http\Controllers\Api\ImageController::class, 'getImages']);
 Route::post('/api/admin/images/upload', [\App\Http\Controllers\Api\ImageController::class, 'uploadImage']);
@@ -122,7 +125,8 @@ Route::middleware([LanguageMiddleware::class])->group(function () {
             'canRegister' => Route::has('register'),
             'laravelVersion' => Application::VERSION,
             'phpVersion' => PHP_VERSION,
-            'locale' => app()->getLocale(), // Добавляем текущий язык в пропсы
+            'locale' => app()->getLocale(),
+            'translations' => \App\Services\TranslationService::getForPage('home', app()->getLocale()),
         ]);
     })->name('home');
 }); // Конец мидлвара языка

@@ -73,8 +73,8 @@ function detectLanguage() {
     return browserLang;
   }
   
-  // 5. Возвращаем русский по умолчанию
-  return 'ru';
+  // 5. Возвращаем казахский по умолчанию
+  return 'kz';
 }
 
 /**

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 /**
  * Слайдер для изображений и видео
+ * Поддерживает мультиязычность
  */
 export default function MediaSlider({ media = [], className = '', autoPlay = true, interval = 5000 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -22,7 +23,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
       return {
         path: item.path || item,
         type: item.type || 'image',
-        name: item.name || 'Медиа файл'
+        name: item.name || (window.translations?.media_file || 'Медиа файл')
       };
     }
     return null;
@@ -68,7 +69,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
           <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
           </svg>
-          <p>Нет медиа файлов для отображения</p>
+          <p>{window.translations?.no_media_files || 'Нет медиа файлов для отображения'}</p>
         </div>
       </div>
     );
@@ -95,7 +96,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
             onPause={() => setIsPlaying(false)}
           >
             <source src={currentMedia.path} type={`video/${currentMedia.path.split('.').pop()}`} />
-            Ваш браузер не поддерживает видео.
+            {window.translations?.browser_not_support_video || 'Ваш браузер не поддерживает видео.'}
           </video>
         ) : (
           <img
@@ -118,13 +119,13 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
 
         {/* Индикатор типа медиа */}
         <div className="absolute top-2 left-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-          {currentMedia.type === 'video' ? '🎥 Видео' : '🖼️ Изображение'}
+          {currentMedia.type === 'video' ? '🎥 ' + (window.translations?.video || 'Видео') : '🖼️ ' + (window.translations?.image || 'Изображение')}
         </div>
 
         {/* Индикатор автовоспроизведения */}
         {autoPlay && (
           <div className="absolute top-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-            {isPlaying ? '⏸️ Пауза' : '▶️ Воспроизвести'}
+            {isPlaying ? '⏸️ ' + (window.translations?.pause || 'Пауза') : '▶️ ' + (window.translations?.play || 'Воспроизвести')}
           </div>
         )}
       </div>
@@ -136,7 +137,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
           <button
             onClick={goToPrevious}
             className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
-            aria-label="Предыдущий слайд"
+            aria-label={window.translations?.previous_slide || "Предыдущий слайд"}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
@@ -147,7 +148,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
           <button
             onClick={goToNext}
             className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
-            aria-label="Следующий слайд"
+            aria-label={window.translations?.next_slide || "Следующий слайд"}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
@@ -168,7 +169,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
                   ? 'bg-white' 
                   : 'bg-white bg-opacity-50 hover:bg-opacity-75'
               }`}
-              aria-label={`Перейти к слайду ${index + 1}`}
+              aria-label={window.translations?.go_to_slide ? `${window.translations.go_to_slide} ${index + 1}` : `Перейти к слайду ${index + 1}`}
             />
           ))}
         </div>

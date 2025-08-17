@@ -18,7 +18,7 @@ class LanguageMiddleware
     /**
      * Язык по умолчанию
      */
-    protected $defaultLanguage = 'ru';
+    protected $defaultLanguage = 'kz';
     
     /**
      * Handle an incoming request.

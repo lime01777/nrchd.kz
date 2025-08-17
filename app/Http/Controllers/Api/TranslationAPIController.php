@@ -1,205 +1,268 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Log;
-use Stichoza\GoogleTranslate\GoogleTranslate;
 use App\Models\StoredTranslation;
+use App\Services\AutoTranslationService;
 use Exception;
 
 class TranslationAPIController extends Controller
 {
     /**
-     * Переводит текст на указанный язык
+     * Сервис автоматического перевода
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @var AutoTranslationService
+     */
+    protected $translationService;
+
+    /**
+     * Конструктор
+     *
+     * @param AutoTranslationService $translationService
+     */
+    public function __construct(AutoTranslationService $translationService)
+    {
+        $this->translationService = $translationService;
+    }
+
+    /**
+     * Получить переводы для указанного языка
+     *
+     * @param Request $request
+     * @param string $language
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTranslations(Request $request, $language)
+    {
+        try {
+            // Проверяем, что язык поддерживается
+            $supportedLanguages = ['kz', 'ru', 'en'];
+            if (!in_array($language, $supportedLanguages)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unsupported language'
+                ], 400);
+            }
+
+            // Загружаем переводы из языковых файлов
+            $translations = $this->translationService->getLanguageFileTranslations($language);
+
+            // Получаем дополнительные переводы из базы данных
+            $dbTranslations = StoredTranslation::where('target_language', $language)
+                ->get()
+                ->pluck('translated_text', 'original_text')
+                ->toArray();
+
+            // Объединяем переводы
+            $allTranslations = array_merge($translations, $dbTranslations);
+
+            return response()->json([
+                'success' => true,
+                'language' => $language,
+                'translations' => $allTranslations,
+                'count' => count($allTranslations)
+            ]);
+
+        } catch (Exception $e) {
+            Log::error('Error getting translations: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading translations'
+            ], 500);
+        }
+    }
+
+    /**
+     * Перевести текст
+     *
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function translate(Request $request)
     {
-        // Валидация запроса
-        $request->validate([
-            'text' => 'required|string',
-            'source_lang' => 'required|string|min:2|max:5',
-            'target_lang' => 'required|string|min:2|max:5'
-        ]);
-        
-        // Для пустого текста возвращаем оригинал
-        if (empty(trim($request->text))) {
-            return response()->json([
-                'success' => true, 
-                'translation' => $request->text
-            ]);
-        }
-        
-        // Проверяем, есть ли уже сохраненный перевод
-        $targetLang = $request->target_lang;
-        
-        // Конвертируем код языка для Google API, если нужно
-        $googleLangCode = ($targetLang === 'kz') ? 'kk' : $targetLang;
-
-        // Проверяем существующий перевод в БД
         try {
-            $existingTranslation = StoredTranslation::where('original_text', $request->text)
-                ->where('target_language', $targetLang)
-                ->first();
-                
-            if ($existingTranslation) {
+            $request->validate([
+                'text' => 'required|string',
+                'target_language' => 'required|string|in:kz,ru,en',
+                'source_language' => 'string|in:kz,ru,en'
+            ]);
+
+            $text = $request->text;
+            $targetLanguage = $request->target_language;
+            $sourceLanguage = $request->source_language ?? 'kz';
+
+            // Если целевой язык совпадает с исходным, возвращаем исходный текст
+            if ($targetLanguage === $sourceLanguage) {
                 return response()->json([
                     'success' => true,
-                    'translation' => $existingTranslation->translated_text,
-                    'source' => $request->source_lang,
-                    'target' => $targetLang,
-                    'cached' => true
+                    'translation' => $text,
+                    'source' => $sourceLanguage,
+                    'target' => $targetLanguage
                 ]);
             }
-        } catch (Exception $e) {
-            Log::error('Error checking cached translation: ' . $e->getMessage());
-            // Продолжаем выполнение и попробуем получить новый перевод
-        }
-        
-        // Логируем запрос перевода
-        Log::debug('Translation API request', [
-            'from' => $request->source_lang,
-            'to' => $targetLang,
-            'text' => mb_substr($request->text, 0, 30) . (mb_strlen($request->text) > 30 ? '...' : '')
-        ]);
 
-        try {
-            // Получаем экземпляр Google Translate API
-            // Инициализируем переводчик
-            $translator = new GoogleTranslate();
-            
-            // Проверяем, есть ли специальный метод для установки ключа
-            $apiKey = env('GOOGLE_TRANSLATE_API_KEY');
-            if ($apiKey && method_exists($translator, 'setApiKey')) {
-                $translator->setApiKey($apiKey);
-            }
-            
-            // Устанавливаем исходный и целевой языки
-            $sourceCode = ($request->source_lang === 'kz') ? 'kk' : $request->source_lang;
-            $translator->setSource($sourceCode);
-            $translator->setTarget($googleLangCode);
-            
             // Выполняем перевод
-            $translation = $translator->translate($request->text);
-            
-            // Если перевод пустой, возвращаем оригинал
-            if (empty($translation)) {
-                Log::warning('Empty translation result, using original text');
-                $translation = $request->text;
-            }
-            
-            // Сохраняем перевод в БД
-            if (!empty($translation) && $translation !== $request->text) {
-                try {
-                    StoredTranslation::create([
-                        'original_text' => $request->text,
-                        'translated_text' => $translation,
-                        'target_language' => $targetLang,
-                        'hash' => md5($request->text . $targetLang),
-                        'page_url' => $request->header('Referer') ?? null,
-                    ]);
-                    
-                    Log::debug('Translation cached in database', [
-                        'text' => mb_substr($request->text, 0, 30) . (mb_strlen($request->text) > 30 ? '...' : ''),
-                        'target' => $targetLang
-                    ]);
-                } catch (Exception $e) {
-                    Log::error('Error caching translation: ' . $e->getMessage());
-                    // Продолжаем с ответом, даже если кэширование не удалось
-                }
-            }
-            
-            // Возвращаем результат перевода
+            $translation = $this->translationService->translateText($text, $targetLanguage, $sourceLanguage);
+
             return response()->json([
                 'success' => true,
                 'translation' => $translation,
-                'source' => $request->source_lang,
-                'target' => $targetLang,
-                'cached' => false
+                'source' => $sourceLanguage,
+                'target' => $targetLanguage
             ]);
+
         } catch (Exception $e) {
-            Log::error('Translation API error: ' . $e->getMessage(), [
-                'exception' => $e->getMessage(),
-                'source' => $request->source_lang,
-                'target' => $targetLang,
-                'text_sample' => mb_substr($request->text, 0, 30) . (mb_strlen($request->text) > 30 ? '...' : '')
-            ]);
+            Log::error('Translation error: ' . $e->getMessage());
             
-            // Возвращаем оригинальный текст в случае ошибки
             return response()->json([
                 'success' => false,
-                'error' => 'Translation failed',
-                'message' => $e->getMessage(),
-                'translation' => $request->text, // Возвращаем оригинал при ошибке
-                'source' => $request->source_lang,
-                'target' => $targetLang
-            ], 200); // Возвращаем 200, чтобы фронтенд мог обработать ошибку
+                'message' => 'Translation failed',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
-    
+
     /**
-     * Обновляет языковую настройку в сессии
+     * Сохранить переводы
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function saveTranslations(Request $request)
+    {
+        try {
+            $request->validate([
+                'translations' => 'required|array',
+                'target_language' => 'required|string|in:kz,ru,en',
+                'source_language' => 'string|in:kz,ru,en'
+            ]);
+
+            $translations = $request->translations;
+            $targetLanguage = $request->target_language;
+            $sourceLanguage = $request->source_language ?? 'kz';
+
+            $savedCount = 0;
+            $errors = [];
+
+            foreach ($translations as $originalText => $translatedText) {
+                try {
+                    if (empty($originalText) || empty($translatedText)) {
+                        continue;
+                    }
+
+                    $this->translationService->storeTranslation(
+                        $originalText,
+                        $translatedText,
+                        $sourceLanguage,
+                        $targetLanguage
+                    );
+
+                    $savedCount++;
+
+                } catch (Exception $e) {
+                    $errors[] = [
+                        'text' => substr($originalText, 0, 30),
+                        'error' => $e->getMessage()
+                    ];
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'saved_count' => $savedCount,
+                'errors' => $errors,
+                'message' => "Saved $savedCount translations"
+            ]);
+
+        } catch (Exception $e) {
+            Log::error('Error saving translations: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error saving translations'
+            ], 500);
+        }
+    }
+
+    /**
+     * Установить язык
+     *
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function setLanguage(Request $request)
     {
-        $request->validate([
-            'language' => 'required|string|in:ru,en,kz'
-        ]);
-        
-        $language = $request->language;
-        
-        // Сохраняем язык в сессии
-        session(['language' => $language]);
-        
-        // Устанавливаем локаль приложения
-        app()->setLocale($language);
-        
-        return response()->json([
-            'success' => true,
-            'language' => $language,
-            'message' => 'Language set successfully'
-        ]);
+        try {
+            $request->validate([
+                'language' => 'required|string|in:kz,ru,en'
+            ]);
+
+            $language = $request->language;
+
+            // Сохраняем язык в сессии
+            Session::put('language', $language);
+            
+            // Устанавливаем язык приложения
+            App::setLocale($language);
+
+            // Устанавливаем куки для сохранения между сессиями
+            $cookie = cookie('language', $language, 43200); // 30 дней
+
+            Log::info('Language set via API', [
+                'language' => $language,
+                'user_ip' => $request->ip()
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'language' => $language,
+                'message' => 'Language set successfully'
+            ])->cookie($cookie);
+
+        } catch (Exception $e) {
+            Log::error('Error setting language: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error setting language'
+            ], 500);
+        }
     }
-    
+
     /**
-     * Получает все доступные переводы для указанного языка
+     * Получить текущий язык
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getTranslations(Request $request)
+    public function getCurrentLanguage(Request $request)
     {
-        $request->validate([
-            'language' => 'required|string|in:ru,en,kz'
-        ]);
-        
-        $language = $request->language;
-        
-        // Получаем все переводы для указанного языка
-        $translations = StoredTranslation::where('target_language', $language)
-            ->select('original_text', 'translated_text')
-            ->orderBy('id', 'desc')
-            ->limit(1000) // Ограничиваем количество возвращаемых переводов
-            ->get();
+        try {
+            $currentLanguage = App::getLocale();
+            $sessionLanguage = Session::get('language');
+            $cookieLanguage = $request->cookie('language');
+
+            return response()->json([
+                'success' => true,
+                'current_language' => $currentLanguage,
+                'session_language' => $sessionLanguage,
+                'cookie_language' => $cookieLanguage,
+                'browser_language' => $request->getPreferredLanguage(['kz', 'ru', 'en'])
+            ]);
+
+        } catch (Exception $e) {
+            Log::error('Error getting current language: ' . $e->getMessage());
             
-        // Преобразуем результат в удобный формат для фронтенда
-        $result = [];
-        foreach ($translations as $translation) {
-            $result[$translation->original_text] = $translation->translated_text;
+            return response()->json([
+                'success' => false,
+                'message' => 'Error getting current language'
+            ], 500);
         }
-        
-        return response()->json([
-            'success' => true,
-            'language' => $language,
-            'translations' => $result,
-            'count' => count($result)
-        ]);
     }
 }

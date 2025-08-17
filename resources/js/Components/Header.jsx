@@ -7,52 +7,57 @@ import ImprovedLanguageSwitcher from './ImprovedLanguageSwitcher';
 import TranslationService from '../Services/SimpleFastTranslationService';
 
 export default function Header() {
-    const { auth } = usePage().props;
+    const { auth, translations } = usePage().props;
     const [isScrolled, setIsScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [accessibilityMode, setAccessibilityMode] = useState(false);
+    
+    // Функция для получения перевода
+    const t = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
 
     const branchesSubLinks = [
-        { title: "г. Астана", url: "branches.astana" },
-        { title: "г. Алматы", url: "branches.almaty" },
-        { title: "Абайская область", url: "branches.abay" },
-        { title: "Акмолинская область", url: "branches.akmola" },
-        { title: "Актюбинская область", url: "branches.aktobe" },
-        { title: "Алматинская область", url: "branches.almatyregion" },
-        { title: "Атырауская область", url: "branches.atyrau" },
-        { title: "Восточно-Казахстанская область", url: "branches.east" },
-        { title: "Жамбылская область", url: "branches.zhambyl" },
-        { title: "Жетысуская область", url: "branches.zhetisu" },
-        { title: "Западно-Казахстанская область", url: "branches.west" },
-        { title: "Карагандинская область", url: "branches.karaganda" },
-        { title: "Костанайская область", url: "branches.kostanay" },
-        { title: "Кызылординская область", url: "branches.kyzylorda" },
-        { title: "Мангистауская область", url: "branches.mangistau" },
-        { title: "Павлодарская область", url: "branches.pavlodar" },
-        { title: "Северо-Казахстанская область", url: "branches.north" },
-        { title: "Туркестанская область", url: "branches.turkestan" },
-        { title: "Улытауская область", url: "branches.ulytau" },
-        { title: "г. Шымкент", url: "branches.shymkent" }
+        { title: t('branchesSubLinks.astana', "г. Астана"), url: "branches.astana" },
+        { title: t('branchesSubLinks.almaty', "г. Алматы"), url: "branches.almaty" },
+        { title: t('branchesSubLinks.abay', "Абайская область"), url: "branches.abay" },
+        { title: t('branchesSubLinks.akmola', "Акмолинская область"), url: "branches.akmola" },
+        { title: t('branchesSubLinks.aktobe', "Актюбинская область"), url: "branches.aktobe" },
+        { title: t('branchesSubLinks.almatyregion', "Алматинская область"), url: "branches.almatyregion" },
+        { title: t('branchesSubLinks.atyrau', "Атырауская область"), url: "branches.atyrau" },
+        { title: t('branchesSubLinks.east', "Восточно-Казахстанская область"), url: "branches.east" },
+        { title: t('branchesSubLinks.zhambyl', "Жамбылская область"), url: "branches.zhambyl" },
+        { title: t('branchesSubLinks.zhetisu', "Жетысуская область"), url: "branches.zhetisu" },
+        { title: t('branchesSubLinks.west', "Западно-Казахстанская область"), url: "branches.west" },
+        { title: t('branchesSubLinks.karaganda', "Карагандинская область"), url: "branches.karaganda" },
+        { title: t('branchesSubLinks.kostanay', "Костанайская область"), url: "branches.kostanay" },
+        { title: t('branchesSubLinks.kyzylorda', "Кызылординская область"), url: "branches.kyzylorda" },
+        { title: t('branchesSubLinks.mangistau', "Мангистауская область"), url: "branches.mangistau" },
+        { title: t('branchesSubLinks.pavlodar', "Павлодарская область"), url: "branches.pavlodar" },
+        { title: t('branchesSubLinks.north', "Северо-Казахстанская область"), url: "branches.north" },
+        { title: t('branchesSubLinks.turkestan', "Туркестанская область"), url: "branches.turkestan" },
+        { title: t('branchesSubLinks.ulytau', "Улытауская область"), url: "branches.ulytau" },
+        { title: t('branchesSubLinks.shymkent', "г. Шымкент"), url: "branches.shymkent" }
     ];
 
     const allDirectionsSubLinks = [
-        { title: "Медицинское образование", url: "medical.education"},
-        { title: "Кадровые ресурсы здравоохранения", url: "human.resources"},
-        { title: "Электронное здравоохранение", url: "electronic.health"},
-        { title: "Аккредитация", url: "medical.accreditation"},
-        { title: "Оценка технологий здравоохранения", url: "health.rate"},
-        { title: "Клинические протоколы", url: "clinical.protocols"},
-        { title: "Стратегические инициативы и международное сотрудничество", url: "strategic.initiatives"},
-        { title: "Рейтинг медицинских организаций", url: "medical.rating"},
-        { title: "Медицинская наука", url: "medical.science"},
-        { title: "Центральная комиссия по биоэтике", url: "bioethics" },
-        { title: "Лекарственная политика", url: "drug.policy"},
-        { title: "Первичная медико-санитарная помощь", url: "primary.healthcare"},
-        { title: "Национальные счета здравоохранения", url: "health.accounts"},
-        { title: "Медицинская статистика", url: "medical.statistics"},
-        { title: "Отраслевой центр технологических компетенций", url: "direction.tech.competence" },
-        { title: "Центр профилактики и укрепления здоровья", url: "center.prevention" },
+        { title: t('directionsSubLinks.medical_education', "Медицинское образование"), url: "medical.education"},
+        { title: t('directionsSubLinks.human_resources', "Кадровые ресурсы здравоохранения"), url: "human.resources"},
+        { title: t('directionsSubLinks.electronic_health', "Электронное здравоохранение"), url: "electronic.health"},
+        { title: t('directionsSubLinks.medical_accreditation', "Аккредитация"), url: "medical.accreditation"},
+        { title: t('directionsSubLinks.health_rate', "Оценка технологий здравоохранения"), url: "health.rate"},
+        { title: t('directionsSubLinks.clinical_protocols', "Клинические протоколы"), url: "clinical.protocols"},
+        { title: t('directionsSubLinks.strategic_initiatives', "Стратегические инициативы и международное сотрудничество"), url: "strategic.initiatives"},
+        { title: t('directionsSubLinks.medical_rating', "Рейтинг медицинских организаций"), url: "medical.rating"},
+        { title: t('directionsSubLinks.medical_science', "Медицинская наука"), url: "medical.science"},
+        { title: t('directionsSubLinks.bioethics', "Центральная комиссия по биоэтике"), url: "bioethics" },
+        { title: t('directionsSubLinks.drug_policy', "Лекарственная политика"), url: "drug.policy"},
+        { title: t('directionsSubLinks.primary_healthcare', "Первичная медико-санитарная помощь"), url: "primary.healthcare"},
+        { title: t('directionsSubLinks.health_accounts', "Национальные счета здравоохранения"), url: "health.accounts"},
+        { title: t('directionsSubLinks.medical_statistics', "Медицинская статистика"), url: "medical.statistics"},
+        { title: t('directionsSubLinks.direction_tech_competence', "Отраслевой центр технологических компетенций"), url: "direction.tech.competence" },
+        { title: t('directionsSubLinks.center_prevention', "Центр профилактики и укрепления здоровья"), url: "center.prevention" },
     ];
 
     const allAboutCentreSubLinks = [

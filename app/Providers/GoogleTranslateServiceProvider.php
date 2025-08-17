@@ -27,7 +27,7 @@ class GoogleTranslateServiceProvider extends ServiceProvider
                 $options = ['key' => $apiKey];
                 
                 Log::info('Creating GoogleTranslate instance with options: ' . json_encode($options));
-                $translator = new GoogleTranslate('ru', 'en', $options);
+                $translator = new GoogleTranslate('kz', 'en', $options);
                 
                 // Проверяем работу перевода
                 $testText = 'Тест перевода';
@@ -44,7 +44,7 @@ class GoogleTranslateServiceProvider extends ServiceProvider
                 return $translator;
             } catch (\Exception $e) {
                 Log::error('Failed to initialize GoogleTranslate: ' . $e->getMessage());
-                return new GoogleTranslate('ru');
+                return new GoogleTranslate('kz');
             }
         });
     }

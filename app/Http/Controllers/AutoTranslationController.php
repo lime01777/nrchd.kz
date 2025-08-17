@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Translation;
 use App\Services\AutoTranslationService;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,7 +22,7 @@ class AutoTranslationController extends Controller
      * Перевести текст и сохранить в базе данных
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function translate(Request $request)
     {
@@ -38,7 +39,7 @@ class AutoTranslationController extends Controller
 
         try {
             $text = $request->input('text');
-            $sourceLanguage = $request->input('source_language', 'ru');
+            $sourceLanguage = $request->input('source_language', 'kz');
             $contentType = $request->input('content_type', 'general');
             $contentId = $request->input('content_id');
 
@@ -71,7 +72,7 @@ class AutoTranslationController extends Controller
      * Получить сохраненный перевод из базы данных
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getTranslation(Request $request)
     {
@@ -109,7 +110,9 @@ class AutoTranslationController extends Controller
             // Если перевод не найден, сделаем и сохраним новый
             $translations = $this->autoTranslationService->translateAndStore(
                 $text,
-                $sourceLanguage
+                $sourceLanguage,
+                'general',
+                null
             );
 
             return response()->json([
@@ -130,7 +133,7 @@ class AutoTranslationController extends Controller
      * Перевести и сохранить массив текстов
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function bulkTranslate(Request $request)
     {
@@ -149,7 +152,7 @@ class AutoTranslationController extends Controller
 
         try {
             $items = $request->input('items');
-            $sourceLanguage = $request->input('source_language', 'ru');
+            $sourceLanguage = $request->input('source_language', 'kz');
             $contentType = $request->input('content_type', 'general');
             $contentId = $request->input('content_id');
 
@@ -190,7 +193,7 @@ class AutoTranslationController extends Controller
      * Получить все переводы для конкретного контента
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getContentTranslations(Request $request)
     {

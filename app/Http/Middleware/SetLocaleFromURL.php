@@ -21,7 +21,7 @@ class SetLocaleFromURL
      *
      * @var string
      */
-    protected $defaultLocale = 'ru';
+    protected $defaultLocale = 'kz';
 
     /**
      * Handle an incoming request.

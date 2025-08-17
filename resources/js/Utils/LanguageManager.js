@@ -9,7 +9,7 @@
 
 // Доступные языки
 const AVAILABLE_LANGUAGES = ['ru', 'kz', 'en'];
-const DEFAULT_LANGUAGE = 'ru';
+const DEFAULT_LANGUAGE = 'kz';
 
 // Класс для управления языком сайта
 class LanguageManager {

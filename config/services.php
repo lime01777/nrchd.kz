@@ -45,7 +45,7 @@ return [
     | Get an API key: https://cloud.google.com/translate/docs/setup
     |
     */
-    'google_translate' => [
-        'api_key' => env('GOOGLE_TRANSLATE_API_KEY'),
+    'google' => [
+        'translate_api_key' => env('GOOGLE_TRANSLATE_API_KEY'),
     ],
 ];

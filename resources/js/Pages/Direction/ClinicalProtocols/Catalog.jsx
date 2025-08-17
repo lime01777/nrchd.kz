@@ -307,6 +307,7 @@ export default function ClinicalProtocolsCatalog() {
                   bgColor="bg-white"
                   useClinicalProtocols={true}
                   onFilesLoaded={handleFilesLoaded}
+                  folder="Клинические протоколы\Поток — клинические протоколы" 
                   onError={(errorMsg) => {
                     console.error('Ошибка в SimpleFileDisplay:', errorMsg);
                     setError(errorMsg);

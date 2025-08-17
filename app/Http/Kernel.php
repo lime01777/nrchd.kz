@@ -65,6 +65,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'setLocale' => \App\Http\Middleware\SetLocaleFromURL::class,
+        'autoLanguage' => \App\Http\Middleware\AutoLanguageDetectionMiddleware::class,
         'conference.subdomain' => \App\Http\Middleware\ConferenceSubdomainMiddleware::class,
     ];
 }

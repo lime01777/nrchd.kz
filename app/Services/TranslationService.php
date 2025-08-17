@@ -12,7 +12,7 @@ use Exception;
 class TranslationService
 {
     protected static $supportedLanguages = ['ru', 'en', 'kz'];
-    protected static $sourceLanguage = 'ru';
+    protected static $sourceLanguage = 'kz';
 
     /**
      * Быстрый перевод текста с использованием БД кэша
@@ -200,5 +200,62 @@ class TranslationService
     public static function hasTranslation(string $text, string $targetLanguage): bool
     {
         return StoredTranslation::findTranslation($text, $targetLanguage) !== null;
+    }
+
+    /**
+     * Получить переводы для конкретной страницы
+     * Этот метод используется в маршрутах для передачи переводов в React компоненты
+     *
+     * @param string $pageName Название страницы
+     * @param string $locale Локаль
+     * @return array Массив переводов
+     */
+    public static function getForPage(string $pageName, string $locale): array
+    {
+        // Всегда возвращаем переводы, независимо от исходного языка
+        // Это нужно для React компонентов, которые должны получать переводы
+
+        // Загружаем переводы из файлов Laravel
+        $translations = [];
+        
+        try {
+            // Загружаем общие переводы
+            $commonTranslations = trans('common', [], $locale);
+            if (is_array($commonTranslations)) {
+                $translations = array_merge($translations, $commonTranslations);
+            }
+
+            // Загружаем переводы для конкретной страницы, если они есть
+            $pageTranslations = trans($pageName, [], $locale);
+            if (is_array($pageTranslations)) {
+                $translations = array_merge($translations, $pageTranslations);
+            }
+
+            // Загружаем сообщения
+            $messagesTranslations = trans('messages', [], $locale);
+            if (is_array($messagesTranslations)) {
+                $translations = array_merge($translations, $messagesTranslations);
+            }
+
+            // Загружаем локализацию
+            $localizationTranslations = trans('localization', [], $locale);
+            if (is_array($localizationTranslations)) {
+                $translations = array_merge($translations, $localizationTranslations);
+            }
+            
+            // Загружаем переводы из базы данных
+            $dbTranslations = \App\Services\DatabaseTranslationService::getAllTranslations($locale);
+            if (is_array($dbTranslations)) {
+                $translations = array_merge($translations, $dbTranslations);
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Error loading translations for page: ' . $e->getMessage(), [
+                'page' => $pageName,
+                'locale' => $locale
+            ]);
+        }
+
+        return $translations;
     }
 }

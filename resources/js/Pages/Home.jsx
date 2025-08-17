@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import Header from '@/Components/Header';
 import News from '@/Components/News';
 import Directions from '@/Components/Directions';
@@ -9,42 +9,51 @@ import Sponsors from '@/Components/Sponsors';
 import Footer from '@/Components/Footer';
 import React from 'react';
 
-// Создаем специальный компонент для графиков на главной странице
-const HomeCharts = () => {
-    return (
-        <section className="text-gray-600 body-font py-16 bg-gray-50">
-            <div className="container mx-auto px-5">
-                <h2 className="text-3xl font-bold mb-12 text-gray-800">Статистика и аналитика</h2>
-                
-                <div className="flex flex-wrap -mx-4">
-                    {/* График травм */}
-                    <div className="w-full lg:w-1/2 px-4 mb-12 lg:mb-0">
-                        <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 h-full">
-                            <div className="h-80">
-                                <ChartHead 
-                                    chartType="injuries" 
-                                />
+
+
+export default function Home({ auth, laravelVersion, phpVersion }) {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const t = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+    
+    // Создаем специальный компонент для графиков на главной странице
+    const HomeCharts = () => {
+        return (
+            <section className="text-gray-600 body-font py-16 bg-gray-50">
+                <div className="container mx-auto px-5">
+                    <h2 className="text-3xl font-bold mb-12 text-gray-800">{t('statistics', 'Статистика и аналитика')}</h2>
+                    
+                    <div className="flex flex-wrap -mx-4">
+                        {/* График травм */}
+                        <div className="w-full lg:w-1/2 px-4 mb-12 lg:mb-0">
+                            <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 h-full">
+                                <div className="h-80">
+                                    <ChartHead 
+                                        chartType="injuries" 
+                                    />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    {/* График аккредитаций */}
-                    <div className="w-full lg:w-1/2 px-4">
-                        <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 h-full">
-                            <div className="h-80">
-                                <ChartHead 
-                                    chartType="accreditation" 
-                                />
+                        
+                        {/* График аккредитаций */}
+                        <div className="w-full lg:w-1/2 px-4">
+                            <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 h-full">
+                                <div className="h-80">
+                                    <ChartHead 
+                                        chartType="accreditation" 
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-    );
-};
-
-export default function Home({ auth, laravelVersion, phpVersion }) {
+            </section>
+        );
+    };
+    
     const handleImageError = () => {
         document
             .getElementById('screenshot-container')
@@ -58,16 +67,16 @@ export default function Home({ auth, laravelVersion, phpVersion }) {
 
     return (
         <>
-            <Head title="РГП на ПХВ ''ННЦРЗ им.Салидат Каирбековой'' МЗ РК"
-      description="Официальный сайт РГП на ПХВ Национального научного центра развития здравоохранения имени Салидат Каирбековой Министерства здравоохранения Республики Казахстан. Новости, направления, услуги, документы, контакты."
+            <Head title={t('center_name', "РГП на ПХВ 'ННЦРЗ им.Салидат Каирбековой' МЗ РК")}
+      description={t('center_name', 'Официальный сайт РГП на ПХВ Национального научного центра развития здравоохранения имени Салидат Каирбековой Министерства здравоохранения Республики Казахстан. Новости, направления, услуги, документы, контакты.')}
       meta={[
-        { name: 'description', content: 'Официальный сайт РГП на ПХВ Национального научного центра развития здравоохранения имени Салидат Каирбековой Министерства здравоохранения Республики Казахстан. Новости, направления, услуги, документы, контакты.' },
+        { name: 'description', content: t('center_name', 'Официальный сайт РГП на ПХВ Национального научного центра развития здравоохранения имени Салидат Каирбековой Министерства здравоохранения Республики Казахстан. Новости, направления, услуги, документы, контакты.') },
         { name: 'keywords', content: 'ННЦРЗ, Национальный научный центр развития здравоохранения, Салидат Каирбекова, МЗ РК, здравоохранение Казахстан, РГП на ПХВ, услуги, документы, новости, медицина' },
-        { name: 'og:title', content: 'РГП на ПХВ ННЦРЗ им.Салидат Каирбековой МЗ РК' },
-        { name: 'og:description', content: 'Официальный сайт РГП на ПХВ Национального научного центра развития здравоохранения имени Салидат Каирбековой МЗ РК.' },
+        { name: 'og:title', content: t('center_name', "РГП на ПХВ ННЦРЗ им.Салидат Каирбековой МЗ РК") },
+        { name: 'og:description', content: t('center_name', 'Официальный сайт РГП на ПХВ Национального научного центра развития здравоохранения имени Салидат Каирбековой МЗ РК.') },
         { name: 'og:type', content: 'website' },
-        { name: 'og:site_name', content: 'ННЦРЗ им.Салидат Каирбековой' },
-        { name: 'og:locale', content: 'ru_RU' }
+        { name: 'og:site_name', content: t('center_name', "ННЦРЗ им.Салидат Каирбековой") },
+        { name: 'og:locale', content: 'kz_KZ' }
       ]}
     />
             <Header />
@@ -79,10 +88,7 @@ export default function Home({ auth, laravelVersion, phpVersion }) {
                         <img className="absolute inset-0 w-full h-full object-cover" alt="hero" src="./img/slide.png" />
                         <div
                             className="absolute lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
-                            <h1 className="title-font sm:text-4xl text-3xl mb-4 font-semibold text-gray-900">Национальный
-                                доклад 
-                                <br className="hidden lg:inline-block" />о развитии здравоохранения  
-                            </h1>
+                            <h1 className="title-font sm:text-4xl text-3xl mb-4 font-semibold text-gray-900">{t('center_name', 'Национальный научный центр развития здравоохранения им. Салидат Каирбековой')}</h1>
                         </div>
                     </div>
                 </div>

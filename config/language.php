@@ -15,7 +15,7 @@ return [
             'native' => 'Русский',
             'flag' => '🇷🇺',
         ],
-        'kk' => [
+        'kz' => [
             'name' => 'Kazakh',
             'native' => 'Қазақша',
             'flag' => '🇰🇿',
@@ -35,7 +35,7 @@ return [
     | The default locale to use when no locale is specified.
     |
     */
-    'default_locale' => 'ru',
+    'default_locale' => 'kz',
 
     /*
     |--------------------------------------------------------------------------

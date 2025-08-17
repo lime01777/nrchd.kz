@@ -30,7 +30,7 @@ Route::get('/', function () {
 // Route for switching languages
 Route::get('change-language/{locale}', function ($locale) {
     if (!in_array($locale, ['ru', 'en', 'kz'])) {
-        $locale = 'ru';
+        $locale = 'kz';
     }
     
     $currentUrl = url()->previous();

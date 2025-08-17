@@ -12,7 +12,7 @@ let isInitialized = false;
 const SUPPORTED_LANGUAGES = ['ru', 'en', 'kz'];
 
 // Язык по умолчанию
-const DEFAULT_LANGUAGE = 'ru';
+const DEFAULT_LANGUAGE = 'kz';
 
 /**
  * Инициализация языковой системы
