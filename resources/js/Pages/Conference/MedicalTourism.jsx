@@ -2,30 +2,151 @@ import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
 
 export default function MedicalTourism() {
-  const [selectedCity, setSelectedCity] = useState('astana');
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0
   });
+  const [showModal, setShowModal] = useState(false);
+  const [currentSpeakerIndex, setCurrentSpeakerIndex] = useState(0);
 
-  // Данные о городах
-  const cities = {
-    astana: {
-      name: 'Астана',
-      dates: '13-15 октября 2025',
-      time: '18:00',
-      venue: 'Президентский центр Республики Казахстан',
-      color: 'from-blue-600 to-blue-800'
+  // Данные о городе (только Астана)
+  const cityData = {
+    name: 'Астана',
+    dates: '13-15 октября 2025',
+    time: '18:00',
+    venue: 'Президентский центр Республики Казахстан',
+    color: 'from-blue-600 to-blue-800'
+  };
+
+  // Данные спикеров
+  const speakers = [
+    {
+      name: 'Бердиходжаев Мынжылкы Сайлауович',
+      title: 'Заместитель директора по хирургии',
+      affiliation: 'РГП «Больница Медицинского центра Управления делами Президента Республики Казахстан» на ПХВ',
+      image: '/img/Tourism/spk1.jpg',
+      details: {
+        memberships: [
+          'Казахская ассоциация нейрохирургов',
+          'Казахстанское общество интервенционных кардиологов и рентгенологов',
+          'European society of minimally invasive therapies (ESMINT)',
+          'European society of neuroradiology (ESNR)',
+          'Общественное объединение «Общество врачей сосудистой и интервенционной нейрохирургии и неврологии Kazneuro»',
+          'Международная ассоциация нейрохирургов',
+          'Ассоциация интервенционных кардиологов Казахстана'
+        ],
+        awards: [
+          '«Үздік еңбегі үшін» - За отличный труд',
+          'Нагрудный знак «Мейірім» Ассамблеи народа Казахстана',
+          'Нагрудный знак «COVID-19 жанқиярлық күресі үшін», «Ақ жол» партиясы',
+          'Нагрудной знак «Денсаулық сақтау ісінің үздігі»',
+          'Награда Национальной медицинской ассоциации «Алтын дәрігер»',
+          'Почетная грамота Министерства здравоохранения РК',
+          'Медаль за вклад в развитие нейрохирургии'
+        ],
+        specialization: 'Нейрохирургия, интервенционная кардиология, сосудистая хирургия',
+        experience: 'Более 20 лет опыта в области нейрохирургии и интервенционной кардиологии',
+        achievements: [
+          'Провел более 5000 сложных нейрохирургических операций',
+          'Автор более 100 научных публикаций',
+          'Разработал инновационные методы лечения сосудистых заболеваний мозга',
+          'Обучил более 50 молодых специалистов'
+        ]
+      }
     },
-    almaty: {
-      name: 'Алматы',
-      dates: '16-17 октября 2025',
-      time: '18:00',
-      venue: 'Место проведения уточняется',
-      color: 'from-green-600 to-green-800'
+    {
+      name: 'Насрулла Абдуллаевич Шаназаров',
+      title: 'Руководитель центра Фотодинамической терапии, Заместитель директора по стратегическому развитию',
+      affiliation: 'Больница МЦ УДП РК, Создатель и руководитель Центра Фотодинамической терапии в БМЦ УДП РК',
+      image: '/img/Tourism/spk2.jpg',
+      details: {
+        memberships: [
+          'Центр Фотодинамической терапии БМЦ УДП РК',
+          'Казахстанская ассоциация онкологов',
+          'Международное общество фотодинамической терапии',
+          'Ассоциация врачей-онкологов Казахстана'
+        ],
+        awards: [
+          'Награда за инновации в онкологии',
+          'Признание за развитие фотодинамической терапии в Казахстане',
+          'Награда за научные достижения в медицине'
+        ]
+      }
+    },
+    {
+      name: 'Орал Базарбаевич Оспанов',
+      title: 'Доктор медицинских наук, профессор, президент Казахстанского общества бариатрических и метаболических хирургов',
+      affiliation: 'Почетный президент Казахстанской Ассоциации эндоскопических хирургов, заведующий кафедрой лапароскопической бариатрической хирургии АО «Медицинский университет Астана»',
+      image: '/img/Tourism/spk3.jpg',
+      details: {
+        memberships: [
+          'Казахстанское общество бариатрических и метаболических хирургов',
+          'Казахстанская Ассоциация эндоскопических хирургов',
+          'Международная федерация хирургии ожирения',
+          'АО «Медицинский университет Астана»',
+          'Всемирная ассоциация бариатрических хирургов'
+        ],
+        awards: [
+          'Звание ученого-медика с мировым именем',
+          'Награда за выдающийся вклад в бариатрическую хирургию',
+          'Признание за развитие эндоскопической хирургии в Казахстане',
+          'Награда за научные достижения в медицине'
+        ]
+      }
+    },
+    {
+      name: 'Мухит Кулмаганбетов',
+      title: 'Врач-офтальмолог, Старший Научный Сотрудник и Заведующий лаборатории по квантовой оптике',
+      affiliation: 'Центр исследования глаза и зрения в Гонконге, визитинг-исследователь Университета Уатерлоу в Канаде, Научный Директор ZebraEye, Основатель и Генеральный Директор Entoptica Limited',
+      image: '/img/Tourism/spk4.jpg',
+      details: {
+        memberships: [
+          'Центр исследования глаза и зрения в Гонконге',
+          'Университет Уатерлоу в Канаде',
+          'Казахский научно-исследовательский институт глазных болезней',
+          'ZebraEye (Казахстан)',
+          'Entoptica Limited (Гонконг)',
+          'Международное общество офтальмологов'
+        ],
+        awards: [
+          'Награда за инновации в офтальмологии',
+          'Признание за исследования в области квантовой оптики',
+          'Награда за развитие искусственного интеллекта в медицине',
+          'Международное признание за научные достижения'
+        ]
+      }
     }
+  ];
+
+  // Состояние для расширяющихся карточек
+  const [expandedSpeaker, setExpandedSpeaker] = useState(null);
+  const [clickedSpeaker, setClickedSpeaker] = useState(null);
+  const [showSpeakerDetail, setShowSpeakerDetail] = useState(false);
+  const [selectedSpeaker, setSelectedSpeaker] = useState(null);
+
+  // Функция для переключения расширенной информации
+  const toggleSpeakerDetails = (speaker) => {
+    if (expandedSpeaker === speaker) {
+      setExpandedSpeaker(null);
+      setClickedSpeaker(null);
+    } else {
+      setExpandedSpeaker(speaker);
+      setClickedSpeaker(speaker);
+    }
+  };
+
+  // Функция для показа детального вида спикера
+  const showSpeakerDetailView = (speaker) => {
+    setSelectedSpeaker(speaker);
+    setShowSpeakerDetail(true);
+  };
+
+  // Функция для возврата к списку спикеров
+  const backToSpeakersList = () => {
+    setShowSpeakerDetail(false);
+    setSelectedSpeaker(null);
   };
 
   // Таймер обратного отсчета
@@ -51,57 +172,59 @@ export default function MedicalTourism() {
     return () => clearInterval(timer);
   }, []);
 
-  const currentCity = cities[selectedCity];
+  // Функции для слайдера спикеров
+  const nextSpeaker = () => {
+    setCurrentSpeakerIndex((prev) => {
+      const maxIndex = speakers.length - 3;
+      return prev >= maxIndex ? 0 : prev + 1;
+    });
+  };
+
+  const prevSpeaker = () => {
+    setCurrentSpeakerIndex((prev) => {
+      return prev <= 0 ? speakers.length - 3 : prev - 1;
+    });
+  };
+
+  // Получаем текущие 3 спикера для отображения
+  const visibleSpeakers = speakers.slice(currentSpeakerIndex, currentSpeakerIndex + 3);
 
   return (
     <>
       <Head title="Международная конференция по медицинскому туризму" />
       
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-        {/* Hero секция с таймером */}
-        <div className={`bg-gradient-to-r ${currentCity.color} text-white relative overflow-hidden`}>
-          {/* Фоновые элементы */}
-          <div className="absolute inset-0 bg-black bg-opacity-10"></div>
+        {/* Hero секция с баннером как фоном */}
+        <div className="relative text-white overflow-hidden">
+          {/* Фоновый баннер */}
+          <div className="absolute inset-0">
+            <img 
+              src="/img/Tourism/banner1.jpg" 
+              alt="Медицинский туризм в Казахстане" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/80 via-blue-800/70 to-green-800/80"></div>
+          </div>
+          
+          {/* Фоновые декоративные элементы */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-white bg-opacity-5 rounded-full -translate-y-48 translate-x-48"></div>
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-white bg-opacity-5 rounded-full translate-y-32 -translate-x-32"></div>
           
           <div className="container mx-auto px-4 py-20 relative z-10">
             <div className="max-w-6xl mx-auto">
-              {/* Переключатель городов */}
-              <div className="flex justify-center mb-12">
-                <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-2xl p-2 flex">
-                  {Object.entries(cities).map(([key, city]) => (
-                    <button
-                      key={key}
-                      onClick={() => setSelectedCity(key)}
-                      className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                        selectedCity === key
-                          ? 'bg-white text-gray-800 shadow-lg'
-                          : 'text-white hover:bg-white hover:bg-opacity-20'
-                      }`}
-                    >
-                      {city.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Основной заголовок */}
               <div className="text-center mb-16">
-                <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-                  Медицинский туризм
-                </h1>
-                <h2 className="text-2xl md:text-3xl font-light mb-8 opacity-90">
-                  Развитие медицинского туризма в Казахстане
+                <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                  {cityData.name}
                 </h2>
                 <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-2xl p-6 inline-block">
-                  <p className="text-xl font-semibold mb-2">{currentCity.dates}</p>
-                  <p className="text-lg opacity-90">{currentCity.venue}</p>
+                  <p className="text-xl font-semibold mb-2">{cityData.dates}</p>
+                  <p className="text-lg opacity-90">{cityData.venue}</p>
                 </div>
               </div>
 
               {/* Таймер обратного отсчета */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto mb-12">
                 {Object.entries(timeLeft).map(([unit, value]) => (
                   <div key={unit} className="bg-white bg-opacity-20 backdrop-blur-sm rounded-2xl p-6 text-center">
                     <div className="text-3xl md:text-4xl font-bold mb-2">{value}</div>
@@ -113,6 +236,22 @@ export default function MedicalTourism() {
                   </div>
                 ))}
               </div>
+
+              {/* Кнопка регистрации */}
+              <div className="text-center">
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="relative bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-white px-16 py-6 rounded-3xl font-bold text-2xl hover:from-yellow-300 hover:via-orange-400 hover:to-red-400 transition-all duration-500 shadow-2xl hover:shadow-orange-500/50 transform hover:scale-110 hover:-translate-y-1 animate-pulse"
+                >
+                  <span className="relative z-10 flex items-center justify-center">
+                    <svg className="w-8 h-8 mr-3 animate-bounce" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Регистрация на конференцию
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-3xl blur-sm opacity-75 animate-ping"></div>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -120,13 +259,13 @@ export default function MedicalTourism() {
         {/* О мероприятии */}
         <section className="py-20">
           <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-6xl mx-auto">
               <div className="text-center mb-16">
                 <h2 className="text-4xl font-bold mb-6">О мероприятии</h2>
                 <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-green-600 mx-auto rounded-full"></div>
               </div>
               
-              <div className="grid md:grid-cols-2 gap-12">
+              <div className="grid md:grid-cols-3 gap-12">
                 <div className="space-y-6">
                   <p className="text-lg leading-relaxed">
                     Первая международная конференция по медицинскому туризму представляет собой уникальную площадку 
@@ -145,6 +284,21 @@ export default function MedicalTourism() {
                   </blockquote>
                   <p className="text-sm text-gray-600 font-semibold">— Глава государства</p>
                 </div>
+
+                {/* Третий блок для фото */}
+                <div className="bg-white rounded-3xl p-8 shadow-xl relative overflow-hidden">
+                  {/* Фоновое изображение */}
+                  <div className="absolute inset-0">
+                    <img 
+                      src="/img/Tourism/president.png" 
+                      alt="Президент" 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                  </div>
+                  
+
+                </div>
               </div>
             </div>
           </div>
@@ -161,7 +315,7 @@ export default function MedicalTourism() {
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 {[
-                  { number: '200', label: 'Делегатов', sublabel: 'из 45 стран' },
+                  { number: '86', label: 'Новых медицинских', sublabel: 'технологий' },
                   { number: '300', label: 'Специалистов', sublabel: 'из Казахстана' },
                   { number: '100', label: 'Организаций', sublabel: 'и партнеров' },
                   { number: '1000', label: 'Посетителей', sublabel: 'целевых' }
@@ -179,6 +333,214 @@ export default function MedicalTourism() {
           </div>
         </section>
 
+        {/* Спикеры */}
+        <section className="py-20 bg-gradient-to-r from-blue-900 to-green-900 text-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-16">
+                <h2 className="text-4xl font-bold mb-4">Спикеры</h2>
+                <p className="text-xl text-green-300">Мы ищем лучших для вас!</p>
+              </div>
+              
+              <div className="relative">
+                {/* Слайдер спикеров */}
+                <div className="flex items-center justify-center">
+                  <div className="relative w-full max-w-6xl">
+                    {!showSpeakerDetail ? (
+                      <>
+                        {/* Кнопки навигации */}
+                        <button
+                          onClick={prevSpeaker}
+                          className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-12 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-3 rounded-full transition-all duration-300 z-10"
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                          </svg>
+                        </button>
+                        
+                        <button
+                          onClick={nextSpeaker}
+                          className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-12 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-3 rounded-full transition-all duration-300 z-10"
+                        >
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </button>
+
+                        {/* Сетка из 3 карточек спикеров */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          {visibleSpeakers.map((speaker, index) => (
+                            <div 
+                              key={index} 
+                              className="bg-white bg-opacity-10 backdrop-blur-sm rounded-3xl p-6 text-center transition-all duration-500 hover:bg-opacity-20 relative group cursor-pointer"
+                              onClick={() => showSpeakerDetailView(speaker)}
+                            >
+                              <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-4 border-white border-opacity-30">
+                                <img 
+                                  src={speaker.image} 
+                                  alt={speaker.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                              <h3 className="text-lg font-bold mb-2">{speaker.name}</h3>
+                              <p className="text-sm mb-2 opacity-90">{speaker.title}</p>
+                              <p className="text-xs opacity-80 mb-4">{speaker.affiliation}</p>
+                              
+                              {/* Индикатор клика */}
+                              <div className="text-xs text-green-300 opacity-80">
+                                Нажмите для подробностей
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Индикаторы слайдера */}
+                        <div className="flex justify-center mt-8 space-x-2">
+                          {Array.from({ length: Math.ceil(speakers.length / 3) }, (_, index) => (
+                            <button
+                              key={index}
+                              onClick={() => setCurrentSpeakerIndex(index * 3)}
+                              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                                Math.floor(currentSpeakerIndex / 3) === index
+                                  ? 'bg-white' 
+                                  : 'bg-white bg-opacity-30 hover:bg-opacity-50'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      /* Детальный вид одного спикера */
+                      <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-3xl p-8 text-center">
+                        {/* Кнопка назад */}
+                        <div className="text-left mb-6">
+                          <button
+                            onClick={backToSpeakersList}
+                            className="flex items-center text-white hover:text-green-300 transition-colors duration-300"
+                          >
+                            <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                            Назад к списку спикеров
+                          </button>
+                        </div>
+
+                        {/* Информация о спикере */}
+                        <div className="text-center">
+                          {/* Фото и основная информация */}
+                          <div className="mb-8">
+                            <div className="w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden border-4 border-white border-opacity-30">
+                              <img 
+                                src={selectedSpeaker.image} 
+                                alt={selectedSpeaker.name}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <h3 className="text-3xl font-bold mb-4">{selectedSpeaker.name}</h3>
+                            <p className="text-xl mb-2 opacity-90">{selectedSpeaker.title}</p>
+                            <p className="text-lg opacity-80 mb-8">{selectedSpeaker.affiliation}</p>
+                          </div>
+
+                          {/* Двухколоночная структура */}
+                          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                            {/* Левая колонка - Регалии */}
+                            <div className="text-left">
+                              {/* Членство в организациях */}
+                              <div className="mb-6">
+                                <h4 className="text-lg font-bold text-blue-300 mb-3 flex items-center">
+                                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                                  </svg>
+                                  ЧЛЕНСТВО В ОРГАНИЗАЦИЯХ:
+                                </h4>
+                                <ul className="space-y-1">
+                                  {selectedSpeaker.details.memberships.map((membership, idx) => (
+                                    <li key={idx} className="flex items-start">
+                                      <span className="text-blue-300 mr-2 mt-1">•</span>
+                                      <span className="text-white text-sm">{membership}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                              
+                              {/* Награды */}
+                              <div>
+                                <h4 className="text-lg font-bold text-green-300 mb-3 flex items-center">
+                                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                  </svg>
+                                  НАГРАДЫ:
+                                </h4>
+                                <ul className="space-y-1">
+                                  {selectedSpeaker.details.awards.map((award, idx) => (
+                                    <li key={idx} className="flex items-start">
+                                      <span className="text-green-300 mr-2 mt-1">•</span>
+                                      <span className="text-white text-sm">{award}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+
+                            {/* Правая колонка - Детальная информация */}
+                            <div className="text-left">
+                              {/* Специализация */}
+                              {selectedSpeaker.details.specialization && (
+                                <div className="mb-6">
+                                  <h4 className="text-lg font-bold text-purple-300 mb-3 flex items-center">
+                                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                      <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838l-2.727 1.17 1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                                    </svg>
+                                    СПЕЦИАЛИЗАЦИЯ:
+                                  </h4>
+                                  <p className="text-white text-sm">{selectedSpeaker.details.specialization}</p>
+                                </div>
+                              )}
+
+                              {/* Опыт работы */}
+                              {selectedSpeaker.details.experience && (
+                                <div className="mb-6">
+                                  <h4 className="text-lg font-bold text-orange-300 mb-3 flex items-center">
+                                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd"/>
+                                    </svg>
+                                    ОПЫТ РАБОТЫ:
+                                  </h4>
+                                  <p className="text-white text-sm">{selectedSpeaker.details.experience}</p>
+                                </div>
+                              )}
+
+                              {/* Достижения */}
+                              {selectedSpeaker.details.achievements && (
+                                <div>
+                                  <h4 className="text-lg font-bold text-indigo-300 mb-3 flex items-center">
+                                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    ДОСТИЖЕНИЯ:
+                                  </h4>
+                                  <ul className="space-y-1">
+                                    {selectedSpeaker.details.achievements.map((achievement, idx) => (
+                                      <li key={idx} className="flex items-start">
+                                        <span className="text-indigo-300 mr-2 mt-1">✓</span>
+                                        <span className="text-white text-sm">{achievement}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Организаторы */}
         <section className="py-20">
           <div className="container mx-auto px-4">
@@ -188,37 +550,20 @@ export default function MedicalTourism() {
                 <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-green-600 mx-auto rounded-full"></div>
               </div>
               
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-white rounded-3xl p-8 shadow-xl">
-                  <h3 className="text-xl font-bold mb-6 text-gray-800">Основные организаторы</h3>
-                  <div className="space-y-4">
-                    {[
-                      'РГП на ПХВ «Национальный научный центр развития здравоохранения имени Салидат Каирбековой» МЗ РК',
-                      'Министерство здравоохранения Республики Казахстан',
-                      'РОО «Ассоциация организаторов в сфере охраны здоровья»',
-                      'DeConsilior'
-                    ].map((org, index) => (
-                      <div key={index} className="flex items-start">
-                        <div className="w-2 h-2 bg-gradient-to-r from-blue-600 to-green-600 rounded-full mt-3 mr-4 flex-shrink-0"></div>
-                        <p className="text-gray-700 font-medium">{org}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="bg-gradient-to-br from-blue-600 to-green-600 text-white rounded-3xl p-8">
-                  <h3 className="text-xl font-bold mb-6">Организационный комитет</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="font-semibold mb-1">Председатель:</div>
-                      <div className="text-lg">Салидат Каирбекова</div>
-                      <div className="text-sm opacity-80">Директор ННЦРЗ</div>
+              <div className="bg-white rounded-3xl p-8 shadow-xl">
+                <h3 className="text-xl font-bold mb-6 text-gray-800">Основные организаторы</h3>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {[
+                    'РГП на ПХВ «Национальный научный центр развития здравоохранения имени Салидат Каирбековой» МЗ РК',
+                    'Министерство здравоохранения Республики Казахстан',
+                    'РОО «Ассоциация организаторов в сфере охраны здоровья»',
+                    'DeConsilior'
+                  ].map((org, index) => (
+                    <div key={index} className="flex items-start">
+                      <div className="w-2 h-2 bg-gradient-to-r from-blue-600 to-green-600 rounded-full mt-3 mr-4 flex-shrink-0"></div>
+                      <p className="text-gray-700 font-medium">{org}</p>
                     </div>
-                    <div>
-                      <div className="font-semibold mb-1">Заместители председателя:</div>
-                      <div>Представители МЗ РК</div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -307,6 +652,45 @@ export default function MedicalTourism() {
             </div>
           </div>
         </footer>
+
+        {/* Модальное окно регистрации */}
+        {showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-3xl w-full max-w-6xl h-[95vh] overflow-hidden flex flex-col">
+              {/* Заголовок модального окна */}
+              <div className="bg-gradient-to-r from-blue-600 to-green-600 text-white p-6 rounded-t-3xl">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-3xl font-bold">Регистрация на конференцию</h2>
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="text-white hover:text-gray-200 text-3xl font-bold transition-colors duration-200"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+
+              {/* Содержимое модального окна */}
+              <div className="flex-1 p-6 overflow-hidden">
+                {/* Встроенная форма Google */}
+                <div className="w-full h-full">
+                  <iframe
+                    src="https://docs.google.com/forms/d/e/1FAIpQLSfs70ZgeWVoowWTYJNem69n7_QvqajrIoldbw4fw3Q-NFmtrQ/viewform?embedded=true"
+                    width="100%"
+                    height="100%"
+                    frameBorder="0"
+                    marginHeight="0"
+                    marginWidth="0"
+                    title="Форма регистрации"
+                    className="rounded-lg"
+                  >
+                    Загрузка...
+                  </iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
