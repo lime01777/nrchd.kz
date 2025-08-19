@@ -35,7 +35,7 @@ Route::prefix('language')->group(function () {
 
 // API маршруты для файлов
 Route::get('/files', [FileController::class, 'getFiles']);
-
+Route::get('/clinical-protocols', [FileController::class, 'getClinicalProtocols']);
 
 // Маршрут для установки языка (для LanguageManager)
 Route::post('/set-language', function (Request $request) {
@@ -56,3 +56,6 @@ Route::post('/set-language', function (Request $request) {
         'message' => 'Language set successfully'
     ]);
 });
+
+// Маршруты для контактных форм
+Route::post('/contact/tech-competence', [\App\Http\Controllers\ContactController::class, 'sendTechCompetenceForm']);

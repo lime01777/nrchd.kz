@@ -46,30 +46,63 @@ export default function TechCompetence() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically send the form data to your backend
-    console.log('Form submitted:', formData);
-    console.log('File:', fileInputRef.current?.files[0]);
     
-    // Reset form after submission
-    setFormData({
-      name: '',
-      phone: '',
-      email: '',
-      projectName: '',
-      message: ''
-    });
-    setFileName('');
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    // Создаем FormData для отправки файла
+    const formDataToSend = new FormData();
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('phone', formData.phone);
+    formDataToSend.append('email', formData.email);
+    formDataToSend.append('projectName', formData.projectName);
+    formDataToSend.append('message', formData.message);
+    
+    // Добавляем файл, если он есть
+    if (fileInputRef.current?.files[0]) {
+      formDataToSend.append('file', fileInputRef.current.files[0]);
     }
-    
-    // Show success message
-    setFormSubmitted(true);
-    setTimeout(() => {
-      setFormSubmitted(false);
-    }, 5000);
+
+    try {
+      // Отправляем данные на сервер
+      const response = await fetch('/api/contact/tech-competence', {
+        method: 'POST',
+        body: formDataToSend,
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Показываем сообщение об успехе
+        setFormSubmitted(true);
+        
+        // Сбрасываем форму
+        setFormData({
+          name: '',
+          phone: '',
+          email: '',
+          projectName: '',
+          message: ''
+        });
+        setFileName('');
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        
+        // Скрываем сообщение через 5 секунд
+        setTimeout(() => {
+          setFormSubmitted(false);
+        }, 5000);
+      } else {
+        // Показываем ошибку
+        alert(result.message || 'Произошла ошибка при отправке заявки');
+      }
+    } catch (error) {
+      console.error('Ошибка при отправке формы:', error);
+      alert('Произошла ошибка при отправке заявки. Попробуйте позже.');
+    }
   };
 
   return (
