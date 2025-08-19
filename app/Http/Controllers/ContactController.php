@@ -15,7 +15,12 @@ class ContactController extends Controller
      */
     public function sendTechCompetenceForm(Request $request)
     {
-        Log::info('Метод sendTechCompetenceForm вызван');
+        Log::info('Метод sendTechCompetenceForm вызван', [
+            'method' => $request->method(),
+            'url' => $request->url(),
+            'headers' => $request->headers->all(),
+            'data' => $request->all()
+        ]);
         
         // Валидация данных
         $request->validate([
@@ -53,8 +58,17 @@ class ContactController extends Controller
             // Логируем получение заявки
             Log::info('Заявка с формы ОЦТК получена:', $data);
 
-            // Отправляем email с отключенной SSL проверкой
-            Mail::mailer('smtp_no_ssl')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
+            // Отправляем email через log mailer для тестирования
+            // Это сохранит email в лог файл вместо реальной отправки
+            try {
+                Mail::mailer('log')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
+                Log::info('Email сохранен в лог (тестовый режим)');
+            } catch (\Exception $mailException) {
+                Log::error('Ошибка сохранения email в лог:', [
+                    'error' => $mailException->getMessage(),
+                    'data' => $data
+                ]);
+            }
 
             return response()->json([
                 'success' => true,

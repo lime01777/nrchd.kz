@@ -78,8 +78,14 @@ export default function TechCompetence() {
       // Попробуем сначала fetch
       let response;
       try {
+        // Получаем CSRF токен из мета-тега
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        
         response = await fetch('/api/contact/tech-competence', {
           method: 'POST',
+          headers: {
+            'X-CSRF-TOKEN': csrfToken,
+          },
           body: formDataToSend,
         });
       } catch (fetchError) {
@@ -89,6 +95,12 @@ export default function TechCompetence() {
         response = await new Promise((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.open('POST', '/api/contact/tech-competence', true);
+          
+          // Добавляем CSRF токен
+          const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+          if (csrfToken) {
+            xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+          }
           
           xhr.onload = function() {
             if (xhr.status >= 200 && xhr.status < 300) {
@@ -149,7 +161,19 @@ export default function TechCompetence() {
       }
     } catch (error) {
       console.error('Ошибка при отправке формы:', error);
-      alert('Произошла ошибка при отправке заявки. Попробуйте позже.');
+      
+      // Более информативное сообщение об ошибке
+      let errorMessage = 'Произошла ошибка при отправке заявки. Попробуйте позже.';
+      
+      if (error.message.includes('Failed to fetch')) {
+        errorMessage = 'Ошибка соединения с сервером. Проверьте интернет-соединение и попробуйте снова.';
+      } else if (error.message.includes('422')) {
+        errorMessage = 'Пожалуйста, проверьте правильность заполнения всех обязательных полей.';
+      } else if (error.message.includes('500')) {
+        errorMessage = 'Внутренняя ошибка сервера. Попробуйте позже или свяжитесь с администратором.';
+      }
+      
+      alert(errorMessage);
     }
   };
 
