@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
-import axios from 'axios';
 
 export default function ClinicalProtocolsCatalog() {
   console.log('Инициализация компонента ClinicalProtocolsCatalog');
@@ -10,28 +9,13 @@ export default function ClinicalProtocolsCatalog() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMedicine, setSelectedMedicine] = useState('');
   const [selectedMkb, setSelectedMkb] = useState('');
-  const [loading, setLoading] = useState(true); // Начинаем с состояния загрузки
+  const [loading, setLoading] = useState(false); // Изменяем на false
   const [error, setError] = useState(null); // Добавляем состояние для ошибок
   const [availableCategories, setAvailableCategories] = useState([]);
   
   // Добавляем логирование при монтировании компонента
   useEffect(() => {
     console.log('Компонент ClinicalProtocolsCatalog смонтирован');
-    
-    // Проверяем доступность API клинических протоколов
-    const checkApiAvailability = async () => {
-      try {
-        console.log('Проверяем доступность API клинических протоколов');
-        const baseUrl = window.location.origin;
-        const response = await axios.get(`${baseUrl}/api/clinical-protocols`);
-        console.log('Ответ API:', response.data);
-      } catch (error) {
-        console.error('Ошибка при проверке API:', error);
-        setError(`Ошибка при проверке API: ${error.message}`);
-      }
-    };
-    
-    checkApiAvailability();
     
     return () => {
       console.log('Компонент ClinicalProtocolsCatalog размонтирован');
@@ -135,26 +119,26 @@ export default function ClinicalProtocolsCatalog() {
       console.error('Ошибка при обработке данных протоколов:', error);
       setFilteredProtocols(0);
       setAvailableCategories([]);
-      setError('Ошибка при обработке данных протоколов: ' + error.message);
+      // Не устанавливаем ошибку, чтобы не блокировать отображение
     }
   };
   
   // Обработка изменения поискового запроса
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    setLoading(true); // Показываем индикатор загрузки при изменении фильтров
+    // Убираем setLoading(true) - не нужно показывать загрузку при каждом изменении
   };
   
   // Обработка изменения раздела медицины
   const handleMedicineChange = (e) => {
     setSelectedMedicine(e.target.value);
-    setLoading(true); // Показываем индикатор загрузки при изменении фильтров
+    // Убираем setLoading(true) - не нужно показывать загрузку при каждом изменении
   };
   
   // Обработка изменения категории МКБ
   const handleMkbChange = (e) => {
     setSelectedMkb(e.target.value);
-    setLoading(true); // Показываем индикатор загрузки при изменении фильтров
+    // Убираем setLoading(true) - не нужно показывать загрузку при каждом изменении
   };
   
   // Сброс всех фильтров
@@ -162,7 +146,7 @@ export default function ClinicalProtocolsCatalog() {
     setSearchTerm('');
     setSelectedMedicine('');
     setSelectedMkb('');
-    setLoading(true); // Показываем индикатор загрузки при сбросе фильтров
+    // Убираем setLoading(true) - не нужно показывать загрузку при сбросе
     setError(null); // Сбрасываем ошибку, если она была
   };
   
@@ -268,14 +252,6 @@ export default function ClinicalProtocolsCatalog() {
               </div>
             </div>
             
-            {/* Индикатор загрузки */}
-            {loading && (
-              <div className="flex justify-center items-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                <span className="ml-3 text-gray-600">Загрузка протоколов...</span>
-              </div>
-            )}
-            
             {/* Сообщение об ошибке */}
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -294,28 +270,14 @@ export default function ClinicalProtocolsCatalog() {
             )}
             
             {/* Список клинических протоколов */}
-            {!loading && !error ? (
-              <>
-                <div className="mb-4 p-2 bg-blue-50 border border-blue-200 rounded">
-                  <p className="text-sm text-blue-800">Статус: Загрузка протоколов...</p>
-                </div>
-                <SimpleFileDisplay 
-                  key={`${searchTerm}-${selectedMedicine}-${selectedMkb}`} // Добавляем key для пересоздания компонента при изменении фильтров
-                  searchTerm={searchTerm} 
-                  medicine={selectedMedicine}
-                  mkb={selectedMkb}
-                  bgColor="bg-white"
-                  useClinicalProtocols={true}
-                  onFilesLoaded={handleFilesLoaded}
-                  folder="Клинические протоколы\Поток — клинические протоколы" 
-                  onError={(errorMsg) => {
-                    console.error('Ошибка в SimpleFileDisplay:', errorMsg);
-                    setError(errorMsg);
-                    setLoading(false);
-                  }}
-                />
-              </>
-            ) : null}
+            <SimpleFileDisplay 
+              key={`${searchTerm}-${selectedMedicine}-${selectedMkb}`} // Добавляем key для пересоздания компонента при изменении фильтров
+              searchTerm={searchTerm} 
+              medicine={selectedMedicine}
+              mkb={selectedMkb}
+              bgColor="bg-white"
+              folder="Клинические протоколы\Поток — клинические протоколы" 
+            />
           </div>
         </div>
       </section>

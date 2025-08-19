@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\TranslationAPIController;
+use App\Http\Controllers\FileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,4 +31,28 @@ Route::prefix('translations')->group(function () {
 Route::prefix('language')->group(function () {
     Route::post('/set', [TranslationAPIController::class, 'setLanguage']);
     Route::get('/current', [TranslationAPIController::class, 'getCurrentLanguage']);
+});
+
+// API маршруты для файлов
+Route::get('/files', [FileController::class, 'getFiles']);
+
+
+// Маршрут для установки языка (для LanguageManager)
+Route::post('/set-language', function (Request $request) {
+    $language = $request->input('language');
+    
+    // Проверяем, что язык валидный
+    $validLanguages = ['ru', 'kz', 'en'];
+    if (!in_array($language, $validLanguages)) {
+        return response()->json(['error' => 'Invalid language'], 400);
+    }
+    
+    // Устанавливаем язык в сессии
+    session(['locale' => $language]);
+    
+    return response()->json([
+        'success' => true,
+        'language' => $language,
+        'message' => 'Language set successfully'
+    ]);
 });
