@@ -48,6 +48,7 @@ export default function TechCompetence() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Form submission started');
     
     // Создаем FormData для отправки файла
     const formDataToSend = new FormData();
@@ -62,19 +63,64 @@ export default function TechCompetence() {
       formDataToSend.append('file', fileInputRef.current.files[0]);
     }
 
+    console.log('FormData created:', {
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email,
+      projectName: formData.projectName,
+      message: formData.message,
+      hasFile: !!fileInputRef.current?.files[0]
+    });
+
     try {
-      // Отправляем данные на сервер
-      const response = await fetch('/api/contact/tech-competence', {
-        method: 'POST',
-        body: formDataToSend,
-        // Не устанавливаем заголовки для FormData с файлами
-      });
+      console.log('Sending POST request to /api/contact/tech-competence');
+      
+      // Попробуем сначала fetch
+      let response;
+      try {
+        response = await fetch('/api/contact/tech-competence', {
+          method: 'POST',
+          body: formDataToSend,
+        });
+      } catch (fetchError) {
+        console.log('Fetch failed, trying XMLHttpRequest:', fetchError);
+        
+        // Альтернативный способ через XMLHttpRequest
+        response = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', '/api/contact/tech-competence', true);
+          
+          xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              resolve({
+                ok: true,
+                status: xhr.status,
+                statusText: xhr.statusText,
+                json: () => JSON.parse(xhr.responseText)
+              });
+            } else {
+              reject(new Error(`HTTP error! status: ${xhr.status}`));
+            }
+          };
+          
+          xhr.onerror = function() {
+            reject(new Error('Network error'));
+          };
+          
+          xhr.send(formDataToSend);
+        });
+      }
+
+      console.log('Response received:', response.status, response.statusText);
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
 
       const result = await response.json();
+      console.log('Response data:', result);
 
       if (result.success) {
         // Показываем сообщение об успехе
