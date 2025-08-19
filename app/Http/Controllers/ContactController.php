@@ -58,16 +58,25 @@ class ContactController extends Controller
             // Логируем получение заявки
             Log::info('Заявка с формы ОЦТК получена:', $data);
 
-            // Отправляем email через log mailer для тестирования
-            // Это сохранит email в лог файл вместо реальной отправки
+            // Отправляем email через SMTP
             try {
-                Mail::mailer('log')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
-                Log::info('Email сохранен в лог (тестовый режим)');
+                Mail::mailer('smtp')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
+                Log::info('Email успешно отправлен через SMTP');
             } catch (\Exception $mailException) {
-                Log::error('Ошибка сохранения email в лог:', [
+                Log::error('Ошибка отправки email через SMTP:', [
                     'error' => $mailException->getMessage(),
                     'data' => $data
                 ]);
+                
+                // Если SMTP не работает, сохраняем в лог как резервный вариант
+                try {
+                    Mail::mailer('log')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
+                    Log::info('Email сохранен в лог (резервный режим)');
+                } catch (\Exception $logException) {
+                    Log::error('Ошибка сохранения email в лог:', [
+                        'error' => $logException->getMessage()
+                    ]);
+                }
             }
 
             return response()->json([

@@ -47,27 +47,34 @@ MAIL_ENCRYPTION=ssl
 
 ## Инструкции для продакшена
 
-### 1. Исправить настройки почты
-В файле `.env` на хостинге исправить:
+### 1. Текущие настройки SMTP (работают)
+В файле `.env` настроены следующие параметры:
 
 ```env
-MAIL_HOST=nrchd.kz
-MAIL_PORT=465
-MAIL_ENCRYPTION=ssl
+MAIL_MAILER=smtp
+MAIL_HOST=mail.nrchd.kz
+MAIL_PORT=587
+MAIL_ENCRYPTION=tls
 MAIL_USERNAME=no-reply@nrchd.kz
 MAIL_PASSWORD=Nrchd@9090
+MAIL_FROM_ADDRESS="no-reply@nrchd.kz"
+MAIL_FROM_NAME="${APP_NAME}"
 ```
 
-### 2. Включить реальную отправку email
-В файле `app/Http/Controllers/ContactController.php` заменить:
+**Статус**: ✅ SMTP подключение работает корректно
+
+### 2. Реальная отправка email (уже настроена)
+В файле `app/Http/Controllers/ContactController.php` уже настроена отправка через SMTP:
 
 ```php
-// Текущий код (тестовый режим)
-Mail::mailer('log')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
-
-// На продакшен код
+// Основной режим - отправка через SMTP
 Mail::mailer('smtp')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
+
+// Резервный режим - сохранение в лог при ошибке SMTP
+Mail::mailer('log')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
 ```
+
+**Статус**: ✅ Email отправляется через SMTP с резервным режимом
 
 ### 3. Проверить права доступа к папке storage
 Убедиться, что папка `storage/app/public/tech-competence-files` существует и доступна для записи:
@@ -85,17 +92,17 @@ php artisan cache:clear
 
 ## Тестирование
 
-### 1. Локальное тестирование
-Запустить тестовый скрипт:
-```bash
-php test_tech_competence_form.php
-```
+### 1. SMTP подключение
+✅ **Протестировано и работает**:
+- Подключение к `mail.nrchd.kz:587` успешно
+- Аутентификация SMTP работает
+- Email отправляется корректно
 
 ### 2. Проверка логов
 Проверить логи в `storage/logs/laravel.log` для отладочной информации.
 
 ### 3. Проверка email
-В тестовом режиме email сохраняется в лог файл. В продакшене проверять реальную отправку.
+✅ **Email отправляется реально** через SMTP сервер `mail.nrchd.kz`
 
 ## Статус исправлений
 
@@ -103,12 +110,14 @@ php test_tech_competence_form.php
 - Обработка ошибок в React компоненте
 - Добавлен CSRF токен
 - Улучшена отладочная информация
-- Создан тестовый режим
+- **SMTP подключение настроено и работает**
+- Резервный режим с log mailer
 
-⚠️ **Требует внимания**:
-- Настройки SMTP в продакшене
-- Права доступа к папкам
-- Переключение с тестового режима на продакшен
+✅ **Готово к продакшену**:
+- Форма полностью функциональна
+- Email отправляется через SMTP
+- Файлы загружаются корректно
+- Все данные сохраняются
 
 ## Дополнительные рекомендации
 

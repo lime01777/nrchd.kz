@@ -49,6 +49,13 @@ return [
             'verify_peer' => false,
             'verify_peer_name' => false,
             'allow_self_signed' => true,
+            'stream_options' => [
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true,
+                ],
+            ],
         ],
 
         'smtp_no_ssl' => [
