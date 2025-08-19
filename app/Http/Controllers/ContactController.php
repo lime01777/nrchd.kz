@@ -53,7 +53,7 @@ class ContactController extends Controller
             // Логируем получение заявки
             Log::info('Заявка с формы ОЦТК получена:', $data);
 
-            // Временно отключаем отправку email для отладки
+            // Отправляем email
             Mail::to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
 
             return response()->json([
