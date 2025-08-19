@@ -59,8 +59,3 @@ Route::post('/set-language', function (Request $request) {
 
 // Маршруты для контактных форм
 Route::post('/contact/tech-competence', [\App\Http\Controllers\ContactController::class, 'sendTechCompetenceForm']);
-
-// Тестовый маршрут для проверки ContactController
-Route::get('/contact/test', function () {
-    return response()->json(['message' => 'ContactController работает!']);
-});

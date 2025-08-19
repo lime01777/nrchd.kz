@@ -53,8 +53,8 @@ class ContactController extends Controller
             // Логируем получение заявки
             Log::info('Заявка с формы ОЦТК получена:', $data);
 
-            // Отправляем email
-            Mail::to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
+            // Отправляем email с отключенной SSL проверкой
+            Mail::mailer('smtp_no_ssl')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
 
             return response()->json([
                 'success' => true,
