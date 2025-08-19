@@ -15,6 +15,8 @@ class ContactController extends Controller
      */
     public function sendTechCompetenceForm(Request $request)
     {
+        Log::info('Метод sendTechCompetenceForm вызван');
+        
         // Валидация данных
         $request->validate([
             'name' => 'required|string|max:255',
@@ -25,6 +27,8 @@ class ContactController extends Controller
             'file' => 'nullable|file|max:10240|mimes:pdf,doc,docx,ppt,pptx' // 10MB max
         ]);
 
+        Log::info('Валидация прошла успешно');
+
         try {
             // Сохраняем файл, если он есть
             $filePath = null;
@@ -32,6 +36,7 @@ class ContactController extends Controller
                 $file = $request->file('file');
                 $fileName = time() . '_' . $file->getClientOriginalName();
                 $filePath = $file->storeAs('tech-competence-files', $fileName, 'public');
+                Log::info('Файл сохранен:', ['path' => $filePath]);
             }
 
             // Данные для email
@@ -48,8 +53,8 @@ class ContactController extends Controller
             // Логируем получение заявки
             Log::info('Заявка с формы ОЦТК получена:', $data);
 
-            // Отправляем email
-            Mail::to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail(formData: $data));
+            // Временно отключаем отправку email для отладки
+            Mail::to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
 
             return response()->json([
                 'success' => true,
@@ -59,6 +64,7 @@ class ContactController extends Controller
         } catch (\Exception $e) {
             Log::error('Ошибка при отправке заявки ОЦТК:', [
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
                 'data' => $request->all()
             ]);
 

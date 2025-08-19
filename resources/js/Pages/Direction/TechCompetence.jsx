@@ -67,10 +67,12 @@ export default function TechCompetence() {
       const response = await fetch('/api/contact/tech-competence', {
         method: 'POST',
         body: formDataToSend,
-        headers: {
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-        },
+        // Не устанавливаем заголовки для FormData с файлами
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const result = await response.json();
 
