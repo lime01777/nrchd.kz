@@ -58,6 +58,55 @@ return [
             ],
         ],
 
+        'smtp_hosting' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL_HOST', 'mail.nrchd.kz'),
+            'port' => 25,
+            'encryption' => null,
+            'username' => null,
+            'password' => null,
+            'timeout' => null,
+            'local_domain' => env('MAIL_EHLO_DOMAIN'),
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true,
+        ],
+
+        'smtp_hosting_alt' => [
+            'transport' => 'smtp',
+            'host' => 'localhost',
+            'port' => 25,
+            'encryption' => null,
+            'username' => null,
+            'password' => null,
+            'timeout' => null,
+            'local_domain' => env('MAIL_EHLO_DOMAIN'),
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true,
+        ],
+
+        'smtp_trusted' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL_HOST', 'mail.nrchd.kz'),
+            'port' => 587,
+            'encryption' => 'tls',
+            'username' => env('MAIL_USERNAME'),
+            'password' => env('MAIL_PASSWORD'),
+            'timeout' => null,
+            'local_domain' => 'nrchd.kz',
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true,
+            'stream_options' => [
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true,
+                ],
+            ],
+        ],
+
         'smtp_no_ssl' => [
             'transport' => 'smtp',
             'host' => env('MAIL_HOST', 'smtp.mailgun.org'),

@@ -58,25 +58,55 @@ class ContactController extends Controller
             // Логируем получение заявки
             Log::info('Заявка с формы ОЦТК получена:', $data);
 
-            // Отправляем email через SMTP
+            // Отправляем email через SMTP с несколькими попытками
+            $emailSent = false;
+            
+            // Попытка 1: Доверенный SMTP (с правильным local_domain)
             try {
-                Mail::mailer('smtp')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
-                Log::info('Email успешно отправлен через SMTP');
-            } catch (\Exception $mailException) {
-                Log::error('Ошибка отправки email через SMTP:', [
-                    'error' => $mailException->getMessage(),
-                    'data' => $data
+                Mail::mailer('smtp_trusted')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
+                Log::info('Email успешно отправлен через доверенный SMTP');
+                $emailSent = true;
+            } catch (\Exception $trustedException) {
+                Log::error('Ошибка отправки email через доверенный SMTP:', [
+                    'error' => $trustedException->getMessage()
                 ]);
                 
-                // Если SMTP не работает, сохраняем в лог как резервный вариант
+                // Попытка 2: Обычный SMTP
                 try {
-                    Mail::mailer('log')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
-                    Log::info('Email сохранен в лог (резервный режим)');
-                } catch (\Exception $logException) {
-                    Log::error('Ошибка сохранения email в лог:', [
-                        'error' => $logException->getMessage()
+                    Mail::mailer('smtp')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
+                    Log::info('Email успешно отправлен через SMTP');
+                    $emailSent = true;
+                } catch (\Exception $mailException) {
+                    Log::error('Ошибка отправки email через SMTP:', [
+                        'error' => $mailException->getMessage()
                     ]);
+                    
+                    // Попытка 3: SMTP без аутентификации (для хостинга)
+                    try {
+                        Mail::mailer('smtp_hosting')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
+                        Log::info('Email успешно отправлен через SMTP хостинга');
+                        $emailSent = true;
+                    } catch (\Exception $hostingException) {
+                        Log::error('Ошибка отправки email через SMTP хостинга:', [
+                            'error' => $hostingException->getMessage()
+                        ]);
+                        
+                        // Попытка 4: Log mailer как резервный вариант
+                        try {
+                            Mail::mailer('log')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
+                            Log::info('Email сохранен в лог (резервный режим)');
+                            $emailSent = true;
+                        } catch (\Exception $logException) {
+                            Log::error('Ошибка сохранения email в лог:', [
+                                'error' => $logException->getMessage()
+                            ]);
+                        }
+                    }
                 }
+            }
+            
+            if (!$emailSent) {
+                Log::error('Все попытки отправки email не удались');
             }
 
             return response()->json([
