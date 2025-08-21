@@ -1,6 +1,14 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import NewsSliderWithMain from './NewsSliderWithMain';
+import SafeImage from './SafeImage';
+import { 
+  isValidImageFile, 
+  isValidImageUrl, 
+  createSafeObjectURL, 
+  revokeSafeObjectURL,
+  filterValidImages 
+} from '../Utils/mediaUtils';
 
 /**
  * Современный компонент загрузки изображений
@@ -21,10 +29,17 @@ export default function ModernImageUploader({
   const [processedImages, setProcessedImages] = useState([]);
 
   useEffect(() => {
+    // Очищаем предыдущие URL объекты перед созданием новых
+    processedImages.forEach(img => {
+      if (img.type === 'file' && img.url) {
+        revokeSafeObjectURL(img.url);
+      }
+    });
+
     // Обрабатываем существующие изображения только при изменении images
     if (images && images.length > 0) {
       const processed = images.map((img, index) => {
-        if (typeof img === 'string') {
+        if (typeof img === 'string' && isValidImageUrl(img)) {
           // Если это URL строки
           return {
             id: `existing-${index}`,
@@ -33,7 +48,7 @@ export default function ModernImageUploader({
             size: 0,
             type: 'url'
           };
-        } else if (img && typeof img === 'object' && img.url) {
+        } else if (img && typeof img === 'object' && img.url && isValidImageUrl(img.url)) {
           // Если это уже объект с URL
           return {
             id: img.id || `existing-${index}`,
@@ -42,55 +57,87 @@ export default function ModernImageUploader({
             size: img.size || 0,
             type: img.type || 'url'
           };
-        } else {
+        } else if (img instanceof File && isValidImageFile(img)) {
           // Если это File объект
-          return {
-            id: `file-${index}`,
-            file: img,
-            url: URL.createObjectURL(img),
-            name: img.name,
-            size: img.size,
-            type: 'file'
-          };
+          const objectUrl = createSafeObjectURL(img);
+          if (objectUrl) {
+            return {
+              id: `file-${index}`,
+              file: img,
+              url: objectUrl,
+              name: img.name,
+              size: img.size,
+              type: 'file'
+            };
+          }
         }
-      });
+        return null;
+      }).filter(Boolean); // Удаляем null значения
 
       setProcessedImages(processed);
     } else {
       setProcessedImages([]);
     }
+
+    // Очистка ресурсов при размонтировании компонента
+    return () => {
+      processedImages.forEach(img => {
+        if (img.type === 'file' && img.url) {
+          revokeSafeObjectURL(img.url);
+        }
+      });
+    };
   }, [images]);
 
   // Обработка drag & drop
   const onDrop = useCallback((acceptedFiles) => {
-    const newFiles = acceptedFiles.filter(file => 
-      file.type.startsWith('image/') && 
-      processedImages.length < maxImages
-    );
+    try {
+      // Фильтруем только валидные изображения
+      const validFiles = acceptedFiles.filter(file => 
+        isValidImageFile(file) && 
+        processedImages.length < maxImages
+      );
 
-    if (newFiles.length === 0) return;
+      if (validFiles.length === 0) {
+        console.warn('Нет валидных изображений для загрузки');
+        return;
+      }
 
-    // Создаем URL для предварительного просмотра
-    const newImageUrls = newFiles.map(file => ({
-      id: Math.random().toString(36).substr(2, 9),
-      file,
-      url: URL.createObjectURL(file),
-      name: file.name,
-      size: file.size,
-      type: 'file'
-    }));
+      // Создаем URL для предварительного просмотра
+      const newImageUrls = validFiles.map(file => {
+        const objectUrl = createSafeObjectURL(file);
+        if (objectUrl) {
+          return {
+            id: Math.random().toString(36).substr(2, 9),
+            file,
+            url: objectUrl,
+            name: file.name,
+            size: file.size,
+            type: 'file'
+          };
+        }
+        return null;
+      }).filter(Boolean); // Удаляем null значения
 
-    const updatedImages = [...processedImages, ...newImageUrls];
-    setProcessedImages(updatedImages);
-    
-    // Обновляем родительский компонент - передаем только файлы
-    const newImages = updatedImages.map(img => img.file || img.url);
-    setImages(newImages);
+      if (newImageUrls.length === 0) {
+        console.warn('Не удалось создать URL объекты для файлов');
+        return;
+      }
 
-    // Если главное изображение не выбрано, устанавливаем первое
-    if (!mainImage && newImageUrls.length > 0) {
-      const firstImageUrl = newImageUrls[0].url;
-      setMainImage(firstImageUrl);
+      const updatedImages = [...processedImages, ...newImageUrls];
+      setProcessedImages(updatedImages);
+      
+      // Обновляем родительский компонент - передаем только файлы
+      const newImages = updatedImages.map(img => img.file || img.url);
+      setImages(newImages);
+
+      // Если главное изображение не выбрано, устанавливаем первое
+      if (!mainImage && newImageUrls.length > 0) {
+        const firstImageUrl = newImageUrls[0].url;
+        setMainImage(firstImageUrl);
+      }
+    } catch (error) {
+      console.error('Ошибка при обработке файлов:', error);
     }
   }, [processedImages, setImages, mainImage, setMainImage, maxImages]);
 
@@ -111,6 +158,14 @@ export default function ModernImageUploader({
 
   // Удаление изображения
   const removeImage = (imageId) => {
+    // Находим изображение для удаления
+    const imageToRemove = processedImages.find(img => img.id === imageId);
+    
+    // Очищаем URL объект если это файл
+    if (imageToRemove && imageToRemove.type === 'file' && imageToRemove.url) {
+      revokeSafeObjectURL(imageToRemove.url);
+    }
+
     const updatedImages = processedImages.filter(img => img.id !== imageId);
     setProcessedImages(updatedImages);
     
@@ -210,13 +265,11 @@ export default function ModernImageUploader({
               >
                 {/* Изображение */}
                 <div className="aspect-square relative">
-                  <img
+                  <SafeImage
                     src={image.url}
                     alt={image.name}
                     className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.src = '/img/placeholder.jpg';
-                    }}
+                    fallbackSrc="/img/placeholder.jpg"
                   />
                   
                   {/* Overlay при наведении */}

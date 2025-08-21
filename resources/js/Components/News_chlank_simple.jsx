@@ -1,14 +1,23 @@
 import React from 'react'
 import { Link } from '@inertiajs/react';
 import NewsFirstImage from './NewsFirstImage';
+import { isValidVideoUrl } from '../Utils/mediaUtils';
 
 function News_chlank_simple({ date, description, slug, image, images = [] }) {
+  // Фильтруем только изображения для карточек (видео показываем только на странице новости)
+  const imageOnlyImages = images.filter(img => {
+    if (typeof img === 'string') {
+      return !isValidVideoUrl(img);
+    }
+    return true; // Если это объект, считаем изображением
+  });
+  
   return (
     <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 h-full">
         {/* Отображение первого изображения */}
         <div className="h-40 overflow-hidden rounded-t-lg">
           <NewsFirstImage 
-            images={images}
+            images={imageOnlyImages}
             image={image}
             className="h-40"
             height="160px"

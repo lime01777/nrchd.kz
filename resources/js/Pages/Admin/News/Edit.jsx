@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
-import CompactImageGallery from '@/Components/CompactImageGallery';
+import ModernMediaUploader from '@/Components/ModernMediaUploader';
 import ModernContentEditor from '@/Components/ModernContentEditor';
-import SimpleImageManager from '@/Components/FileManager/SimpleImageManager';
+import MediaManager from '@/Components/FileManager/MediaManager';
 
 const DEFAULT_CATEGORIES = [
   'Общие',
@@ -589,30 +589,33 @@ export default function NewsEdit({ news = null }) {
                 )}
               </div>
 
-              {/* Галерея изображений */}
+              {/* Галерея медиа */}
               <div className="sm:col-span-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Галерея изображений
+                  🎥 Медиа галерея
                   <span className="text-xs text-gray-500 ml-2">
-                    - Добавьте до 10 изображений для слайдера
+                    - Добавьте изображения или видео (до 10 файлов)
                   </span>
                 </label>
                 
-                {/* Упрощенный файловый менеджер */}
-                <SimpleImageManager
-                  onSelect={(image) => {
-                    const newImages = [...images, image.path];
-                    handleImagesChange(newImages);
-                  }}
-                  selectedImages={images.map(img => ({ path: img }))}
+                {/* Современный загрузчик медиа */}
+                <ModernMediaUploader
+                  media={images}
+                  setMedia={handleImagesChange}
+                  maxFiles={10}
                 />
                 
-                {/* Текущие изображения */}
-                <CompactImageGallery
-                  images={images}
-                  setImages={handleImagesChange}
-                  maxImages={10}
-                />
+                {/* Медиа менеджер для выбора из библиотеки */}
+                <div className="mt-4">
+                  <MediaManager
+                    onSelect={(mediaItem) => {
+                      const newImages = [...images, mediaItem.path];
+                      handleImagesChange(newImages);
+                    }}
+                    selectedMedia={images.map(img => ({ path: img }))}
+                    maxFiles={10}
+                  />
+                </div>
               </div>
 
               {/* Содержимое */}

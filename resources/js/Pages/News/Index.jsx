@@ -4,6 +4,7 @@ import LayoutDirection from '@/Layouts/LayoutDirection';
 import { Link } from '@inertiajs/react';
 import LayoutNews from '@/Layouts/LayoutNews';
 import NewsImageSlider from '@/Components/NewsImageSlider';
+import { isValidVideoUrl } from '@/Utils/mediaUtils';
 
 export default function NewsIndex({ news, categories, filters }) {
   const { data, setData, get, processing } = useForm({
@@ -86,13 +87,21 @@ export default function NewsIndex({ news, categories, filters }) {
               } else if (item.image) {
                 displayImages.push(item.image);
               }
+              
+              // Фильтруем только изображения для карточек (видео показываем только на странице новости)
+              const imageOnlyImages = displayImages.filter(img => {
+                if (typeof img === 'string') {
+                  return !isValidVideoUrl(img);
+                }
+                return true; // Если это объект, считаем изображением
+              });
 
               return (
                 <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                  {displayImages.length > 0 && (
+                  {imageOnlyImages.length > 0 && (
                     <div className="h-48 overflow-hidden">
                       <NewsImageSlider 
-                        images={displayImages}
+                        images={imageOnlyImages}
                         className="h-48"
                         height="192px"
                         showDots={displayImages.length > 1}

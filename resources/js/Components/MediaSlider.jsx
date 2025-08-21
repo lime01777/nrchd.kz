@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import SafeImage from './SafeImage';
+import SafeVideo from './SafeVideo';
 
 /**
  * Слайдер для изображений и видео
@@ -85,8 +87,9 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
         onClick={handleSliderClick}
       >
         {currentMedia.type === 'video' ? (
-          <video
+          <SafeVideo
             key={currentMedia.path}
+            src={currentMedia.path}
             className="w-full h-full object-contain"
             controls
             autoPlay={isPlaying}
@@ -94,19 +97,21 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
             loop
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
-          >
-            <source src={currentMedia.path} type={`video/${currentMedia.path.split('.').pop()}`} />
-            {window.translations?.browser_not_support_video || 'Ваш браузер не поддерживает видео.'}
-          </video>
+            fallbackContent={
+              <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                <div className="text-center">
+                  <div className="text-4xl mb-2">🎥</div>
+                  <div className="text-xs text-gray-600">Видео недоступно</div>
+                </div>
+              </div>
+            }
+          />
         ) : (
-          <img
+          <SafeImage
             src={currentMedia.path}
             alt={currentMedia.name}
             className="w-full h-full object-cover"
-            onError={(e) => {
-              e.target.style.display = 'none';
-              e.target.nextSibling.style.display = 'flex';
-            }}
+            fallbackSrc="/img/placeholder.jpg"
           />
         )}
         

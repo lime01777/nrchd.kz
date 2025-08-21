@@ -18,6 +18,17 @@ export default function CompactImageGallery({
 
   // Обработка существующих изображений
   useEffect(() => {
+    // Очищаем предыдущие URL объекты перед созданием новых
+    processedImages.forEach(img => {
+      if (img.type === 'file' && img.url && img.url.startsWith('blob:')) {
+        try {
+          URL.revokeObjectURL(img.url);
+        } catch (error) {
+          console.warn('Ошибка при очистке URL объекта:', error);
+        }
+      }
+    });
+
     if (images && images.length > 0) {
       const processed = images.map((img, index) => {
         if (typeof img === 'string') {
@@ -28,13 +39,18 @@ export default function CompactImageGallery({
             type: 'url'
           };
         } else if (img instanceof File) {
-          return {
-            id: `file-${index}-${img.name}-${img.size}`, // Более уникальный id
-            file: img,
-            url: URL.createObjectURL(img),
-            name: img.name,
-            type: 'file'
-          };
+          try {
+            return {
+              id: `file-${index}-${img.name}-${img.size}`, // Более уникальный id
+              file: img,
+              url: URL.createObjectURL(img),
+              name: img.name,
+              type: 'file'
+            };
+          } catch (error) {
+            console.error('Ошибка при создании URL объекта для файла:', img.name, error);
+            return null;
+          }
         }
         return null;
       }).filter(Boolean);
@@ -46,8 +62,12 @@ export default function CompactImageGallery({
     // Очистка URL объектов при размонтировании или изменении
     return () => {
       processedImages.forEach(img => {
-        if (img.type === 'file' && img.url) {
-          URL.revokeObjectURL(img.url);
+        if (img.type === 'file' && img.url && img.url.startsWith('blob:')) {
+          try {
+            URL.revokeObjectURL(img.url);
+          } catch (error) {
+            console.warn('Ошибка при очистке URL объекта при размонтировании:', error);
+          }
         }
       });
     };

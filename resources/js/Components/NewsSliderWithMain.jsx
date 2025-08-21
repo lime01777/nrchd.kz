@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import SafeImage from './SafeImage';
 
 /**
  * Слайдер новостей для отображения изображений
@@ -58,8 +59,20 @@ export default function NewsSliderWithMain({
     
     // Фильтруем пустые/недействительные изображения и преобразуем пути
     const validImages = images
-      .filter(img => img && (typeof img === 'string' || img instanceof File))
-      .map(img => transformImagePath(img));
+      .filter(img => {
+        if (!img) return false;
+        if (typeof img === 'string') {
+          // Проверяем, что это валидный URL или blob URL
+          return img.trim() !== '' && (img.startsWith('http') || img.startsWith('blob:') || img.startsWith('/'));
+        }
+        if (img instanceof File) {
+          // Проверяем, что это валидный файл изображения
+          return img.size > 0 && img.type.startsWith('image/');
+        }
+        return false;
+      })
+      .map(img => transformImagePath(img))
+      .filter(url => url && url.trim() !== ''); // Дополнительная фильтрация пустых URL
     
     console.log('NewsSliderWithMain - обработка изображений:', {
       images,
@@ -88,6 +101,8 @@ export default function NewsSliderWithMain({
 
   // Обработчик ошибки загрузки изображения
   const handleImageError = useCallback((index) => {
+    console.warn('Ошибка загрузки изображения:', processedImages[index]);
+    
     setErrorImages(prev => {
       const newSet = new Set(prev);
       newSet.add(index);
@@ -161,19 +176,15 @@ export default function NewsSliderWithMain({
           </div>
         )}
         
-        <img
+        <SafeImage
           src={processedImages[0]}
           alt="Изображение новости"
           className={`w-full h-full object-cover transition-opacity duration-300 ${
             loadedImages.has(0) ? 'opacity-100' : 'opacity-0'
           }`}
+          fallbackSrc="/img/placeholder.jpg"
           onLoad={() => handleImageLoad(0)}
-          onError={(e) => {
-            console.error('Ошибка загрузки изображения:', processedImages[0]);
-            handleImageError(0);
-            e.target.onerror = null;
-            e.target.src = '/img/placeholder.jpg';
-          }}
+          onError={() => handleImageError(0)}
         />
         
         {/* Показываем счетчик даже для одного изображения */}
@@ -215,19 +226,15 @@ export default function NewsSliderWithMain({
     >
       {/* Основное изображение */}
       <div className="relative w-full h-full">
-        <img
+        <SafeImage
           src={processedImages[currentIndex]}
           alt={`Изображение ${currentIndex + 1}`}
           className={`w-full h-full object-cover transition-opacity duration-500 ${
             loadedImages.has(currentIndex) ? 'opacity-100' : 'opacity-0'
           }`}
+          fallbackSrc="/img/news/placeholder.jpg"
           onLoad={() => handleImageLoad(currentIndex)}
-          onError={(e) => {
-            console.error('Ошибка загрузки изображения:', processedImages[currentIndex]);
-            handleImageError(currentIndex);
-            e.target.onerror = null;
-            e.target.src = '/img/news/placeholder.jpg';
-          }}
+          onError={() => handleImageError(currentIndex)}
         />
         
         {/* Предварительная загрузка остальных изображений */}

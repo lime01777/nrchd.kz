@@ -63,7 +63,7 @@ class ContactController extends Controller
             
             // Попытка 1: Доверенный SMTP (с правильным local_domain)
             try {
-                Mail::mailer('smtp_trusted')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
+                Mail::mailer('smtp_trusted')->to('r.kyliev@nrchd.kz')->send(new TechCompetenceFormMail($data));
                 Log::info('Email успешно отправлен через доверенный SMTP');
                 $emailSent = true;
             } catch (\Exception $trustedException) {
@@ -73,7 +73,7 @@ class ContactController extends Controller
                 
                 // Попытка 2: Обычный SMTP
                 try {
-                    Mail::mailer('smtp')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
+                    Mail::mailer('smtp')->to('r.kyliev@nrchd.kz')->send(new TechCompetenceFormMail($data));
                     Log::info('Email успешно отправлен через SMTP');
                     $emailSent = true;
                 } catch (\Exception $mailException) {
@@ -83,7 +83,7 @@ class ContactController extends Controller
                     
                     // Попытка 3: SMTP без аутентификации (для хостинга)
                     try {
-                        Mail::mailer('smtp_hosting')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
+                        Mail::mailer('smtp_hosting')->to('r.kyliev@nrchd.kz')->send(new TechCompetenceFormMail($data));
                         Log::info('Email успешно отправлен через SMTP хостинга');
                         $emailSent = true;
                     } catch (\Exception $hostingException) {
@@ -93,7 +93,7 @@ class ContactController extends Controller
                         
                         // Попытка 4: Log mailer как резервный вариант
                         try {
-                            Mail::mailer('log')->to('no-reply@nrchd.kz')->send(new TechCompetenceFormMail($data));
+                            Mail::mailer('log')->to('r.kyliev@nrchd.kz')->send(new TechCompetenceFormMail($data));
                             Log::info('Email сохранен в лог (резервный режим)');
                             $emailSent = true;
                         } catch (\Exception $logException) {

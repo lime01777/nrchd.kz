@@ -80,6 +80,11 @@ export default function TechCompetence() {
       try {
         // Получаем CSRF токен из мета-тега
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        console.log('CSRF Token:', csrfToken);
+        
+        if (!csrfToken) {
+          throw new Error('CSRF token not found. Please refresh the page.');
+        }
         
         response = await fetch('/api/contact/tech-competence', {
           method: 'POST',
@@ -98,9 +103,14 @@ export default function TechCompetence() {
           
           // Добавляем CSRF токен
           const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-          if (csrfToken) {
-            xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+          console.log('CSRF Token (XMLHttpRequest):', csrfToken);
+          
+          if (!csrfToken) {
+            reject(new Error('CSRF token not found. Please refresh the page.'));
+            return;
           }
+          
+          xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
           
           xhr.onload = function() {
             if (xhr.status >= 200 && xhr.status < 300) {
@@ -124,11 +134,23 @@ export default function TechCompetence() {
       }
 
       console.log('Response received:', response.status, response.statusText);
+      console.log('Response headers:', response.headers);
+
+      // Проверяем Content-Type ответа
+      const contentType = response.headers.get('content-type');
+      console.log('Content-Type:', contentType);
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error response:', errorText);
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+
+      // Проверяем, что ответ действительно JSON
+      if (!contentType || !contentType.includes('application/json')) {
+        const responseText = await response.text();
+        console.error('Non-JSON response:', responseText);
+        throw new Error(`Server returned non-JSON response. Content-Type: ${contentType}`);
       }
 
       const result = await response.json();
@@ -171,8 +193,15 @@ export default function TechCompetence() {
         errorMessage = 'Пожалуйста, проверьте правильность заполнения всех обязательных полей.';
       } else if (error.message.includes('500')) {
         errorMessage = 'Внутренняя ошибка сервера. Попробуйте позже или свяжитесь с администратором.';
+      } else if (error.message.includes('non-JSON response')) {
+        errorMessage = 'Сервер вернул неверный формат ответа. Попробуйте обновить страницу и повторить попытку.';
+      } else if (error.message.includes('JSON.parse')) {
+        errorMessage = 'Ошибка обработки ответа сервера. Попробуйте обновить страницу и повторить попытку.';
+      } else if (error.message.includes('CSRF token not found')) {
+        errorMessage = 'Ошибка безопасности. Пожалуйста, обновите страницу и попробуйте снова.';
       }
       
+      console.error('Показываем пользователю:', errorMessage);
       alert(errorMessage);
     }
   };

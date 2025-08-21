@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
-import CompactMediaGallery from '@/Components/CompactMediaGallery';
+import ModernMediaUploader from '@/Components/ModernMediaUploader';
 import ModernContentEditor from '@/Components/ModernContentEditor';
 import MediaManager from '@/Components/FileManager/MediaManager';
 
@@ -436,28 +436,30 @@ export default function NewsCreate() {
               {/* Галерея медиа */}
               <div className="sm:col-span-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  🎥 Медиа галерея (НОВАЯ ВЕРСИЯ)
+                  🎥 Медиа галерея
                   <span className="text-xs text-gray-500 ml-2">
                     - Добавьте изображения или видео (до 10 файлов)
                   </span>
                 </label>
                 
-                {/* Медиа менеджер */}
-                <MediaManager
-                  onSelect={(mediaItem) => {
-                    const newMedia = [...media, mediaItem];
-                    handleMediaChange(newMedia);
-                  }}
-                  selectedMedia={media}
-                  maxFiles={10}
-                />
-                
-                {/* Текущие медиа */}
-                <CompactMediaGallery
+                {/* Современный загрузчик медиа */}
+                <ModernMediaUploader
                   media={media}
                   setMedia={handleMediaChange}
                   maxFiles={10}
                 />
+                
+                {/* Медиа менеджер для выбора из библиотеки */}
+                <div className="mt-4">
+                  <MediaManager
+                    onSelect={(mediaItem) => {
+                      const newMedia = [...media, mediaItem];
+                      handleMediaChange(newMedia);
+                    }}
+                    selectedMedia={media}
+                    maxFiles={10}
+                  />
+                </div>
               </div>
 
               {/* Содержимое */}

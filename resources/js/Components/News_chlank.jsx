@@ -1,17 +1,26 @@
 import React from 'react'
 import { Link } from '@inertiajs/react';
 import NewsSliderWithMain from './NewsSliderWithMain';
+import { isValidVideoUrl } from '../Utils/mediaUtils';
 
 function News_chlank({ date, description, slug, image, images = [] }) {
   // Определяем изображения для отображения
   const displayImages = images && images.length > 0 ? images : (image ? [image] : []);
+  
+  // Фильтруем только изображения для карточек (видео показываем только на странице новости)
+  const imageOnlyImages = displayImages.filter(img => {
+    if (typeof img === 'string') {
+      return !isValidVideoUrl(img);
+    }
+    return true; // Если это объект, считаем изображением
+  });
   
   return (
     <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 h-full">
         {/* Отображение слайдера изображений */}
         <div className="h-40 overflow-hidden rounded-t-lg">
           <NewsSliderWithMain 
-            images={displayImages}
+            images={imageOnlyImages}
             className="h-40"
             height="160px"
             showDots={true}
