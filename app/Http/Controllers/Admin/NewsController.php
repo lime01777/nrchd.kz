@@ -72,11 +72,25 @@ class NewsController extends Controller
         ]);
 
         try {
+            // Проверяем права на запись в storage
+            $storagePath = storage_path('app/public/news');
+            if (!is_writable($storagePath)) {
+                Log::error('Нет прав на запись в директорию', ['path' => $storagePath]);
+                return back()->withErrors(['error' => 'Ошибка прав доступа к директории загрузки']);
+            }
+
             // Генерируем slug
             $slug = $this->generateUniqueSlug($validated['title']);
 
             // Обрабатываем изображения
             $imagePaths = $this->processImages($request);
+
+            // Проверяем, что хотя бы одно изображение загружено
+            if (empty($imagePaths)) {
+                Log::warning('Попытка создания новости без изображений', [
+                    'title' => $validated['title']
+                ]);
+            }
 
             // Создаем новость
             $news = new News();
@@ -92,7 +106,8 @@ class NewsController extends Controller
             Log::info('Создана новость', [
                 'id' => $news->id,
                 'title' => $news->title,
-                'images_count' => count($imagePaths)
+                'images_count' => count($imagePaths),
+                'images' => $imagePaths
             ]);
 
             return redirect()->route('admin.news')->with('success', 'Новость успешно создана');
@@ -100,10 +115,12 @@ class NewsController extends Controller
         } catch (\Exception $e) {
             Log::error('Ошибка при создании новости', [
                 'error' => $e->getMessage(),
-                'title' => $request->input('title')
+                'trace' => $e->getTraceAsString(),
+                'title' => $request->input('title'),
+                'files' => $request->hasFile('image_files') ? count($request->file('image_files')) : 0
             ]);
 
-            return back()->withErrors(['error' => 'Произошла ошибка при создании новости: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Произошла ошибка при создании новости. Проверьте логи сервера.']);
         }
     }
 
@@ -173,7 +190,8 @@ class NewsController extends Controller
             Log::info('Обновлена новость', [
                 'id' => $news->id,
                 'title' => $news->title,
-                'images_count' => count($imagePaths)
+                'images_count' => count($imagePaths),
+                'images' => $imagePaths
             ]);
 
             return redirect()->route('admin.news')->with('success', 'Новость успешно обновлена');
@@ -181,10 +199,12 @@ class NewsController extends Controller
         } catch (\Exception $e) {
             Log::error('Ошибка при обновлении новости', [
                 'error' => $e->getMessage(),
-                'news_id' => $id
+                'trace' => $e->getTraceAsString(),
+                'news_id' => $id,
+                'files' => $request->hasFile('image_files') ? count($request->file('image_files')) : 0
             ]);
 
-            return back()->withErrors(['error' => 'Произошла ошибка при обновлении новости: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Произошла ошибка при обновлении новости. Проверьте логи сервера.']);
         }
     }
 
@@ -229,24 +249,74 @@ class NewsController extends Controller
     {
         $imagePaths = [];
 
+        // Проверяем и создаем директорию если не существует
+        $storagePath = storage_path('app/public/news');
+        if (!file_exists($storagePath)) {
+            try {
+                mkdir($storagePath, 0755, true);
+                Log::info('Создана директория для изображений', ['path' => $storagePath]);
+            } catch (\Exception $e) {
+                Log::error('Ошибка создания директории', [
+                    'path' => $storagePath,
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
+
         // Обрабатываем новые загруженные файлы
         if ($request->hasFile('image_files')) {
             foreach ($request->file('image_files') as $file) {
                 if ($file && $file->isValid()) {
                     try {
+                        // Проверяем размер файла
+                        if ($file->getSize() > 10 * 1024 * 1024) { // 10MB
+                            Log::warning('Файл слишком большой', [
+                                'name' => $file->getClientOriginalName(),
+                                'size' => $file->getSize()
+                            ]);
+                            continue;
+                        }
+
+                        // Проверяем тип файла
+                        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                        if (!in_array($file->getMimeType(), $allowedTypes)) {
+                            Log::warning('Неподдерживаемый тип файла', [
+                                'name' => $file->getClientOriginalName(),
+                                'mime' => $file->getMimeType()
+                            ]);
+                            continue;
+                        }
+
                         $path = $file->store('news', 'public');
-                        $imagePaths[] = '/storage/' . $path;
                         
-                        Log::info('Загружено изображение', [
-                            'name' => $file->getClientOriginalName(),
-                            'path' => '/storage/' . $path
-                        ]);
+                        // Проверяем, что файл действительно сохранен
+                        $fullPath = storage_path('app/public/' . $path);
+                        if (file_exists($fullPath)) {
+                            $imagePaths[] = '/storage/' . $path;
+                            
+                            Log::info('Загружено изображение', [
+                                'name' => $file->getClientOriginalName(),
+                                'path' => '/storage/' . $path,
+                                'size' => filesize($fullPath)
+                            ]);
+                        } else {
+                            Log::error('Файл не сохранен', [
+                                'name' => $file->getClientOriginalName(),
+                                'expected_path' => $fullPath
+                            ]);
+                        }
                     } catch (\Exception $e) {
                         Log::error('Ошибка загрузки изображения', [
                             'file' => $file->getClientOriginalName(),
-                            'error' => $e->getMessage()
+                            'error' => $e->getMessage(),
+                            'trace' => $e->getTraceAsString()
                         ]);
                     }
+                } else {
+                    Log::warning('Невалидный файл', [
+                        'name' => $file ? $file->getClientOriginalName() : 'unknown',
+                        'valid' => $file ? $file->isValid() : false
+                    ]);
                 }
             }
         }
@@ -256,7 +326,22 @@ class NewsController extends Controller
         if (is_array($inputImages)) {
             foreach ($inputImages as $url) {
                 if (is_string($url) && !empty(trim($url))) {
-                    $imagePaths[] = $url;
+                    // Проверяем, что URL не содержит отсутствующие файлы
+                    if (strpos($url, '/storage/news/') === 0) {
+                        $filename = basename($url);
+                        $filepath = storage_path('app/public/news/' . $filename);
+                        
+                        if (file_exists($filepath)) {
+                            $imagePaths[] = $url;
+                        } else {
+                            Log::warning('Отсутствует файл изображения', [
+                                'url' => $url,
+                                'filepath' => $filepath
+                            ]);
+                        }
+                    } else {
+                        $imagePaths[] = $url;
+                    }
                 }
             }
         }
