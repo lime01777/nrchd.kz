@@ -240,12 +240,12 @@ class AddSubRoutesToLocalized extends Command
     })->name('bioethics.composition');
     
     // Подмаршруты оценки технологий здравоохранения
-    Route::get('/health-rate/omt-reports', function (\$locale) {
-        return Inertia::render('Direction/HealthRate/OmtReports', [
+    Route::get('/health-rate/otz-reports', function (\$locale) {
+        return Inertia::render('Direction/HealthRate/OtzReports', [
             'locale' => \$locale,
-            'translations' => TranslationService::getForPage('health_rate_omt_reports', \$locale),
+            'translations' => TranslationService::getForPage('health_rate_otz_reports', \$locale),
         ]);
-    })->name('health.rate.omt.reports');
+    })->name('health.rate.otz.reports');
     
     Route::get('/health-rate/quality-commission', function (\$locale) {
         return Inertia::render('Direction/HealthRate/QualityCommission', [

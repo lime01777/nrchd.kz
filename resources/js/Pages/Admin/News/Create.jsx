@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Link, useForm } from '@inertiajs/react';
+import { Link, useForm, router } from '@inertiajs/react';
 import ModernMediaUploader from '@/Components/ModernMediaUploader';
 import ModernContentEditor from '@/Components/ModernContentEditor';
 import MediaManager from '@/Components/FileManager/MediaManager';
@@ -37,25 +37,134 @@ export default function NewsCreate() {
   // Обработчик изменения медиа
   const handleMediaChange = (newMedia) => {
     console.log('Create - изменение медиа:', newMedia);
+    console.log('Create - типы элементов:', newMedia.map(item => ({
+      type: typeof item,
+      isFile: item instanceof File,
+      hasFile: item && item.file,
+      name: item?.name || item?.file?.name,
+      mimeType: item?.type || item?.file?.type,
+      mediaType: item?.mediaType || item?.file?.mediaType,
+      size: item?.size || item?.file?.size
+    })));
     setMedia(newMedia);
     
-    // Разделяем файлы и URL
-    const files = [];
+    // Разделяем файлы и URL, а также изображения и видео
+    const imageFiles = [];
+    const videoFiles = [];
     const urls = [];
     
     newMedia.forEach(item => {
-      if (item instanceof File || (item && item.file)) {
-        files.push(item.file || item);
-      } else if (typeof item === 'string') {
-        urls.push(item);
-      } else if (item && item.path) {
-        urls.push(item.path);
+      console.log('Обработка элемента медиа:', {
+        item: item,
+        type: typeof item,
+        isFile: item instanceof File,
+        hasFile: item && item.file,
+        name: item?.name || item?.file?.name,
+        mimeType: item?.type || item?.file?.type,
+        mediaType: item?.mediaType || item?.file?.mediaType
+      });
+    
+    // Функция для определения типа файла
+    const determineFileType = (file) => {
+      const name = file.name || '';
+      const type = file.type || '';
+      const extension = name.split('.').pop()?.toLowerCase() || '';
+      
+      // Приоритет 1: MIME тип
+      if (type.startsWith('video/')) {
+        return 'video';
+      } else if (type.startsWith('image/')) {
+        return 'image';
       }
+      
+      // Приоритет 2: Расширение файла
+      const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'];
+      const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+      
+      if (videoExtensions.includes(extension)) {
+        return 'video';
+      } else if (imageExtensions.includes(extension)) {
+        return 'image';
+      }
+      
+      // Приоритет 3: По умолчанию считаем изображением
+      console.warn('Неопределенный тип файла, считаем изображением:', name, type, extension);
+      return 'image';
+    };
+    
+    if (item instanceof File) {
+      // Приоритет 1: Используем информацию о типе медиа, если она есть
+      if (item.mediaType) {
+        if (item.mediaType === 'video') {
+          console.log('Добавляем видео файл (по mediaType):', item.name);
+          videoFiles.push(item);
+        } else {
+          console.log('Добавляем изображение файл (по mediaType):', item.name);
+          imageFiles.push(item);
+        }
+      } else {
+        // Приоритет 2: Определяем тип файла по MIME типу и расширению
+        const fileType = determineFileType(item);
+        if (fileType === 'video') {
+          console.log('Добавляем видео файл (по определению):', item.name);
+          videoFiles.push(item);
+        } else {
+          console.log('Добавляем изображение файл (по определению):', item.name);
+          imageFiles.push(item);
+        }
+      }
+    } else if (item && item.file) {
+      // Обработка объектов с файлами
+      const file = item.file;
+      
+      // Приоритет 1: Используем информацию о типе медиа, если она есть
+      if (file.mediaType) {
+        if (file.mediaType === 'video') {
+          console.log('Добавляем видео файл из объекта (по mediaType):', file.name);
+          videoFiles.push(file);
+        } else {
+          console.log('Добавляем изображение файл из объекта (по mediaType):', file.name);
+          imageFiles.push(file);
+        }
+      } else {
+        // Приоритет 2: Определяем тип файла по MIME типу и расширению
+        const fileType = determineFileType(file);
+        if (fileType === 'video') {
+          console.log('Добавляем видео файл из объекта (по определению):', file.name);
+          videoFiles.push(file);
+        } else {
+          console.log('Добавляем изображение файл из объекта (по определению):', file.name);
+          imageFiles.push(file);
+        }
+      }
+    } else if (typeof item === 'string') {
+      console.log('Добавляем URL:', item);
+      urls.push(item);
+    } else if (item && item.path) {
+      console.log('Добавляем путь:', item.path);
+      urls.push(item.path);
+    } else {
+      console.warn('Неизвестный тип элемента:', item);
+    }
+  });
+    
+    console.log('Create - разделение файлов и URL:', { 
+      imageFiles, 
+      videoFiles, 
+      urls,
+      totalFiles: imageFiles.length + videoFiles.length
     });
     
-    // Устанавливаем файлы в FormData
+    // Устанавливаем данные в форму
+    console.log('Create - устанавливаем данные в форму:', {
+      urls,
+      imageFiles: imageFiles.map(f => ({ name: f.name, type: f.type, size: f.size })),
+      videoFiles: videoFiles.map(f => ({ name: f.name, type: f.type, size: f.size }))
+    });
+    
     setData('images', urls); // URL медиа
-    setData('image_files', files); // Файлы для загрузки
+    setData('image_files', imageFiles); // Файлы изображений
+    setData('video_files', videoFiles); // Файлы видео
   };
 
 
@@ -144,19 +253,7 @@ export default function NewsCreate() {
         setData('status', 'Черновик');
       }
 
-      // Обработка медиа
-      // Проверка, что медиа не пустые и могут быть загружены
-      const validMedia = media.filter(item => {
-        if (typeof item === 'string') return item;
-        if (item instanceof File) return item.size > 0;
-        if (item && item.file) return item.file.size > 0;
-        if (item && item.path) return item.path;
-        return false;
-      });
-      
-      // Важно! Добавляем медиа в данные формы
-      setData('images', validMedia);
-  
+      // Проверка контента и категорий
       if (!data.content || data.content.replace(/<[^>]*?>/g, '').trim().length < 10) {
         alert('Содержимое должно содержать минимум 10 символов');
         setIsSubmitting(false);
@@ -168,86 +265,192 @@ export default function NewsCreate() {
         return;
       }
       
-      // Разделяем изображения и видео
-      const imageFiles = [];
-      const videoFiles = [];
-      const imageUrls = [];
-      const videoUrls = [];
-      
-      validMedia.forEach(item => {
-        if (item instanceof File || (item && item.file)) {
-          const file = item.file || item;
-          if (file.type.startsWith('video/')) {
-            videoFiles.push(file);
-          } else {
-            imageFiles.push(file);
-          }
-        } else if (typeof item === 'string' || (item && item.path)) {
-          const path = item.path || item;
-          const extension = path.split('.').pop()?.toLowerCase();
-          const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'];
-          if (videoExtensions.includes(extension)) {
-            videoUrls.push(path);
-          } else {
-            imageUrls.push(path);
-          }
-        }
+      // Упрощенная обработка медиа (используем данные из handleMediaChange)
+      console.log('Состояние медиа перед отправкой:', {
+        media: media,
+        data_images: data.images,
+        data_image_files: data.image_files,
+        data_video_files: data.video_files
       });
       
-      // Подготавливаем данные для отправки
+      // Дополнительная проверка файлов
+      if (data.image_files && data.image_files.length > 0) {
+        console.log('Детали файлов изображений:', data.image_files.map(file => ({
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          sizeMB: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
+          lastModified: file.lastModified,
+          isValidSize: file.size <= 10 * 1024 * 1024, // 10MB
+          isValidType: ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'].includes(file.type)
+        })));
+      }
+      
+      if (data.video_files && data.video_files.length > 0) {
+        console.log('Детали файлов видео:', data.video_files.map(file => ({
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          sizeMB: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
+          lastModified: file.lastModified,
+          isValidSize: file.size <= 50 * 1024 * 1024, // 50MB
+          isValidType: ['video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/flv', 'video/webm'].includes(file.type)
+        })));
+      }
+      
+      // Подготавливаем данные для отправки (позже добавим валидированные файлы)
       const submitData = {
         title: data.title,
         content: data.content,
         status: data.status,
         publishDate: data.publishDate || '',
         category: cat,
-        images: [...imageUrls, ...videoUrls], // Все URL
-        image_files: imageFiles, // Только изображения
-        video_files: videoFiles // Только видео
+        images: data.images || []
       };
+
+      // Валидация файлов на клиентской стороне
+      const validImageFiles = [];
+      const validVideoFiles = [];
+      
+      // Функция для определения типа файла
+      const determineFileType = (file) => {
+        const name = file.name || '';
+        const type = file.type || '';
+        const extension = name.split('.').pop()?.toLowerCase() || '';
+        
+        if (type.startsWith('video/') || ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'].includes(extension)) {
+          return 'video';
+        } else if (type.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
+          return 'image';
+        }
+        return 'unknown';
+      };
+      
+      if (data.image_files && data.image_files.length > 0) {
+        data.image_files.forEach(file => {
+          const fileType = determineFileType(file);
+          
+          // Проверяем, что файл действительно изображение
+          if (fileType === 'video') {
+            console.warn('Видео файл попал в массив изображений, перемещаем:', file.name);
+            validVideoFiles.push(file);
+            return;
+          }
+          
+          const isValidSize = file.size <= 10 * 1024 * 1024; // 10MB
+          const isValidType = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'].includes(file.type);
+          
+          if (!isValidSize) {
+            console.warn('Файл изображения превышает размер:', file.name, (file.size / (1024 * 1024)).toFixed(2) + ' MB');
+          }
+          if (!isValidType) {
+            console.warn('Неподдерживаемый тип файла изображения:', file.name, file.type);
+          }
+          
+          if (isValidSize && isValidType) {
+            validImageFiles.push(file);
+          } else {
+            alert(`Файл "${file.name}" не прошел валидацию:\n${!isValidSize ? '- Размер превышает 10MB\n' : ''}${!isValidType ? '- Неподдерживаемый тип файла' : ''}`);
+          }
+        });
+      }
+      
+      if (data.video_files && data.video_files.length > 0) {
+        data.video_files.forEach(file => {
+          const fileType = determineFileType(file);
+          
+          // Проверяем, что файл действительно видео
+          if (fileType === 'image') {
+            console.warn('Изображение попало в массив видео, перемещаем:', file.name);
+            validImageFiles.push(file);
+            return;
+          }
+          
+          const isValidSize = file.size <= 50 * 1024 * 1024; // 50MB
+          const isValidType = ['video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/flv', 'video/webm'].includes(file.type);
+          
+          if (!isValidSize) {
+            console.warn('Файл видео превышает размер:', file.name, (file.size / (1024 * 1024)).toFixed(2) + ' MB');
+          }
+          if (!isValidType) {
+            console.warn('Неподдерживаемый тип файла видео:', file.name, file.type);
+          }
+          
+          if (isValidSize && isValidType) {
+            validVideoFiles.push(file);
+          } else {
+            alert(`Файл "${file.name}" не прошел валидацию:\n${!isValidSize ? '- Размер превышает 50MB\n' : ''}${!isValidType ? '- Неподдерживаемый тип файла' : ''}`);
+          }
+        });
+      }
+      
+      // Добавляем только валидные файлы
+      if (validImageFiles.length > 0) {
+        submitData.image_files = validImageFiles;
+      }
+      if (validVideoFiles.length > 0) {
+        submitData.video_files = validVideoFiles;
+      }
       
       console.log('Отправка формы с данными:', {
         title: data.title,
         content_length: data.content ? data.content.length : 0,
         categories: cat,
-        media_count: validMedia.length,
+        images_count: data.images ? data.images.length : 0,
+        image_files_count: data.image_files ? data.image_files.length : 0,
+        video_files_count: data.video_files ? data.video_files.length : 0,
+        validImageFiles_count: validImageFiles.length,
+        validVideoFiles_count: validVideoFiles.length,
         status: data.status
       });
+      
+      console.log('ФИНАЛЬНЫЕ ДАННЫЕ ДЛЯ ОТПРАВКИ:', {
+        submitData,
+        validImageFiles: validImageFiles.map(f => ({ name: f.name, type: f.type, size: f.size })),
+        validVideoFiles: validVideoFiles.map(f => ({ name: f.name, type: f.type, size: f.size })),
+        forceFormData: (validImageFiles.length > 0 || validVideoFiles.length > 0)
+      });
 
-      // Отправляем форму с правильными данными
-      post(route('admin.news.store'), submitData, { 
+      // Опции для запроса
+      const options = {
         preserveScroll: true,
-        timeout: 60000, // Тайм-аут 60 секунд
-        onStart: () => {
-          console.log('Начинаем отправку формы...');
-        },
-        onProgress: (progress) => {
-          console.log('Прогресс загрузки:', progress);
-        },
-        onSuccess: (response) => {
-          console.log('Успешная отправка:', response);
+        // Принудительно используем FormData, если действительно есть файлы к отправке
+        forceFormData: (validImageFiles.length > 0 || validVideoFiles.length > 0),
+        onSuccess: (page) => {
+          console.log('Успешное сохранение:', page);
           setIsSubmitting(false);
         },
         onError: (errors) => {
           console.error('Ошибки валидации:', errors);
           setIsSubmitting(false);
           
-          // Показываем пользователю детали ошибки
-          if (errors.error) {
-            alert('Ошибка сохранения: ' + errors.error);
-          } else {
-            const errorMessages = Object.values(errors).flat();
-            if (errorMessages.length > 0) {
-              alert('Ошибки валидации:\n' + errorMessages.join('\n'));
+          // Показываем конкретные ошибки пользователю
+          const errorMessages = [];
+          Object.keys(errors).forEach(key => {
+            if (Array.isArray(errors[key])) {
+              errorMessages.push(...errors[key]);
+            } else {
+              errorMessages.push(errors[key]);
             }
+          });
+          
+          if (errorMessages.length > 0) {
+            alert('Ошибки валидации:\n' + errorMessages.join('\n'));
           }
         },
         onFinish: () => {
-          // Этот колбэк выполнится всегда, независимо от успеха или ошибки
-          console.log('Завершение отправки формы');
           setIsSubmitting(false);
         }
+      };
+      // Отправляем форму с явно собранными данными, минуя состояние формы
+      console.log('ОТПРАВКА ФОРМЫ:', {
+        route: route('admin.news.store'),
+        submitData,
+        options,
+        forceFormData: (validImageFiles.length > 0 || validVideoFiles.length > 0)
       });
+      
+      router.post(route('admin.news.store'), submitData, options);
     } catch (error) {
       console.error('Ошибка при отправке формы:', error);
       setIsSubmitting(false);

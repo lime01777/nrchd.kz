@@ -58,6 +58,7 @@ export default function Header() {
         { title: t('directionsSubLinks.medical_statistics', "Медицинская статистика"), url: "medical.statistics"},
         { title: t('directionsSubLinks.direction_tech_competence', "Отраслевой центр технологических компетенций"), url: "direction.tech.competence" },
         { title: t('directionsSubLinks.center_prevention', "Центр профилактики и укрепления здоровья"), url: "center.prevention" },
+        { title: "Объединенная комиссия по качеству медицинских услуг", url: "quality.commission" },
     ];
 
     const allAboutCentreSubLinks = [

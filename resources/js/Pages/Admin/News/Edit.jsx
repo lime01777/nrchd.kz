@@ -81,34 +81,138 @@ export default function NewsEdit({ news = null }) {
     };
   }, [showCategoryDropdown]);
 
-  // Обработчик изменения изображений
-  const handleImagesChange = (newImages) => {
-    console.log('Edit - изменение изображений:', newImages);
+  // Обработчик изменения медиа
+  const handleMediaChange = (newMedia) => {
+    console.log('Edit - изменение медиа:', newMedia);
+    console.log('Edit - типы элементов:', newMedia.map(item => ({
+      type: typeof item,
+      isFile: item instanceof File,
+      hasFile: item && item.file,
+      name: item?.name || item?.file?.name,
+      mimeType: item?.type || item?.file?.type,
+      mediaType: item?.mediaType || item?.file?.mediaType,
+      size: item?.size || item?.file?.size
+    })));
     
-    // Проверяем, что newImages является массивом
-    const imagesArray = Array.isArray(newImages) ? newImages : [];
-    setImages(imagesArray);
+    setImages(newMedia);
     
-    // Разделяем файлы и URL
-    const files = [];
+    // Разделяем файлы и URL, а также изображения и видео
+    const imageFiles = [];
+    const videoFiles = [];
     const urls = [];
     
-    imagesArray.forEach(img => {
-      if (img instanceof File) {
-        files.push(img);
-      } else if (typeof img === 'string' && img.trim().length > 0) {
-        urls.push(img);
+    // Функция для определения типа файла
+    const determineFileType = (file) => {
+      const name = file.name || '';
+      const type = file.type || '';
+      const extension = name.split('.').pop()?.toLowerCase() || '';
+      
+      // Приоритет 1: MIME тип
+      if (type.startsWith('video/')) {
+        return 'video';
+      } else if (type.startsWith('image/')) {
+        return 'image';
+      }
+      
+      // Приоритет 2: Расширение файла
+      const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'];
+      const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+      
+      if (videoExtensions.includes(extension)) {
+        return 'video';
+      } else if (imageExtensions.includes(extension)) {
+        return 'image';
+      }
+      
+      // Приоритет 3: По умолчанию считаем изображением
+      console.warn('Неопределенный тип файла, считаем изображением:', name, type, extension);
+      return 'image';
+    };
+    
+    newMedia.forEach(item => {
+      console.log('Edit - обработка элемента медиа:', {
+        item: item,
+        type: typeof item,
+        isFile: item instanceof File,
+        hasFile: item && item.file,
+        name: item?.name || item?.file?.name,
+        mimeType: item?.type || item?.file?.type,
+        mediaType: item?.mediaType || item?.file?.mediaType
+      });
+      
+      if (item instanceof File) {
+        // Приоритет 1: Используем информацию о типе медиа, если она есть
+        if (item.mediaType) {
+          if (item.mediaType === 'video') {
+            console.log('Edit - добавляем видео файл (по mediaType):', item.name);
+            videoFiles.push(item);
+          } else {
+            console.log('Edit - добавляем изображение файл (по mediaType):', item.name);
+            imageFiles.push(item);
+          }
+        } else {
+          // Приоритет 2: Определяем тип файла по MIME типу и расширению
+          const fileType = determineFileType(item);
+          if (fileType === 'video') {
+            console.log('Edit - добавляем видео файл (по определению):', item.name);
+            videoFiles.push(item);
+          } else {
+            console.log('Edit - добавляем изображение файл (по определению):', item.name);
+            imageFiles.push(item);
+          }
+        }
+      } else if (item && item.file) {
+        // Обработка объектов с файлами
+        const file = item.file;
+        
+        // Приоритет 1: Используем информацию о типе медиа, если она есть
+        if (file.mediaType) {
+          if (file.mediaType === 'video') {
+            console.log('Edit - добавляем видео файл из объекта (по mediaType):', file.name);
+            videoFiles.push(file);
+          } else {
+            console.log('Edit - добавляем изображение файл из объекта (по mediaType):', file.name);
+            imageFiles.push(file);
+          }
+        } else {
+          // Приоритет 2: Определяем тип файла по MIME типу и расширению
+          const fileType = determineFileType(file);
+          if (fileType === 'video') {
+            console.log('Edit - добавляем видео файл из объекта (по определению):', file.name);
+            videoFiles.push(file);
+          } else {
+            console.log('Edit - добавляем изображение файл из объекта (по определению):', file.name);
+            imageFiles.push(file);
+          }
+        }
+      } else if (typeof item === 'string') {
+        console.log('Edit - добавляем URL:', item);
+        urls.push(item);
+      } else if (item && item.path) {
+        console.log('Edit - добавляем путь:', item.path);
+        urls.push(item.path);
+      } else {
+        console.warn('Edit - неизвестный тип элемента:', item);
       }
     });
     
-    console.log('Edit - разделенные файлы и URL:', { files, urls, totalImages: imagesArray.length });
+    console.log('Edit - разделение файлов и URL:', { 
+      imageFiles, 
+      videoFiles, 
+      urls,
+      totalFiles: imageFiles.length + videoFiles.length
+    });
     
-    // Обновляем данные формы
-    setData(prevData => ({
-      ...prevData,
-      images: urls,
-      image_files: files
-    }));
+    // Устанавливаем данные в форму
+    console.log('Edit - устанавливаем данные в форму:', {
+      urls,
+      imageFiles: imageFiles.map(f => ({ name: f.name, type: f.type, size: f.size })),
+      videoFiles: videoFiles.map(f => ({ name: f.name, type: f.type, size: f.size }))
+    });
+    
+    setData('images', urls); // URL медиа
+    setData('image_files', imageFiles); // Файлы изображений
+    setData('video_files', videoFiles); // Файлы видео
   };
 
 
@@ -247,51 +351,55 @@ export default function NewsEdit({ news = null }) {
         return;
       }
       
-      // Обработка изображений
-      console.log('Состояние изображений перед валидацией:', {
+      // Упрощенная обработка изображений
+      console.log('Состояние изображений перед отправкой:', {
         images: images,
-        imagesLength: images ? images.length : 0,
-        imagesType: typeof images
+        imagesLength: images ? images.length : 0
       });
       
-      // Проверка, что изображения не пустые и могут быть загружены
-      const validImages = images.filter(img => {
-        const isValid = img && (typeof img === 'string' || (img instanceof File && img.size > 0));
-        if (!isValid) {
-          console.warn('Невалидное изображение:', img);
-        }
-        return isValid;
-      });
+      // Фильтруем только валидные изображения
+      const validImages = Array.isArray(images) ? images.filter(img => {
+        return img && (
+          typeof img === 'string' || 
+          (img instanceof File && img.size > 0)
+        );
+      }) : [];
       
       console.log('Валидные изображения:', validImages);
       
-      // Разделяем изображения и видео
+      // Разделяем файлы и URL, а также изображения и видео
       const imageFiles = [];
       const videoFiles = [];
-      const imageUrls = [];
-      const videoUrls = [];
+      const urls = [];
       
       validImages.forEach(img => {
         if (img instanceof File) {
-          console.log('Добавляем файл:', img.name, img.size);
+          // Определяем тип файла по MIME типу
           if (img.type.startsWith('video/')) {
             videoFiles.push(img);
-          } else {
+          } else if (img.type.startsWith('image/')) {
             imageFiles.push(img);
-          }
-        } else if (typeof img === 'string') {
-          console.log('Добавляем URL:', img);
-          const extension = img.split('.').pop()?.toLowerCase();
-          const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'];
-          if (videoExtensions.includes(extension)) {
-            videoUrls.push(img);
           } else {
-            imageUrls.push(img);
+            // Если MIME тип не определен, определяем по расширению
+            const extension = img.name.split('.').pop()?.toLowerCase();
+            const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'];
+            if (videoExtensions.includes(extension)) {
+              videoFiles.push(img);
+            } else {
+              imageFiles.push(img);
+            }
           }
+        } else if (typeof img === 'string' && img.trim()) {
+          urls.push(img);
         }
       });
       
-      console.log('Финальное разделение:', { imageFiles, videoFiles, imageUrls, videoUrls });
+      console.log('Разделение файлов и URL:', { 
+        imageFiles, 
+        videoFiles, 
+        urls,
+        totalFiles: imageFiles.length + videoFiles.length
+      });
       
       // Подготавливаем данные для отправки
       const submitData = {
@@ -300,7 +408,7 @@ export default function NewsEdit({ news = null }) {
         status: data.status,
         publishDate: data.publishDate || '',
         category: cat,
-        images: [...imageUrls, ...videoUrls]
+        images: urls
       };
 
       // Добавляем файлы если есть
@@ -601,7 +709,7 @@ export default function NewsEdit({ news = null }) {
                 {/* Современный загрузчик медиа */}
                 <ModernMediaUploader
                   media={images}
-                  setMedia={handleImagesChange}
+                  setMedia={handleMediaChange}
                   maxFiles={10}
                 />
                 
@@ -610,7 +718,7 @@ export default function NewsEdit({ news = null }) {
                   <MediaManager
                     onSelect={(mediaItem) => {
                       const newImages = [...images, mediaItem.path];
-                      handleImagesChange(newImages);
+                      handleMediaChange(newImages);
                     }}
                     selectedMedia={images.map(img => ({ path: img }))}
                     maxFiles={10}

@@ -37,8 +37,24 @@ export default function SafeVideo({
   const isValidSrc = src && (
     typeof src === 'string' && 
     src.trim() !== '' && 
-    (src.startsWith('http') || src.startsWith('blob:') || src.startsWith('/'))
+    (src.startsWith('http') || src.startsWith('/'))
   );
+  
+  // Проверяем, является ли это blob URL (может вызвать CORS ошибки)
+  const isBlobUrl = src && typeof src === 'string' && src.startsWith('blob:');
+  
+  // Если это blob URL, показываем fallback (избегаем CORS ошибок)
+  if (isBlobUrl) {
+    console.warn('Обнаружен blob URL для видео, показываем fallback:', src);
+    return (
+      <div className={`bg-gray-200 flex items-center justify-center ${className}`}>
+        <div className="text-gray-400 text-center">
+          <div className="text-4xl mb-2">🎥</div>
+          <p className="text-xs">Предварительный просмотр</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isValidSrc) {
     console.warn('Невалидный src для видео:', src);

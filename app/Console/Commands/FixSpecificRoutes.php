@@ -97,7 +97,7 @@ class FixSpecificRoutes extends Command
             "route('bioethics.certification')" => "route('bioethics.certification', { locale })",
             "route('bioethics.biobanks')" => "route('bioethics.biobanks', { locale })",
             "route('bioethics.local-commissions')" => "route('bioethics.local-commissions', { locale })",
-            "route('health.rate.omt.reports')" => "route('health.rate.omt.reports', { locale })",
+            "route('health.rate.otz.reports')" => "route('health.rate.otz.reports', { locale })",
             "route('health.rate.quality.commission')" => "route('health.rate.quality.commission', { locale })",
             "route('clinical.protocols')" => "route('clinical.protocols', { locale })",
             "route('medical.accreditation')" => "route('medical.accreditation', { locale })",

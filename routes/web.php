@@ -204,13 +204,16 @@ Route::get('/center-prevention', function () {
     return Inertia::render('Direction/CenterPrevention');
 })->name('center.prevention');
 
-Route::get('/health-rate/omt-reports', function () {
-    return Inertia::render('Direction/HealthRate/OmtReports');
-})->name('health.rate.omt.reports');
+Route::get('/health-rate/otz-reports', [App\Http\Controllers\OtzReportsController::class, 'index'])->name('health.rate.otz.reports');
 
-Route::get('/health-rate/quality-commission', function () {
-    return Inertia::render('Direction/HealthRate/QualityCommission');
-})->name('health.rate.quality.commission');
+// Заявки ОТЗ
+Route::get('/health-rate/otz-applications', [App\Http\Controllers\OtzApplicationController::class, 'index'])->name('health.rate.otz.applications');
+Route::get('/health-rate/otz-applications/{otzApplication}', [App\Http\Controllers\OtzApplicationController::class, 'show'])->name('health.rate.otz.applications.show');
+Route::get('/health-rate/otz-applications/{otzApplication}/data', [App\Http\Controllers\OtzApplicationController::class, 'getApplicationData'])->name('health.rate.otz.applications.data');
+
+Route::get('/quality-commission', function () {
+    return Inertia::render('Direction/QualityCommission');
+})->name('quality.commission');
 
 Route::get('/clinical-protocols', function () {
     return Inertia::render('Direction/ClinicalProtocols');
@@ -485,6 +488,13 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::put('/news/{id}', [App\Http\Controllers\Admin\NewsController::class, 'update'])->name('admin.news.update');
     Route::delete('/news/{id}', [App\Http\Controllers\Admin\NewsController::class, 'destroy'])->name('admin.news.destroy');
     Route::post('/admin/news/bulk', [\App\Http\Controllers\Admin\NewsController::class, 'bulk'])->name('admin.news.bulk');
+
+    // Управление заявками ОТЗ
+    Route::resource('otz-applications', App\Http\Controllers\Admin\OtzApplicationController::class, [
+        'names' => 'admin.otz-applications'
+    ]);
+    Route::post('/otz-applications/{otzApplication}/upload-documents', [App\Http\Controllers\Admin\OtzApplicationController::class, 'uploadDocuments'])->name('admin.otz-applications.upload-documents');
+    Route::delete('/otz-applications/{otzApplication}/delete-document', [App\Http\Controllers\Admin\OtzApplicationController::class, 'deleteDocument'])->name('admin.otz-applications.delete-document');
 
     // Управление документами
     Route::get('/documents', [App\Http\Controllers\Admin\DocumentController::class, 'index'])->name('admin.documents');

@@ -77,6 +77,39 @@ class NewsController extends Controller
         }
 
         try {
+            // Логируем файлы перед валидацией
+            if ($request->hasFile('image_files')) {
+                Log::info('Файлы изображений перед валидацией:', [
+                    'count' => count($request->file('image_files')),
+                    'files' => array_map(function($file) {
+                        return [
+                            'name' => $file->getClientOriginalName(),
+                            'size' => $file->getSize(),
+                            'mime_type' => $file->getMimeType(),
+                            'extension' => $file->getClientOriginalExtension(),
+                            'is_valid' => $file->isValid(),
+                            'error' => $file->getError()
+                        ];
+                    }, $request->file('image_files'))
+                ]);
+            }
+            
+            if ($request->hasFile('video_files')) {
+                Log::info('Файлы видео перед валидацией:', [
+                    'count' => count($request->file('video_files')),
+                    'files' => array_map(function($file) {
+                        return [
+                            'name' => $file->getClientOriginalName(),
+                            'size' => $file->getSize(),
+                            'mime_type' => $file->getMimeType(),
+                            'extension' => $file->getClientOriginalExtension(),
+                            'is_valid' => $file->isValid(),
+                            'error' => $file->getError()
+                        ];
+                    }, $request->file('video_files'))
+                ]);
+            }
+            
             // Валидация данных
             $validated = $request->validate([
                 'title' => 'required|string|max:255',
@@ -88,7 +121,7 @@ class NewsController extends Controller
                 'images' => 'nullable|array',
                 'images.*' => 'nullable',
                 'image_files' => 'nullable|array',
-                'image_files.*' => 'nullable|file|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+                'image_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:10240',
                 'video_files' => 'nullable|array',
                 'video_files.*' => 'nullable|file|mimes:mp4,avi,mov,wmv,flv,webm|max:51200',
                 'main_image' => 'nullable',
@@ -106,13 +139,15 @@ class NewsController extends Controller
         // Логирование для отладки
         Log::info('Данные запроса при создании новости', [
             'has_images' => $request->has('images'),
-            'images_files' => $request->hasFile('image_files'),
+            'images_input' => $request->input('images'),
+            'has_image_files' => $request->hasFile('image_files'),
+            'has_video_files' => $request->hasFile('video_files'),
+            'image_files_count' => $request->hasFile('image_files') ? count($request->file('image_files')) : 0,
+            'video_files_count' => $request->hasFile('video_files') ? count($request->file('video_files')) : 0,
             'title' => $request->input('title'),
             'content' => $request->input('content'),
             'category' => $request->input('category'),
             'status' => $request->input('status'),
-            'images_input' => $request->input('images'),
-            'image_files_count' => $request->hasFile('image_files') ? count($request->file('image_files')) : 0,
             'all_data' => $request->all()
         ]);
 
@@ -130,6 +165,15 @@ class NewsController extends Controller
             ]);
             
             foreach ($imageFiles as $key => $img) {
+                Log::info('Обработка файла изображения', [
+                    'key' => $key,
+                    'name' => $img->getClientOriginalName(),
+                    'size' => $img->getSize(),
+                    'mime_type' => $img->getMimeType(),
+                    'is_valid' => $img->isValid(),
+                    'error' => $img->getError()
+                ]);
+                
                 if ($img && $img->isValid()) {
                     try {
                         // Генерируем уникальное имя файла
@@ -158,7 +202,10 @@ class NewsController extends Controller
                 } else {
                     Log::warning('Невалидный файл изображения', [
                         'key' => $key,
-                        'file' => $img ? $img->getClientOriginalName() : 'null'
+                        'name' => $img->getClientOriginalName(),
+                        'size' => $img->getSize(),
+                        'mime_type' => $img->getMimeType(),
+                        'error' => $img->getError()
                     ]);
                 }
             }
@@ -175,6 +222,15 @@ class NewsController extends Controller
             ]);
             
             foreach ($videoFiles as $key => $video) {
+                Log::info('Обработка файла видео', [
+                    'key' => $key,
+                    'name' => $video->getClientOriginalName(),
+                    'size' => $video->getSize(),
+                    'mime_type' => $video->getMimeType(),
+                    'is_valid' => $video->isValid(),
+                    'error' => $video->getError()
+                ]);
+                
                 if ($video && $video->isValid()) {
                     try {
                         // Генерируем уникальное имя файла
@@ -203,7 +259,10 @@ class NewsController extends Controller
                 } else {
                     Log::warning('Невалидный файл видео', [
                         'key' => $key,
-                        'file' => $video ? $video->getClientOriginalName() : 'null'
+                        'name' => $video->getClientOriginalName(),
+                        'size' => $video->getSize(),
+                        'mime_type' => $video->getMimeType(),
+                        'error' => $video->getError()
                     ]);
                 }
             }
@@ -296,7 +355,15 @@ class NewsController extends Controller
             // Ошибки валидации - возвращаем их как есть
             Log::error('Ошибка валидации при создании новости', [
                 'errors' => $e->errors(),
-                'title' => $request->input('title', 'не указан')
+                'title' => $request->input('title', 'не указан'),
+                'request_data' => [
+                    'has_image_files' => $request->hasFile('image_files'),
+                    'has_video_files' => $request->hasFile('video_files'),
+                    'image_files_count' => $request->hasFile('image_files') ? count($request->file('image_files')) : 0,
+                    'video_files_count' => $request->hasFile('video_files') ? count($request->file('video_files')) : 0,
+                    'images_input' => $request->input('images'),
+                    'all_files' => $request->allFiles()
+                ]
             ]);
             throw $e;
             
@@ -373,7 +440,7 @@ class NewsController extends Controller
             'images' => 'nullable|array',
             'images.*' => 'nullable',
             'image_files' => 'nullable|array',
-            'image_files.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'image_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:10240',
             'video_files' => 'nullable|array',
             'video_files.*' => 'nullable|file|mimes:mp4,avi,mov,wmv,flv,webm|max:51200',
             'main_image' => 'nullable',
@@ -395,7 +462,10 @@ class NewsController extends Controller
         Log::info('Данные запроса при обновлении новости', [
             'has_images' => $request->has('images'),
             'images_input' => $request->input('images'),
-            'images_files' => $request->hasFile('image_files') ? 'есть файлы' : 'нет файлов',
+            'has_image_files' => $request->hasFile('image_files'),
+            'has_video_files' => $request->hasFile('video_files'),
+            'image_files_count' => $request->hasFile('image_files') ? count($request->file('image_files')) : 0,
+            'video_files_count' => $request->hasFile('video_files') ? count($request->file('video_files')) : 0,
             'title' => $request->input('title'),
             'content' => $request->input('content'),
             'category' => $request->input('category'),
@@ -413,7 +483,19 @@ class NewsController extends Controller
         
         // Обрабатываем файлы изображений (если есть)
         if ($request->hasFile('image_files')) {
+            Log::info('Обработка файлов изображений', [
+                'count' => count($request->file('image_files'))
+            ]);
+            
             foreach ($request->file('image_files') as $key => $img) {
+                Log::info('Обработка файла изображения', [
+                    'key' => $key,
+                    'name' => $img->getClientOriginalName(),
+                    'size' => $img->getSize(),
+                    'mime_type' => $img->getMimeType(),
+                    'is_valid' => $img->isValid()
+                ]);
+                
                 if ($img && $img->isValid()) {
                     // Генерируем уникальное имя файла
                     $filename = time() . '_' . $key . '.' . $img->getClientOriginalExtension();
@@ -428,13 +510,31 @@ class NewsController extends Controller
                     ];
                     
                     Log::info('Загружен файл изображения', ['path' => $path]);
+                } else {
+                    Log::warning('Невалидный файл изображения', [
+                        'key' => $key,
+                        'name' => $img->getClientOriginalName(),
+                        'error' => $img->getError()
+                    ]);
                 }
             }
         }
         
         // Обрабатываем файлы видео (если есть)
         if ($request->hasFile('video_files')) {
+            Log::info('Обработка файлов видео', [
+                'count' => count($request->file('video_files'))
+            ]);
+            
             foreach ($request->file('video_files') as $key => $video) {
+                Log::info('Обработка файла видео', [
+                    'key' => $key,
+                    'name' => $video->getClientOriginalName(),
+                    'size' => $video->getSize(),
+                    'mime_type' => $video->getMimeType(),
+                    'is_valid' => $video->isValid()
+                ]);
+                
                 if ($video && $video->isValid()) {
                     // Генерируем уникальное имя файла
                     $filename = time() . '_video_' . $key . '.' . $video->getClientOriginalExtension();
@@ -449,15 +549,27 @@ class NewsController extends Controller
                     ];
                     
                     Log::info('Загружен файл видео', ['path' => $path]);
+                } else {
+                    Log::warning('Невалидный файл видео', [
+                        'key' => $key,
+                        'name' => $video->getClientOriginalName(),
+                        'error' => $video->getError()
+                    ]);
                 }
             }
         }
         
         // Обрабатываем URL изображений из библиотеки или уже загруженные
         $inputImages = $request->input('images');
+        Log::info('Обработка input images', [
+            'input_images' => $inputImages,
+            'is_array' => is_array($inputImages),
+            'count' => is_array($inputImages) ? count($inputImages) : 0
+        ]);
+        
         if (is_array($inputImages)) {
             foreach ($inputImages as $img) {
-                if (is_string($img) && !empty($img)) {
+                if (is_string($img) && !empty(trim($img))) {
                     // Проверяем, не добавлен ли уже этот путь
                     $exists = false;
                     foreach ($imagePaths as $existingPath) {
@@ -483,6 +595,12 @@ class NewsController extends Controller
                         ];
                         Log::info('Добавлен URL медиа', ['url' => $img, 'type' => $type]);
                     }
+                } else {
+                    Log::warning('Пропущен невалидный URL изображения', [
+                        'url' => $img,
+                        'type' => gettype($img),
+                        'empty' => empty($img)
+                    ]);
                 }
             }
         }
@@ -545,7 +663,13 @@ class NewsController extends Controller
             }
         }
         
-        $news->images = $compatibleImages;
+        // Устанавливаем пустой массив, если нет изображений
+        $news->images = $compatibleImages ?: [];
+        
+        Log::info('Финальные изображения для сохранения', [
+            'compatible_images' => $compatibleImages,
+            'count' => count($compatibleImages)
+        ]);
         $news->save();
 
         Log::info('Новость успешно обновлена', [

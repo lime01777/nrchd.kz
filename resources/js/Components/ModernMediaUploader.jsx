@@ -61,6 +61,14 @@ export default function ModernMediaUploader({
         } else if (item instanceof File) {
           // Если это File объект
           const isVideo = isValidVideoFile(item);
+          console.log('ModernMediaUploader - обработка существующего файла:', {
+            name: item.name,
+            type: item.type,
+            size: item.size,
+            isVideo: isVideo,
+            isValidImage: isValidImageFile(item)
+          });
+          
           const objectUrl = createSafeObjectURL(item);
           if (objectUrl) {
             return {
@@ -110,6 +118,14 @@ export default function ModernMediaUploader({
       // Создаем URL для предварительного просмотра
       const newMediaUrls = validFiles.map(file => {
         const isVideo = isValidVideoFile(file);
+        console.log('ModernMediaUploader - определение типа файла:', {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          isVideo: isVideo,
+          isValidImage: isValidImageFile(file)
+        });
+        
         const objectUrl = createSafeObjectURL(file);
         if (objectUrl) {
           return {
@@ -133,8 +149,25 @@ export default function ModernMediaUploader({
       const updatedMedia = [...processedMedia, ...newMediaUrls];
       setProcessedMedia(updatedMedia);
       
-      // Обновляем родительский компонент - передаем только файлы
-      const newMedia = updatedMedia.map(item => item.file || item.url);
+      // Обновляем родительский компонент - передаем файлы с информацией о типе
+      const newMedia = updatedMedia.map(item => {
+        if (item.file) {
+          // Для файлов добавляем информацию о типе медиа
+          const mediaItem = item.file;
+          mediaItem.mediaType = item.mediaType; // Добавляем тип медиа к файлу
+          return mediaItem;
+        }
+        return item.url;
+      });
+      
+      console.log('ModernMediaUploader - передаем медиа родителю:', newMedia.map(item => ({
+        type: typeof item,
+        isFile: item instanceof File,
+        name: item?.name,
+        mimeType: item?.type,
+        mediaType: item?.mediaType
+      })));
+      
       setMedia(newMedia);
     } catch (error) {
       console.error('Ошибка при обработке файлов:', error);
@@ -170,8 +203,25 @@ export default function ModernMediaUploader({
     const updatedMedia = processedMedia.filter(item => item.id !== mediaId);
     setProcessedMedia(updatedMedia);
     
-    // Обновляем родительский компонент
-    const newMedia = updatedMedia.map(item => item.file || item.url);
+    // Обновляем родительский компонент - передаем файлы с информацией о типе
+    const newMedia = updatedMedia.map(item => {
+      if (item.file) {
+        // Для файлов добавляем информацию о типе медиа
+        const mediaItem = item.file;
+        mediaItem.mediaType = item.mediaType; // Добавляем тип медиа к файлу
+        return mediaItem;
+      }
+      return item.url;
+    });
+    
+    console.log('ModernMediaUploader - удаление медиа, передаем родителю:', newMedia.map(item => ({
+      type: typeof item,
+      isFile: item instanceof File,
+      name: item?.name,
+      mimeType: item?.type,
+      mediaType: item?.mediaType
+    })));
+    
     setMedia(newMedia);
   };
 

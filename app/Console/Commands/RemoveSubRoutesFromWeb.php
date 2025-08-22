@@ -63,7 +63,7 @@ class RemoveSubRoutesFromWeb extends Command
             "Route::get('/bioethics/composition', function () {\n    return Inertia::render('Direction/Bioethics/Composition');\n})->name('bioethics.composition');",
             
             // Подмаршруты оценки технологий здравоохранения
-            "Route::get('/health-rate/omt-reports', function () {\n    return Inertia::render('Direction/HealthRate/OmtReports');\n})->name('health.rate.omt.reports');",
+            "Route::get('/health-rate/otz-reports', function () {\n    return Inertia::render('Direction/HealthRate/OtzReports');\n})->name('health.rate.otz.reports');",
             "Route::get('/health-rate/quality-commission', function () {\n    return Inertia::render('Direction/HealthRate/QualityCommission');\n})->name('health.rate.quality.commission');",
             
             // Подмаршруты стратегических инициатив

@@ -2,6 +2,9 @@ import React from 'react';
 import { Link } from '@inertiajs/react';
 
 function HeroFolder({ parentRoute, parentName, h1, bgColor = 'bg-red-100', buttonBgColor = 'bg-red-100', buttonHoverBgColor = 'hover:bg-red-200', buttonBorderColor = 'border-red-200' }) {
+  // Отладочная информация
+  console.log('HeroFolder props:', { parentRoute, parentName, h1, bgColor, buttonBgColor });
+  
   return (
     /* Main Hero */
     <section className={`text-gray-600 body-font relative h-[50vh] ${bgColor}`}>

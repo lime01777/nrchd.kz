@@ -69,6 +69,15 @@ export default function AdminLayout({ children, title }) {
             Аккордеоны документов
           </Link>
           <Link 
+            href={route('admin.otz-applications.index')} 
+            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${route().current('admin.otz-applications.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
+          >
+            <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Заявки ОТЗ
+          </Link>
+          <Link 
             href={route('admin.users')} 
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${route().current('admin.users') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
           >

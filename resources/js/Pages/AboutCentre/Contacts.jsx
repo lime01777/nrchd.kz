@@ -46,7 +46,6 @@ export default function Contacts() {
                                 <div className="mb-4">
                                     <h3 className="text-gray-700 font-medium">Пресс-служба:</h3>
                                     <p className="text-gray-600">+7 (7172) 648-951 (внутрений 1117)</p>
-                                    <p className="text-gray-600">press@nrchd.kz</p>
                                 </div>
                                 <div className="mb-4">
                                     <h3 className="text-gray-700 font-medium">По вопросам сотрудничества:</h3>
