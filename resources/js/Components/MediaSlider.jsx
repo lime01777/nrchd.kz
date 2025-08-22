@@ -180,12 +180,15 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
         </div>
       )}
 
-      {/* Счетчик слайдов */}
-      {normalizedMedia.length > 1 && (
-        <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-          {currentIndex + 1} / {normalizedMedia.length}
-        </div>
-      )}
+              {/* Счетчик слайдов */}
+        {normalizedMedia.length > 1 && (
+          <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+            {currentIndex + 1} / {normalizedMedia.length}
+            {normalizedMedia.length >= 15 && (
+              <span className="ml-1 text-yellow-300">(макс.)</span>
+            )}
+          </div>
+        )}
     </div>
   );
 }

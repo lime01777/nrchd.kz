@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\VacancyController as AdminVacancyController;
 use App\Http\Controllers\ConferenceRegistrationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Middleware\LanguageMiddleware;
 
@@ -553,6 +555,25 @@ Route::get('admin/news/test-upload', function () {
 })->middleware(['auth']);
 
 Route::post('admin/news/test-upload', [\App\Http\Controllers\Admin\NewsController::class, 'testUpload'])->middleware(['auth']);
+
+// Простой тестовый маршрут для проверки данных формы
+Route::post('admin/news/test-form', function (Request $request) {
+    Log::info('Тестовый запрос формы', [
+        'all_data' => $request->all(),
+        'has_image_files' => $request->hasFile('image_files'),
+        'has_video_files' => $request->hasFile('video_files'),
+        'images_input' => $request->input('images'),
+        'files' => $request->allFiles(),
+        'content_type' => $request->header('Content-Type')
+    ]);
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Данные получены',
+        'data' => $request->all(),
+        'files_count' => count($request->allFiles())
+    ]);
+})->middleware(['auth']);
 
 // Маршруты для филиалов
 Route::get('/astana', function () {

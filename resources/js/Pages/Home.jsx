@@ -7,7 +7,6 @@ import BannerCatalog from '@/Components/BannerCatalog';
 import ChartHead from '@/Components/ChartHead';
 import Sponsors from '@/Components/Sponsors';
 import Footer from '@/Components/Footer';
-import ConferenceBanner from '@/Components/ConferenceBanner';
 import React from 'react';
 
 
@@ -95,7 +94,6 @@ export default function Home({ auth, laravelVersion, phpVersion }) {
                 </div>
             </section>
             <News />
-            <ConferenceBanner />
             <Directions />
             <Services />
             <BannerCatalog />

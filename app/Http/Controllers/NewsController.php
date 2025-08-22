@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\News;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
+use Inertia\Inertia;
 
 class NewsController extends Controller
 {
@@ -17,60 +15,72 @@ class NewsController extends Controller
     private function getFullImageUrl($path)
     {
         if (empty($path)) {
-            Log::warning('Пустой путь к изображению');
             return null;
         }
         
-        // Логируем исходный путь для отладки
-        Log::info('Original image path', ['path' => $path]);
-        
         // Если путь уже является полным URL
         if (strpos($path, 'http://') === 0 || strpos($path, 'https://') === 0) {
-            Log::info('Путь уже является URL', ['path' => $path]);
             return $path;
         }
         
         // Если путь начинается с /storage/
         if (strpos($path, '/storage/') === 0) {
-            // Используем абсолютный URL без начального слэша
-            $absolutePath = substr($path, 1); // Удаляем начальный слэш
-            $result = asset($absolutePath);
-            Log::info('Путь начинается с /storage/', ['original' => $path, 'result' => $result]);
-            return $result;
+            return asset(substr($path, 1));
         }
         
         // Если путь начинается с storage/
         if (strpos($path, 'storage/') === 0) {
-            $result = asset($path);
-            Log::info('Путь начинается с storage/', ['original' => $path, 'result' => $result]);
-            return $result;
+            return asset($path);
         }
         
         // Если путь начинается с news/
         if (strpos($path, 'news/') === 0) {
-            $result = asset('storage/' . $path);
-            Log::info('Путь начинается с news/', ['original' => $path, 'result' => $result]);
-            return $result;
+            return asset('storage/' . $path);
         }
         
         // Если путь начинается с /news/
         if (strpos($path, '/news/') === 0) {
-            $result = asset('storage' . $path);
-            Log::info('Путь начинается с /news/', ['original' => $path, 'result' => $result]);
-            return $result;
+            return asset('storage' . $path);
         }
         
         // В остальных случаях добавляем /img/news/
-        $result = '/img/news/' . basename($path);
-        
-        // Логируем результат преобразования
-        Log::info('Converted image URL (default case)', ['original' => $path, 'result' => $result]);
-        
-        return $result;
+        return '/img/news/' . basename($path);
     }
 
     /**
-     * Display a listing of the news.
+     * Обработка изображений для фронтенда
+     */
+    private function processImagesForFrontend($news)
+    {
+        // Преобразуем изображения в полные URL
+        if (is_array($news->images)) {
+            $news->images = array_map(function($img) {
+                return $this->getFullImageUrl($img);
+            }, $news->images);
+        }
+        
+        // Устанавливаем главное изображение
+        if (!empty($news->main_image)) {
+            $news->image = $this->getFullImageUrl($news->main_image);
+        } elseif (!empty($news->images) && is_array($news->images) && count($news->images) > 0) {
+            $news->image = $news->images[0];
+        } elseif (!empty($news->image)) {
+            $news->image = $this->getFullImageUrl($news->image);
+        }
+        
+        // Убеждаемся, что main_image есть в массиве images
+        if (!empty($news->main_image) && is_array($news->images)) {
+            $mainImageUrl = $this->getFullImageUrl($news->main_image);
+            if (!in_array($mainImageUrl, $news->images)) {
+                array_unshift($news->images, $mainImageUrl);
+            }
+        }
+        
+        return $news;
+    }
+
+    /**
+     * Display a listing of the resource.
      */
     public function index(Request $request)
     {
@@ -78,7 +88,7 @@ class NewsController extends Controller
             ->orderBy('publish_date', 'desc');
 
         // Поиск по ключевому слову
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $searchTerm = $request->input('search');
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('title', 'like', "%{$searchTerm}%")
@@ -87,54 +97,25 @@ class NewsController extends Controller
         }
 
         // Фильтр по категории
-        if ($request->has('category') && $request->input('category') !== 'all') {
-            $query->where('category', $request->input('category'));
+        if ($request->filled('category') && $request->input('category') !== 'all') {
+            $query->whereJsonContains('category', $request->input('category'));
         }
 
         // Получаем категории для фильтра
         $categories = News::where('status', 'Опубликовано')
             ->distinct()
-            ->pluck('category');
+            ->pluck('category')
+            ->flatten()
+            ->unique()
+            ->values();
 
         // Пагинация
         $news = $query->paginate(9);
 
-        // Преобразуем данные для совместимости с фронтендом
+        // Обрабатываем изображения для каждой новости
         $news->getCollection()->transform(function ($item) {
-            // Используем main_image вместо image и преобразуем в полный URL
-            $imagePath = $item->main_image ?? ($item->images[0] ?? $item->image ?? null);
-            $item->image = $this->getFullImageUrl($imagePath);
-            
-            // Также преобразуем все изображения в массиве
-            if (is_array($item->images)) {
-                $item->images = array_map(function($img) {
-                    return $this->getFullImageUrl($img);
-                }, $item->images);
-            }
-            
-            // Если main_image есть, но его нет в массиве images, добавляем его
-            if (!empty($item->main_image) && (!is_array($item->images) || empty($item->images))) {
-                $mainImageUrl = $this->getFullImageUrl($item->main_image);
-                $item->images = [$mainImageUrl];
-            } elseif (!empty($item->main_image) && is_array($item->images)) {
-                $mainImageUrl = $this->getFullImageUrl($item->main_image);
-                if (!in_array($mainImageUrl, $item->images)) {
-                    array_unshift($item->images, $mainImageUrl);
-                }
-            }
-            
-            return $item;
+            return $this->processImagesForFrontend($item);
         });
-
-        // Логируем для отладки
-        $firstNews = $news->getCollection()->first();
-        Log::info('News data for frontend', [
-            'id' => $firstNews ? $firstNews->id : null,
-            'title' => $firstNews ? $firstNews->title : null,
-            'image' => $firstNews ? $firstNews->image : null,
-            'main_image' => $firstNews ? $firstNews->main_image : null,
-            'images' => $firstNews ? $firstNews->images : null,
-        ]);
 
         return Inertia::render('News/Index', [
             'news' => $news,
@@ -155,164 +136,137 @@ class NewsController extends Controller
         }
 
         // Увеличиваем счетчик просмотров
-        $news->views = ($news->views ?? 0) + 1;
-        $news->save();
+        $news->increment('views');
 
-        // Используем main_image вместо image для совместимости с фронтендом
-        $imagePath = $news->main_image ?? ($news->images[0] ?? $news->image ?? null);
-        $news->image = $this->getFullImageUrl($imagePath);
-        
-        // Также преобразуем все изображения в массиве
-        if (is_array($news->images)) {
-            $news->images = array_map(function($img) {
-                return $this->getFullImageUrl($img);
-            }, $news->images);
-        }
-        
-        // Если main_image есть, но его нет в массиве images, добавляем его
-        if (!empty($news->main_image) && (!is_array($news->images) || empty($news->images))) {
-            $mainImageUrl = $this->getFullImageUrl($news->main_image);
-            $news->images = [$mainImageUrl];
-        } elseif (!empty($news->main_image) && is_array($news->images)) {
-            $mainImageUrl = $this->getFullImageUrl($news->main_image);
-            if (!in_array($mainImageUrl, $news->images)) {
-                array_unshift($news->images, $mainImageUrl);
-            }
-        }
+        // Обрабатываем изображения
+        $news = $this->processImagesForFrontend($news);
 
         // Получаем связанные новости той же категории
-        $relatedNews = News::where('category', $news->category)
+        $relatedNews = News::where('status', 'Опубликовано')
             ->where('id', '!=', $news->id)
-            ->where('status', 'Опубликовано')
+            ->where(function($query) use ($news) {
+                if (is_array($news->category)) {
+                    foreach ($news->category as $cat) {
+                        $query->orWhereJsonContains('category', $cat);
+                    }
+                } else {
+                    $query->where('category', $news->category);
+                }
+            })
             ->orderBy('publish_date', 'desc')
             ->limit(3)
-            ->get()
-            ->map(function($item) {
-                // Используем main_image вместо image для связанных новостей
-                $imagePath = $item->main_image ?? ($item->images[0] ?? $item->image ?? null);
-                $item->image = $this->getFullImageUrl($imagePath);
-                
-                // Также преобразуем все изображения в массиве
-                if (is_array($item->images)) {
-                    $item->images = array_map(function($img) {
-                        return $this->getFullImageUrl($img);
-                    }, $item->images);
-                }
-                
-                return $item;
-            });
+            ->get();
 
-        // Логируем для отладки
-        Log::info('News detail data', [
-            'id' => $news->id,
-            'title' => $news->title,
-            'image' => $news->image,
-            'main_image' => $news->main_image,
-            'images' => $news->images
-        ]);
+        // Обрабатываем изображения для связанных новостей
+        $relatedNews->transform(function ($item) {
+            return $this->processImagesForFrontend($item);
+        });
 
         return Inertia::render('News/Show', [
             'news' => $news,
             'relatedNews' => $relatedNews,
         ]);
     }
-    
+
     /**
-     * Получение последних новостей для API
+     * API для получения последних новостей
      */
     public function getLatestNews(Request $request)
     {
         $limit = $request->input('limit', 10);
-        
-        Log::info('API getLatestNews called', [
-            'limit' => $limit,
-            'request_headers' => $request->headers->all()
-        ]);
         
         $news = News::where('status', 'Опубликовано')
             ->orderBy('publish_date', 'desc')
             ->limit($limit)
             ->get();
             
-        // Логируем полученные новости для отладки
-        $firstNews = $news->first();
-        Log::info('Latest news API data', [
-            'count' => $news->count(),
-            'first_news' => $firstNews ? [
-                'id' => $firstNews->id,
-                'title' => $firstNews->title,
-                'image' => $firstNews->image,
-                'main_image' => $firstNews->main_image,
-                'images' => $firstNews->images
-            ] : null
-        ]);
-        
         // Преобразуем новости для фронтенда
         $transformedNews = $news->map(function($item) {
-            // Определяем путь к изображению
-            $imagePath = null;
+            $item = $this->processImagesForFrontend($item);
             
-            // Сначала пробуем использовать main_image
-            if (!empty($item->main_image)) {
-                $imagePath = $item->main_image;
-                Log::info('Используем main_image', ['path' => $imagePath]);
-            } 
-            // Затем пробуем первое изображение из массива
-            elseif (is_array($item->images) && !empty($item->images) && isset($item->images[0])) {
-                $imagePath = $item->images[0];
-                Log::info('Используем первое изображение из массива', ['path' => $imagePath]);
-            } 
-            // Наконец, пробуем использовать старое поле image
-            elseif (!empty($item->image)) {
-                $imagePath = $item->image;
-                Log::info('Используем старое поле image', ['path' => $imagePath]);
-            } 
-            // Если ничего не нашли, используем заглушку
-            else {
-                Log::warning('Не найдено изображение для новости', ['id' => $item->id]);
-                $imagePath = '/img/placeholder.jpg';
-            }
-            
-            // Преобразуем путь в полный URL
-            $fullImageUrl = $this->getFullImageUrl($imagePath);
-            
-            // Преобразуем все изображения в массиве
-            $transformedImages = [];
-            if (is_array($item->images) && !empty($item->images)) {
-                $transformedImages = array_map(function($img) {
-                    return $this->getFullImageUrl($img);
-                }, $item->images);
-            } else {
-                // Если нет массива изображений, используем главное изображение
-                $transformedImages = [$fullImageUrl];
-            }
-            
-            // Если main_image есть, но его нет в массиве images, добавляем его
-            if (!empty($item->main_image) && !in_array($item->main_image, $transformedImages)) {
-                $mainImageUrl = $this->getFullImageUrl($item->main_image);
-                if (!in_array($mainImageUrl, $transformedImages)) {
-                    array_unshift($transformedImages, $mainImageUrl);
-                }
-            }
-            
-            // Создаем новый объект с нужными полями
             return [
                 'id' => $item->id,
                 'title' => $item->title,
-                'description' => $item->title, // Используем заголовок как описание
+                'description' => $item->title,
                 'slug' => $item->slug,
                 'date' => $item->formatted_publish_date,
-                'image' => $fullImageUrl,
-                'images' => $transformedImages,
+                'image' => $item->image,
+                'images' => $item->images,
                 'url' => route('news.show', $item->slug)
             ];
         });
         
-        // Логируем финальный результат
-        Log::info('Final API response', [
-            'transformed_count' => $transformedNews->count(),
-            'first_transformed' => $transformedNews->first()
-        ]);
+        return response()->json($transformedNews);
+    }
+
+    /**
+     * API для получения новостей по категории
+     */
+    public function getNewsByCategory(Request $request, $category)
+    {
+        $limit = $request->input('limit', 10);
+        
+        $news = News::where('status', 'Опубликовано')
+            ->whereJsonContains('category', $category)
+            ->orderBy('publish_date', 'desc')
+            ->limit($limit)
+            ->get();
+            
+        // Преобразуем новости для фронтенда
+        $transformedNews = $news->map(function($item) {
+            $item = $this->processImagesForFrontend($item);
+            
+            return [
+                'id' => $item->id,
+                'title' => $item->title,
+                'description' => $item->title,
+                'slug' => $item->slug,
+                'date' => $item->formatted_publish_date,
+                'image' => $item->image,
+                'images' => $item->images,
+                'url' => route('news.show', $item->slug)
+            ];
+        });
+        
+        return response()->json($transformedNews);
+    }
+
+    /**
+     * API для поиска новостей
+     */
+    public function searchNews(Request $request)
+    {
+        $query = $request->input('q', '');
+        $limit = $request->input('limit', 10);
+        
+        if (empty($query)) {
+            return response()->json([]);
+        }
+        
+        $news = News::where('status', 'Опубликовано')
+            ->where(function($q) use ($query) {
+                $q->where('title', 'like', "%{$query}%")
+                  ->orWhere('content', 'like', "%{$query}%");
+            })
+            ->orderBy('publish_date', 'desc')
+            ->limit($limit)
+            ->get();
+            
+        // Преобразуем новости для фронтенда
+        $transformedNews = $news->map(function($item) {
+            $item = $this->processImagesForFrontend($item);
+            
+            return [
+                'id' => $item->id,
+                'title' => $item->title,
+                'description' => $item->title,
+                'slug' => $item->slug,
+                'date' => $item->formatted_publish_date,
+                'image' => $item->image,
+                'images' => $item->images,
+                'url' => route('news.show', $item->slug)
+            ];
+        });
         
         return response()->json($transformedNews);
     }
