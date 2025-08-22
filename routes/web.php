@@ -17,6 +17,8 @@ Route::get('/api/admin/images', [\App\Http\Controllers\Api\ImageController::clas
 Route::post('/api/admin/images/upload', [\App\Http\Controllers\Api\ImageController::class, 'uploadImage']);
 Route::delete('/api/admin/images/delete', [\App\Http\Controllers\Api\ImageController::class, 'deleteImage']);
 
+
+
 // Маршруты для обслуживания изображений
 Route::get('/images/{path}', [\App\Http\Controllers\ImageController::class, 'serve'])->where('path', '.*');
 Route::get('/news-images/{filename}', [\App\Http\Controllers\ImageController::class, 'serveNewsImage']);

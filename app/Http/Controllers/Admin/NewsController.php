@@ -10,9 +10,48 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Response;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\URL;
 
 class NewsController extends Controller
 {
+    /**
+     * Преобразование пути к изображению в полный URL
+     */
+    private function getFullImageUrl($path)
+    {
+        if (empty($path)) {
+            return null;
+        }
+        
+        // Если путь уже является полным URL
+        if (strpos($path, 'http://') === 0 || strpos($path, 'https://') === 0) {
+            return $path;
+        }
+        
+        // Если путь начинается с /storage/
+        if (strpos($path, '/storage/') === 0) {
+            $absolutePath = substr($path, 1); // Удаляем начальный слэш
+            return asset($absolutePath);
+        }
+        
+        // Если путь начинается с storage/
+        if (strpos($path, 'storage/') === 0) {
+            return asset($path);
+        }
+        
+        // Если путь начинается с news/
+        if (strpos($path, 'news/') === 0) {
+            return asset('storage/' . $path);
+        }
+        
+        // Если путь начинается с /news/
+        if (strpos($path, '/news/') === 0) {
+            return asset('storage' . $path);
+        }
+        
+        // В остальных случаях добавляем /img/news/
+        return '/img/news/' . basename($path);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -40,6 +79,19 @@ class NewsController extends Controller
         }
 
         $news = $query->orderBy('created_at', 'desc')->get();
+
+        // Преобразуем изображения для отображения в админке
+        $news->transform(function ($item) {
+            if (is_array($item->images)) {
+                $item->images = array_map(function($img) {
+                    return $this->getFullImageUrl($img);
+                }, $item->images);
+            }
+            if ($item->main_image) {
+                $item->main_image = $this->getFullImageUrl($item->main_image);
+            }
+            return $item;
+        });
 
         return Inertia::render('Admin/News/Index', [
             'news' => $news,
@@ -148,7 +200,10 @@ class NewsController extends Controller
             'content' => $request->input('content'),
             'category' => $request->input('category'),
             'status' => $request->input('status'),
-            'all_data' => $request->all()
+            'all_data' => $request->all(),
+            'files' => $request->allFiles(),
+            'content_type' => $request->header('Content-Type'),
+            'method' => $request->method()
         ]);
 
         // Обработка изображений
@@ -349,7 +404,16 @@ class NewsController extends Controller
             'main_image' => $news->main_image
         ]);
 
-            return redirect()->route('admin.news')->with('success', 'Новость успешно создана');
+        // Проверяем, является ли это AJAX запросом
+        if ($request->expectsJson() || $request->header('Accept') === 'application/json') {
+            return response()->json([
+                'success' => true,
+                'message' => 'Новость успешно создана',
+                'news_id' => $news->id
+            ]);
+        }
+
+        return redirect()->route('admin.news')->with('success', 'Новость успешно создана');
             
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Ошибки валидации - возвращаем их как есть
@@ -376,6 +440,14 @@ class NewsController extends Controller
                 'request_data' => $request->except(['image_files']) // Исключаем файлы из лога
             ]);
             
+            // Проверяем, является ли это AJAX запросом
+            if ($request->expectsJson() || $request->header('Accept') === 'application/json') {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Произошла ошибка при сохранении новости: ' . $e->getMessage()
+                ], 500);
+            }
+            
             return back()->withErrors([
                 'error' => 'Произошла ошибка при сохранении новости: ' . $e->getMessage()
             ])->withInput();
@@ -399,6 +471,14 @@ class NewsController extends Controller
             'main_image_type' => gettype($news->main_image)
         ]);
 
+        // Преобразуем пути к изображениям для отображения в админке
+        $processedImages = [];
+        if (is_array($news->images)) {
+            $processedImages = array_map(function($img) {
+                return $this->getFullImageUrl($img);
+            }, $news->images);
+        }
+
         return Inertia::render('Admin/News/Edit', [
             'news' => [
                 'id' => $news->id,
@@ -408,8 +488,8 @@ class NewsController extends Controller
                 'category' => $news->category,
                 'status' => $news->status,
                 'publishDate' => $news->formatted_publish_date,
-                'images' => $news->images,
-                'main_image' => $news->main_image,
+                'images' => $processedImages,
+                'main_image' => $news->main_image ? $this->getFullImageUrl($news->main_image) : null,
             ],
         ]);
     }

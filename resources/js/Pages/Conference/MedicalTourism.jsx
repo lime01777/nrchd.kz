@@ -16,7 +16,7 @@ export default function MedicalTourism() {
     name: 'Астана',
     dates: '13-15 октября 2025',
     time: '18:00',
-    venue: 'Президентский центр Республики Казахстан',
+    venue: 'Место проведения: Президентский центр Республики Казахстан',
     color: 'from-blue-600 to-blue-800'
   };
 
@@ -257,36 +257,39 @@ export default function MedicalTourism() {
         </div>
 
         {/* О мероприятии */}
-        <section className="py-20">
+        <section className="py-12 md:py-20">
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-16">
-                <h2 className="text-4xl font-bold mb-6">О мероприятии</h2>
-                <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-green-600 mx-auto rounded-full"></div>
+              <div className="text-center mb-8 md:mb-16">
+                <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6">О мероприятии</h2>
+                <div className="w-16 md:w-24 h-1 bg-gradient-to-r from-blue-600 to-green-600 mx-auto rounded-full"></div>
               </div>
               
-              <div className="grid md:grid-cols-3 gap-12">
-                <div className="space-y-6">
-                  <p className="text-lg leading-relaxed">
-                    Первая международная конференция по медицинскому туризму представляет собой уникальную площадку 
-                    для продвижения туристического потенциала Казахстана и укрепления международного имиджа страны.
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-12">
+                <div className="space-y-4 md:space-y-6">
+                  <p className="text-sm md:text-base leading-relaxed">
+                  Цель Конференции – создание диалоговой площадки для обсуждения актуальных тенденций и вызовов в сфере здравоохранения, обмена опытом между национальными и международными экспертами, 
+                  а также презентации инновационных решений, технологий, лекарственных средств и медицинского оборудования, способствующих устойчивому развитию отрасли.
                   </p>
-                  <p className="text-lg leading-relaxed">
-                    Медицинский туризм - это ответственное и многогранное направление, требующее особого внимания, 
-                    ведь речь идёт о здоровье людей.
+                  <p className="text-sm md:text-base leading-relaxed">
+                  Конференция объединит ключевых участников медицинской отрасли:
+Руководителей Управлений здравоохранения всех 19 областей Казахстана;
+Представителей крупных медицинских центров и частных клиник;
+Экспертов в области диагностики, лечения и инновационных технологий;
+Международных партнеров в сфере медицинского туризма.
                   </p>
                 </div>
                 
-                <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-3xl p-8">
-                  <blockquote className="text-lg italic mb-4">
+                <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl md:rounded-3xl p-6 md:p-8">
+                  <blockquote className="text-base md:text-lg italic mb-3 md:mb-4 leading-relaxed">
                     «Мы видим большой потенциал в развитии медицинского туризма, особенно в высокотехнологичных отраслях… 
                     Готовы выстраивать устойчивые трансграничные связи для достижения прогресса в этой сфере.»
                   </blockquote>
-                  <p className="text-sm text-gray-600 font-semibold">— Глава государства</p>
+                  <p className="text-xs md:text-sm text-gray-600 font-semibold">— Глава государства</p>
                 </div>
 
                 {/* Третий блок для фото */}
-                <div className="bg-white rounded-3xl p-8 shadow-xl relative overflow-hidden">
+                <div className="bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden h-64 md:h-auto">
                   {/* Фоновое изображение */}
                   <div className="absolute inset-0">
                     <img 
@@ -305,15 +308,15 @@ export default function MedicalTourism() {
         </section>
 
         {/* Статистика */}
-        <section className="py-20 bg-white">
+        <section className="py-12 md:py-20 bg-white">
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-16">
-                <h2 className="text-4xl font-bold mb-6">Масштаб мероприятия</h2>
-                <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-green-600 mx-auto rounded-full"></div>
+              <div className="text-center mb-8 md:mb-16">
+                <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6">Масштаб мероприятия</h2>
+                <div className="w-16 md:w-24 h-1 bg-gradient-to-r from-blue-600 to-green-600 mx-auto rounded-full"></div>
               </div>
               
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
                 {[
                   { number: '86', label: 'Новых медицинских', sublabel: 'технологий' },
                   { number: '300', label: 'Специалистов', sublabel: 'из Казахстана' },
@@ -321,11 +324,11 @@ export default function MedicalTourism() {
                   { number: '1000', label: 'Посетителей', sublabel: 'целевых' }
                 ].map((stat, index) => (
                   <div key={index} className="text-center group">
-                    <div className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300">
+                    <div className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-1 md:mb-2 group-hover:scale-110 transition-transform duration-300">
                       {stat.number}
                     </div>
-                    <div className="text-lg font-semibold text-gray-800 mb-1">{stat.label}</div>
-                    <div className="text-sm text-gray-600">{stat.sublabel}</div>
+                    <div className="text-sm md:text-lg font-semibold text-gray-800 mb-1">{stat.label}</div>
+                    <div className="text-xs md:text-sm text-gray-600">{stat.sublabel}</div>
                   </div>
                 ))}
               </div>
@@ -334,12 +337,12 @@ export default function MedicalTourism() {
         </section>
 
         {/* Спикеры */}
-        <section className="py-20 bg-gradient-to-r from-blue-900 to-green-900 text-white">
+        <section className="py-12 md:py-20 bg-gradient-to-r from-blue-900 to-green-900 text-white">
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-16">
-                <h2 className="text-4xl font-bold mb-4">Спикеры</h2>
-                <p className="text-xl text-green-300">Мы ищем лучших для вас!</p>
+              <div className="text-center mb-8 md:mb-16">
+                <h2 className="text-2xl md:text-4xl font-bold mb-3 md:mb-4">Спикеры</h2>
+                <p className="text-lg md:text-xl text-green-300">Мы ищем лучших для вас!</p>
               </div>
               
               <div className="relative">
@@ -351,40 +354,40 @@ export default function MedicalTourism() {
                         {/* Кнопки навигации */}
                         <button
                           onClick={prevSpeaker}
-                          className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-12 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-3 rounded-full transition-all duration-300 z-10"
+                          className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-8 md:-translate-x-12 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 md:p-3 rounded-full transition-all duration-300 z-10"
                         >
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                           </svg>
                         </button>
                         
                         <button
                           onClick={nextSpeaker}
-                          className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-12 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-3 rounded-full transition-all duration-300 z-10"
+                          className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-8 md:translate-x-12 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 md:p-3 rounded-full transition-all duration-300 z-10"
                         >
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
                         </button>
 
                         {/* Сетка из 3 карточек спикеров */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                           {visibleSpeakers.map((speaker, index) => (
                             <div 
                               key={index} 
-                              className="bg-white bg-opacity-10 backdrop-blur-sm rounded-3xl p-6 text-center transition-all duration-500 hover:bg-opacity-20 relative group cursor-pointer"
+                              className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl md:rounded-3xl p-4 md:p-6 text-center transition-all duration-500 hover:bg-opacity-20 relative group cursor-pointer"
                               onClick={() => showSpeakerDetailView(speaker)}
                             >
-                              <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-4 border-white border-opacity-30">
+                              <div className="w-16 h-16 md:w-24 md:h-24 mx-auto mb-3 md:mb-4 rounded-full overflow-hidden border-2 md:border-4 border-white border-opacity-30">
                                 <img 
                                   src={speaker.image} 
                                   alt={speaker.name}
                                   className="w-full h-full object-cover"
                                 />
                               </div>
-                              <h3 className="text-lg font-bold mb-2">{speaker.name}</h3>
-                              <p className="text-sm mb-2 opacity-90">{speaker.title}</p>
-                              <p className="text-xs opacity-80 mb-4">{speaker.affiliation}</p>
+                              <h3 className="text-sm md:text-lg font-bold mb-1 md:mb-2 leading-tight">{speaker.name}</h3>
+                              <p className="text-xs md:text-sm mb-1 md:mb-2 opacity-90 leading-tight">{speaker.title}</p>
+                              <p className="text-xs opacity-80 mb-3 md:mb-4 leading-tight">{speaker.affiliation}</p>
                               
                               {/* Индикатор клика */}
                               <div className="text-xs text-green-300 opacity-80">
@@ -395,12 +398,12 @@ export default function MedicalTourism() {
                         </div>
 
                         {/* Индикаторы слайдера */}
-                        <div className="flex justify-center mt-8 space-x-2">
+                        <div className="flex justify-center mt-6 md:mt-8 space-x-1 md:space-x-2">
                           {Array.from({ length: Math.ceil(speakers.length / 3) }, (_, index) => (
                             <button
                               key={index}
                               onClick={() => setCurrentSpeakerIndex(index * 3)}
-                              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                              className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 ${
                                 Math.floor(currentSpeakerIndex / 3) === index
                                   ? 'bg-white' 
                                   : 'bg-white bg-opacity-30 hover:bg-opacity-50'
@@ -411,14 +414,14 @@ export default function MedicalTourism() {
                       </>
                     ) : (
                       /* Детальный вид одного спикера */
-                      <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-3xl p-8 text-center">
+                      <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl md:rounded-3xl p-4 md:p-8 text-center">
                         {/* Кнопка назад */}
-                        <div className="text-left mb-6">
+                        <div className="text-left mb-4 md:mb-6">
                           <button
                             onClick={backToSpeakersList}
-                            className="flex items-center text-white hover:text-green-300 transition-colors duration-300"
+                            className="flex items-center text-white hover:text-green-300 transition-colors duration-300 text-sm md:text-base"
                           >
-                            <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4 md:w-6 md:h-6 mr-1 md:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                             </svg>
                             Назад к списку спикеров
@@ -428,27 +431,27 @@ export default function MedicalTourism() {
                         {/* Информация о спикере */}
                         <div className="text-center">
                           {/* Фото и основная информация */}
-                          <div className="mb-8">
-                            <div className="w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden border-4 border-white border-opacity-30">
+                          <div className="mb-6 md:mb-8">
+                            <div className="w-32 h-32 md:w-48 md:h-48 mx-auto mb-4 md:mb-6 rounded-full overflow-hidden border-2 md:border-4 border-white border-opacity-30">
                               <img 
                                 src={selectedSpeaker.image} 
                                 alt={selectedSpeaker.name}
                                 className="w-full h-full object-cover"
                               />
                             </div>
-                            <h3 className="text-3xl font-bold mb-4">{selectedSpeaker.name}</h3>
-                            <p className="text-xl mb-2 opacity-90">{selectedSpeaker.title}</p>
-                            <p className="text-lg opacity-80 mb-8">{selectedSpeaker.affiliation}</p>
+                            <h3 className="text-xl md:text-3xl font-bold mb-3 md:mb-4 leading-tight">{selectedSpeaker.name}</h3>
+                            <p className="text-lg md:text-xl mb-2 opacity-90 leading-tight">{selectedSpeaker.title}</p>
+                            <p className="text-base md:text-lg opacity-80 mb-6 md:mb-8 leading-tight">{selectedSpeaker.affiliation}</p>
                           </div>
 
                           {/* Двухколоночная структура */}
-                          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
                             {/* Левая колонка - Регалии */}
                             <div className="text-left">
                               {/* Членство в организациях */}
                               <div className="mb-6">
-                                <h4 className="text-lg font-bold text-blue-300 mb-3 flex items-center">
-                                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <h4 className="text-base md:text-lg font-bold text-blue-300 mb-2 md:mb-3 flex items-center">
+                                  <svg className="w-4 h-4 md:w-5 md:h-5 mr-1 md:mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
                                   </svg>
                                   ЧЛЕНСТВО В ОРГАНИЗАЦИЯХ:
@@ -465,8 +468,8 @@ export default function MedicalTourism() {
                               
                               {/* Награды */}
                               <div>
-                                <h4 className="text-lg font-bold text-green-300 mb-3 flex items-center">
-                                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <h4 className="text-base md:text-lg font-bold text-green-300 mb-2 md:mb-3 flex items-center">
+                                  <svg className="w-4 h-4 md:w-5 md:h-5 mr-1 md:mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                   </svg>
                                   НАГРАДЫ:
@@ -556,8 +559,7 @@ export default function MedicalTourism() {
                   {[
                     'РГП на ПХВ «Национальный научный центр развития здравоохранения имени Салидат Каирбековой» МЗ РК',
                     'Министерство здравоохранения Республики Казахстан',
-                    'РОО «Ассоциация организаторов в сфере охраны здоровья»',
-                    'DeConsilior'
+                    'РОО «Ассоциация организаторов в сфере охраны здоровья»'
                   ].map((org, index) => (
                     <div key={index} className="flex items-start">
                       <div className="w-2 h-2 bg-gradient-to-r from-blue-600 to-green-600 rounded-full mt-3 mr-4 flex-shrink-0"></div>

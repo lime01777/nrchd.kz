@@ -392,6 +392,44 @@ export default function NewsCreate() {
         submitData.video_files = validVideoFiles;
       }
       
+      // Устанавливаем файлы в состояние формы для правильной передачи
+      if (validImageFiles.length > 0) {
+        setData('image_files', validImageFiles);
+      }
+      if (validVideoFiles.length > 0) {
+        setData('video_files', validVideoFiles);
+      }
+      
+      // Создаем FormData для правильной передачи файлов
+      const formData = new FormData();
+      
+      // Добавляем основные данные
+      formData.append('title', data.title || '');
+      formData.append('content', data.content || '');
+      formData.append('status', data.status || 'Черновик');
+      formData.append('publishDate', data.publishDate || '');
+      
+      // Добавляем категории
+      if (cat && cat.length > 0) {
+        cat.forEach(category => {
+          formData.append('category[]', category);
+        });
+      }
+      
+      // Добавляем файлы изображений
+      if (validImageFiles.length > 0) {
+        validImageFiles.forEach(file => {
+          formData.append('image_files[]', file);
+        });
+      }
+      
+      // Добавляем файлы видео
+      if (validVideoFiles.length > 0) {
+        validVideoFiles.forEach(file => {
+          formData.append('video_files[]', file);
+        });
+      }
+      
       console.log('Отправка формы с данными:', {
         title: data.title,
         content_length: data.content ? data.content.length : 0,
@@ -450,7 +488,37 @@ export default function NewsCreate() {
         forceFormData: (validImageFiles.length > 0 || validVideoFiles.length > 0)
       });
       
-      router.post(route('admin.news.store'), submitData, options);
+      // Используем FormData для правильной передачи файлов
+      if (validImageFiles.length > 0 || validVideoFiles.length > 0) {
+        // Отправляем FormData напрямую через fetch
+        fetch(route('admin.news.store'), {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json',
+          },
+        })
+        .then(response => response.json())
+        .then(result => {
+          console.log('Результат отправки:', result);
+          if (result.success) {
+            router.visit(route('admin.news'));
+          } else {
+            console.error('Ошибка при сохранении:', result);
+            alert('Ошибка при сохранении новости');
+          }
+          setIsSubmitting(false);
+        })
+        .catch(error => {
+          console.error('Ошибка при отправке:', error);
+          alert('Ошибка при отправке формы');
+          setIsSubmitting(false);
+        });
+      } else {
+        // Если нет файлов, используем обычную отправку
+        post(route('admin.news.store'), data, options);
+      }
     } catch (error) {
       console.error('Ошибка при отправке формы:', error);
       setIsSubmitting(false);
