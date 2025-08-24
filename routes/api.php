@@ -27,6 +27,10 @@ Route::prefix('translations')->group(function () {
     Route::post('/save', [TranslationAPIController::class, 'saveTranslations']);
 });
 
+// Прямые маршруты для совместимости с существующим JavaScript кодом
+Route::post('/translate', [TranslationAPIController::class, 'translate']);
+Route::post('/translate-batch', [TranslationAPIController::class, 'translateBatch']);
+
 // API маршруты для управления языками
 Route::prefix('language')->group(function () {
     Route::post('/set', [TranslationAPIController::class, 'setLanguage']);

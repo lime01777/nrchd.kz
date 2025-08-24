@@ -129,6 +129,75 @@ class TranslationAPIController extends Controller
     }
 
     /**
+     * Перевести несколько текстов одновременно
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function translateBatch(Request $request)
+    {
+        try {
+            $request->validate([
+                'texts' => 'required|array',
+                'texts.*' => 'string',
+                'target_language' => 'required|string|in:kz,ru,en',
+                'source_language' => 'string|in:kz,ru,en'
+            ]);
+
+            $texts = $request->texts;
+            $targetLanguage = $request->target_language;
+            $sourceLanguage = $request->source_language ?? 'kz';
+
+            $translations = [];
+            $errors = [];
+
+            foreach ($texts as $index => $text) {
+                try {
+                    if (empty($text)) {
+                        $translations[$index] = '';
+                        continue;
+                    }
+
+                    // Если целевой язык совпадает с исходным, возвращаем исходный текст
+                    if ($targetLanguage === $sourceLanguage) {
+                        $translations[$index] = $text;
+                        continue;
+                    }
+
+                    // Выполняем перевод
+                    $translation = $this->translationService->translateText($text, $targetLanguage, $sourceLanguage);
+                    $translations[$index] = $translation;
+
+                } catch (Exception $e) {
+                    $errors[] = [
+                        'index' => $index,
+                        'text' => substr($text, 0, 30),
+                        'error' => $e->getMessage()
+                    ];
+                    $translations[$index] = $text; // Возвращаем исходный текст при ошибке
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'translations' => $translations,
+                'errors' => $errors,
+                'source' => $sourceLanguage,
+                'target' => $targetLanguage
+            ]);
+
+        } catch (Exception $e) {
+            Log::error('Batch translation error: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Batch translation failed',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Сохранить переводы
      *
      * @param Request $request
