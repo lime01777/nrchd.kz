@@ -6,52 +6,15 @@ import NameDoctor from '@/Components/NameDoctor';
 import NameDoctorWithPopup from '@/Components/NameDoctorWithPopup';
 import ActualFile from '@/Components/ActualFile';
 import FilesAccord from '@/Components/FilesAccord';
+import MainLeadershipCard from '@/Components/MainLeadershipCard';
+import SimpleLeadershipCard from '@/Components/SimpleLeadershipCard';
+import OrganizationalStructure from '@/Components/OrganizationalStructure';
+import { leadershipData, organizationalStructureData } from '@/data/organizationalStructure';
 
 export default function AboutCentre() {
-    const allNameDoctors = [
-      { 
-        name: "Кулкаева Гульнара Утепергеновна", 
-        about: "Председатель Правления РГП на ПХВ «Национальный научный центр развития здравоохранения им.Салидат Каирбековой» МЗ РК",
-        photo: "img/leadership/1.jpg",
-        biography: (
-          <div className="text-sm text-gray-700">
-            <p className="mb-2">Родилась в 1969 году в г. Волгоград, РФ.</p>
-            
-            <p className="font-semibold mt-2 mb-1">Образование:</p>
-            <ul className="list-disc pl-4 mb-2">
-              <li>1994 г. - Астраханская государственная медицинская академия, специальность «Лечебное дело»</li>
-              <li>2009 г. - магистратура, Нагойский университет (Япония), специальность «Управление здравоохранением»</li>
-              <li>2015 г. - магистратура, Алматинская Международная академия бизнеса, специальность «Деловое администрирование»</li>
-            </ul>
-            
-            <p className="font-semibold mt-3 mb-1">Ученая степень:</p>
-            <p>Кандидат медицинских наук</p>
-            
-            <p className="font-semibold mt-3 mb-1">Трудовая деятельность:</p>
-            <ul className="list-none space-y-2">
-              <li>• 1996 г. - врач-инфекционист, областная клиническая инфекционная больница, г. Астрахань, РФ</li>
-              <li>• 2002-2010 гг. - главный эксперт Управления первичной медико-санитарной помощи Департамента лечебно-профилактической работы Министерства здравоохранения РК</li>
-              <li>• 2010-2014 гг. - руководящие должности в управлении здравоохранения г. Астаны и министерстве здравоохранения РК</li>
-              <li>• 2014-2015 гг. - директор Департамента организации медицинской помощи Министерства здравоохранения и социального развития РК</li>
-              <li>• 2015-2016 гг. - заместитель Председателя Комитета контроля медицинской и фармацевтической деятельности</li>
-              <li>• 2016-2017 гг. - заместитель руководителя Управления здравоохранения г. Алматы</li>
-              <li>• 2017-2018 гг. - директор Департамента по организации закупа медицинских услуг НАО «Фонд социального медицинского страхования»</li>
-              <li>• 2018-2021 гг. - первый заместитель Председателя Правления Национального научного онкологического центра</li>
-              <li>• 2021-2023 гг. - председатель Правления Национального научного онкологического центра</li>
-              <li>• С мая 2023 г. - Председатель Правления РГП на ПХВ «Национальный научный центр развития здравоохранения имени Салидат Каирбековой»</li>
-            </ul>
-            
-            <p className="font-semibold mt-3 mb-1">Награды:</p>
-            <p>Почетная Грамота Президента Республики Казахстан, Почетные Грамоты Министерства здравоохранения РК, медаль «Ерен енбегi үшiн», нагрудные знаки «Денсаулық сақтау ісінің үздігі», «Денсаулық сақтау ісіне қосқан үлесі үшін».</p>
-          </div>
-        ),
-      },
-      { 
-        name: "Шайхиев Саин Саинович", 
-        about: "Заведующий председателя правления",
-        photo: "/storage/leadership/2.jpg",
-        biography: "Кандидат медицинских наук. Член Казахстанской ассоциации неврологов. Участник международных конференций по нейрофизиологии. Руководитель научных проектов в области исследования нервной системы."
-      },];
+        // Используем данные из отдельного файла
+    const leadership = leadershipData;
+    const departments = organizationalStructureData;
 
     const allNameWatchers = [
       { name: "Локшин Вячеслав Нотанович", about: "Президент Казахстанской ассоциации репродуктивной медицины. Доктор медицинских наук, профессор, академик Российской академии медико-технических наук, академик Национальной академии наук Казахстана, специальности – лечебное дело, общественное здравоохранение, акушерство и гинекология."},
@@ -127,21 +90,59 @@ export default function AboutCentre() {
       </div>
     </section>
 
-    <section className="text-gray-600 body-font">
-      <div className="container px-5 pt-24 mx-auto">
-        <div className="flex flex-col text-left w-full">
-          <h1 className="sm:text-2xl text-2xl font-semibold title-font text-gray-900 mb-6">Руководство</h1>
+    {/* Секция руководства */}
+    <section className="text-gray-600 body-font bg-gray-50">
+      <div className="container px-5 py-16 mx-auto">
+        <div className="flex flex-col text-left w-full mb-12">
+          <h1 className="sm:text-3xl text-2xl font-bold title-font text-gray-900 mb-4">Руководство центра</h1>
+          <p className="text-gray-600 max-w-3xl">
+            Наши руководители обеспечивают стратегическое развитие и эффективное управление центром, 
+            руководствуясь принципами инновационности и качества медицинских услуг.
+          </p>
         </div>
-        <div className="flex flex-wrap -m-2">
-          {allNameDoctors.map((namedoctor, index) => (
-            <NameDoctorWithPopup 
+        {/* Главный руководитель */}
+        <div className="mb-12">
+          {leadership.filter(leader => leader.isMain).map((leader, index) => (
+            <MainLeadershipCard 
               key={index} 
-              name={namedoctor.name} 
-              about={namedoctor.about} 
-              photo={namedoctor.photo} 
-              biography={namedoctor.biography} 
-            />))}
+              name={leader.name} 
+              position={leader.position} 
+              photo={leader.photo} 
+              biography={leader.biography}
+              contact={leader.contact}
+            />
+          ))}
         </div>
+
+        {/* Остальное руководство */}
+        <div className="mt-12">
+          <h3 className="text-2xl font-semibold text-gray-900 mb-8 text-center">Заместители</h3>
+          <div className="flex flex-wrap -m-4">
+                      {leadership.filter(leader => !leader.isMain).map((leader, index) => (
+              <SimpleLeadershipCard 
+                key={index} 
+                name={leader.name} 
+                position={leader.position} 
+                photo={leader.photo} 
+                contact={leader.contact}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Секция организационной структуры */}
+    <section className="text-gray-600 body-font">
+      <div className="container px-5 py-16 mx-auto">
+        <div className="flex flex-col text-left w-full mb-12">
+          <h1 className="sm:text-3xl text-2xl font-bold title-font text-gray-900 mb-4">Организационная структура</h1>
+          <p className="text-gray-600 max-w-3xl">
+            Структура центра организована по департаментному принципу для обеспечения 
+            эффективного управления и координации всех направлений деятельности.
+          </p>
+        </div>
+        <OrganizationalStructure departments={departments} />
       </div>
     </section>
 

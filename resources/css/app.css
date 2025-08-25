@@ -7,6 +7,9 @@
 /* Import modern editor styles */
 @import 'modern-editor.css';
 
+/* Import leadership styles */
+@import 'leadership.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
