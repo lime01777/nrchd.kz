@@ -188,11 +188,19 @@ class DocumentAccordionController extends Controller
             ['route' => 'direction.health.accounts', 'name' => 'Национальные счета здравоохранения'],
             ['route' => 'direction.health.rate', 'name' => 'Тарифы на медицинские услуги'],
             ['route' => 'direction.strategic.initiatives', 'name' => 'Стратегические инициативы'],
+            ['route' => 'medical.tourism', 'name' => 'Медицинский туризм'],
             
             // Страницы из подраздела Direction/StrategicInitiatives
             ['route' => 'direction.strategic.initiatives.astana.declaration', 'name' => 'Декларация Астаны'],
             ['route' => 'direction.strategic.initiatives.partnership', 'name' => 'Стратегическое партнерство'],
             ['route' => 'direction.strategic.initiatives.research', 'name' => 'Стратегические исследования'],
+            
+            // Страницы из подраздела MedicalTourism
+            ['route' => 'medical.tourism.directions', 'name' => 'Направления работы'],
+            ['route' => 'medical.tourism.certification', 'name' => 'Сертификация клиник'],
+            ['route' => 'medical.tourism.services', 'name' => 'Популярные услуги'],
+            ['route' => 'medical.tourism.documents', 'name' => 'Документы'],
+            ['route' => 'medical.tourism.contacts', 'name' => 'Контакты'],
             
             // Страницы из подраздела Direction/MedicalScience
             ['route' => 'direction.medical.science.clinical', 'name' => 'Клинические исследования'],

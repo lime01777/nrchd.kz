@@ -1,9 +1,22 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
 export default function ElectronicHealth() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+
   const [showFullText, setShowFullText] = useState(false);
   
   return (
@@ -91,7 +104,6 @@ export default function ElectronicHealth() {
                                 <li>Верификация, актуализация и обсуждение классификатора МКБ-11 с межведомственной рабочей группой, подгруппой по внедрению МКБ-11 на территории Республики Казахстан не менее 15 классов МКБ-11;</li>
                                 <li>Сопоставление перечня операций в соответствии с МКБ-9 (с клинической модификацией) и с не менее 5 классами МКБ-11;</li>
                                 <li>Разработка проекта плана проведения обучающих семинаров по МКБ-11 для медицинских работников, которые применяют в работе международный классификатор болезней;</li>
-                                <li>Совместно с межведомственной рабочей группой создание профильных рабочих подгрупп из состава МРГ на уровне медицинских организаций для верификации перевода МКБ-11 на государственном языке и рассмотрения, разработки предложений по пересмотру НПА с учетом перехода на МКБ-11.</li>
                             </ul>
                         </>
                     )}
@@ -99,8 +111,8 @@ export default function ElectronicHealth() {
             </div>
             <div className="flex justify-center mt-4">
                 <button 
-                    onClick={() => setShowFullText(!showFullText)} 
-                    className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3 transition-all duration-150 ease-in hover:bg-gray-100"
+                    onClick={() => setShowFullTextComponent(!showFullText)} 
+                    className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3 transition-all duration-300 ease-in-out hover:bg-blue-50 transform hover:scale-105"
                 >
                     {showFullText ? 'Свернуть' : 'Читать далее'}
                     <svg 
@@ -109,7 +121,7 @@ export default function ElectronicHealth() {
                         height="24" 
                         viewBox="0 0 24 24"
                         fill="currentColor"
-                        className="ml-2"
+                        className={`ml-2 transform transition-transform duration-300 ${showFullText ? 'rotate-45' : ''}`}
                     >
                         {showFullText ? (
                             <path d="M19 13H5v-2h14v2z" />
@@ -124,17 +136,33 @@ export default function ElectronicHealth() {
             </div>
         </div>
     </section>
+    
     <section className="text-gray-600 body-font">
-        <div className="container px-5 pt-8 pb-24 mx-auto">
-            <div className='flex md:flex-row flex-wrap'>
-                <FolderChlank h1="МКБ-11" color="bg-fuchsia-100" colorsec="bg-fuchsia-200" href={route('electronic.health.mkb11')} />
-                <FolderChlank h1="Нормативно-правовые акты" color="bg-fuchsia-100" colorsec="bg-fuchsia-200" href={route('electronic.health.regulations')} />
-                <FolderChlank h1="Стандарты" color="bg-fuchsia-100" colorsec="bg-fuchsia-200" href={route('electronic.health.standards')} />
+        <div className="container pt-8 mx-auto">
+            <div className='flex flex-wrap'>
+                <FolderChlank 
+                    title="Стандарты" 
+                    description="Стандарты электронного здравоохранения"
+                    href={route('electronic.health.standards')}
+                    icon="📋"
+                />
+                <FolderChlank 
+                    title="Регламенты" 
+                    description="Регламенты электронного здравоохранения"
+                    href={route('electronic.health.regulations')}
+                    icon="📜"
+                />
+                <FolderChlank 
+                    title="МКБ-11" 
+                    description="Международная классификация болезней 11-го пересмотра"
+                    href={route('electronic.health.mkb11')}
+                    icon="🏥"
+                />
             </div>
         </div>
     </section>
-    </>    
-  )
+    </>
+  );
 }
 
-ElectronicHealth.layout = (page) => <LayoutDirection img={'electronichealth'} h1={'Электронное здравоохранение'} useVideo={true}>{page}</LayoutDirection>
+ElectronicHealth.layout = (page) => <LayoutDirection img="electronichealth" h1={t('directions.electronic_health', 'Электронное здравоохранение')}>{page}</LayoutDirection>;

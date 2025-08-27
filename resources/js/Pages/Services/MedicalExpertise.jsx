@@ -1,9 +1,21 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 import ServiceTimeline from '@/Components/ServiceTimeline';
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
 export default function MedicalExpertise() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
   const timelineItems = [
     { title: "Регистрация заявки", value: "1 рабочий день" },
     { title: "Срок проведения экспертизы", value: "15 рабочих дней" },
@@ -12,7 +24,7 @@ export default function MedicalExpertise() {
 
   return (
     <>
-      <Head title="Научно-медицинская экспертиза" meta={[{ name: 'description', content: 'Услуги научно-медицинской экспертизы.' }]} />
+              <Head title={tComponent('services.medical_expertise', 'Научно-медицинская экспертиза')} meta={[{ name: 'description', content: 'Услуги научно-медицинской экспертизы.' }]} />
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-2/3 px-4">
@@ -46,4 +58,4 @@ export default function MedicalExpertise() {
   );
 }
 
-MedicalExpertise.layout = (page) => <ServicesPageLayout title="Научно-медицинская экспертиза" img="service-expertise" bgColor='bg-gray-200'>{page}</ServicesPageLayout>;
+MedicalExpertise.layout = (page) => <ServicesPageLayout title={t('services.medical_expertise', 'Научно-медицинская экспертиза')} img="service-expertise" bgColor='bg-gray-200'>{page}</ServicesPageLayout>;

@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 import FolderChlank from '@/Components/FolderChlank';
 import LayoutDirection from '@/Layouts/LayoutDirection';
@@ -7,12 +7,25 @@ import FileAccordChlank from '@/Components/FileAccordChlank';
 import FilesAccord from '@/Components/FilesAccord';
 import PageAccordions from "@/Components/PageAccordions";
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
 export default function HealthRate() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+
   const [showFullText, setShowFullText] = useState(false);
   
   return (
     <>
-    <Head title='Оценка технологий здравоохранения' meta={[{ name: 'description', content: 'Оценка здоровья населения: методики, показатели и результаты мониторинга состояния здоровья.' }]} />
+    <Head title={tComponent('services.health_tech_assessment', 'Оценка технологий здравоохранения')} meta={[{ name: 'description', content: 'Оценка здоровья населения: методики, показатели и результаты мониторинга состояния здоровья.' }]} />
     <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
             <div className='flex flex-wrap px-12 text-justify mb-4'>
@@ -83,8 +96,8 @@ export default function HealthRate() {
             </div>
             <div className="flex justify-center mt-4">
                 <button 
-                    onClick={() => setShowFullText(!showFullText)} 
-                    className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3 transition-all duration-150 ease-in hover:bg-gray-100"
+                    onClick={() => setShowFullTextComponent(!showFullText)} 
+                    className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3 transition-all duration-300 ease-in-out hover:bg-blue-50 transform hover:scale-105"
                 >
                     {showFullText ? 'Свернуть' : 'Читать далее'}
                     <svg 
@@ -93,7 +106,7 @@ export default function HealthRate() {
                         height="24" 
                         viewBox="0 0 24 24"
                         fill="currentColor"
-                        className="ml-2"
+                        className={`ml-2 transform transition-transform duration-300 ${showFullText ? 'rotate-45' : ''}`}
                     >
                         {showFullText ? (
                             <path d="M19 13H5v-2h14v2z" />
@@ -108,36 +121,21 @@ export default function HealthRate() {
             </div>
         </div>
     </section>
+    
     <section className="text-gray-600 body-font">
-        <div className="container px-5 pt-8 mx-auto">
-            <div className='flex md:flex-row flex-wrap'>
+        <div className="container pt-8 mx-auto">
+            <div className='flex flex-wrap'>
                 <FolderChlank 
-                    h1="Отчеты ОТЗ" 
-                    color="bg-fuchsia-100" 
-                    colorsec="bg-fuchsia-200" 
-                    href={route('health.rate.otz.reports')} 
+                    title="ОТЗ отчеты" 
+                    description="Отчеты по оценке технологий здравоохранения"
+                    href={route('health.rate.otz.reports')}
+                    icon="📊"
                 />
             </div>
         </div>
     </section>
-    <section className="text-gray-600 body-font">
-        <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
-            <FilesAccord 
-                folder="Оценка технологии здравоохранения/Набор — Методические рекомендации"
-                title="Методические рекомендации"
-                bgColor="bg-fuchsia-100"
-                defaultOpen={true}
-            />
-            <FilesAccord 
-                folder="Оценка технологии здравоохранения/Набор — Приказы"
-                title="Приказы"
-                bgColor="bg-fuchsia-100"
-            />
-        </div>
-    </section>
-    <PageAccordions bgColor="bg-fuchsia-100" />
     </>
-  )
+  );
 }
 
-HealthRate.layout = (page) => <LayoutDirection img={'healthrate'} h1={'Оценка медицинских технологий'}>{page}</LayoutDirection>
+HealthRate.layout = (page) => <LayoutDirection img="healthrate" h1={t('services.health_tech_assessment', 'Оценка технологий здравоохранения')}>{page}</LayoutDirection>;

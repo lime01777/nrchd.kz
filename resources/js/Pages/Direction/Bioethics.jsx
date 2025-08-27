@@ -1,13 +1,26 @@
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import React from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
 import FolderChlank from '@/Components/FolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
 export default function Bioethics() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+
   return (
     <>
-      <Head title="Центральная комиссия по биоэтике" meta={[{ name: 'description', content: 'Центральная комиссия по биоэтике: экспертиза, сертификация и надзор в области биоэтики.' }]} />
+      <Head title={tComponent('directions.bioethics', 'Центральная комиссия по биоэтике')} meta={[{ name: 'description', content: 'Центральная комиссия по биоэтике: экспертиза, сертификация и надзор в области биоэтики.' }]} />
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>
@@ -93,7 +106,7 @@ export default function Bioethics() {
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">Май</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">2, 23</div>
+                    <div className="text-sm text-gray-600">9, 23</div>
                     <div className="text-xs text-gray-500">Пятница</div>
                   </div>
                 </div>
@@ -107,14 +120,14 @@ export default function Bioethics() {
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">Июль</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">11</div>
+                    <div className="text-sm text-gray-600">4, 18</div>
                     <div className="text-xs text-gray-500">Пятница</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">Август</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">8, 22</div>
+                    <div className="text-sm text-gray-600">1, 15, 29</div>
                     <div className="text-xs text-gray-500">Пятница</div>
                   </div>
                 </div>
@@ -142,70 +155,95 @@ export default function Bioethics() {
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">Декабрь</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">12, 26</div>
+                    <div className="text-sm text-gray-600">5, 19</div>
                     <div className="text-xs text-gray-500">Пятница</div>
                   </div>
                 </div>
-              </div>
-              <div className="mt-6 text-sm text-gray-600 text-center">
-                <p><strong>Примечание:</strong> Все заседания проводятся по пятницам в рабочем органе Центральной комиссии по биоэтике.</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Основные направления */}
-      <section className="text-gray-600 body-font pb-8">
+      {/* Направления деятельности */}
+      <section className="text-gray-600 body-font py-12">
         <div className="container px-5 mx-auto">
-          <div className="flex flex-wrap">
-            <FolderChlank 
-              h1="БИОЭТИЧЕСКАЯ ЭКСПЕРТИЗА" 
-              color="bg-blue-200" 
-              colorsec="bg-blue-300" 
-              href={route('bioethics.expertise')}
-            />
-            <FolderChlank 
-              h1="СЕРТИФИКАЦИЯ ЛОКАЛЬНЫХ КОМИССИЙ ПО БИОЭТИКЕ" 
-              color="bg-blue-200" 
-              colorsec="bg-blue-300" 
-              href={route('bioethics.certification')}
-            />
-            <FolderChlank 
-              h1="БИОБАНКИ" 
-              color="bg-blue-200" 
-              colorsec="bg-blue-300" 
-              href={route('bioethics.biobanks')}
-            />
-            <FolderChlank 
-              h1="ПЕРЕЧЕНЬ ЛОКАЛЬНЫХ ЭТИЧЕСКИХ КОМИССИЙ" 
-              color="bg-blue-200" 
-              colorsec="bg-blue-300" 
-              href={route('bioethics.local-commissions')}
-            />
+          <div className="flex flex-wrap px-12">
+            <h3 className="text-xl font-semibold text-gray-800 mb-6 w-full">Направления деятельности Центральной комиссии по биоэтике</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+              <FolderChlank 
+                title="Биоэтическая экспертиза" 
+                description="Проведение биоэтической экспертизы документов, связанных с проведением биомедицинских исследований"
+                href={route('bioethics.expertise')}
+                icon="🔬"
+              />
+              
+              <FolderChlank 
+                title="Сертификация" 
+                description="Сертификация локальных комиссий по биоэтике медицинских организаций"
+                href={route('bioethics.certification')}
+                icon="🏛️"
+              />
+              
+              <FolderChlank 
+                title="Локальные комиссии" 
+                description="Координация деятельности локальных комиссий по биоэтике"
+                href={route('bioethics.local_commissions')}
+                icon="🏥"
+              />
+              
+              <FolderChlank 
+                title="Биобанки" 
+                description="Надзор за деятельностью биобанков и биоколлекций"
+                href={route('bioethics.biobanks')}
+                icon="🧬"
+              />
+              
+              <FolderChlank 
+                title="Состав комиссии" 
+                description="Информация о составе Центральной комиссии по биоэтике"
+                href={route('bioethics.composition')}
+                icon="👥"
+              />
+            </div>
           </div>
         </div>
       </section>
 
-             {/* Контакты */}
-       <section className="text-gray-600 body-font pb-8">
-         <div className="container px-5 mx-auto">
-           <div className="bg-white p-6 rounded-lg shadow-md">
-             <h3 className="text-lg font-semibold text-gray-800 mb-3">Контакты:</h3>
-             <p className="text-gray-700 mb-2">
-               <strong>Адрес:</strong> г. Астана, ул. Мангилик ел 20, блок С, 5 этаж, 507 кабинет
-             </p>
-             <p className="text-gray-700 mb-2">
-               <strong>Телефон:</strong> 87172648-950; 87172648-951 (внут 1109)
-             </p>
-             <p className="text-gray-700">
-               <strong>Электронная почта:</strong> <a href="mailto:ckb-amu@yandex.kz" className="text-blue-600 hover:text-blue-800">ckb-amu@yandex.kz</a>
-             </p>
-           </div>
-         </div>
-       </section>
+      {/* Контактная информация */}
+      <section className="text-gray-600 body-font py-12 bg-gray-50">
+        <div className="container px-5 mx-auto">
+          <div className="flex flex-wrap px-12">
+            <div className="w-full">
+              <h3 className="text-xl font-semibold text-gray-800 mb-6">Контактная информация</h3>
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-semibold text-gray-800 mb-3">Адрес</h4>
+                    <p className="text-gray-600">010000, Республика Казахстан, г. Астана, ул. Мангилек Ел, 20</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800 mb-3">Телефон</h4>
+                    <p className="text-gray-600">+7 (7172) 648-951 (внутренний 1000)</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800 mb-3">Email</h4>
+                    <p className="text-gray-600">bioethics@nrchd.kz</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800 mb-3">График работы</h4>
+                    <p className="text-gray-600">Пн - Пт, с 9:00 до 18:00</p>
+                    <p className="text-gray-600">Перерыв с 13:00 до 14:00</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </>
-  )
+  );
 }
 
-Bioethics.layout = page => <LayoutDirection img="medicalscience" h1="Центральная комиссия по биоэтике" useVideo={false}>{page}</LayoutDirection>
+Bioethics.layout = (page) => <LayoutDirection img="bioethics" h1={t('directions.bioethics', 'Центральная комиссия по биоэтике')}>{page}</LayoutDirection>;

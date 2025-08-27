@@ -1,10 +1,22 @@
 import React, { useState, useRef } from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import VideoModal from '@/Components/VideoModal';
 import FilesAccord from '@/Components/FilesAccord';
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
 export default function TechCompetence() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');
@@ -47,7 +59,7 @@ export default function TechCompetence() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefaultComponent();
     console.log('Form submission started');
     
     // Создаем FormData для отправки файла
@@ -98,7 +110,7 @@ export default function TechCompetence() {
         
         // Альтернативный способ через XMLHttpRequest
         response = await new Promise((resolve, reject) => {
-          const xhr = new XMLHttpRequest();
+          const xhr = new XMLHttpRequestComponent();
           xhr.open('POST', '/api/contact/tech-competence', true);
           
           // Добавляем CSRF токен
@@ -106,7 +118,7 @@ export default function TechCompetence() {
           console.log('CSRF Token (XMLHttpRequest):', csrfToken);
           
           if (!csrfToken) {
-            reject(new Error('CSRF token not found. Please refresh the page.'));
+            rejectComponent(new Error('CSRF token not found. Please refresh the page.'));
             return;
           }
           
@@ -121,12 +133,12 @@ export default function TechCompetence() {
                 json: () => JSON.parse(xhr.responseText)
               });
             } else {
-              reject(new Error(`HTTP error! status: ${xhr.status}`));
+              rejectComponent(new Error(`HTTP error! status: ${xhr.status}`));
             }
           };
           
           xhr.onerror = function() {
-            reject(new Error('Network error'));
+            rejectComponent(new Error('Network error'));
           };
           
           xhr.send(formDataToSend);
@@ -137,18 +149,18 @@ export default function TechCompetence() {
       console.log('Response headers:', response.headers);
 
       // Проверяем Content-Type ответа
-      const contentType = response.headers.get('content-type');
+      const contentType = response.headers.getComponent('content-type');
       console.log('Content-Type:', contentType);
 
       if (!response.ok) {
-        const errorText = await response.text();
+        const errorText = await response.textComponent();
         console.error('Error response:', errorText);
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
 
       // Проверяем, что ответ действительно JSON
       if (!contentType || !contentType.includes('application/json')) {
-        const responseText = await response.text();
+        const responseText = await response.textComponent();
         console.error('Non-JSON response:', responseText);
         throw new Error(`Server returned non-JSON response. Content-Type: ${contentType}`);
       }
@@ -174,12 +186,12 @@ export default function TechCompetence() {
         }
         
         // Скрываем сообщение через 5 секунд
-        setTimeout(() => {
+        setTimeoutComponent(() => {
           setFormSubmitted(false);
         }, 5000);
       } else {
         // Показываем ошибку
-        alert(result.message || 'Произошла ошибка при отправке заявки');
+        alertComponent(result.message || 'Произошла ошибка при отправке заявки');
       }
     } catch (error) {
       console.error('Ошибка при отправке формы:', error);
@@ -202,13 +214,13 @@ export default function TechCompetence() {
       }
       
       console.error('Показываем пользователю:', errorMessage);
-      alert(errorMessage);
+      alertComponent(errorMessage);
     }
   };
 
   return (
     <>
-      <Head title="Отраслевой центр технологических компетенций" meta={[{ name: 'description', content: 'Отраслевой центр технологических компетенций в сфере здравоохранения: инновации, разработки и технологические решения.' }]} />
+              <Head title={tComponent('directions.tech_competence', 'Отраслевой центр технологических компетенций')} meta={[{ name: 'description', content: 'Отраслевой центр технологических компетенций в сфере здравоохранения: инновации, разработки и технологические решения.' }]} />
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -433,4 +445,4 @@ export default function TechCompetence() {
   );
 }
 
-TechCompetence.layout = (page) => <LayoutDirection img={'techcomtence'} h1={'Отраслевой центр технологических компетенций'} useVideo={true}>{page}</LayoutDirection>;
+TechCompetence.layout = (page) => <LayoutDirection img={'techcomtence'} h1={t('directions.tech_competence', 'Отраслевой центр технологических компетенций')} useVideo={false}>{page}</LayoutDirection>;

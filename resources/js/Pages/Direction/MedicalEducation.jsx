@@ -1,4 +1,4 @@
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import React, { useState } from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
 import BannerCatalog from "@/Components/BannerCatalog";
@@ -6,12 +6,25 @@ import PageAccordions from "@/Components/PageAccordions";
 import FilesAccord from "@/Components/FilesAccord";
 import FolderChlank from "@/Components/FolderChlank";
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
 export default function MedicalEducation() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода внутри компонента
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+
   const [showFullText, setShowFullText] = useState(false);
 
   return (
     <>
-    <Head title="Медицинское образование" meta={[{ name: 'description', content: 'Медицинское образование: программы, курсы и обучение в сфере здравоохранения.' }]} />
+    <Head title={tComponent('directions.medical_education', 'Медицинское образование')} meta={[{ name: 'description', content: 'Медицинское образование: программы, курсы и обучение в сфере здравоохранения.' }]} />
     <section className="text-gray-600 body-font pb-8">
       <div className="container px-5 py-12 mx-auto">
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -96,132 +109,34 @@ export default function MedicalEducation() {
           </div>
         </div>
       </div>
-      
-      <div className="container px-5 py-8 mx-auto">
-        <div className="flex flex-wrap -m-4">
-          <FolderChlank 
-            h1="Информационная система Каталог образовательных программ дополнительного образования в сфере здравоохранения"
-            data-translate-h1="true"
-            color="bg-green-100" 
-            colorsec="bg-green-200" 
-            href={route('direction.medical.education.documents')}
-          />
-          <FolderChlank 
-            h1="Перечень организаций дополнительного образования по медицинским специальностям"
-            data-translate-h1="true"
-            color="bg-green-100" 
-            colorsec="bg-green-200" 
-            href={route('direction.medical.education.recommendations')}
-          />
-          <FolderChlank 
-            h1="Результаты рейтинговой оценки по образовательной деятельности медицинских ВУЗов, НИИ, НЦ, ВМК и МК"
-            data-translate-h1="true"
-            color="bg-green-100" 
-            colorsec="bg-green-200" 
-            href={route('direction.medical.education.rating')}
-          />
-        </div>
-      </div>
-
-
     </section>
-    <BannerCatalog />
+    
     <section className="text-gray-600 body-font">
-        <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
-            
-            {/* Второй аккордеон */}
-                <FilesAccord 
-                    folder="MedicalEducation/class mediumd"
-                    title="Повышение квалификации для среднего медперсонала"
-                    bgColor="bg-green-100"
+        <div className="container pt-8 mx-auto">
+            <div className='flex flex-wrap'>
+                <FolderChlank 
+                    title="Рейтинг" 
+                    description="Рейтинг медицинских образовательных учреждений"
+                    href={route('medical.education.rating')}
+                    icon="📊"
                 />
-            
-            {/* Третий аккордеон */}
-                <FilesAccord 
-                    folder="MedicalEducation/class menedger"
-                    title="Повышение квалификации для менеджеров"
-                    bgColor="bg-green-100"
+                <FolderChlank 
+                    title="Документы" 
+                    description="Документы по медицинскому образованию"
+                    href={route('medical.education.documents')}
+                    icon="📋"
                 />
-            
-            {/* Четвертый аккордеон */}
-                <FilesAccord 
-                    folder="MedicalEducation/class doctor"
-                    title="Повышение квалификации для врачей"
-                    bgColor="bg-green-100"
+                <FolderChlank 
+                    title="Рекомендации" 
+                    description="Рекомендации по медицинскому образованию"
+                    href={route('medical.education.recommendations')}
+                    icon="📚"
                 />
-        </div>
-    </section>
-
-    <section className="text-gray-600 body-font pb-8">
-      <div className="container px-5 py-12 mx-auto">
-        <div className="bg-green-100 p-6 rounded-lg shadow-sm">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            Контактная информация
-          </h3>
-          <p className="text-lg mb-4">
-            По возникшим вопросам касательно процедуры подачи заявок для экспертизы и включения программ сертификационных курсов и повышения квалификации в Каталог просим обратиться в:
-          </p>
-          
-          <div className="pl-4 border-l-4 border-green-300 mt-5 mb-5">
-            <p className="font-medium text-gray-700 mb-1">Департамент развития медицинского образования и науки ННЦРЗ</p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-              <div className="flex items-start">
-                <div className="flex-shrink-0 mr-3 mt-1 text-green-600">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Рабочий телефон:</p>
-                  <p className="text-base font-medium">+7(7172) 700950 (вн. 1114)</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start">
-                <div className="flex-shrink-0 mr-3 mt-1 text-green-600">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Мобильный телефон:</p>
-                  <p className="text-base font-medium">+7(707)189-46-80</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start">
-                <div className="flex-shrink-0 mr-3 mt-1 text-green-600">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Электронный адрес:</p>
-                  <a href="mailto:ddmes.rcrz@mail.ru" className="text-base font-medium text-green-700 hover:underline">ddmes.rcrz@mail.ru</a>
-                </div>
-              </div>
-              
-              <div className="flex items-start">
-                <div className="flex-shrink-0 mr-3 mt-1 text-green-600">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Контактное лицо:</p>
-                  <p className="text-base font-medium">Есдаулет Самат Азаматұлы</p>
-                </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
     </section>
     </>
-    
-  )
+  );
 }
 
-MedicalEducation.layout = (page) => <LayoutDirection img={'medicaleducation'} h1={'Медицинское образование'} useVideo={true}>{page}</LayoutDirection>;
+MedicalEducation.layout = (page) => <LayoutDirection img="medicaleducation" h1={t('directions.medical_education', 'Медицинское образование')}>{page}</LayoutDirection>;

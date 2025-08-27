@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 import FileAccordTitle from '@/Components/FileAccordTitle';
@@ -26,6 +26,12 @@ const AccreditationForm = () => {
 };
 
 export default function Accreditation() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const t = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
   const timelineItems = [
     { title: "Регистрация заявки", value: "1 рабочий день" },
     { title: "Срок оказания услуги", value: "27 рабочих дней" },
@@ -69,7 +75,7 @@ export default function Accreditation() {
 
   return (
     <>
-      <Head title="Аккредитация медицинских организаций и организаций здравоохранения" meta={[{ name: 'description', content: 'Аккредитация медицинских организаций и организаций здравоохранения в Казахстане.' }]} />
+              <Head title={t('services.accreditation', 'Аккредитация медицинских организаций и организаций здравоохранения')} meta={[{ name: 'description', content: 'Аккредитация медицинских организаций и организаций здравоохранения в Казахстане.' }]} />
 
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">

@@ -1,17 +1,28 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage, Link } from '@inertiajs/react';
 import React, { useState } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import ChartHead from '@/Components/ChartHead'
 import PageAccordions from '@/Components/PageAccordions';
 import FolderChlank from '@/Components/FolderChlank';
-import { Link } from '@inertiajs/react';
+
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
 
 export default function PrimaryHealthCare() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
   const [showFullText, setShowFullText] = useState(false);
   
   return (
     <>
-    <Head title="Первичная медико-санитарная помощь" meta={[{ name: 'description', content: 'Первичная медико-санитарная помощь: информация о развитии и организации первичной медицинской помощи.' }]} />
+          <Head title={tComponent('directions.primary_healthcare', 'Первичная медико-санитарная помощь')} meta={[{ name: 'description', content: 'Первичная медико-санитарная помощь: информация о развитии и организации первичной медицинской помощи.' }]} />
     <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify'>
@@ -40,11 +51,11 @@ export default function PrimaryHealthCare() {
             
             <div className="flex justify-center mt-4">
                 <button 
-                  onClick={() => setShowFullText(!showFullText)} 
+                  onClick={() => setShowFullTextComponent(!showFullText)} 
                   className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px]
                   rounded-xl p-3 transition-all duration-300 ease-in-out hover:bg-gray-100 transform hover:scale-105"
                 >
-                    {showFullText ? 'Скрыть' : 'Читать далее'}
+                                          {showFullText ? tComponent('hide', 'Скрыть') : 'Читать далее'}
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="currentColor" className={`ml-1 transition-transform duration-500 ease-in-out ${showFullText ? 'rotate-45' : ''}`}>
                         <rect x="11.5" y="5" width="1" height="14" />
@@ -82,4 +93,4 @@ export default function PrimaryHealthCare() {
   )
 }
 
-PrimaryHealthCare.layout = (page) => <LayoutDirection img={'pmsp'} h1={'Первичная медико-санитарная помощь'} useVideo={true}>{page}</LayoutDirection>;
+PrimaryHealthCare.layout = (page) => <LayoutDirection img={'pmsp'} h1={t('directions.primary_healthcare', 'Первичная медико-санитарная помощь')} useVideo={false}>{page}</LayoutDirection>;

@@ -1,12 +1,23 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
 import ActualFile from '@/Components/ActualFile';
 import FilesAccord from '@/Components/FilesAccord';
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
 
 export default function MedicalRating() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода внутри компонента
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');
@@ -25,7 +36,7 @@ export default function MedicalRating() {
 
   return (
     <>
-      <Head title="Рейтинг медицинских организаций" meta={[{ name: 'description', content: 'Рейтинг медицинских организаций Казахстана: результаты и аналитика.' }]} />
+      <Head title={tComponent('directions.medical_rating', 'Рейтинг медицинских организаций')} meta={[{ name: 'description', content: 'Рейтинг медицинских организаций Казахстана: результаты и аналитика.' }]} />
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>
@@ -42,10 +53,10 @@ export default function MedicalRating() {
         <div className="container pt-8 pb-24 mx-auto">
           <div className="flex md:flex-row flex-wrap">
             <FolderChlank 
-              h1="Архив рейтингов" 
-              color="bg-blue-100" 
-              colorsec="bg-blue-200" 
+              title="Архив рейтингов" 
+              description="Исторические данные рейтингов"
               href={route('medical.rating.regional')}
+              icon="📊"
             />
           </div>
         </div>
@@ -54,7 +65,7 @@ export default function MedicalRating() {
       {/* Блок с лучшими организациями */}
       <ActualFile 
         title="Лучшие из лучших в здравоохранении Республики Казахстан"
-        folder="Рейтинг медицинских организаций" 
+        folder={tComponent('directions.medical_rating', 'Рейтинг медицинских организаций')} 
         bgColor="bg-blue-100"
       />
 
@@ -71,7 +82,7 @@ export default function MedicalRating() {
         </div>
     </section>
     </>
-  )
+  );
 }
 
-MedicalRating.layout = page => <LayoutDirection img="reiting" h1="Рейтинг медицинских организаций" useVideo={true}>{page}</LayoutDirection>;
+MedicalRating.layout = (page) => <LayoutDirection img="reiting" h1={t('directions.medical_rating', 'Рейтинг медицинских организаций')}>{page}</LayoutDirection>;

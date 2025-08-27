@@ -31,6 +31,9 @@ Route::prefix('translations')->group(function () {
 Route::post('/translate', [TranslationAPIController::class, 'translate']);
 Route::post('/translate-batch', [TranslationAPIController::class, 'translateBatch']);
 
+// Маршрут для получения переводов страницы
+Route::post('/page-translations', [\App\Http\Controllers\LanguageController::class, 'getPageTranslations']);
+
 // API маршруты для управления языками
 Route::prefix('language')->group(function () {
     Route::post('/set', [TranslationAPIController::class, 'setLanguage']);

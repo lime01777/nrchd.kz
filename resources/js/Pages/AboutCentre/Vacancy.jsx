@@ -1,13 +1,24 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FileAccordTitle from '@/Components/FileAccordTitle';
 import FileAccordChlank from '@/Components/FileAccordChlank';
 import JobsChlank from '@/Components/JobsChlank';
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
 
 
 export default function Vacancy() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+
     const someDocuments = [
     {title: "Моделирование новой формулы дефицита", filetype: "XLS", img: 3},
     {title: "Обновленная методика определения дефицита КРЗ", filetype: "PDF", img: 2},
@@ -17,11 +28,11 @@ export default function Vacancy() {
     {title: "Методика прогнозирования", filetype: "PDF", img: 2},
     ];
     const massJobs = [
-      {title: "Главный специалист управления стандартизации медицинской помощи", date: "18 марта 2024 года", needs: "Требуемый опыт работы: 3 года"},
-      {title: "Главный специалист центра отраслевых технологических компетенций", date: "18 марта 2024 года", needs: "Требуемый опыт работы: 3 года"},
-      {title: "Главный специалист Управления развития медицинской науки", date: "18 марта 2024 года", needs: "Требуемый опыт работы: 3 года"},
-      {title: "Главный специалист управления оценки технологий здравоохранения", date: "18 марта 2024 года", needs: "Требуемый опыт работы: 3 года"},
-      {title: "Главный специалист управления оценки технологий здравоохранения", date: "18 марта 2024 года", needs: "Требуемый опыт работы: 3 года"},
+      {title: "Главный специалист управления стандартизации медицинской помощи", date: "18 марта 2024 года", needs: "Требуемый опыт работы: 3 года"},
+      {title: "Главный специалист центра отраслевых технологических компетенций", date: "18 марта 2024 года", needs: "Требуемый опыт работы: 3 года"},
+      {title: "Главный специалист Управления развития медицинской науки", date: "18 марта 2024 года", needs: "Требуемый опыт работы: 3 года"},
+      {title: "Главный специалист управления оценки технологий здравоохранения", date: "18 марта 2024 года", needs: "Требуемый опыт работы: 3 года"},
+      {title: "Главный специалист управления оценки технологий здравоохранения", date: "18 марта 2024 года", needs: "Требуемый опыт работы: 3 года"},
 
     ];
 
@@ -53,11 +64,8 @@ export default function Vacancy() {
       </div>
     </section>
 
-
-
-
     </>
   )
 }
 
-Vacancy.layout = (page) => <LayoutDirection img="humanresources" h1="Вакансии" >{page}</LayoutDirection>
+Vacancy.layout = (page) => <LayoutDirection img="humanresources" h1={t('vacancies', 'Вакансии')} >{page}</LayoutDirection>

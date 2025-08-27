@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 import ServiceTimeline from '@/Components/ServiceTimeline';
@@ -6,7 +6,19 @@ import PriceList from '@/Components/PriceList';
 import FilesAccord from '@/Components/FilesAccord';
 import FAQ from '@/Components/FAQ';
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
 export default function DrugExpertise() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
   const timelineItems = [
     { title: "Первичная оценка", value: "5 рабочих дней" },
     { title: "Проведение профессиональной экспертизы", value: "20 рабочих дней / 30 рабочих дней / 40 рабочих дней" },
@@ -91,7 +103,7 @@ export default function DrugExpertise() {
 
   return (
     <>
-      <Head title="Экспертиза лекарственных средств" meta={[{ name: 'description', content: 'Экспертиза лекарственных средств и фармацевтических препаратов.' }]} />
+              <Head title={tComponent('services.drug_expertise', 'Экспертиза лекарственных средств')} meta={[{ name: 'description', content: 'Экспертиза лекарственных средств и фармацевтических препаратов.' }]} />
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-2/3 px-4 mt-10">
@@ -146,4 +158,4 @@ export default function DrugExpertise() {
   );
 }
 
-DrugExpertise.layout = (page) => <ServicesPageLayout title="Экспертиза лекарственных средств" img="service-drug" bgColor="bg-purple-100">{page}</ServicesPageLayout>;
+DrugExpertise.layout = (page) => <ServicesPageLayout title={t('services.drug_expertise', 'Экспертиза лекарственных средств')} img="service-drug" bgColor="bg-purple-100">{page}</ServicesPageLayout>;

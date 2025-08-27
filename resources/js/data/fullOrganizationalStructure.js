@@ -961,6 +961,34 @@ export const fullOrganizationalStructureData = [
     ]
   },
   {
+    id: 46,
+    name: "Департамент медицинского туризма",
+    description: "Развитие и координация медицинского туризма в Казахстане",
+    employees: [
+      {
+        name: "Нургожина Мадина Темирбековна",
+        position: "Директор департамента",
+        contact: {
+          email: "m.nurgozhina@nrchd.kz"
+        }
+      },
+      {
+        name: "Тлеужан Аруана Аманкелдіқызы",
+        position: "Главный специалист по сертификации",
+        contact: {
+          email: "a.tleuzhan@nrchd.kz"
+        }
+      },
+      {
+        name: "Топаева Нурайым Ерболқызы",
+        position: "Координатор по работе с пациентами",
+        contact: {
+          email: "n.topaeva@nrchd.kz"
+        }
+      }
+    ]
+  },
+  {
     id: 39,
     name: "Республиканский Научно-практический центр ПМСП",
     description: "Научно-практический центр первичной медико-санитарной помощи",

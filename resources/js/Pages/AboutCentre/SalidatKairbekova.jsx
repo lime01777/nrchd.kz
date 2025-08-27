@@ -1,8 +1,21 @@
-import { Head } from '@inertiajs/react'
+import { Head, usePage } from '@inertiajs/react'
 import LayoutDirection from '@/Layouts/LayoutDirection'
 import React from 'react'
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
 export default function SalidatKairbekova() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+
   return (
     <>
     <Head title="NNCRZ" />
@@ -173,4 +186,4 @@ export default function SalidatKairbekova() {
   )
 }
 
-SalidatKairbekova.layout = (page) => <LayoutDirection img="salidatkairbekova" h1="Салидат Каирбекова">{page}</LayoutDirection>
+SalidatKairbekova.layout = (page) => <LayoutDirection img="salidatkairbekova" h1={t('about.salidat_kairbekova', 'Салидат Каирбекова')}>{page}</LayoutDirection>

@@ -55,24 +55,6 @@ export default function Tourism() {
           </div>
           
           <div className="px-8 mb-12">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4 px-4">Популярные направления медицинского туризма:</h3>
-            <div className="grid md:grid-cols-3 gap-6 mb-8 px-4">
-              <div className="border border-gray-200 p-5 rounded-lg">
-                <h4 className="text-lg font-semibold text-gray-800 mb-2">Кардиология</h4>
-                <p className="text-gray-600">Диагностика и лечение сердечно-сосудистых заболеваний</p>
-              </div>
-              
-              <div className="border border-gray-200 p-5 rounded-lg">
-                <h4 className="text-lg font-semibold text-gray-800 mb-2">Ортопедия</h4>
-                <p className="text-gray-600">Эндопротезирование суставов, спортивная травматология</p>
-              </div>
-              
-              <div className="border border-gray-200 p-5 rounded-lg">
-                <h4 className="text-lg font-semibold text-gray-800 mb-2">Репродуктивная медицина</h4>
-                <p className="text-gray-600">ЭКО и другие методы лечения бесплодия</p>
-              </div>
-            </div>
-            
             <FilesAccord
               title="Документы"
               items={[

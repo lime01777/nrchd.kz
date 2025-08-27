@@ -1,10 +1,24 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import LayoutNews from '@/Layouts/LayoutNews';
 import { Link } from '@inertiajs/react';
 import MediaSlider from '@/Components/MediaSlider';
 
-export default function NewsShow({ news, relatedNews }) {
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
+export default function NewsShow() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+    
+    const { news, relatedNews } = usePage().props;
   if (!news) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -146,4 +160,4 @@ export default function NewsShow({ news, relatedNews }) {
   );
 }
 
-NewsShow.layout = page => <LayoutNews img="news" h1="Новости">{page}</LayoutNews>;
+NewsShow.layout = page => <LayoutNews img="news" h1={t('news', 'Новости')}>{page}</LayoutNews>;

@@ -1,13 +1,25 @@
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import React from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
 import FolderChlank from '@/Components/FolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
 export default function MedicalScience() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
   return (
     <>
-      <Head title="Медицинская наука" meta={[{ name: 'description', content: 'Медицинская наука: исследования, разработки и достижения.' }]} />
+              <Head title={tComponent('directions.medical_science', 'Медицинская наука')} meta={[{ name: 'description', content: 'Медицинская наука: исследования, разработки и достижения.' }]} />
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>
@@ -86,4 +98,4 @@ export default function MedicalScience() {
   )
 }
 
-MedicalScience.layout = page => <LayoutDirection img="medicalscience" h1="Медицинская наука" useVideo={true}>{page}</LayoutDirection>
+MedicalScience.layout = page => <LayoutDirection img="medicalscience" h1={t('directions.medical_science', 'Медицинская наука')} useVideo={false}>{page}</LayoutDirection>

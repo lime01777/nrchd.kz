@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import React, { useState, useEffect } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import { Link } from '@inertiajs/react';
@@ -6,15 +6,29 @@ import LayoutNews from '@/Layouts/LayoutNews';
 import NewsImageSlider from '@/Components/NewsImageSlider';
 import { isValidVideoUrl } from '@/Utils/mediaUtils';
 
-export default function NewsIndex({ news, categories, filters }) {
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
+export default function NewsIndex() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+    
+    const { news, categories, filters } = usePage().props;
   const { data, setData, get, processing } = useForm({
     search: filters.search || '',
     category: filters.category || 'all',
   });
 
   const handleSearch = (e) => {
-    e.preventDefault();
-    get(route('news'), {
+    e.preventDefaultComponent();
+    getComponent(route('news'), {
       preserveState: true,
       preserveScroll: true,
     });
@@ -22,7 +36,7 @@ export default function NewsIndex({ news, categories, filters }) {
 
   const handleCategoryChange = (category) => {
     setData('category', category);
-    get(route('news'), {
+    getComponent(route('news'), {
       preserveState: true,
       preserveScroll: true,
     });
@@ -30,7 +44,7 @@ export default function NewsIndex({ news, categories, filters }) {
 
   return (
     <>
-      <Head title="Новости" meta={[{ name: 'description', content: 'Последние новости Национального научного центра развития здравоохранения.' }]} />
+              <Head title={tComponent('news', 'Новости')} meta={[{ name: 'description', content: 'Последние новости Национального научного центра развития здравоохранения.' }]} />
       
       <div className="container mx-auto px-4 py-8">
         {/* Поиск и фильтры */}
@@ -162,4 +176,4 @@ export default function NewsIndex({ news, categories, filters }) {
   );
 }
 
-NewsIndex.layout = page => <LayoutNews img="news" h1="Новости">{page}</LayoutNews>;
+NewsIndex.layout = page => <LayoutNews img="news" h1={t('news', 'Новости')}>{page}</LayoutNews>;

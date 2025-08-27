@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 import FolderChlank from '@/Components/FolderChlank';
 import LayoutDirection from '@/Layouts/LayoutDirection';
@@ -8,10 +8,16 @@ import FilesAccord from '@/Components/FilesAccord';
 import PageAccordions from "@/Components/PageAccordions";
 
 export default function NationalHealthAccounts() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const t = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
     return (
         <>
-            <Head title="Национальные счета здравоохранения" />
-            <PageHeader title="Национальные счета здравоохранения" />
+            <Head title={t('directions.health_accounts', 'Национальные счета здравоохранения')} />
+            <PageHeader title={t('directions.health_accounts', 'Национальные счета здравоохранения')} />
             
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">

@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
@@ -9,10 +9,23 @@ import FilesAccord from '@/Components/FilesAccord';
 import ActualFile from '@/Components/ActualFile';
 import FAQ from '@/Components/FAQ';
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
 export default function HealthAccounts() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+
   return (
     <>
-    <Head title="Национальные счета здравоохранения" meta={[{ name: 'description', content: 'Национальные счета здравоохранения: статистические данные и мониторинг финансовых потоков в системе здравоохранения Казахстана.' }]} />
+    <Head title={tComponent('directions.health_accounts', 'Национальные счета здравоохранения')} meta={[{ name: 'description', content: 'Национальные счета здравоохранения: статистические данные и мониторинг финансовых потоков в системе здравоохранения Казахстана.' }]} />
     
     <section className="text-gray-600 body-font pb-8">
       <div className="container px-5 py-12 mx-auto">
@@ -27,10 +40,10 @@ export default function HealthAccounts() {
     <section className="text-gray-600 body-font pb-8">
       <div className="container px-5 mx-auto">
         <FolderChlank 
-          h1="Документы Национальных счетов здравоохранения" 
-          color="bg-fuchsia-100" colorsec="bg-fuchsia-200"
-          bgColor="bg-purple-50"
-          route="health.accounts"
+          title="Документы Национальных счетов здравоохранения" 
+          description="Основные документы и отчеты"
+          href={route('health-accounts.documents')}
+          icon="📊"
         />
       </div>
     </section>
@@ -58,7 +71,7 @@ export default function HealthAccounts() {
     </section>
 
     </>
-  )
+  );
 }
 
-HealthAccounts.layout = page => <LayoutDirection img="account" h1="Национальные счета здравоохранения" useVideo={true}>{page}</LayoutDirection>
+HealthAccounts.layout = (page) => <LayoutDirection img="account" h1={t('directions.health_accounts', 'Национальные счета здравоохранения')}>{page}</LayoutDirection>;

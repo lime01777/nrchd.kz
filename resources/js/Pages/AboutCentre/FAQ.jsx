@@ -1,8 +1,21 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
 export default function FAQ() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+
     const [openQuestion, setOpenQuestion] = useState(null);
 
     const toggleQuestion = (index) => {
@@ -100,4 +113,4 @@ export default function FAQ() {
     );
 }
 
-FAQ.layout = (page) => <LayoutDirection img="aboutcenter" h1="Вопросы и ответы">{page}</LayoutDirection>;
+FAQ.layout = (page) => <LayoutDirection img="aboutcenter" h1={t('about.faq', 'Вопросы и ответы')}>{page}</LayoutDirection>;

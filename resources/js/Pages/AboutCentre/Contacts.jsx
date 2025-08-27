@@ -1,8 +1,21 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
 export default function Contacts() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+
     return (
         <>
             <Head title="Контактная информация | NNCRZ" />
@@ -103,7 +116,7 @@ export default function Contacts() {
                                     </div>
                                     <div>
                                         <button type="submit" className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                            Отправить
+                                            Отправить сообщение
                                         </button>
                                     </div>
                                 </form>
@@ -116,4 +129,4 @@ export default function Contacts() {
     );
 }
 
-Contacts.layout = (page) => <LayoutDirection img="contact" h1="Контактная информация">{page}</LayoutDirection>;
+Contacts.layout = (page) => <LayoutDirection img="contact" h1={t('about.contact_info', 'Контактная информация')}>{page}</LayoutDirection>;

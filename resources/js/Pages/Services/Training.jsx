@@ -1,11 +1,21 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 import FAQ from '@/Components/FAQ'; 
 import FilesAccord from '@/Components/FilesAccord';
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
 
 export default function Training() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода внутри компонента
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
   return (
     <>
     <Head title="Организация и проведение обучающих циклов по дополнительному и неформальному образованию ЦМОП" meta={[{ name: 'description', content: 'Обучающие циклы по дополнительному и неформальному образованию ЦМОП.' }]} />
@@ -89,4 +99,4 @@ export default function Training() {
   );
 }
 
-Training.layout = page => <ServicesPageLayout title="Организация и проведение обучающих циклов по дополнительному и неформальному образованию" img="headcentre">{page}</ServicesPageLayout>
+Training.layout = page => <ServicesPageLayout title={t('services.training', 'Организация и проведение обучающих циклов по дополнительному и неформальному образованию')} img="headcentre">{page}</ServicesPageLayout>

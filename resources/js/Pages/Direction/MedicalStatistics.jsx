@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
 import FilesAccord from '@/Components/FilesAccord';
@@ -8,10 +8,16 @@ import SwitchableChart from '@/Components/SwitchableChart';
 import DocumentCards from '@/Components/DocumentCards';
 
 export default function MedicalStatistics() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const t = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
     const [showFullText, setShowFullText] = useState(false);
 
     return (
-        <LayoutDirection img="static" h1="Медицинская статистика" useVideo={true}>
+        <LayoutDirection img="static" h1={t('directions.medical_statistics', 'Медицинская статистика')} useVideo={false}>
             <Head title="Медицинская статистика | NNCRZ" meta={[{ name: 'description', content: 'Медицинская статистика: данные, отчеты и аналитическая информация о состоянии здравоохранения.' }]} />
             
             {/* Блок с текстом и кнопкой "Читать далее" */}
@@ -44,7 +50,7 @@ export default function MedicalStatistics() {
                         className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px]
                         rounded-xl p-3 transition-all duration-300 ease-in-out hover:bg-gray-100 transform hover:scale-105"
                     >
-                        {showFullText ? 'Скрыть' : 'Читать далее'}
+                        {showFullText ? t('hide', 'Скрыть') : 'Читать далее'}
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                             fill="currentColor" className={`ml-1 transition-transform duration-500 ease-in-out ${showFullText ? 'rotate-45' : ''}`}>
                             <rect x="11.5" y="5" width="1" height="14" />

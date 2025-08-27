@@ -29,7 +29,7 @@ class UpdateComponentTranslations extends Command
         'Кадровые ресурсы здравоохранения' => 'directions.human_resources',
         'Электронное здравоохранение' => 'directions.electronic_health',
         'Аккредитация' => 'directions.accreditation',
-        'Оценка технологий здравоохранения' => 'directions.health_tech_assessment',
+        'Оценка технологий здравоохранения' => 'directions.health_tech_assessments',
         'Клинические протоколы' => 'directions.clinical_protocols',
         'Стратегические инициативы и международное сотрудничество' => 'directions.strategic_initiatives',
         'Рейтинг медицинских организаций' => 'directions.medical_rating',
@@ -52,7 +52,7 @@ class UpdateComponentTranslations extends Command
         // Услуги
         'Организация и проведение обучающих циклов по дополнительному и неформальному образованию' => 'services.training',
         'Оценка рекламных материалов' => 'services.ads_evaluation',
-        'Оценка технологий здравоохранения' => 'services.health_tech_assessment',
+        'Оценка технологии здравоохранения' => 'services.health_tech_assessment',
         'Экспертиза лекарственных средств' => 'services.drug_expertise',
         'Экспертиза научно-образовательных программ дополнительного образования' => 'services.education_programs',
         'Научно-медицинская экспертиза' => 'services.medical_expertise',
@@ -81,7 +81,7 @@ class UpdateComponentTranslations extends Command
         'Первый' => 'first',
         'Последний' => 'last',
         'Предыдущий' => 'previous',
-        'Следующий' => 'next',
+        'Следующий' => 'next_page',
         
         // Статусы
         'Активный' => 'status.active',

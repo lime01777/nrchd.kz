@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React, { useState, useRef } from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 import FilesAccord from '@/Components/FilesAccord';
@@ -147,7 +147,7 @@ const PostMonitoringForm = () => {
             <input 
               type="tel" 
               name="phone"
-              placeholder="Телефон"
+              placeholder={t('form.phone', 'Телефон')}
               value={formData.phone}
               onChange={handleChange}
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
@@ -251,6 +251,12 @@ const PostMonitoringForm = () => {
 };
 
 export default function PostAccreditationMonitoring() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const t = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');
@@ -284,7 +290,7 @@ export default function PostAccreditationMonitoring() {
 
   return (
     <>
-      <Head title="Постаккредитационный мониторинг" meta={[{ name: 'description', content: 'Постаккредитационный мониторинг медицинских организаций.' }]} />
+              <Head title={t('services.post_accreditation_monitoring', 'Постаккредитационный мониторинг')} meta={[{ name: 'description', content: 'Постаккредитационный мониторинг медицинских организаций.' }]} />
       
       <section className="text-gray-600 body-font">
         <div className="container mx-auto py-8 md:py-16 px-4 md:px-5">
@@ -370,9 +376,9 @@ export default function PostAccreditationMonitoring() {
   );
 }
 
-PostAccreditationMonitoring.layout = (page) => <ServicesPageLayout 
-  title="Постаккредитационный мониторинг" 
-  img="service-accreditation" 
-  bgColor="bg-blue-300"
-  hideForm={true}
->{page}</ServicesPageLayout>;
+  PostAccreditationMonitoring.layout = (page) => <ServicesPageLayout
+    title={t('services.post_accreditation_monitoring', 'Постаккредитационный мониторинг')}
+    img="service-accreditation"
+    bgColor="bg-blue-300"
+    hideForm={true}
+  >{page}</ServicesPageLayout>;

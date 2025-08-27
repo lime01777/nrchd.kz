@@ -58,6 +58,7 @@ export default function Header() {
         { title: t('directionsSubLinks.medical_statistics', "Медицинская статистика"), url: "medical.statistics"},
         { title: t('directionsSubLinks.direction_tech_competence', "Отраслевой центр технологических компетенций"), url: "direction.tech.competence" },
         { title: t('directionsSubLinks.center_prevention', "Центр профилактики и укрепления здоровья"), url: "center.prevention" },
+        { title: t('directionsSubLinks.medical_tourism', "Медицинский туризм"), url: "medical.tourism" },
         { title: "Объединенная комиссия по качеству медицинских услуг", url: "quality.commission" },
     ];
 
@@ -143,7 +144,7 @@ export default function Header() {
                         style={{ transformOrigin: "top center" }}>
                         {/* Первое меню */}
                         <ul className="w-96 py-2 border-r border-gray-100">
-                            {allDirectionsSubLinks.slice(0, 8).map((directionsublink, index) =>(
+                            {allDirectionsSubLinks.slice(0, Math.ceil(allDirectionsSubLinks.length / 2)).map((directionsublink, index) =>(
                             <DirectionsSubLinks key={index} title={directionsublink.title} url={directionsublink.url} />
 
                             ))}
@@ -151,7 +152,7 @@ export default function Header() {
 
                         {/* Второе меню */}
                         <ul className="w-96 py-2">
-                            {allDirectionsSubLinks.slice(8).map((directionsublink, index) =>(
+                            {allDirectionsSubLinks.slice(Math.ceil(allDirectionsSubLinks.length / 2)).map((directionsublink, index) =>(
                             <DirectionsSubLinks key={index} title={directionsublink.title} url={directionsublink.url} />
                             ))}
 

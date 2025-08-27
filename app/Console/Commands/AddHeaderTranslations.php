@@ -103,6 +103,7 @@ class AddHeaderTranslations extends Command
                 'directionsSubLinks.medical_statistics' => 'Медициналық статистика',
                 'directionsSubLinks.direction_tech_competence' => 'Технологиялық құзыреттілік салалық орталығы',
                 'directionsSubLinks.center_prevention' => 'Денсаулықты сақтау және нығайту орталығы',
+                'directionsSubLinks.medical_tourism' => 'Медициналық туризм',
             ],
             'ru' => [
                 'directionsSubLinks.medical_education' => 'Медицинское образование',
@@ -121,6 +122,7 @@ class AddHeaderTranslations extends Command
                 'directionsSubLinks.medical_statistics' => 'Медицинская статистика',
                 'directionsSubLinks.direction_tech_competence' => 'Отраслевой центр технологических компетенций',
                 'directionsSubLinks.center_prevention' => 'Центр профилактики и укрепления здоровья',
+                'directionsSubLinks.medical_tourism' => 'Медицинский туризм',
             ],
             'en' => [
                 'directionsSubLinks.medical_education' => 'Medical Education',
@@ -139,6 +141,7 @@ class AddHeaderTranslations extends Command
                 'directionsSubLinks.medical_statistics' => 'Medical Statistics',
                 'directionsSubLinks.direction_tech_competence' => 'Industry Center for Technological Competencies',
                 'directionsSubLinks.center_prevention' => 'Center for Prevention and Health Promotion',
+                'directionsSubLinks.medical_tourism' => 'Medical Tourism',
             ]
         ];
         

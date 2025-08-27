@@ -1,9 +1,15 @@
 import React from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import TabDocuments from '@/Components/TabDocuments';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 
 export default function TabDocumentsExample() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const t = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
   // Пример данных для компонента TabDocuments
   const tabsData = [
     {
@@ -20,21 +26,21 @@ export default function TabDocumentsExample() {
               url: "#"
             },
             {
-              title: "Название документа",
+              title: t('document.title', 'Название документа'),
               fileType: "pdf",
               fileSize: "24 KB",
               date: "27.03.2024",
               url: "#"
             },
             {
-              title: "Название документа",
+              title: t('document.title', 'Название документа'),
               fileType: "pdf",
               fileSize: "24 KB",
               date: "27.03.2024",
               url: "#"
             },
             {
-              title: "Название документа",
+              title: t('document.title', 'Название документа'),
               fileType: "pdf",
               fileSize: "24 KB",
               date: "27.03.2024",
@@ -58,14 +64,14 @@ export default function TabDocumentsExample() {
               url: "#"
             },
             {
-              title: "Название документа",
+              title: t('document.title', 'Название документа'),
               fileType: "pdf",
               fileSize: "24 KB",
               date: "27.03.2024",
               url: "#"
             },
             {
-              title: "Название документа",
+              title: t('document.title', 'Название документа'),
               fileType: "pdf",
               fileSize: "24 KB",
               date: "27.03.2024",
@@ -125,7 +131,7 @@ export default function TabDocumentsExample() {
         year: "2023 год",
         documents: [
           {
-            title: "Название документа",
+            title: t('document.title', 'Название документа'),
             fileType: "pdf", // тип файла
             fileSize: "24 KB", // размер файла
             date: "27.03.2024", // дата

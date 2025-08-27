@@ -1,156 +1,134 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
-import News from '@/Components/News';
-import ActualFile from '@/Components/ActualFile';
 import FilesAccord from '@/Components/FilesAccord';
 
-// Компонент формы аккредитации для связи с отделом
-const AccreditationForm = () => {
-  const [files, setFiles] = useState([]);
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
+// Компонент формы обратной связи
+const ContactForm = () => {
   const [formData, setFormData] = useState({
-    orgName: '',
+    name: '',
     email: '',
     phone: '',
+    organization: '',
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
-  
-  const handleFileChange = (e) => {
-    if (e.target.files) {
-      setFiles(Array.from(e.target.files));
-    }
-  };
-  
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [id]: value
+      [name]: value
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setSubmitStatus(null);
     
-    try {
-      // Импортируем сервис для отправки форм динамически
-      const { default: FormService } = await import('@/Services/FormService');
-      
-      // Отправляем данные формы
-      const response = await FormService.submitForm('medical_accreditation', formData, files);
-      
-      // Обрабатываем успешный ответ
-      console.log('Форма успешно отправлена:', response.data);
-      setSubmitStatus({ success: true, message: 'Форма успешно отправлена. Мы свяжемся с вами в ближайшее время.' });
-      
-      // Очищаем форму
+    // Здесь будет логика отправки формы
+    console.log('Form data:', formData);
+    
+    // Имитация отправки
+    setTimeout(() => {
+      setIsSubmitting(false);
       setFormData({
-        orgName: '',
+        name: '',
         email: '',
         phone: '',
+        organization: '',
         message: ''
       });
-      setFiles([]);
-    } catch (error) {
-      console.error('Ошибка при отправке формы:', error);
-      setSubmitStatus({ success: false, message: 'Произошла ошибка при отправке формы. Пожалуйста, попробуйте позже.' });
-    } finally {
-      setIsSubmitting(false);
-    }
+      alert('Форма отправлена успешно!');
+    }, 1000);
   };
-  
+
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4 border border-gray-200">
-      <h2 className="text-lg font-semibold text-gray-800 mb-3 text-center">Свяжитесь с нами</h2>
+    <div className="bg-white p-6 rounded-lg shadow-md">
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">Оставить заявку</h3>
       
-      {submitStatus && (
-        <div className={`mb-4 p-3 rounded-md ${submitStatus.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-          {submitStatus.message}
-        </div>
-      )}
-      
-      <form onSubmit={handleSubmit} className="text-sm">
-        <div className="mb-2">
-          <label htmlFor="orgName" className="block text-gray-700 text-xs font-medium mb-1">
-            Полное наименование организации
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+            ФИО *
           </label>
-          <input 
-            type="text" 
-            id="orgName" 
-            className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
             required
-            value={formData.orgName}
-            onChange={handleInputChange}
-            disabled={isSubmitting}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
           />
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
-          <div>
-            <label htmlFor="email" className="block text-gray-700 text-xs font-medium mb-1">
-              Email
-            </label>
-            <input 
-              type="email" 
-              id="email" 
-              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-              required
-              value={formData.email}
-              onChange={handleInputChange}
-              disabled={isSubmitting}
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="phone" className="block text-gray-700 text-xs font-medium mb-1">
-              Телефон
-            </label>
-            <input 
-              type="tel" 
-              id="phone" 
-              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-              required
-              value={formData.phone}
-              onChange={handleInputChange}
-              disabled={isSubmitting}
-            />
-          </div>
+
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            Email *
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+          />
         </div>
-        
-        <div className="mb-2">
-          <label htmlFor="message" className="block text-gray-700 text-xs font-medium mb-1">
+
+        <div>
+          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+            Телефон
+          </label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="organization" className="block text-sm font-medium text-gray-700 mb-1">
+            Организация
+          </label>
+          <input
+            type="text"
+            id="organization"
+            name="organization"
+            value={formData.organization}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
             Сообщение
           </label>
-          <textarea 
-            id="message" 
-            rows="2"
-            className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
+          <textarea
+            id="message"
+            name="message"
             value={formData.message}
-            onChange={handleInputChange}
-            disabled={isSubmitting}
-          ></textarea>
-        </div>
-        
-        <div className="flex items-center mb-2">
-          <input 
-            type="checkbox" 
-            id="consent" 
-            className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            required
-            disabled={isSubmitting}
+            onChange={handleChange}
+            rows="4"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
           />
-          <label htmlFor="consent" className="ml-2 block text-xs text-gray-700">
-            Я согласен на обработку персональных данных
-          </label>
         </div>
-        
-        <div className="flex justify-center">
-          <button 
+
+        <div className="flex justify-end">
+          <button
             type="submit"
             className={`bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-1.5 px-4 rounded-md text-sm transition duration-300 w-auto ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
             disabled={isSubmitting}
@@ -173,6 +151,13 @@ const AccreditationForm = () => {
 };
 
 export default function MedicalAccreditation() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+
   // Состояние для отслеживания, показывать ли описания
   const [showDescriptions, setShowDescriptions] = useState(false);
   
@@ -245,130 +230,86 @@ export default function MedicalAccreditation() {
         <div className="container px-5 mx-auto">
             <h2 className="text-2xl font-semibold text-center mb-12">Этапы подачи заявки</h2>
             
-            {/* Карточки этапов */}
-            <div 
-                className="flex flex-wrap md:flex-nowrap justify-between mb-12"
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-            >
-                {evaluationSteps.map((step, index) => (
-                    <div 
-                        key={step.id} 
-                        className="w-full md:w-1/5 px-2 mb-6 md:mb-0"
-                    >
-                        <div 
-                            className={`bg-white rounded-lg shadow-md overflow-hidden h-full ${showDescriptions ? 'shadow-lg' : ''}`}
-                            style={{ transition: 'all 0.3s ease' }}
-                        >
-                            {/* Верхняя часть карточки с номером */}
-                            <div className="bg-yellow-200 p-4 flex items-center justify-center">
-                                <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-800 font-bold">
-                                    {step.id}
-                                </div>
-                            </div>
-                            
-                            {/* Содержимое карточки */}
-                            <div className="p-4">
-                                <h3 className="font-semibold text-center mb-2">{step.title}</h3>
-                                
-                                {/* Описание (появляется на всех карточках при наведении на любую) */}
-                                <div 
-                                    className="text-sm text-gray-600 overflow-hidden transition-all duration-300"
-                                    style={{ 
-                                        maxHeight: showDescriptions ? '200px' : '0',
-                                        opacity: showDescriptions ? 1 : 0,
-                                        marginTop: showDescriptions ? '8px' : '0'
-                                    }}
-                                >
-                                    <p>{step.description}</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        {/* Стрелка для мобильных устройств */}
-                        {index < evaluationSteps.length - 1 && (
-                            <div className="flex justify-center md:hidden mt-2 mb-4">
-                                <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                                </svg>
-                            </div>
-                        )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {evaluationSteps.map((step, index) => (
+                <div
+                  key={step.id}
+                  className="bg-white p-6 rounded-lg shadow-md relative"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <div className="flex items-center mb-4">
+                    <div className="bg-yellow-100 text-yellow-800 rounded-full w-8 h-8 flex items-center justify-center font-semibold text-sm mr-3">
+                      {step.id}
                     </div>
-                ))}
-            </div>
-            
-            {/* Дополнительная информация */}
-            <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-gray-800">
-                <h3 className="font-semibold text-lg mb-3 text-gray-800">Контактная информация</h3>
-                <p className="text-gray-700">Для бесплатной консультации по аккредитации:</p>
-                <p className="font-medium text-gray-800 mt-1">8 (7172) 648-951</p>
-                <p className="text-gray-600 text-sm mt-1">Внутренние номера: 1000, 1143, 1127, 1046, 1064, 1014</p>
-                <a href='https://wa.me/77472996410' className='text-blue-600 hover:underline flex items-center gap-1'>
-                    <i className='fab fa-whatsapp text-green-500'></i> +7 747 299 6410
-                </a>
-                <a href='https://wa.me/77019825870' className='text-blue-600 hover:underline flex items-center gap-1'>
-                    <i className='fab fa-whatsapp text-green-500'></i> +7 701 982 5870
-                </a>
-
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                    <p className="text-sm text-gray-600">Наши специалисты готовы ответить на все ваши вопросы по процессу аккредитации и помочь с подготовкой необходимых документов.</p>
+                    <h3 className="text-lg font-semibold text-gray-800">{step.title}</h3>
+                  </div>
+                  
+                  {showDescriptions && (
+                    <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg p-4 mt-2 z-10">
+                      <p className="text-sm text-gray-600">{step.description}</p>
+                    </div>
+                  )}
                 </div>
+              ))}
             </div>
         </div>
     </section>
 
+    {/* Блок с направлениями */}
     <section className="text-gray-600 body-font">
-        <div className="container px-5 pt-8 mx-auto">
-            <div className='flex md:flex-row flex-wrap'>
-                <FolderChlank h1="Руководства" color="bg-yellow-200" colorsec="bg-yellow-300" href={route('accreditation.guides')} />
-                <FolderChlank h1="Эксперты внешней оценки" color="bg-yellow-200" colorsec="bg-yellow-300" href={route('accreditation.experts')} />
-                <FolderChlank h1="Обучающие материалы" color="bg-yellow-200" colorsec="bg-yellow-300" href={route('accreditation.training')} />
-                <FolderChlank h1="Действующие стандарты и критерии аккредитации" color="bg-yellow-200"
-                    colorsec="bg-yellow-300" href={route('accreditation.standards')} />
-                <FolderChlank h1="Архив стандартов" color="bg-yellow-200" colorsec="bg-yellow-300" href={route('accreditation.archive')} />
-                <FolderChlank h1="Акредитационная комиссия" color="bg-yellow-200"
-                    colorsec="bg-yellow-300" href={route('accreditation.commission')} />
+        <div className="container pt-8 mx-auto">
+            <div className='flex flex-wrap'>
+                <FolderChlank 
+                    title="Активные стандарты" 
+                    description="Действующие стандарты аккредитации"
+                    href={route('medical-accreditation.active-standards')}
+                    icon="📋"
+                />
+                <FolderChlank 
+                    title="Архив стандартов" 
+                    description="Архивные стандарты аккредитации"
+                    href={route('medical-accreditation.standards-archive')}
+                    icon="📚"
+                />
+                <FolderChlank 
+                    title="Руководства" 
+                    description="Руководства по аккредитации"
+                    href={route('medical-accreditation.guides')}
+                    icon="📖"
+                />
+                <FolderChlank 
+                    title="Эксперты" 
+                    description="Эксперты по аккредитации"
+                    href={route('medical-accreditation.experts')}
+                    icon="👥"
+                />
+                <FolderChlank 
+                    title="Комиссия" 
+                    description="Комиссия по аккредитации"
+                    href={route('medical-accreditation.commission')}
+                    icon="🏛️"
+                />
+                <FolderChlank 
+                    title="Учебные материалы" 
+                    description="Учебные материалы по аккредитации"
+                    href={route('medical-accreditation.training-materials')}
+                    icon="📝"
+                />
             </div>
         </div>
     </section>
-    <News />
-    
-    {/* Секция с актуальным документом и формой запроса, разделенная 2/3 и 1/3 */}
-    <section className="text-gray-600 body-font pb-12">
-        <div className="container px-5 mx-auto">
-            <div className="flex flex-wrap -mx-4">
-                {/* Актуальный документ - 2/3 ширины */}
-                <div className="w-full lg:w-2/3 px-4 mb-8 lg:mb-0">
-                    <div className="bg-yellow-100 p-6 rounded-lg shadow-md h-full">
-                        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Проверьте себя в списке аккредитованных медицинских организаций</h2>
-                        <ActualFile 
-                            folder="Accreditation/Reports" 
-                            title="" 
-                            bgColor="transparent"
-                            autoOpen={true}
-                            hideDownload={false}
-                        />
-                    </div>
-                </div>
-                
-                {/* Форма запроса на аккредитацию - 1/3 ширины */}
-                <div className="w-full lg:w-1/3 px-4">
-                    <div className="h-full">
-                        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Запрос на аккредитацию</h2>
-                        <AccreditationForm />
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-/>
 
+    {/* Блок с формой обратной связи */}
+    <section className="text-gray-600 body-font py-12 bg-gray-50">
+        <div className="container px-5 mx-auto">
+            <div className="max-w-2xl mx-auto">
+                <ContactForm />
+            </div>
+        </div>
+    </section>
     </>
-    
-  )
+  );
 }
 
-MedicalAccreditation.layout = page => <LayoutDirection img="medicalaccreditation" h1="Аккредитация медицинских организаций" useVideo={true}>{page}</LayoutDirection>
+MedicalAccreditation.layout = (page) => <LayoutDirection img="medicalaccreditation" h1={t('directions.medical_accreditation', 'Медицинская аккредитация')}>{page}</LayoutDirection>;

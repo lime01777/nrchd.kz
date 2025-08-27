@@ -414,6 +414,31 @@ Route::get('/direction/tech-competence', function () {
     return Inertia::render('Direction/TechCompetence');
 })->name('direction.tech.competence');
 
+// Маршруты для медицинского туризма
+Route::get('/medical-tourism', function () {
+    return Inertia::render('Direction/MedicalTourism');
+})->name('medical.tourism');
+
+Route::get('/medical-tourism/directions', function () {
+    return Inertia::render('Direction/MedicalTourism/Directions');
+})->name('medical.tourism.directions');
+
+Route::get('/medical-tourism/certification', function () {
+    return Inertia::render('Direction/MedicalTourism/Certification');
+})->name('medical.tourism.certification');
+
+Route::get('/medical-tourism/services', function () {
+    return Inertia::render('Direction/MedicalTourism/Services');
+})->name('medical.tourism.services');
+
+Route::get('/medical-tourism/documents', function () {
+    return Inertia::render('Direction/MedicalTourism/Documents');
+})->name('medical.tourism.documents');
+
+Route::get('/medical-tourism/contacts', function () {
+    return Inertia::render('Direction/MedicalTourism/Contacts');
+})->name('medical.tourism.contacts');
+
 // Маршруты для Центральной комиссии по биоэтике
 Route::get('/bioethics', function () {
     return Inertia::render('Direction/Bioethics');
@@ -442,6 +467,13 @@ Route::get('/bioethics/composition', function () {
 // Маршруты для новостей
 Route::get('/news', [App\Http\Controllers\NewsController::class, 'index'])->name('news');
 Route::get('/news/{slug}', [App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
+
+// Маршруты для клиник
+Route::get('/clinics', [App\Http\Controllers\ClinicController::class, 'index'])->name('clinics');
+Route::get('/clinics/{slug}', [App\Http\Controllers\ClinicController::class, 'show'])->name('clinics.show');
+
+// Маршруты для страниц отдельных клиник медицинского туризма
+Route::get('/clinics/show/{route}', [App\Http\Controllers\ClinicController::class, 'showByRoute'])->name('clinics.show.by.route');
 
 // Скрытая страница конференции по медицинскому туризму (без публичных ссылок)
 Route::get('/medical-tourism-conference', function () {
@@ -685,6 +717,12 @@ Route::post('/about-centre/vacancies/{slug}/apply', [App\Http\Controllers\Vacanc
 // Маршруты для админ-панели вакансий (требуют авторизации)
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::resource('vacancies', AdminVacancyController::class);
+    
+    // Управление клиниками
+    Route::resource('clinics', \App\Http\Controllers\Admin\ClinicController::class);
+    Route::post('/clinics/{clinic}/images', [\App\Http\Controllers\Admin\ClinicController::class, 'uploadImages'])->name('admin.clinics.upload-images');
+    Route::delete('/clinics/{clinic}/images', [\App\Http\Controllers\Admin\ClinicController::class, 'deleteImage'])->name('admin.clinics.delete-image');
+    Route::put('/clinics/{clinic}/gallery/reorder', [\App\Http\Controllers\Admin\ClinicController::class, 'reorderGallery'])->name('admin.clinics.reorder-gallery');
 });
 
 require __DIR__.'/auth.php';

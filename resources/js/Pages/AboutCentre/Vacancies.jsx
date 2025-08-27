@@ -1,6 +1,12 @@
 import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
+
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
 
 const VacancyCard = ({ vacancy }) => {
     // Преобразуем дату в формат ДД месяца ГГГГ года
@@ -40,9 +46,16 @@ const VacancyCard = ({ vacancy }) => {
 };
 
 export default function Vacancies({ vacancies }) {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+
     return (
         <>
-            <Head title="Вакансии" />
+            <Head title={tComponent('vacancies', 'Вакансии')} />
             
             <div className="py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
@@ -65,4 +78,4 @@ export default function Vacancies({ vacancies }) {
     );
 }
 
-Vacancies.layout = page => <LayoutDirection img={'humanresources'} h1={'Вакансии'} children={page} useVideo={true}/>;
+Vacancies.layout = page => <LayoutDirection img={'humanresources'} h1={t('vacancies', 'Вакансии')} children={page} useVideo={true}/>;

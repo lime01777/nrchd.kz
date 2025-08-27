@@ -1,10 +1,23 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
 export default function HumanResources() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+
   const [showFullText, setShowFullText] = useState(false);
   
   return (
@@ -91,73 +104,39 @@ export default function HumanResources() {
               <li data-translate>Разработка методических руководств и рекомендаций в области кадровых ресурсов здравоохранения.</li>
             </ul>
             <p className="mb-4 tracking-wide text-gray-700 leading-relaxed" data-translate>
-              Внедрение современных HR-технологий управления персоналом – ключ к трансформации кадровых служб в организациях здравоохранения всех уровней.
-              Обсерватория помогает при разработке и изучении на уровне медицинских организаций корпоративной политики управления персоналом с внедрением современных HR-технологий, аутсорсинга, определения и эффективности управления, а также качественного рекрутинга.
+              Деятельность Обсерватории направлена на формирование сбалансированной, устойчивой и ориентированной на будущее кадровой политики в здравоохранении.
             </p>
           </div>
           </div>
-{/*             <div className="flex justify-center mt-4">
-                <button 
-                  onClick={() => setShowFullText(!showFullText)}
-                  className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px]
-                  rounded-xl p-3 transition-all duration-300 ease-in-out hover:bg-gray-100 transform hover:scale-105">
-                    {showFullText ? 'Скрыть' : 'Читать далее'}
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="currentColor" className={`ml-1 transition-transform duration-500 ease-in-out ${showFullText ? 'rotate-45' : ''}`}>
-                        <rect x="11.5" y="5" width="1" height="14" />
-                        <rect x="5" y="11.5" width="14" height="1" />
-                    </svg>
-                </button>
-            </div> */}
         </div>
     </section>
-
+    
     <section className="text-gray-600 body-font">
-        <div className="container pt-8 pb-24 mx-auto">
-            <div className="flex md:flex-row flex-wrap">
+        <div className="container pt-8 mx-auto">
+            <div className='flex flex-wrap'>
                 <FolderChlank 
-                    h1="Выпускникам" 
-                    color="bg-red-100" 
-                    colorsec="bg-red-200" 
-                    href={route('human.resources.graduates')}
-                />
-                <FolderChlank 
-                    h1="Руководителям" 
-                    color="bg-red-100" 
-                    colorsec="bg-red-200" 
-                    href={route('human.resources.managers')}
-                />
-                <FolderChlank 
-                    h1="Медработникам" 
-                    color="bg-red-100" 
-                    colorsec="bg-red-200" 
+                    title="Медицинские работники" 
+                    description="Информация для медицинских работников"
                     href={route('human.resources.medical.workers')}
+                    icon="👨‍⚕️"
+                />
+                <FolderChlank 
+                    title="Руководители" 
+                    description="Информация для руководителей"
+                    href={route('human.resources.managers')}
+                    icon="👔"
+                />
+                <FolderChlank 
+                    title="Выпускники" 
+                    description="Информация для выпускников"
+                    href={route('human.resources.graduates')}
+                    icon="🎓"
                 />
             </div>
         </div>
     </section>
-    <section className="text-gray-600 body-font">
-        <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
-            {/* Первый аккордеон */}
-
-                <FilesAccord 
-                    folder="Кадровые ресурсы/Набор - Кадровый дефицит"
-                    title="Кадровый дефицит"
-                    bgColor="bg-red-100"
-                    defaultOpen={true}
-                />
-            
-            {/* Второй аккордеон */}
-            
-                <FilesAccord 
-                    folder="Кадровые ресурсы/Набор - Планирование и прогнозирвоание кадровых ресурсов здравоохранения"
-                    title="Планирование и прогнозирование кадровых ресурсов здравоохранения"
-                    bgColor="bg-red-100"
-                />
-        </div>
-    </section>
     </>
-  )
+  );
 }
 
-HumanResources.layout = (page) => <LayoutDirection img={'humanresources'} h1={'Кадровые ресурсы здравоохранения'} useVideo={true}>{page}</LayoutDirection>;
+HumanResources.layout = (page) => <LayoutDirection img="humanresources" h1={t('directions.human_resources', 'Кадровые ресурсы')}>{page}</LayoutDirection>;

@@ -65,10 +65,14 @@ class NewsController extends Controller
             'category.*' => 'string',
             'status' => 'required|string|in:Черновик,Опубликовано,Запланировано',
             'publish_date' => 'nullable|date',
-            'images' => 'nullable|array|max:15',
-            'images.*' => 'nullable|string',
-            'image_files' => 'nullable|array|max:15',
-            'image_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'media' => 'nullable|array|max:15',
+            'media.*' => 'nullable|array',
+            'media.*.path' => 'nullable|string',
+            'media.*.type' => 'nullable|string|in:image,video',
+            'media.*.name' => 'nullable|string',
+            'media.*.source' => 'nullable|string|in:library,file',
+            'media_files' => 'nullable|array|max:15',
+            'media_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,mp4,avi,mov,wmv,flv,webm|max:51200',
         ]);
 
         try {
@@ -82,12 +86,12 @@ class NewsController extends Controller
             // Генерируем slug
             $slug = $this->generateUniqueSlug($validated['title']);
 
-            // Обрабатываем изображения
-            $imagePaths = $this->processImages($request);
+            // Обрабатываем медиа-файлы
+            $mediaPaths = $this->processMedia($request);
 
-            // Проверяем, что хотя бы одно изображение загружено
-            if (empty($imagePaths)) {
-                Log::warning('Попытка создания новости без изображений', [
+            // Проверяем, что хотя бы один медиа-файл загружен
+            if (empty($mediaPaths)) {
+                Log::warning('Попытка создания новости без медиа-файлов', [
                     'title' => $validated['title']
                 ]);
             }
@@ -100,14 +104,14 @@ class NewsController extends Controller
             $news->category = $validated['category'];
             $news->status = $validated['status'];
             $news->publish_date = $validated['publish_date'] ?? null;
-            $news->images = $imagePaths;
+            $news->images = $mediaPaths; // Сохраняем в поле images для обратной совместимости
             $news->save();
 
             Log::info('Создана новость', [
                 'id' => $news->id,
                 'title' => $news->title,
-                'images_count' => count($imagePaths),
-                'images' => $imagePaths
+                'media_count' => count($mediaPaths),
+                'media' => $mediaPaths
             ]);
 
             return redirect()->route('admin.news')->with('success', 'Новость успешно создана');
@@ -117,7 +121,7 @@ class NewsController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'title' => $request->input('title'),
-                'files' => $request->hasFile('image_files') ? count($request->file('image_files')) : 0
+                'files' => $request->hasFile('media_files') ? count($request->file('media_files')) : 0
             ]);
 
             return back()->withErrors(['error' => 'Произошла ошибка при создании новости. Проверьте логи сервера.']);
@@ -160,10 +164,14 @@ class NewsController extends Controller
             'category.*' => 'string',
             'status' => 'required|string|in:Черновик,Опубликовано,Запланировано',
             'publish_date' => 'nullable|date',
-            'images' => 'nullable|array|max:15',
-            'images.*' => 'nullable|string',
-            'image_files' => 'nullable|array|max:15',
-            'image_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'media' => 'nullable|array|max:15',
+            'media.*' => 'nullable|array',
+            'media.*.path' => 'nullable|string',
+            'media.*.type' => 'nullable|string|in:image,video',
+            'media.*.name' => 'nullable|string',
+            'media.*.source' => 'nullable|string|in:existing,library,file',
+            'media_files' => 'nullable|array|max:15',
+            'media_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,mp4,avi,mov,wmv,flv,webm|max:51200',
         ]);
 
         try {
@@ -174,8 +182,8 @@ class NewsController extends Controller
                 $slug = $news->slug;
             }
 
-            // Обрабатываем изображения
-            $imagePaths = $this->processImages($request, $news->images);
+            // Обрабатываем медиа-файлы
+            $mediaPaths = $this->processMedia($request, $news->images);
 
             // Обновляем новость
             $news->title = $validated['title'];
@@ -184,14 +192,14 @@ class NewsController extends Controller
             $news->category = $validated['category'];
             $news->status = $validated['status'];
             $news->publish_date = $validated['publish_date'] ?? null;
-            $news->images = $imagePaths;
+            $news->images = $mediaPaths; // Сохраняем в поле images для обратной совместимости
             $news->save();
 
             Log::info('Обновлена новость', [
                 'id' => $news->id,
                 'title' => $news->title,
-                'images_count' => count($imagePaths),
-                'images' => $imagePaths
+                'media_count' => count($mediaPaths),
+                'media' => $mediaPaths
             ]);
 
             return redirect()->route('admin.news')->with('success', 'Новость успешно обновлена');
@@ -201,7 +209,7 @@ class NewsController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'news_id' => $id,
-                'files' => $request->hasFile('image_files') ? count($request->file('image_files')) : 0
+                'files' => $request->hasFile('media_files') ? count($request->file('media_files')) : 0
             ]);
 
             return back()->withErrors(['error' => 'Произошла ошибка при обновлении новости. Проверьте логи сервера.']);
@@ -216,10 +224,10 @@ class NewsController extends Controller
         try {
             $news = News::findOrFail($id);
             
-            // Удаляем изображения
+            // Удаляем медиа-файлы
             if ($news->images) {
-                foreach ($news->images as $imagePath) {
-                    $this->deleteImage($imagePath);
+                foreach ($news->images as $mediaPath) {
+                    $this->deleteMedia($mediaPath);
                 }
             }
 
@@ -243,18 +251,18 @@ class NewsController extends Controller
     }
 
     /**
-     * Обработка изображений
+     * Обработка медиа-файлов (изображения и видео)
      */
-    private function processImages(Request $request, $existingImages = [])
+    private function processMedia(Request $request, $existingMedia = [])
     {
-        $imagePaths = [];
+        $mediaPaths = [];
 
         // Проверяем и создаем директорию если не существует
         $storagePath = storage_path('app/public/news');
         if (!file_exists($storagePath)) {
             try {
                 mkdir($storagePath, 0755, true);
-                Log::info('Создана директория для изображений', ['path' => $storagePath]);
+                Log::info('Создана директория для медиа-файлов', ['path' => $storagePath]);
             } catch (\Exception $e) {
                 Log::error('Ошибка создания директории', [
                     'path' => $storagePath,
@@ -264,12 +272,12 @@ class NewsController extends Controller
         }
 
         // Обрабатываем новые загруженные файлы
-        if ($request->hasFile('image_files')) {
-            foreach ($request->file('image_files') as $file) {
+        if ($request->hasFile('media_files')) {
+            foreach ($request->file('media_files') as $file) {
                 if ($file && $file->isValid()) {
                     try {
                         // Проверяем размер файла
-                        if ($file->getSize() > 10 * 1024 * 1024) { // 10MB
+                        if ($file->getSize() > 50 * 1024 * 1024) { // 50MB
                             Log::warning('Файл слишком большой', [
                                 'name' => $file->getClientOriginalName(),
                                 'size' => $file->getSize()
@@ -278,7 +286,10 @@ class NewsController extends Controller
                         }
 
                         // Проверяем тип файла
-                        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                        $allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                        $allowedVideoTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/flv', 'video/webm'];
+                        $allowedTypes = array_merge($allowedImageTypes, $allowedVideoTypes);
+                        
                         if (!in_array($file->getMimeType(), $allowedTypes)) {
                             Log::warning('Неподдерживаемый тип файла', [
                                 'name' => $file->getClientOriginalName(),
@@ -292,12 +303,13 @@ class NewsController extends Controller
                         // Проверяем, что файл действительно сохранен
                         $fullPath = storage_path('app/public/' . $path);
                         if (file_exists($fullPath)) {
-                            $imagePaths[] = '/storage/' . $path;
+                            $mediaPaths[] = '/storage/' . $path;
                             
-                            Log::info('Загружено изображение', [
+                            Log::info('Загружен медиа-файл', [
                                 'name' => $file->getClientOriginalName(),
                                 'path' => '/storage/' . $path,
-                                'size' => filesize($fullPath)
+                                'size' => filesize($fullPath),
+                                'type' => in_array($file->getMimeType(), $allowedVideoTypes) ? 'video' : 'image'
                             ]);
                         } else {
                             Log::error('Файл не сохранен', [
@@ -306,7 +318,7 @@ class NewsController extends Controller
                             ]);
                         }
                     } catch (\Exception $e) {
-                        Log::error('Ошибка загрузки изображения', [
+                        Log::error('Ошибка загрузки медиа-файла', [
                             'file' => $file->getClientOriginalName(),
                             'error' => $e->getMessage(),
                             'trace' => $e->getTraceAsString()
@@ -321,52 +333,54 @@ class NewsController extends Controller
             }
         }
 
-        // Обрабатываем URL изображений из библиотеки (включая выбранные из существующих)
-        $inputImages = $request->input('images', []);
-        if (is_array($inputImages)) {
-            foreach ($inputImages as $url) {
-                if (is_string($url) && !empty(trim($url))) {
+        // Обрабатываем медиа из библиотеки и существующие файлы
+        $inputMedia = $request->input('media', []);
+        if (is_array($inputMedia)) {
+            foreach ($inputMedia as $mediaItem) {
+                if (is_array($mediaItem) && isset($mediaItem['path']) && !empty(trim($mediaItem['path']))) {
+                    $path = $mediaItem['path'];
+                    
                     // Проверяем, что URL не содержит отсутствующие файлы
-                    if (strpos($url, '/storage/news/') === 0) {
-                        $filename = basename($url);
+                    if (strpos($path, '/storage/news/') === 0) {
+                        $filename = basename($path);
                         $filepath = storage_path('app/public/news/' . $filename);
                         
                         if (file_exists($filepath)) {
-                            $imagePaths[] = $url;
+                            $mediaPaths[] = $path;
                         } else {
-                            Log::warning('Отсутствует файл изображения', [
-                                'url' => $url,
+                            Log::warning('Отсутствует медиа-файл', [
+                                'path' => $path,
                                 'filepath' => $filepath
                             ]);
                         }
                     } else {
-                        $imagePaths[] = $url;
+                        $mediaPaths[] = $path;
                     }
                 }
             }
         }
 
         // Удаляем дубликаты
-        $imagePaths = array_unique($imagePaths);
+        $mediaPaths = array_unique($mediaPaths);
 
-        Log::info('Обработка изображений завершена', [
-            'total_images' => count($imagePaths),
-            'paths' => $imagePaths
+        Log::info('Обработка медиа-файлов завершена', [
+            'total_media' => count($mediaPaths),
+            'paths' => $mediaPaths
         ]);
 
-        return $imagePaths;
+        return $mediaPaths;
     }
 
     /**
-     * Удаление изображения
+     * Удаление медиа-файла
      */
-    private function deleteImage($path)
+    private function deleteMedia($path)
     {
         if (strpos($path, '/storage/') === 0) {
             $filePath = public_path('storage' . str_replace('/storage', '', $path));
             if (file_exists($filePath)) {
                 unlink($filePath);
-                Log::info('Удален файл изображения', ['path' => $filePath]);
+                Log::info('Удален медиа-файл', ['path' => $filePath]);
             }
         }
     }

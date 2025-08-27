@@ -1,9 +1,22 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import Sponsors from '@/Components/Sponsors';
 
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+};
+
+
 export default function Partners() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const tComponent = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+
     return (
         <>
             <Head title="Партнеры | NNCRZ" />
@@ -56,4 +69,4 @@ export default function Partners() {
     );
 }
 
-Partners.layout = (page) => <LayoutDirection img="partner" h1="Партнеры">{page}</LayoutDirection>;
+Partners.layout = (page) => <LayoutDirection img="partner" h1={t('about.partners', 'Партнеры')}>{page}</LayoutDirection>;

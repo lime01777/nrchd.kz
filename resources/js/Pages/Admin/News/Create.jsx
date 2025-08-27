@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
 import MediaManager from '@/Components/FileManager/MediaManager';
+import MediaSlider from '@/Components/MediaSlider';
 
 const DEFAULT_CATEGORIES = [
   'Общие',
@@ -15,7 +16,7 @@ const DEFAULT_CATEGORIES = [
 
 export default function NewsCreate() {
   const [showMediaManager, setShowMediaManager] = useState(false);
-  const [selectedImages, setSelectedImages] = useState([]);
+  const [dragActive, setDragActive] = useState(false);
 
   const { data, setData, post, processing, errors } = useForm({
     title: '',
@@ -23,8 +24,8 @@ export default function NewsCreate() {
     category: [],
     status: 'Черновик',
     publish_date: new Date().toISOString().substr(0, 10),
-    images: [],
-    image_files: [],
+    media: [], // Унифицированное поле для всех медиа-файлов
+    media_files: [], // Новые загружаемые файлы
   });
 
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -53,58 +54,126 @@ export default function NewsCreate() {
     setData('category', []);
   };
 
-  // Обработка выбора изображений из библиотеки
-  const handleImageSelect = (images) => {
+  // Обработка выбора медиа из библиотеки
+  const handleMediaSelect = (mediaItems) => {
     // Проверяем лимит файлов
-    const totalImages = (data.image_files ? data.image_files.length : 0) + images.length;
+    const totalMedia = (data.media ? data.media.length : 0) + (data.media_files ? data.media_files.length : 0) + mediaItems.length;
     
-    if (totalImages > 15) {
-      alert(`Максимальное количество изображений: 15. У вас уже ${data.image_files ? data.image_files.length : 0} загруженных файлов.`);
+    if (totalMedia > 15) {
+      alert(`Максимальное количество медиа-файлов: 15. У вас уже ${data.media ? data.media.length : 0} файлов из библиотеки и ${data.media_files ? data.media_files.length : 0} загруженных файлов.`);
       return;
     }
     
-    const imageUrls = images.map(img => img.path);
-    setSelectedImages(images);
-    setData('images', imageUrls);
+    const newMedia = mediaItems.map(item => ({
+      path: item.path,
+      type: item.type || (item.path.includes('.mp4') || item.path.includes('.avi') || item.path.includes('.mov') ? 'video' : 'image'),
+      name: item.name || item.path.split('/').pop(),
+      source: 'library'
+    }));
+    
+    setData('media', [...(data.media || []), ...newMedia]);
   };
 
-  // Обработка загрузки файлов
+  // Обработка загрузки файлов через input
   const handleFileUpload = (event) => {
     const files = Array.from(event.target.files);
+    processFiles(files);
+  };
+
+  // Обработка drag & drop
+  const handleDrag = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  }, []);
+
+  const handleDrop = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
     
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const files = Array.from(e.dataTransfer.files);
+      processFiles(files);
+    }
+  }, []);
+
+  // Обработка файлов
+  const processFiles = (files) => {
     // Проверяем лимит файлов
-    const totalImages = (data.images ? data.images.length : 0) + (data.image_files ? data.image_files.length : 0) + files.length;
+    const totalMedia = (data.media ? data.media.length : 0) + (data.media_files ? data.media_files.length : 0) + files.length;
     
-    if (totalImages > 15) {
-      alert(`Максимальное количество изображений: 15. У вас уже ${data.images ? data.images.length : 0} изображений из библиотеки и ${data.image_files ? data.image_files.length : 0} загруженных файлов.`);
+    if (totalMedia > 15) {
+      alert(`Максимальное количество медиа-файлов: 15. У вас уже ${data.media ? data.media.length : 0} файлов из библиотеки и ${data.media_files ? data.media_files.length : 0} загруженных файлов.`);
       return;
     }
-    
-    // Проверяем размер файлов
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    const oversizedFiles = files.filter(file => file.size > maxSize);
-    
-    if (oversizedFiles.length > 0) {
-      const fileNames = oversizedFiles.map(f => f.name).join(', ');
-      alert(`Следующие файлы превышают лимит 10MB: ${fileNames}`);
-      return;
+
+    // Фильтруем и валидируем файлы
+    const validFiles = files.filter(file => {
+      const maxSize = 50 * 1024 * 1024; // 50MB для видео
+      const imageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      const videoTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/flv', 'video/webm'];
+      
+      if (file.size > maxSize) {
+        alert(`Файл ${file.name} превышает лимит 50MB`);
+        return false;
+      }
+      
+      if (!imageTypes.includes(file.type) && !videoTypes.includes(file.type)) {
+        alert(`Файл ${file.name} имеет неподдерживаемый тип`);
+        return false;
+      }
+      
+      return true;
+    });
+
+    if (validFiles.length > 0) {
+      setData('media_files', [...(data.media_files || []), ...validFiles]);
     }
+  };
+
+  // Удаление медиа-файла
+  const removeMedia = (index, source) => {
+    if (source === 'library') {
+      const newMedia = data.media.filter((_, i) => i !== index);
+      setData('media', newMedia);
+    } else {
+      const newFiles = data.media_files.filter((_, i) => i !== index);
+      setData('media_files', newFiles);
+    }
+  };
+
+  // Перемещение медиа-файлов
+  const moveMedia = (fromIndex, toIndex, source) => {
+    if (source === 'library') {
+      const newMedia = [...data.media];
+      const [movedItem] = newMedia.splice(fromIndex, 1);
+      newMedia.splice(toIndex, 0, movedItem);
+      setData('media', newMedia);
+    } else {
+      const newFiles = [...data.media_files];
+      const [movedItem] = newFiles.splice(fromIndex, 1);
+      newFiles.splice(toIndex, 0, movedItem);
+      setData('media_files', newFiles);
+    }
+  };
+
+  // Получение всех медиа для предварительного просмотра
+  const getAllMedia = () => {
+    const libraryMedia = data.media || [];
+    const fileMedia = (data.media_files || []).map((file, index) => ({
+      path: URL.createObjectURL(file),
+      type: file.type.startsWith('video/') ? 'video' : 'image',
+      name: file.name,
+      source: 'file',
+      fileIndex: index
+    }));
     
-    setData('image_files', files);
-  };
-
-  // Удаление изображения из библиотеки
-  const removeLibraryImage = (index) => {
-    const newImages = selectedImages.filter((_, i) => i !== index);
-    const newUrls = newImages.map(img => img.path);
-    setSelectedImages(newImages);
-    setData('images', newUrls);
-  };
-
-  // Удаление загруженного файла
-  const removeUploadedFile = (index) => {
-    const newFiles = data.image_files.filter((_, i) => i !== index);
-    setData('image_files', newFiles);
+    return [...libraryMedia, ...fileMedia];
   };
 
   // Отправка формы
@@ -131,13 +200,15 @@ export default function NewsCreate() {
       title: data.title,
       content_length: data.content.length,
       categories: data.category,
-      images_count: data.images.length,
-      files_count: data.image_files.length,
+      media_count: data.media.length,
+      files_count: data.media_files.length,
       status: data.status
     });
 
     post(route('admin.news.store'));
   };
+
+  const allMedia = getAllMedia();
 
   return (
     <AdminLayout>
@@ -240,7 +311,7 @@ export default function NewsCreate() {
                   )}
                 </div>
 
-                {/* Статус */}
+                {/* Статус и дата */}
                 <div className="sm:col-span-3">
                   <label htmlFor="status" className="block text-sm font-medium text-gray-700">
                     Статус
@@ -260,7 +331,6 @@ export default function NewsCreate() {
                   </div>
                 </div>
 
-                {/* Дата публикации */}
                 <div className="sm:col-span-3">
                   <label htmlFor="publish_date" className="block text-sm font-medium text-gray-700">
                     Дата публикации
@@ -277,50 +347,52 @@ export default function NewsCreate() {
                   </div>
                 </div>
 
-                {/* Изображения */}
+                {/* Медиа-файлы */}
                 <div className="sm:col-span-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Изображения (до 15 файлов)
+                    Медиа-файлы (до 15 файлов)
                     <span className="ml-2 text-sm text-gray-500">
-                      {((data.images ? data.images.length : 0) + (data.image_files ? data.image_files.length : 0))}/15
+                      {allMedia.length}/15
                     </span>
                   </label>
                   
-                  {/* Загрузка файлов */}
-                  <div className="mb-4">
-                    <label className="block text-sm text-gray-600 mb-2">
-                      Загрузить файлы (до 15 изображений, максимум 10MB каждое):
-                    </label>
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                    />
-                    {data.image_files && data.image_files.length > 0 && (
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-600 mb-2">Загруженные файлы:</p>
-                        <div className="space-y-1">
-                          {data.image_files.map((file, index) => (
-                            <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                              <span className="text-sm text-gray-700">{file.name}</span>
-                              <button
-                                type="button"
-                                onClick={() => removeUploadedFile(index)}
-                                className="text-red-600 hover:text-red-800"
-                              >
-                                Удалить
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                  {/* Drag & Drop зона */}
+                  <div
+                    className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                      dragActive 
+                        ? 'border-blue-500 bg-blue-50' 
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                  >
+                    <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                      <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <div className="mt-4">
+                      <p className="text-sm text-gray-600">
+                        Перетащите файлы сюда или{' '}
+                        <label className="text-blue-600 hover:text-blue-500 cursor-pointer">
+                          выберите файлы
+                          <input
+                            type="file"
+                            multiple
+                            accept="image/*,video/*"
+                            onChange={handleFileUpload}
+                            className="hidden"
+                          />
+                        </label>
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Поддерживаются изображения (JPG, PNG, GIF, WebP) и видео (MP4, AVI, MOV, WMV, FLV, WebM) до 50MB
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Библиотека изображений */}
-                  <div className="mb-4">
+                  {/* Библиотека медиа */}
+                  <div className="mt-4">
                     <button
                       type="button"
                       onClick={() => setShowMediaManager(true)}
@@ -331,31 +403,68 @@ export default function NewsCreate() {
                       </svg>
                       Выбрать из библиотеки
                     </button>
-                    
-                    {selectedImages.length > 0 && (
-                      <div className="mt-3">
-                        <p className="text-sm text-gray-600 mb-2">Выбранные изображения:</p>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                          {selectedImages.map((image, index) => (
-                            <div key={index} className="relative group">
-                              <img
-                                src={image.path}
-                                alt={image.name}
-                                className="w-full h-24 object-cover rounded border"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => removeLibraryImage(index)}
-                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
+
+                  {/* Предварительный просмотр слайдера */}
+                  {allMedia.length > 0 && (
+                    <div className="mt-6">
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">Предварительный просмотр слайдера:</h4>
+                      <MediaSlider 
+                        media={allMedia}
+                        className="w-full"
+                        autoPlay={false}
+                        interval={5000}
+                      />
+                    </div>
+                  )}
+
+                  {/* Список медиа-файлов */}
+                  {allMedia.length > 0 && (
+                    <div className="mt-4">
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">Загруженные файлы:</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                        {allMedia.map((media, index) => (
+                          <div key={index} className="relative group">
+                            <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                              {media.type === 'video' ? (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                  <div className="text-center">
+                                    <div className="text-2xl mb-1">🎥</div>
+                                    <div className="text-xs text-gray-600">Видео</div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <img
+                                  src={media.path}
+                                  alt={media.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              )}
+                            </div>
+                            
+                            {/* Индикатор типа */}
+                            <div className="absolute top-1 left-1 bg-black bg-opacity-75 text-white text-xs px-1 py-0.5 rounded">
+                              {media.type === 'video' ? '🎥' : '🖼️'}
+                            </div>
+                            
+                            {/* Кнопка удаления */}
+                            <button
+                              type="button"
+                              onClick={() => removeMedia(index, media.source)}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              ×
+                            </button>
+                            
+                            {/* Название файла */}
+                            <div className="mt-1 text-xs text-gray-600 truncate">
+                              {media.name}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Кнопки */}
@@ -380,12 +489,12 @@ export default function NewsCreate() {
         </div>
       </div>
 
-      {/* Модальное окно библиотеки изображений */}
+      {/* Модальное окно библиотеки медиа */}
       {showMediaManager && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
           <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">Библиотека изображений</h3>
+              <h3 className="text-lg font-medium text-gray-900">Библиотека медиа-файлов</h3>
               <button
                 onClick={() => setShowMediaManager(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -396,7 +505,7 @@ export default function NewsCreate() {
               </button>
             </div>
             <MediaManager
-              onSelect={handleImageSelect}
+              onSelect={handleMediaSelect}
               onClose={() => setShowMediaManager(false)}
               multiple={true}
             />

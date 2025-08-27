@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 import FolderChlank from '@/Components/FolderChlank';
 import LayoutDirection from '@/Layouts/LayoutDirection';
@@ -8,10 +8,16 @@ import FilesAccord from '@/Components/FilesAccord';
 import PageAccordions from "@/Components/PageAccordions";
 
 export default function MedicalOrganizationsRating() {
+    const { translations } = usePage().props;
+    
+    // Функция для получения перевода
+    const t = (key, fallback = '') => {
+        return translations?.[key] || fallback;
+    };
+
     return (
         <>
-            <Head title="Рейтинг медицинских организаций" />
-            <PageHeader title="Рейтинг медицинских организаций" />
+            <Head title={t('directions.medical_rating', 'Рейтинг медицинских организаций')} />
             
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -88,4 +94,4 @@ export default function MedicalOrganizationsRating() {
     );
 }
 
-MedicalOrganizationsRating.layout = (page) => <LayoutDirection img={'reiting'} h1={'Оценка медицинских технологий'}>{page}</LayoutDirection>
+MedicalOrganizationsRating.layout = (page) => <LayoutDirection img="reiting" h1={t('directions.medical_rating', 'Рейтинг медицинских организаций')}>{page}</LayoutDirection>;

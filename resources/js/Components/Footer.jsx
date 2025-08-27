@@ -36,6 +36,7 @@ const FooterLinks = () => {
             { title: "Медицинская статистика", url: "medical.statistics", translate: true },
             { title: "Отраслевой центр технологических компетенций", url: "direction.tech.competence", translate: true },
             { title: "Центр профилактики и укрепления здоровья", url: "center.prevention", translate: true },
+            { title: "Медицинский туризм", url: "medical.tourism", translate: true },
         ],
         'Услуги': [
             { title: "Организация и проведение обучающих циклов", url: "services.training", translate: true },
