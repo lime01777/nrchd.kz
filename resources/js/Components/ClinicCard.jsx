@@ -46,7 +46,7 @@ export default function ClinicCard({ clinic }) {
                 {/* Title and City */}
                 <div className="mb-3">
                     <Link
-                        href={route('clinics.show', clinic.slug)}
+                        href={route('clinics.show.public', clinic.slug)}
                         className="block group"
                     >
                         <h3 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
@@ -110,7 +110,7 @@ export default function ClinicCard({ clinic }) {
                 {/* Action Button */}
                 <div className="mt-6">
                     <Link
-                        href={route('clinics.show', clinic.slug)}
+                        href={route('clinics.show.public', clinic.slug)}
                         className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
                     >
                         {t('clinics.view_details')}

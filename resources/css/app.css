@@ -10,6 +10,7 @@
 /* Import leadership styles */
 @import 'leadership.css';
 
+/* Tailwind CSS directives - required for Tailwind to work */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -31,6 +32,7 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  line-clamp: 2;
 }
 
 .line-clamp-3 {
@@ -38,4 +40,15 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  line-clamp: 3;
+}
+
+/* Анимация мигания фона кнопки */
+@keyframes bgBlink {
+  0%, 100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgb(21, 177, 78);
+  }
 }

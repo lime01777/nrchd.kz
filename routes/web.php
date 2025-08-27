@@ -470,7 +470,7 @@ Route::get('/news/{slug}', [App\Http\Controllers\NewsController::class, 'show'])
 
 // Маршруты для клиник
 Route::get('/clinics', [App\Http\Controllers\ClinicController::class, 'index'])->name('clinics');
-Route::get('/clinics/{slug}', [App\Http\Controllers\ClinicController::class, 'show'])->name('clinics.show');
+Route::get('/clinics/{slug}', [App\Http\Controllers\ClinicController::class, 'show'])->name('clinics.show.public');
 
 // Маршруты для страниц отдельных клиник медицинского туризма
 Route::get('/clinics/show/{route}', [App\Http\Controllers\ClinicController::class, 'showByRoute'])->name('clinics.show.by.route');

@@ -245,7 +245,11 @@ export default function Home() {
                                 }`}
                             >
                                 {/* Заголовок */}
-                                <h1 className="title-font sm:text-4xl text-3xl mb-8 font-semibold text-white drop-shadow-lg">
+                                <h1 className={`title-font sm:text-4xl text-3xl mb-8 font-semibold drop-shadow-lg ${
+                                    slide.id === 1 || slide.id === 2 
+                                        ? 'text-black' 
+                                        : 'text-white'
+                                }`}>
                                     <TypewriterText 
                                         text={slide.title} 
                                         isTyping={index === currentSlide && isTyping}
@@ -254,7 +258,11 @@ export default function Home() {
                                 </h1>
                                 
                                 {/* Подзаголовок */}
-                                <p className="text-xl text-white leading-relaxed mb-10 max-w-2xl drop-shadow-lg">
+                                <p className={`text-xl leading-relaxed mb-10 max-w-2xl drop-shadow-lg ${
+                                    slide.id === 1 || slide.id === 2 
+                                        ? 'text-black' 
+                                        : 'text-white'
+                                }`}>
                                     <TypewriterText 
                                         text={slide.subtitle} 
                                         isTyping={index === currentSlide && isTyping}

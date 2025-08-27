@@ -456,7 +456,7 @@ class ClinicController extends Controller
             '@type' => 'MedicalOrganization',
             'name' => $clinic->name,
             'description' => $clinic->short_desc,
-            'url' => route('clinics.show', $clinic->slug),
+            'url' => route('clinics.show.public', $clinic->slug),
             'telephone' => $clinic->phone,
             'email' => $clinic->email,
             'address' => [
