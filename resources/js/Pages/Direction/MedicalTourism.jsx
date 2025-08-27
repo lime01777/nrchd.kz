@@ -121,7 +121,7 @@ export default function MedicalTourism() {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 px-4">
-            <a href={route('medical.tourism.services')} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover:scale-105 transform transition-transform duration-200 cursor-pointer">
+            <a href={route('medical.tourism.services')} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-300 cursor-pointer">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 mx-auto">
                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -131,7 +131,7 @@ export default function MedicalTourism() {
               <p className="text-gray-600 text-center">Диагностика и лечение сердечно-сосудистых заболеваний с использованием современных технологий</p>
             </a>
             
-            <a href={route('medical.tourism.services')} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover:scale-105 transform transition-transform duration-200 cursor-pointer">
+            <a href={route('medical.tourism.services')} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-300 cursor-pointer">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 mx-auto">
                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-10 0a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2" />
@@ -141,7 +141,7 @@ export default function MedicalTourism() {
               <p className="text-gray-600 text-center">Эндопротезирование суставов, спортивная травматология и реабилитация</p>
             </a>
             
-            <a href={route('medical.tourism.services')} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover:scale-105 transform transition-transform duration-200 cursor-pointer">
+            <a href={route('medical.tourism.services')} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-300 cursor-pointer">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 mx-auto">
                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />

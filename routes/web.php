@@ -719,7 +719,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::resource('vacancies', AdminVacancyController::class);
     
     // Управление клиниками
-    Route::resource('clinics', \App\Http\Controllers\Admin\ClinicController::class);
+    Route::resource('clinics', \App\Http\Controllers\Admin\ClinicController::class, ['names' => 'admin.clinics']);
     Route::post('/clinics/{clinic}/images', [\App\Http\Controllers\Admin\ClinicController::class, 'uploadImages'])->name('admin.clinics.upload-images');
     Route::delete('/clinics/{clinic}/images', [\App\Http\Controllers\Admin\ClinicController::class, 'deleteImage'])->name('admin.clinics.delete-image');
     Route::put('/clinics/{clinic}/gallery/reorder', [\App\Http\Controllers\Admin\ClinicController::class, 'reorderGallery'])->name('admin.clinics.reorder-gallery');
