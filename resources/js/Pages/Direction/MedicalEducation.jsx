@@ -119,21 +119,21 @@ export default function MedicalEducation() {
                     colorsec="bg-gray-300"
                     title="Рейтинг" 
                     description="Рейтинг медицинских образовательных учреждений"
-                    href={route('medical.education.rating')}
+                    href={route('direction.medical.education.rating')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
                     title="Документы" 
                     description="Документы по медицинскому образованию"
-                    href={route('medical.education.documents')}
+                    href={route('direction.medical.education.documents')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
                     title="Рекомендации" 
                     description="Рекомендации по медицинскому образованию"
-                    href={route('medical.education.recommendations')}
+                    href={route('direction.medical.education.recommendations')}
                 />
             </div>
         </div>
