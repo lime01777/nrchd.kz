@@ -15,6 +15,26 @@ export default function BioethicsCertification() {
               Локальные комиссии по биоэтике имеют право на выдачу заключений на проведение биомедицинских исследований при условии наличия сертификата соответствия стандартам деятельности биоэтических комиссий, выдаваемого Центральной комиссией по биоэтике Министерства здравоохранения Республики Казахстан (пункт 8 статья 228 Кодекс РК «О здоровье народа и системе здравоохранения»).
             </p>
 
+            <div className="w-full mb-6 p-6 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+              <h3 className="text-lg font-semibold text-blue-800 mb-3">
+                Нормативно-правовая основа
+              </h3>
+              <p className="text-blue-700 mb-3">
+                Деятельность по сертификации локальных комиссий по биоэтике осуществляется в соответствии с приказом Министра здравоохранения Республики Казахстан от 9 декабря 2020 года № ҚР ДСМ-243/2020 «Об утверждении правил выдачи и срока действия сертификата соответствия требованиям деятельности биоэтических комиссий».
+              </p>
+              <a 
+                href="https://adilet.zan.kz/rus/docs/V2000021774" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                Открыть приказ
+              </a>
+            </div>
+
             <h2 className="text-xl font-semibold text-gray-800 mb-4 w-full">
               Порядок сертификации локальных комиссий по биоэтике (ЛКБ)
             </h2>
@@ -132,32 +152,14 @@ export default function BioethicsCertification() {
         </div>
       </section>
 
-      {/* Документы и материалы */}
+      {/* Полезные документы */}
       <section className="text-gray-600 body-font">
         <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
             <FilesAccord 
-                folder="Bioethics/Certification/Procedures"
-                title="Процедуры сертификации"
+                folder="Bioethics/Certification/Documents"
+                title="Полезные документы"
                 bgColor="bg-blue-200"
                 defaultOpen={true}
-            />
-            <FilesAccord 
-                folder="Bioethics/Certification/Requirements"
-                title="Требования к локальным комиссиям"
-                bgColor="bg-blue-200"
-                defaultOpen={false}
-            />
-            <FilesAccord 
-                folder="Bioethics/Certification/Standards"
-                title="Стандарты сертификации"
-                bgColor="bg-blue-200"
-                defaultOpen={false}
-            />
-            <FilesAccord 
-                folder="Bioethics/Certification/Training"
-                title="Обучение и повышение квалификации"
-                bgColor="bg-blue-200"
-                defaultOpen={false}
             />
         </div>
     </section>
@@ -166,6 +168,7 @@ export default function BioethicsCertification() {
 }
 
 BioethicsCertification.layout = page => <LayoutFolderChlank 
+  h1="Сертификация локальных комиссий по биоэтике"
   title="Сертификация локальных комиссий по биоэтике"
   parentRoute={route('bioethics')}
   parentName="Центральная комиссия по биоэтике"

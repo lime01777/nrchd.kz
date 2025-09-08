@@ -102,7 +102,8 @@ export default function BioethicsBiobanks() {
   )
 }
 
-BioethicsBiobanks.layout = page => <LayoutFolderChlank 
+BioethicsBiobanks.layout = page => <LayoutFolderChlank    
+  h1="Биобанки"
   title="Биобанки"
   parentRoute={route('bioethics')}
   parentName="Центральная комиссия по биоэтике"

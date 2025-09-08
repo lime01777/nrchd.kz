@@ -18,6 +18,7 @@ export default function Bioethics() {
         return translations?.[key] || fallback;
     };
 
+
   return (
     <>
       <Head title={tComponent('directions.bioethics', 'Центральная комиссия по биоэтике')} meta={[{ name: 'description', content: tComponent('bioethics.description', 'Центральная комиссия по биоэтике: экспертиза, сертификация и надзор в области биоэтики.') }]} />
@@ -45,7 +46,7 @@ export default function Bioethics() {
             </p>
             
             <p className="tracking-wide leading-relaxed mb-4">
-              Приказом Министра здравоохранения Республики Казахстан №961 от 31 декабря 2024 года «О внесении изменения в приказ Министра здравоохранения Республики Казахстан от 20 декабря 2020 года №854/1 «Об утверждении состава Центральной комиссии по биоэтике»» утвержден новый состав Центральной комиссии по биоэтике (<a href={route('bioethics.composition')} className="text-blue-600 hover:text-blue-800 underline">Состав Центральной комиссии по биоэтике</a>)
+              Приказом Министра здравоохранения Республики Казахстан №961 от 31 декабря 2024 года «О внесении изменения в приказ Министра здравоохранения Республики Казахстан от 20 декабря 2020 года №854/1 «Об утверждении состава Центральной комиссии по биоэтике»» утвержден новый состав Центральной комиссии по биоэтике.
             </p>
             
                          <p className="tracking-wide leading-relaxed mb-4">
@@ -165,6 +166,7 @@ export default function Bioethics() {
         </div>
       </section>
 
+
       {/* Направления деятельности */}
       <section className="text-gray-600 body-font py-12">
         <div className="container px-5 mx-auto">
@@ -174,8 +176,8 @@ export default function Bioethics() {
               <FolderChlank 
                 color="bg-gray-200"
                 colorsec="bg-gray-300"
-                title={tComponent('bioethics.expertise', 'Биоэтическая экспертиза')} 
-                description="Проведение биоэтической экспертизы документов, связанных с проведением биомедицинских исследований"
+                title={tComponent('bioethics.sop', 'СОП')} 
+                description="Стандартные операционные процедуры биоэтической экспертизы"
                 href={route('bioethics.expertise')}
               />
               
@@ -190,10 +192,9 @@ export default function Bioethics() {
               <FolderChlank 
                 color="bg-gray-200"
                 colorsec="bg-gray-300"
-                title={tComponent('bioethics.local_commissions', 'Локальные комиссии')} 
-                description="Координация деятельности локальных комиссий по биоэтике"
-                href={route('bioethics.local-commissions')}
-
+                title={tComponent('bioethics.local_commissions_list', 'Перечень ЛКБ')} 
+                description="Перечень локальных комиссий по биоэтике"
+                href={route('bioethics.local_commissions')}
               />
               
               <FolderChlank 
@@ -202,16 +203,14 @@ export default function Bioethics() {
                 title={tComponent('bioethics.biobanks', 'Биобанки')} 
                 description="Надзор за деятельностью биобанков и биоколлекций"
                 href={route('bioethics.biobanks')}
-
               />
               
               <FolderChlank 
                 color="bg-gray-200"
                 colorsec="bg-gray-300"
-                title={tComponent('bioethics.composition', 'Состав комиссии')} 
-                description="Информация о составе Центральной комиссии по биоэтике"
-                href={route('bioethics.composition')}
-
+                title={tComponent('bioethics.npa', 'НПА')} 
+                description="Нормативно-правовые акты по биоэтике"
+                href={route('bioethics.npa')}
               />
             
           </div>

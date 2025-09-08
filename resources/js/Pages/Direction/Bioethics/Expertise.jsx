@@ -6,13 +6,13 @@ import FilesAccord from '@/Components/FilesAccord';
 export default function BioethicsExpertise() {
   return (
     <>
-      <Head title="Биоэтическая экспертиза" meta={[{ name: 'description', content: 'Биоэтическая экспертиза: процедуры, требования и документы.' }]} />
+      <Head title="СОП" meta={[{ name: 'description', content: 'Стандартные операционные процедуры биоэтической экспертизы.' }]} />
       
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>
             <h2 className="text-2xl font-bold text-gray-800 mb-6 w-full">
-              Порядок подачи заявки на проведение биоэтической экспертизы
+              СОП
             </h2>
             
             <div className="w-full mb-6">
@@ -110,7 +110,8 @@ export default function BioethicsExpertise() {
 }
 
 BioethicsExpertise.layout = page => <LayoutFolderChlank 
-  title="Биоэтическая экспертиза"
+  h1="СОП"
+  title="Стандартные операционные процедуры биоэтической экспертизы"
   parentRoute={route('bioethics')}
   parentName="Центральная комиссия по биоэтике"
   heroBgColor="bg-blue-100"

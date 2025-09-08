@@ -1,98 +1,230 @@
 import { Head } from "@inertiajs/react";
 import React from 'react';
 import LayoutFolderChlank from "@/Layouts/LayoutFolderChlank";
-import FilesAccord from '@/Components/FilesAccord';
 
 export default function BioethicsLocalCommissions() {
+  // Данные о сертифицированных ЛКБ
+  const medicalUniversities = [
+    {
+      id: 1,
+      name: "Западно-Казахстанский медицинский университет имени Марата Оспанова",
+      certification: "№XIV-R",
+      validity: "19.12.2024-19.12.2027",
+      link: "https://zkmu.edu.kz/ru/lokalnava-komissiva-po-bioetike/"
+    },
+    {
+      id: 2,
+      name: "Международный казахско-турецкий университет",
+      certification: "№XII",
+      validity: "14.12.2022-14.12.2025",
+      link: "https://ayu.edu.kz/ru/"
+    }
+  ];
+
+  const researchInstitutes = [
+    {
+      id: 3,
+      name: "Академия питания и Ассоциация профилактической медицины",
+      certification: "№XIII-R",
+      validity: "14.12.2023-14.12.2026",
+      link: "https://academypm.org/language/ru/o-nas/lokalnaya-komissiya-po-bioetike/"
+    },
+    {
+      id: 4,
+      name: "Казахский научно-исследовательский институт онкологии и радиологии",
+      certification: "№Х",
+      validity: "09.11.2022-09.11.2025",
+      link: "https://onco.kz/"
+    },
+    {
+      id: 5,
+      name: "Научно-производственный центр трансфузиологии",
+      certification: "№XV-R",
+      validity: "05.06.2025-05.06.2028",
+      link: "https://spct.kz/about/%d0%b8%d0%bd%d1%84%d0%be%d1%80%d0%bc%d0%b0%d1%86%d0%b8%d1%8f-%d0%be-%d0%bb%d1%8d%d0%ba/?lang=ru"
+    },
+    {
+      id: 6,
+      name: "ТОО «Национальный научный онкологический центр»",
+      certification: "№XVI-R",
+      validity: "20.06.2025-20.06.2026",
+      link: "https://cancercenter.edu.kz/ru/lokalnaya-komissiya-po-bioetike"
+    },
+    {
+      id: 7,
+      name: "КФ «University Medical Center»",
+      certification: "№XVII",
+      validity: "20.06.2025-20.06.2028",
+      link: "https://umc.org.kz/?ethics-commission=post"
+    },
+    {
+      id: 8,
+      name: "Больница управления делами Президента",
+      certification: "№XVIII",
+      validity: "20.06.2025-20.06.2026",
+      link: "https://bmcudp.kz/ru/activities/localkomissiya/"
+    },
+    {
+      id: 9,
+      name: "Научно-исследовательский институт кардиологии и внутренних болезней",
+      certification: "№XIX",
+      validity: "25.07.2025-25.07.2028",
+      link: "https://ncvb.kz/ru/lokalnaya-komissiya-po-bioetike/"
+    },
+    {
+      id: 10,
+      name: "Казахский научно-исследовательский центр инфекционных заболеваний и дерматовенерологии",
+      certification: "№XX-R",
+      validity: "25.07.2025-25.07.2026",
+      link: "https://kncdiz.kz/ru/nauka/lokalnyy_eticheskiy_komitet/"
+    },
+    {
+      id: 11,
+      name: "Национальный центр хирургии имени Сызганова",
+      certification: "№XXI-R",
+      validity: "25.07.2025-25.07.2026",
+      link: "https://nnch.kz/lokalnaya-eticheskaya-komissiya/"
+    }
+  ];
+
+  const TableRow = ({ item }) => (
+    <tr className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+      <td className="px-4 py-3 text-sm font-medium text-gray-900 text-center">
+        {item.id}
+      </td>
+      <td className="px-4 py-3 text-sm text-gray-900">
+        {item.name}
+      </td>
+      <td className="px-4 py-3 text-sm text-gray-900 text-center">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          {item.certification}
+        </span>
+      </td>
+      <td className="px-4 py-3 text-sm text-gray-900 text-center">
+        {item.validity}
+      </td>
+      <td className="px-4 py-3 text-sm text-center">
+        <a
+          href={item.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
+        >
+          <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          Открыть
+        </a>
+      </td>
+    </tr>
+  );
+
   return (
     <>
-      <Head title="Перечень локальных этических комиссий" meta={[{ name: 'description', content: 'Перечень локальных этических комиссий по биоэтике в Республике Казахстан.' }]} />
+      <Head title="Перечень ЛКБ" meta={[{ name: 'description', content: 'Перечень сертифицированных локальных комиссий по биоэтике в Республике Казахстан.' }]} />
       
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
-          <div className='flex flex-wrap px-12 text-justify mb-4'>
-            <p className="tracking-wide leading-relaxed mb-4">
-              Министерством здравоохранения Республики Казахстан на заседании Ученого Совета 9 января 2007 года рекомендовано создание локальных этических комиссий по биоэтике (ЛКБ) во всех организациях медицинского образования и науки, организациях здравоохранения.
-            </p>
+          <div className='flex flex-wrap px-12 text-justify mb-8'>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 w-full">
+              Перечень ЛКБ
+            </h2>
             
             <p className="tracking-wide leading-relaxed mb-4">
-              ЛКБ должны осуществлять независимую этическую экспертизу биомедицинских исследований, выполняемых в данной организации, гарантировать соблюдение прав пациентов, участвующих в исследованиях, а также вести мониторинг и промежуточный контроль хода исследования после получения разрешения на его проведение.
+              Список сертифицированных локальных комиссий по биоэтике, имеющих право на проведение этической экспертизы биомедицинских исследований в Республике Казахстан.
             </p>
+          </div>
 
-            <div className="w-full mb-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                Основные функции локальных этических комиссий:
-              </h3>
-              <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                <li>Независимая этическая экспертиза биомедицинских исследований</li>
-                <li>Гарантия соблюдения прав пациентов, участвующих в исследованиях</li>
-                <li>Мониторинг хода исследований после получения разрешения</li>
-                <li>Промежуточный контроль проведения исследований</li>
-                <li>Оценка этической обоснованности исследовательских проектов</li>
-                <li>Контроль качества информированного согласия участников</li>
-              </ul>
+          {/* Медицинские ВУЗы */}
+          <div className="px-12 mb-8">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+              <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+              Медицинские ВУЗы
+            </h3>
+            
+            <div className="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
+                        №
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Наименование организации
+                      </th>
+                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
+                        Сертификация
+                      </th>
+                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-40">
+                        Срок действия
+                      </th>
+                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
+                        Ссылка
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {medicalUniversities.map((item) => (
+                      <TableRow key={item.id} item={item} />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
+          </div>
 
-            <div className="w-full mb-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                Организации, где создаются ЛКБ:
-              </h3>
-              <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-                <li>Организации медицинского образования</li>
-                <li>Организации науки</li>
-                <li>Организации здравоохранения</li>
-                <li>Научно-исследовательские институты</li>
-                <li>Высшие учебные заведения медицинского профиля</li>
-              </ul>
-            </div>
-
-            <div className="w-full mb-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                Координация с Центральной комиссией по биоэтике:
-              </h3>
-              <p className="text-gray-700 mb-3">
-                Центральная комиссия по биоэтике ведет реестр локальных комиссий, осуществляет координацию их деятельности и обеспечивает единообразие подходов к биоэтической экспертизе. Все ЛКБ должны быть сертифицированы Центральной комиссией по биоэтике для получения права на проведение этической экспертизы.
-              </p>
+          {/* НИИ/НЦ */}
+          <div className="px-12">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+              <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+              </svg>
+              НИИ/НЦ
+            </h3>
+            
+            <div className="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
+                        №
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Наименование организации
+                      </th>
+                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
+                        Сертификация
+                      </th>
+                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-40">
+                        Срок действия
+                      </th>
+                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
+                        Ссылка
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {researchInstitutes.map((item) => (
+                      <TableRow key={item.id} item={item} />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </section>
-
-      {/* Документы и материалы */}
-      <section className="text-gray-600 body-font">
-        <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
-            <FilesAccord 
-                folder="Bioethics/LocalCommissions/Registry"
-                title="Реестр локальных комиссий"
-                bgColor="bg-blue-200"
-                defaultOpen={true}
-            />
-            <FilesAccord 
-                folder="Bioethics/LocalCommissions/Contacts"
-                title="Контактная информация"
-                bgColor="bg-blue-200"
-                defaultOpen={false}
-            />
-            <FilesAccord 
-                folder="Bioethics/LocalCommissions/Competence"
-                title="Сферы компетенции"
-                bgColor="bg-blue-200"
-                defaultOpen={false}
-            />
-            <FilesAccord 
-                folder="Bioethics/LocalCommissions/Reports"
-                title="Отчеты о деятельности"
-                bgColor="bg-blue-200"
-                defaultOpen={false}
-            />
-        </div>
-    </section>
     </>
   )
 }
 
 BioethicsLocalCommissions.layout = page => <LayoutFolderChlank 
-  title="Перечень локальных этических комиссий"
+  h1="Перечень ЛКБ"
+  title="Перечень ЛКБ"
   parentRoute={route('bioethics')}
   parentName="Центральная комиссия по биоэтике"
   heroBgColor="bg-blue-100"
