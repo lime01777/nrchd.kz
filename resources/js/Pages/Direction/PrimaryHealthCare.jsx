@@ -69,15 +69,17 @@ export default function PrimaryHealthCare() {
         <div className="container pt-8 pb-24 mx-auto">
             <div className="flex md:flex-row flex-wrap">
                 <FolderChlank 
-                    h1="Амбулаторная помощь" 
-                    color="bg-green-100" 
-                    colorsec="bg-green-200" 
+                    color="bg-gray-200"
+                    colorsec="bg-gray-300"
+                    title="Амбулаторная помощь" 
+                    description="Информация об амбулаторной помощи"
                     href={route('primary.healthcare.outpatient')}
                 />
                 <FolderChlank 
-                    h1="Профилактика и скрининг" 
-                    color="bg-green-100" 
-                    colorsec="bg-green-200" 
+                    color="bg-gray-200"
+                    colorsec="bg-gray-300"
+                    title="Профилактика и скрининг" 
+                    description="Информация о профилактике и скрининге"
                     href={route('primary.healthcare.prevention')}
                 />
             </div>

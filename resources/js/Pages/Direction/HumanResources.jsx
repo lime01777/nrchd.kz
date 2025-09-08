@@ -115,22 +115,25 @@ export default function HumanResources() {
         <div className="container pt-8 mx-auto">
             <div className='flex flex-wrap'>
                 <FolderChlank 
+                    color="bg-gray-200"
+                    colorsec="bg-gray-300"
                     title="Медицинские работники" 
                     description="Информация для медицинских работников"
                     href={route('human.resources.medical.workers')}
-                    icon="👨‍⚕️"
                 />
                 <FolderChlank 
+                    color="bg-gray-200"
+                    colorsec="bg-gray-300"
                     title="Руководители" 
                     description="Информация для руководителей"
                     href={route('human.resources.managers')}
-                    icon="👔"
                 />
                 <FolderChlank 
+                    color="bg-gray-200"
+                    colorsec="bg-gray-300"
                     title="Выпускники" 
                     description="Информация для выпускников"
                     href={route('human.resources.graduates')}
-                    icon="🎓"
                 />
             </div>
         </div>

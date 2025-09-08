@@ -38,14 +38,26 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Google Translate API
+    | Translation Services
     |--------------------------------------------------------------------------
     |
-    | Here you can set your Google Translate API key for translation services.
-    | Get an API key: https://cloud.google.com/translate/docs/setup
+    | Google Translate API отключен. Используется только база данных.
     |
     */
     'google' => [
-        'translate_api_key' => env('GOOGLE_TRANSLATE_API_KEY'),
+        'translate_api_key' => '', // Google Translate отключен
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | DeepL Translation Service
+    |--------------------------------------------------------------------------
+    |
+    | DeepL API для автоматического перевода отсутствующих строк.
+    |
+    */
+    'deepl' => [
+        'key'  => env('DEEPL_API_KEY'),
+        'base' => rtrim(env('DEEPL_API_BASE','https://api-free.deepl.com'), '/'),
     ],
 ];

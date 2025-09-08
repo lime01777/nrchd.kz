@@ -39,7 +39,7 @@ const ImprovedLanguageSwitcher = () => {
     setIsDropdownOpen(false);
 
     try {
-      // Используем новый быстрый сервис переводов
+      // Используем новый быстрый сервис переводов (только из БД)
       await TranslationService.translatePage(langCode);
 
       // Сохраняем выбранный язык

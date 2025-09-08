@@ -439,30 +439,7 @@ Route::get('/medical-tourism/contacts', function () {
     return Inertia::render('Direction/MedicalTourism/Contacts');
 })->name('medical.tourism.contacts');
 
-// Маршруты для Центральной комиссии по биоэтике
-Route::get('/bioethics', function () {
-    return Inertia::render('Direction/Bioethics');
-})->name('bioethics');
-
-Route::get('/bioethics/expertise', function () {
-    return Inertia::render('Direction/Bioethics/Expertise');
-})->name('bioethics.expertise');
-
-Route::get('/bioethics/certification', function () {
-    return Inertia::render('Direction/Bioethics/Certification');
-})->name('bioethics.certification');
-
-Route::get('/bioethics/biobanks', function () {
-    return Inertia::render('Direction/Bioethics/Biobanks');
-})->name('bioethics.biobanks');
-
-Route::get('/bioethics/local-commissions', function () {
-    return Inertia::render('Direction/Bioethics/LocalCommissions');
-})->name('bioethics.local-commissions');
-
-Route::get('/bioethics/composition', function () {
-    return Inertia::render('Direction/Bioethics/Composition');
-})->name('bioethics.composition');
+// Маршруты для Центральной комиссии по биоэтике перенесены в localized.php
 
 // Маршруты для новостей
 Route::get('/news', [App\Http\Controllers\NewsController::class, 'index'])->name('news');

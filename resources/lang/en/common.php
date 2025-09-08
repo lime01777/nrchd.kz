@@ -291,4 +291,14 @@ return array (
   'directionsSubLinks.direction_tech_competence' => 'Industry Center for Technological Competencies',
   'directionsSubLinks.center_prevention' => 'Center for Prevention and Health Promotion',
   'directionsSubLinks.medical_tourism' => 'Medical Tourism',
+  
+  // Bioethics translations
+  'directions.bioethics' => 'Central Commission on Bioethics',
+  'bioethics.title' => 'Central Commission on Bioethics under the Ministry of Health of the Republic of Kazakhstan',
+  'bioethics.description' => 'The Central Commission on Bioethics of the Ministry of Health of the Republic of Kazakhstan is an independent expert body that conducts bioethical examination of documents related to biomedical research.',
+  'bioethics.expertise' => 'Bioethical Expertise',
+  'bioethics.certification' => 'Certification',
+  'bioethics.local_commissions' => 'Local Commissions',
+  'bioethics.biobanks' => 'Biobanks',
+  'bioethics.composition' => 'Commission Composition',
 );

@@ -53,10 +53,11 @@ export default function MedicalRating() {
         <div className="container pt-8 pb-24 mx-auto">
           <div className="flex md:flex-row flex-wrap">
             <FolderChlank 
+              color="bg-gray-200"
+              colorsec="bg-gray-300"
               title="Архив рейтингов" 
               description="Исторические данные рейтингов"
               href={route('medical.rating.regional')}
-              icon="📊"
             />
           </div>
         </div>

@@ -20,12 +20,12 @@ export default function Bioethics() {
 
   return (
     <>
-      <Head title={tComponent('directions.bioethics', 'Центральная комиссия по биоэтике')} meta={[{ name: 'description', content: 'Центральная комиссия по биоэтике: экспертиза, сертификация и надзор в области биоэтики.' }]} />
+      <Head title={tComponent('directions.bioethics', 'Центральная комиссия по биоэтике')} meta={[{ name: 'description', content: tComponent('bioethics.description', 'Центральная комиссия по биоэтике: экспертиза, сертификация и надзор в области биоэтики.') }]} />
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>
             <h2 className="text-2xl font-bold text-gray-800 mb-6 w-full">
-              ЦЕНТРАЛЬНАЯ КОМИССИЯ ПО БИОЭТИКЕ ПРИ МИНИСТЕРСТВЕ ЗДРАВООХРАНЕНИЯ РК
+              {tComponent('bioethics.title', 'ЦЕНТРАЛЬНАЯ КОМИССИЯ ПО БИОЭТИКЕ ПРИ МИНИСТЕРСТВЕ ЗДРАВООХРАНЕНИЯ РК')}
             </h2>
             
             <p className="tracking-wide leading-relaxed mb-4">
@@ -169,44 +169,51 @@ export default function Bioethics() {
       <section className="text-gray-600 body-font py-12">
         <div className="container px-5 mx-auto">
           <div className="flex flex-wrap px-12">
-            <h3 className="text-xl font-semibold text-gray-800 mb-6 w-full">Направления деятельности Центральной комиссии по биоэтике</h3>
+
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
               <FolderChlank 
-                title="Биоэтическая экспертиза" 
+                color="bg-gray-200"
+                colorsec="bg-gray-300"
+                title={tComponent('bioethics.expertise', 'Биоэтическая экспертиза')} 
                 description="Проведение биоэтической экспертизы документов, связанных с проведением биомедицинских исследований"
                 href={route('bioethics.expertise')}
-                icon="🔬"
               />
               
               <FolderChlank 
-                title="Сертификация" 
+                color="bg-gray-200"
+                colorsec="bg-gray-300"
+                title={tComponent('bioethics.certification', 'Сертификация')} 
                 description="Сертификация локальных комиссий по биоэтике медицинских организаций"
                 href={route('bioethics.certification')}
-                icon="🏛️"
               />
               
               <FolderChlank 
-                title="Локальные комиссии" 
+                color="bg-gray-200"
+                colorsec="bg-gray-300"
+                title={tComponent('bioethics.local_commissions', 'Локальные комиссии')} 
                 description="Координация деятельности локальных комиссий по биоэтике"
-                href={route('bioethics.local_commissions')}
-                icon="🏥"
+                href={route('bioethics.local-commissions')}
+
               />
               
               <FolderChlank 
-                title="Биобанки" 
+                color="bg-gray-200"
+                colorsec="bg-gray-300"
+                title={tComponent('bioethics.biobanks', 'Биобанки')} 
                 description="Надзор за деятельностью биобанков и биоколлекций"
                 href={route('bioethics.biobanks')}
-                icon="🧬"
+
               />
               
               <FolderChlank 
-                title="Состав комиссии" 
+                color="bg-gray-200"
+                colorsec="bg-gray-300"
+                title={tComponent('bioethics.composition', 'Состав комиссии')} 
                 description="Информация о составе Центральной комиссии по биоэтике"
                 href={route('bioethics.composition')}
-                icon="👥"
+
               />
-            </div>
+            
           </div>
         </div>
       </section>

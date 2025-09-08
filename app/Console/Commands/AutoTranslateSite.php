@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Stichoza\GoogleTranslate\GoogleTranslate;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 
@@ -87,16 +86,8 @@ class AutoTranslateSite extends Command
                 $this->info("Создана директория для языка: {$langDir}");
             }
             
-            // Инициализируем экземпляр переводчика
-            $translator = new GoogleTranslate();
-            $translator->setSource($sourceLanguage);
-            
-            // Особая обработка для казахского языка, т.к. Google использует 'kk'
-            if ($lang === 'kz') {
-                $translator->setTarget('kk');
-            } else {
-                $translator->setTarget($lang);
-            }
+            // Google Translate отключен - используем только существующие переводы
+            $this->info("Google Translate отключен. Используем только существующие переводы.");
             
             // Счетчики для статистики
             $translated = [];

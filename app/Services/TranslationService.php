@@ -6,7 +6,6 @@ use App\Models\StoredTranslation;
 use App\Services\TranslationExceptionsService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Stichoza\GoogleTranslate\GoogleTranslate;
 use Exception;
 
 class TranslationService
@@ -15,12 +14,12 @@ class TranslationService
     protected static $sourceLanguage = 'kz';
 
     /**
-     * Быстрый перевод текста с использованием БД кэша
+     * Получить перевод текста из БД (без Google Translate)
      *
      * @param string $text Текст для перевода
      * @param string $targetLanguage Целевой язык
      * @param string $pageUrl URL страницы для контекста
-     * @return string Переведенный текст
+     * @return string Переведенный текст или оригинал
      */
     public static function translate(string $text, string $targetLanguage, string $pageUrl = null): string
     {
@@ -38,37 +37,17 @@ class TranslationService
         // Проверяем исключения переводов
         $exceptionTranslation = TranslationExceptionsService::checkException($text, $targetLanguage);
         if ($exceptionTranslation !== null) {
-            // Сохраняем исключение в БД для кэширования
-            self::saveTranslation($text, $exceptionTranslation, $targetLanguage, $pageUrl);
             return $exceptionTranslation;
         }
 
-        // Сначала проверяем БД
+        // Проверяем БД
         $cachedTranslation = StoredTranslation::findTranslation($text, $targetLanguage);
         if ($cachedTranslation) {
             return $cachedTranslation;
         }
 
-        // Если нет в БД, делаем новый перевод
-        try {
-            $translator = new GoogleTranslate();
-            $googleLangCode = $targetLanguage === 'kz' ? 'kk' : $targetLanguage;
-            
-            $translatedText = $translator->setSource(self::$sourceLanguage)
-                                        ->setTarget($googleLangCode)
-                                        ->translate($text);
-
-            // Сохраняем в БД
-            self::saveTranslation($text, $translatedText, $targetLanguage, $pageUrl);
-
-            return $translatedText;
-        } catch (Exception $e) {
-            Log::error('Ошибка Google Translate: ' . $e->getMessage(), [
-                'text' => $text,
-                'target_language' => $targetLanguage
-            ]);
-            return $text;
-        }
+        // Если нет перевода в БД, возвращаем оригинал
+        return $text;
     }
 
     /**
@@ -125,7 +104,7 @@ class TranslationService
     }
 
     /**
-     * Массовый перевод текстов
+     * Массовый перевод текстов из БД (без Google Translate)
      *
      * @param array $texts Массив текстов для перевода
      * @param string $targetLanguage Целевой язык
@@ -135,22 +114,16 @@ class TranslationService
     public static function translateBatch(array $texts, string $targetLanguage, string $pageUrl = null): array
     {
         $translations = [];
-        $textsToTranslate = [];
 
-        // Сначала проверяем что есть в БД
+        // Проверяем что есть в БД
         foreach ($texts as $text) {
             $cached = StoredTranslation::findTranslation($text, $targetLanguage);
             if ($cached) {
                 $translations[$text] = $cached;
             } else {
-                $textsToTranslate[] = $text;
+                // Если нет перевода, оставляем оригинал
+                $translations[$text] = $text;
             }
-        }
-
-        // Переводим оставшиеся тексты
-        foreach ($textsToTranslate as $text) {
-            $translated = self::translate($text, $targetLanguage, $pageUrl);
-            $translations[$text] = $translated;
         }
 
         return $translations;
@@ -179,14 +152,14 @@ class TranslationService
 
     /**
      * Сканировать контент сайта и найти новые тексты для перевода
+     * (только из БД, без Google Translate)
      *
      * @param string $targetLanguage Целевой язык
      * @return array Массив новых текстов
      */
     public static function scanForNewContent(string $targetLanguage): array
     {
-        // Здесь будет логика сканирования контента
-        // Пока возвращаем пустой массив, реализуем позже
+        // Возвращаем пустой массив, так как Google Translate отключен
         return [];
     }
 

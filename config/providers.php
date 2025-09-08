@@ -13,6 +13,5 @@ return [
     'providers' => [
         // Other Service Providers...
         Barryvdh\TranslationManager\ManagerServiceProvider::class,
-        App\Providers\GoogleTranslateServiceProvider::class,
     ],
 ];

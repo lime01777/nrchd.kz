@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TranslationController;
 use App\Http\Controllers\Api\TranslationAPIController;
 use App\Http\Controllers\FileController;
 
@@ -15,6 +16,10 @@ use App\Http\Controllers\FileController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+// Новые маршруты для переводов с DeepL
+Route::get('/i18n/{locale}', [TranslationController::class, 'dictionary']);
+Route::post('/translate/ensure', [TranslationController::class, 'ensure']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

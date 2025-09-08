@@ -291,4 +291,14 @@ return array (
   'directionsSubLinks.direction_tech_competence' => 'Отраслевой центр технологических компетенций',
   'directionsSubLinks.center_prevention' => 'Центр профилактики и укрепления здоровья',
   'directionsSubLinks.medical_tourism' => 'Медицинский туризм',
+  
+  // Переводы для биоэтики
+  'directions.bioethics' => 'Центральная комиссия по биоэтике',
+  'bioethics.title' => 'Центральная комиссия по биоэтике при Министерстве здравоохранения РК',
+  'bioethics.description' => 'Центральная комиссия по биоэтике Министерства здравоохранения Республики Казахстан является независимым экспертным органом, проводящим биоэтическую экспертизу документов, связанных с проведением биомедицинских исследований.',
+  'bioethics.expertise' => 'Биоэтическая экспертиза',
+  'bioethics.certification' => 'Сертификация',
+  'bioethics.local_commissions' => 'Локальные комиссии',
+  'bioethics.biobanks' => 'Биобанки',
+  'bioethics.composition' => 'Состав комиссии',
 );

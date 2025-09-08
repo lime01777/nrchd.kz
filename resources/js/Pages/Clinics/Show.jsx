@@ -162,7 +162,7 @@ export default function ClinicShow({ clinic }) {
 
 ClinicShow.layout = page => <LayoutFolderChlank 
   h1="Клиника" 
-  parentRoute={route('strategic.initiatives.tourism')}
+  parentRoute={route('medical.tourism')}
   parentName="Медицинский туризм" 
   heroBgColor="bg-green-100"
   buttonBgColor="bg-green-100"

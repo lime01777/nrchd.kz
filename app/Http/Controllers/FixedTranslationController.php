@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Stichoza\GoogleTranslate\GoogleTranslate;
 use Illuminate\Support\Facades\Log;
 use App\Models\StoredTranslation;
 use Exception;
@@ -12,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class FixedTranslationController extends Controller
 {
     /**
-     * Translate text using Google Translate API
+     * Get translation from database (without Google Translate)
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
@@ -37,170 +36,47 @@ class FixedTranslationController extends Controller
                 ]);
             }
             
-            // Всегда кэшировать переводы, независимо от запроса
-            $shouldCache = true;
-            
-            // Используем параметр page_url если он передан
-            $pageUrl = $request->input('page_url', $request->header('Referer') ?? '');
-            
-            // First check if we already have this translation stored
             $targetLang = $request->target;
-            if ($targetLang === 'kz') {
-                // We use 'kz' in our system, but Google API uses 'kk'
-                $googleLangCode = 'kk';
-            } else {
-                $googleLangCode = $targetLang;
-            }
 
-        // Проверяем существующий перевод в БД с защитой от ошибок
-        try {
-            $existingTranslation = StoredTranslation::findTranslation($request->text, $targetLang);
-            
-            if ($existingTranslation) {
-                // Translation already exists in our database
-                Log::debug('Using cached translation from database', [
-                    'text' => substr($request->text, 0, 30) . (strlen($request->text) > 30 ? '...' : ''),
-                    'target' => $targetLang
-                ]);
+            // Проверяем существующий перевод в БД с защитой от ошибок
+            try {
+                $existingTranslation = StoredTranslation::findTranslation($request->text, $targetLang);
                 
-                return response()->json([
-                    'success' => true,
-                    'translation' => $existingTranslation,
-                    'source' => $request->source,
-                    'target' => $targetLang,
-                    'cached' => true
-                ]);
-            }
-        } catch (Exception $dbException) {
-            // Если произошла ошибка при доступе к БД, логируем и продолжаем работу
-            Log::error('Error accessing database for translation: ' . $dbException->getMessage());
-            // Продолжаем выполнение и попробуем перевести без кэша
-        }
-        
-        // Log the translation request for debugging
-        Log::debug('Translation request', [
-            'from' => $request->source,
-            'to' => $targetLang,
-            'text' => substr($request->text, 0, 30) . (strlen($request->text) > 30 ? '...' : '')
-        ]);
-
-        try {
-            // Get the Google Translate instance with API key already configured
-            $translator = app('google-translate');
-            
-            // Handle language codes correctly
-            $sourceCode = $request->source;
-            $targetCode = $googleLangCode;
-            
-            // Convert our lang codes to Google format if needed
-            if ($sourceCode === 'kz') $sourceCode = 'kk'; // Kazakh language code in Google API is 'kk'
-            
-            // Log the actual codes being used
-            Log::debug('Using language codes', ['source' => $sourceCode, 'target' => $targetCode]);
-            
-            // Set source and target languages
-            $translator->setSource($sourceCode);
-            $translator->setTarget($targetCode);
-            
-            // Try to translate the text
-            $translation = $translator->translate($request->text);
-            
-            // If no exception but empty translation, use original text
-            if (empty($translation)) {
-                Log::warning('Empty translation result, using original text');
-                $translation = $request->text;
-            }
-            
-            // Улучшенное кэширование перевода с прямым запросом в БД в случае проблем с моделью
-            if ($shouldCache && !empty($translation) && $translation !== $request->text) {
-                try {
-                    $hash = StoredTranslation::generateHash($request->text, $targetLang);
-                    
-                    // Проверяем, существует ли уже такой перевод
-                    $existing = StoredTranslation::where('hash', $hash)
-                        ->where('target_language', $targetLang)
-                        ->first();
-                    
-                    if ($existing) {
-                        // Обновляем URL страницы, если он новый
-                        if (!empty($pageUrl) && ($existing->page_url != $pageUrl)) {
-                            $existing->page_url = $pageUrl;
-                            $existing->save();
-                        }
-                    } else {
-                        // Сначала пробуем использовать модель Eloquent
-                        try {
-                            StoredTranslation::create([
-                                'original_text' => $request->text,
-                                'translated_text' => $translation,
-                                'target_language' => $targetLang,
-                                'hash' => $hash,
-                                'page_url' => $pageUrl,
-                            ]);
-                        } catch (Exception $eloquentError) {
-                            // Если не удалось через Eloquent, попробуем прямой SQL-запрос
-                            Log::warning('Eloquent cache failed, trying raw query: ' . $eloquentError->getMessage());
-                            
-                            // Обрезаем слишком длинные тексты, чтобы избежать ошибок с БД
-                            $maxLength = 60000; // Максимальная длина текста для БД
-                            $originalText = mb_strlen($request->text) > $maxLength ? mb_substr($request->text, 0, $maxLength) : $request->text;
-                            $translatedText = mb_strlen($translation) > $maxLength ? mb_substr($translation, 0, $maxLength) : $translation;
-                            
-                            DB::table('stored_translations')->insert([
-                                'original_text' => $originalText,
-                                'translated_text' => $translatedText,
-                                'target_language' => $targetLang,
-                                'hash' => $hash,
-                                'page_url' => $pageUrl,
-                                'created_at' => now(),
-                                'updated_at' => now(),
-                            ]);
-                        }
-                    }
-                    
-                    Log::debug('Translation cached in database', [
+                if ($existingTranslation) {
+                    // Translation exists in our database
+                    Log::debug('Using translation from database', [
                         'text' => substr($request->text, 0, 30) . (strlen($request->text) > 30 ? '...' : ''),
-                        'target' => $targetLang,
-                        'page_url' => $pageUrl
+                        'target' => $targetLang
                     ]);
-                } catch (Exception $e) {
-                    Log::error('Error caching translation: ' . $e->getMessage());
-                    // Continue with the response, even if caching failed
+                    
+                    return response()->json([
+                        'success' => true,
+                        'translation' => $existingTranslation,
+                        'source' => $request->source,
+                        'target' => $targetLang,
+                        'cached' => true
+                    ]);
                 }
+            } catch (Exception $dbException) {
+                // Если произошла ошибка при доступе к БД, логируем и продолжаем работу
+                Log::error('Error accessing database for translation: ' . $dbException->getMessage());
             }
             
-            // Log successful translation
-            Log::debug('Translation successful', [
-                'original' => $request->text,
-                'translated' => $translation
+            // Log the translation request for debugging
+            Log::debug('No translation found in database, returning original', [
+                'from' => $request->source,
+                'to' => $targetLang,
+                'text' => substr($request->text, 0, 30) . (strlen($request->text) > 30 ? '...' : '')
             ]);
-            
+
+            // If no translation found, return original text
             return response()->json([
                 'success' => true,
-                'translation' => $translation,
+                'translation' => $request->text, // Return original text
                 'source' => $request->source,
                 'target' => $targetLang,
                 'cached' => false
             ]);
-        } catch (Exception $e) {
-            Log::error('Translation error: ' . $e->getMessage(), [
-                'exception' => $e->getMessage(),
-                'source' => $request->source ?? 'unknown',
-                'target' => $targetLang ?? 'unknown',
-                'text_sample' => substr($request->text ?? '', 0, 30) . (strlen($request->text ?? '') > 30 ? '...' : ''),
-                'api_key_present' => !empty(env('GOOGLE_TRANSLATE_API_KEY'))
-            ]);
-            
-            // Return original text on error to avoid breaking the UI
-            return response()->json([
-                'success' => false,
-                'error' => 'Translation failed',
-                'message' => $e->getMessage(),
-                'translation' => $request->text ?? '', // Return original text on error
-                'source' => $request->source ?? 'unknown',
-                'target' => $targetLang ?? 'unknown'
-            ], 200); // Still return 200 to let the frontend handle it gracefully
-        }
         
         // Глобальный catch для защиты от белого экрана при любых непредвиденных ошибках
         } catch (Exception $globalError) {
@@ -304,7 +180,7 @@ class FixedTranslationController extends Controller
     }
     
     /**
-     * Test the translation API to see if it's working
+     * Test the translation API (database only, no Google Translate)
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
@@ -318,68 +194,49 @@ class FixedTranslationController extends Controller
             'target' => 'required|string|min:2|max:5'
         ]);
         
-        // Получаем API ключ напрямую, чтобы проверить его наличие
-        $apiKey = env('GOOGLE_TRANSLATE_API_KEY');
-        
-        // Log the test request with masked API key
-        Log::info('Translation API test request', [
+        // Log the test request
+        Log::info('Translation API test request (database only)', [
             'from' => $request->source,
             'to' => $request->target,
-            'text' => $request->text,
-            'api_key_present' => !empty($apiKey),
-            'api_key_preview' => $apiKey ? substr($apiKey, 0, 3) . '...' . substr($apiKey, -3) : 'none'
+            'text' => $request->text
         ]);
         
         try {
-            // Try to get the translator service
-            $translator = app('google-translate');
+            // Check if translation exists in database
+            $existingTranslation = StoredTranslation::findTranslation($request->text, $request->target);
             
-            if (!$translator) {
-                throw new Exception('Google Translate service not available');
+            if ($existingTranslation) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Translation found in database',
+                    'translation' => $existingTranslation,
+                    'original' => $request->text,
+                    'source' => $request->source,
+                    'target' => $request->target,
+                    'cached' => true
+                ]);
+            } else {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'No translation found in database, returning original',
+                    'translation' => $request->text,
+                    'original' => $request->text,
+                    'source' => $request->source,
+                    'target' => $request->target,
+                    'cached' => false
+                ]);
             }
             
-            // Convert language codes if needed (Google uses 'kk' for Kazakh)
-            $sourceCode = $request->source === 'kz' ? 'kk' : $request->source;
-            $targetCode = $request->target === 'kz' ? 'kk' : $request->target;
-            
-            // Устанавливаем языки для перевода
-            $translator->setSource($sourceCode);
-            $translator->setTarget($targetCode);
-            
-            // Используем переданный текст или тестовую фразу
-            $originalText = $request->text ?: 'Привет, это тестовый перевод';
-            $translation = $translator->translate($originalText);
-            
-            // Логируем результат
-            Log::info('Test translation successful', [
-                'original' => $originalText,
-                'translated' => $translation,
-                'target' => $request->target
-            ]);
-            
-            return response()->json([
-                'success' => true,
-                'original' => $originalText,
-                'translation' => $translation,
-                'api_key_present' => !empty($apiKey),
-                'source' => $request->source,
-                'target' => $request->target
-            ]);
         } catch (Exception $e) {
-            Log::error('Test translation error: ' . $e->getMessage(), [
-                'exception' => $e->getMessage(),
-                'source' => $request->source,
-                'target' => $request->target,
-                'api_key_present' => !empty($apiKey)
+            Log::error('Test translation error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
             
             return response()->json([
                 'success' => false,
-                'error' => 'Translation test failed',
-                'message' => $e->getMessage(),
-                'api_key_present' => !empty($apiKey),
-                'source' => $request->source,
-                'target' => $request->target
+                'error' => 'Translation API test failed',
+                'message' => $e->getMessage()
             ]);
         }
     }

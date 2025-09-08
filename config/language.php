@@ -39,14 +39,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Google Translate API Key
+    | Translation Settings
     |--------------------------------------------------------------------------
     |
-    | Your Google Translate API key. If empty, will use the free
-    | Stichoza/google-translate-php library without API key.
+    | Google Translate API отключен. Используется только база данных.
     |
     */
-    'google_translate_api_key' => env('GOOGLE_TRANSLATE_API_KEY', ''),
+    'google_translate_api_key' => '', // Google Translate отключен
 
     /*
     |--------------------------------------------------------------------------

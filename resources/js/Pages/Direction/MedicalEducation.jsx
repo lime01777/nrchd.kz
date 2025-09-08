@@ -115,22 +115,25 @@ export default function MedicalEducation() {
         <div className="container pt-8 mx-auto">
             <div className='flex flex-wrap'>
                 <FolderChlank 
+                    color="bg-gray-200"
+                    colorsec="bg-gray-300"
                     title="Рейтинг" 
                     description="Рейтинг медицинских образовательных учреждений"
                     href={route('medical.education.rating')}
-                    icon="📊"
                 />
                 <FolderChlank 
+                    color="bg-gray-200"
+                    colorsec="bg-gray-300"
                     title="Документы" 
                     description="Документы по медицинскому образованию"
                     href={route('medical.education.documents')}
-                    icon="📋"
                 />
                 <FolderChlank 
+                    color="bg-gray-200"
+                    colorsec="bg-gray-300"
                     title="Рекомендации" 
                     description="Рекомендации по медицинскому образованию"
                     href={route('medical.education.recommendations')}
-                    icon="📚"
                 />
             </div>
         </div>

@@ -102,22 +102,25 @@ export default function ClinicalProtocols() {
         <div className="container pt-8 mx-auto">
             <div className='flex flex-wrap'>
                 <FolderChlank 
+                    color="bg-gray-200"
+                    colorsec="bg-gray-300"
                     title={tComponent('directions.clinical_protocols', 'Клинические протоколы')} 
                     description="Каталог клинических протоколов"
                     href={route('clinical.protocols.catalog')}
-                    icon="📋"
                 />
                 <FolderChlank 
+                    color="bg-gray-200"
+                    colorsec="bg-gray-300"
                     title="Комиссия по клиническим протоколам" 
                     description="Информация о комиссии"
                     href={route('clinical.protocols.commission')}
-                    icon="👥"
                 />
                 <FolderChlank 
+                    color="bg-gray-200"
+                    colorsec="bg-gray-300"
                     title="Мониторинг внедрения" 
                     description="Мониторинг внедрения клинических протоколов"
                     href={route('clinical.protocols.monitoring')}
-                    icon="📊"
                 />
             </div>
         </div>

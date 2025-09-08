@@ -126,10 +126,11 @@ export default function HealthRate() {
         <div className="container pt-8 mx-auto">
             <div className='flex flex-wrap'>
                 <FolderChlank 
+                    color="bg-gray-200"
+                    colorsec="bg-gray-300"
                     title="ОТЗ отчеты" 
                     description="Отчеты по оценке технологий здравоохранения"
                     href={route('health.rate.otz.reports')}
-                    icon="📊"
                 />
             </div>
         </div>

@@ -1,6 +1,6 @@
 import '../css/app.css';
 import './bootstrap';
-// ВАЖНО: Полностью обновленная система перевода
+// ВАЖНО: Полностью обновленная система перевода (только из БД)
 import './Utils/translation-blocker'; // Import blocker for translation information blocks
 import languageInitializer from './Utils/language-initializer-new'; // Новейший инициализатор языка
 

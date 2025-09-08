@@ -136,16 +136,18 @@ export default function DrugPolicy() {
         <div className="container pt-8 mx-auto">
           <div className='flex flex-wrap'>
             <FolderChlank 
+              color="bg-gray-200"
+              colorsec="bg-gray-300"
               title="Регламенты" 
               description="Нормативно-правовые акты в области лекарственной политики"
               href={route('drug-policy.regulations')}
-              icon="📜"
             />
             <FolderChlank 
+              color="bg-gray-200"
+              colorsec="bg-gray-300"
               title="Комиссия" 
               description="Информация о комиссии по лекарственной политике"
               href={route('drug-policy.commission')}
-              icon="👥"
             />
           </div>
         </div>

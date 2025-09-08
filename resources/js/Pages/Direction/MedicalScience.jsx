@@ -49,21 +49,24 @@ export default function MedicalScience() {
         <div className="container px-5 mx-auto">
           <div className="flex flex-wrap">
             <FolderChlank 
-              h1="Перечень утвержденных научно-медицинских разработок" 
-              color="bg-gray-200" 
-              colorsec="bg-gray-300" 
+              color="bg-gray-200"
+              colorsec="bg-gray-300"
+              title="Перечень утвержденных научно-медицинских разработок" 
+              description="Информация о научно-медицинских разработках"
               href={route('medical.science.research')}
             />
             <FolderChlank 
-              h1="Клинические исследования" 
-              color="bg-gray-200" 
-              colorsec="bg-gray-300" 
+              color="bg-gray-200"
+              colorsec="bg-gray-300"
+              title="Клинические исследования" 
+              description="Информация о клинических исследованиях"
               href={route('medical.science.clinical')}
             />
             <FolderChlank 
-              h1="Ученый совет" 
-              color="bg-gray-200" 
-              colorsec="bg-gray-300" 
+              color="bg-gray-200"
+              colorsec="bg-gray-300"
+              title="Ученый совет" 
+              description="Информация об ученом совете"
               href={route('medical.science.council')}
             />
           </div>

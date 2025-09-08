@@ -1,8 +1,8 @@
 /**
  * new-translator.js - Легкий и простой переводчик для сайта
  *
- * Этот модуль предоставляет функционал для перевода страницы с использованием Google Translate API.
- * Реализована поддержка кэширования, чтобы уменьшить количество запросов к API.
+ * Этот модуль предоставляет функционал для перевода страницы из базы данных.
+ * Google Translate API отключен.
  */
 
 // Поддерживаемые языки
@@ -189,7 +189,7 @@ function saveToCache(text, targetLang, translation) {
 }
 
 /**
- * Переводит текст через API
+ * Получает перевод из базы данных через API (без Google Translate)
  */
 async function translateViaAPI(text, sourceLang, targetLang) {
   if (!text || text.trim() === '') return text;
@@ -202,7 +202,7 @@ async function translateViaAPI(text, sourceLang, targetLang) {
       return null;
     }
     
-    // Делаем запрос к API
+    // Делаем запрос к API для получения перевода из БД
     const response = await fetch('/api/translate', {
       method: 'POST',
       headers: {
@@ -213,7 +213,7 @@ async function translateViaAPI(text, sourceLang, targetLang) {
         text: text,
         source: sourceLang,
         target: targetLang,
-        cache: true // Сохраняем перевод на сервере
+        cache: false // Не сохраняем новые переводы, только получаем существующие
       })
     });
     
@@ -227,10 +227,11 @@ async function translateViaAPI(text, sourceLang, targetLang) {
       return data.translation;
     }
     
-    throw new Error(data.message || 'Unknown API error');
+    // Если перевод не найден в БД, возвращаем оригинал
+    return text;
   } catch (error) {
     console.error('[Translator] API error:', error);
-    return null;
+    return text; // Возвращаем оригинал в случае ошибки
   }
 }
 
@@ -314,7 +315,7 @@ function replaceTextInElement(element, originalText, translatedText) {
 }
 
 /**
- * Переводит страницу на указанный язык
+ * Переводит страницу на указанный язык (только из БД, без Google Translate)
  */
 export async function translatePage(targetLang, forceTranslate = false) {
   console.time('translation');
@@ -355,9 +356,6 @@ export async function translatePage(targetLang, forceTranslate = false) {
   document.documentElement.setAttribute('lang', targetLang);
   document.cookie = `language=${targetLang};path=/;max-age=31536000`;
   
-  // CSRF токен для API запросов
-  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-  
   // Счетчик переведенных элементов
   let translatedCount = 0;
   
@@ -378,7 +376,7 @@ export async function translatePage(targetLang, forceTranslate = false) {
       continue;
     }
     
-    // Если текста нет в кэше, переводим через API
+    // Если текста нет в кэше, проверяем БД через API
     try {
       const translation = await translateViaAPI(text, 'ru', targetLang);
       

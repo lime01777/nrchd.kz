@@ -1,6 +1,6 @@
 /**
  * SimpleFastTranslationService - Упрощенный быстрый сервис переводов
- * Интегрируется с существующей системой переводов
+ * Работает только с базой данных, Google Translate отключен
  */
 
 class SimpleFastTranslationService {

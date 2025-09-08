@@ -37,12 +37,14 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\HandleInertiaRequests::class,
+            \App\Http\Middleware\SetLocale::class,
         ],
 
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\SetLocale::class,
         ],
     ];
 
@@ -67,5 +69,6 @@ class Kernel extends HttpKernel
         'setLocale' => \App\Http\Middleware\SetLocaleFromURL::class,
         'autoLanguage' => \App\Http\Middleware\AutoLanguageDetectionMiddleware::class,
         'conference.subdomain' => \App\Http\Middleware\ConferenceSubdomainMiddleware::class,
+        'locale' => \App\Http\Middleware\SetLocale::class,
     ];
 }

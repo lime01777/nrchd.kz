@@ -140,23 +140,26 @@ export default function ElectronicHealth() {
     <section className="text-gray-600 body-font">
         <div className="container pt-8 mx-auto">
             <div className='flex flex-wrap'>
-                <FolderChlank 
+                <FolderChlank
+                    color="bg-fuchsia-200"
+                    colorsec="bg-fuchsia-300"
                     title="Стандарты" 
                     description="Стандарты электронного здравоохранения"
                     href={route('electronic.health.standards')}
-                    icon="📋"
                 />
                 <FolderChlank 
-                    title="Регламенты" 
-                    description="Регламенты электронного здравоохранения"
+                    color="bg-fuchsia-200"
+                    colorsec="bg-fuchsia-300"
+                    title="НПА" 
+                    description="Нормативно-правовые акты электронного здравоохранения"
                     href={route('electronic.health.regulations')}
-                    icon="📜"
                 />
                 <FolderChlank 
+                    color="bg-fuchsia-200"
+                    colorsec="bg-fuchsia-300"
                     title="МКБ-11" 
                     description="Международная классификация болезней 11-го пересмотра"
                     href={route('electronic.health.mkb11')}
-                    icon="🏥"
                 />
             </div>
         </div>

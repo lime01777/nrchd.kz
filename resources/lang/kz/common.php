@@ -291,4 +291,14 @@ return array (
   'directionsSubLinks.direction_tech_competence' => 'Технологиялық құзыреттілік салалық орталығы',
   'directionsSubLinks.center_prevention' => 'Денсаулықты сақтау және нығайту орталығы',
   'directionsSubLinks.medical_tourism' => 'Медициналық туризм',
+  
+  // Биоэтика аудармалары
+  'directions.bioethics' => 'Биоэтика бойынша орталық комиссия',
+  'bioethics.title' => 'Қазақстан Республикасы Денсаулық сақтау министрлігінің биоэтика бойынша орталық комиссиясы',
+  'bioethics.description' => 'Қазақстан Республикасы Денсаулық сақтау министрлігінің биоэтика бойынша орталық комиссиясы биомедициналық зерттеулерді жүргізуге байланысты құжаттарды биоэтикалық сараптау жүргізетін тәуелсіз эксперттік орган болып табылады.',
+  'bioethics.expertise' => 'Биоэтикалық сараптау',
+  'bioethics.certification' => 'Сертификаттау',
+  'bioethics.local_commissions' => 'Жергілікті комиссиялар',
+  'bioethics.biobanks' => 'Биобанктер',
+  'bioethics.composition' => 'Комиссия құрамы',
 );

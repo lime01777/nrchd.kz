@@ -67,4 +67,47 @@ Route::get('/news', function () {
     ]);
 })->name('news');
 
+// Маршруты для Центральной комиссии по биоэтике
+Route::get('/bioethics', function () {
+    return Inertia::render('Direction/Bioethics', [
+        'locale' => app()->getLocale(),
+        'translations' => TranslationService::getForPage('bioethics', app()->getLocale()),
+    ]);
+})->name('bioethics');
+
+Route::get('/bioethics/expertise', function () {
+    return Inertia::render('Direction/Bioethics/Expertise', [
+        'locale' => app()->getLocale(),
+        'translations' => TranslationService::getForPage('bioethics_expertise', app()->getLocale()),
+    ]);
+})->name('bioethics.expertise');
+
+Route::get('/bioethics/certification', function () {
+    return Inertia::render('Direction/Bioethics/Certification', [
+        'locale' => app()->getLocale(),
+        'translations' => TranslationService::getForPage('bioethics_certification', app()->getLocale()),
+    ]);
+})->name('bioethics.certification');
+
+Route::get('/bioethics/biobanks', function () {
+    return Inertia::render('Direction/Bioethics/Biobanks', [
+        'locale' => app()->getLocale(),
+        'translations' => TranslationService::getForPage('bioethics_biobanks', app()->getLocale()),
+    ]);
+})->name('bioethics.biobanks');
+
+Route::get('/bioethics/local-commissions', function () {
+    return Inertia::render('Direction/Bioethics/LocalCommissions', [
+        'locale' => app()->getLocale(),
+        'translations' => TranslationService::getForPage('bioethics_local_commissions', app()->getLocale()),
+    ]);
+})->name('bioethics.local_commissions');
+
+Route::get('/bioethics/composition', function () {
+    return Inertia::render('Direction/Bioethics/Composition', [
+        'locale' => app()->getLocale(),
+        'translations' => TranslationService::getForPage('bioethics_composition', app()->getLocale()),
+    ]);
+})->name('bioethics.composition');
+
 // Add other routes here with the same translation pattern

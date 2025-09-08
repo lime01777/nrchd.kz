@@ -40,10 +40,11 @@ export default function HealthAccounts() {
     <section className="text-gray-600 body-font pb-8">
       <div className="container px-5 mx-auto">
         <FolderChlank 
+          color="bg-gray-200"
+          colorsec="bg-gray-300"
           title="Документы Национальных счетов здравоохранения" 
           description="Основные документы и отчеты"
           href={route('health-accounts.documents')}
-          icon="📊"
         />
       </div>
     </section>
