@@ -185,19 +185,26 @@ class AutoTranslationService
     
     /**
      * Генерирует переводы для массива ключей и значений
+     *
+     * @param array $data
+     * @param string $targetLanguage Целевой язык
+     * @param string $sourceLanguage Исходный язык
+     * @param string $contentType
+     * @param int|null $contentId
+     * @return array
      */
-    public function translateArray(array $data, $sourceLanguage = 'kz', $contentType = 'general', $contentId = null)
+    public function translateArray(array $data, $targetLanguage, $sourceLanguage = 'kz', $contentType = 'general', $contentId = null)
     {
         $results = [];
-        
+
         foreach ($data as $key => $value) {
             if (is_string($value) && !empty(trim($value))) {
-                $results[$key] = $this->translateText($value, $sourceLanguage);
+                $results[$key] = $this->translateText($value, $targetLanguage, $sourceLanguage);
             } else {
                 $results[$key] = $value;
             }
         }
-        
+
         return $results;
     }
     
