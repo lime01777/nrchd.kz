@@ -80,28 +80,10 @@ export default function BioethicsExpertise() {
       <section className="text-gray-600 body-font">
         <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
             <FilesAccord 
-                folder="Bioethics/Expertise/Procedures"
-                title="Процедуры биоэтической экспертизы"
+                folder="Bioethics/Expertise/Documents"
+                title="Полезные документы"
                 bgColor="bg-blue-200"
                 defaultOpen={true}
-            />
-            <FilesAccord 
-                folder="Bioethics/Expertise/Requirements"
-                title="Требования к документации"
-                bgColor="bg-blue-200"
-                defaultOpen={false}
-            />
-            <FilesAccord 
-                folder="Bioethics/Expertise/Forms"
-                title="Формы документов"
-                bgColor="bg-blue-200"
-                defaultOpen={false}
-            />
-            <FilesAccord 
-                folder="Bioethics/Expertise/Guidelines"
-                title="Методические рекомендации"
-                bgColor="bg-blue-200"
-                defaultOpen={false}
             />
         </div>
     </section>
