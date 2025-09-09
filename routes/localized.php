@@ -103,6 +103,12 @@ Route::get('/bioethics/local-commissions', function () {
     ]);
 })->name('bioethics.local_commissions');
 
+Route::get('/bioethics/composition', function () {
+    return Inertia::render('Direction/Bioethics/Composition', [
+        'locale' => app()->getLocale(),
+        'translations' => TranslationService::getForPage('bioethics_composition', app()->getLocale()),
+    ]);
+})->name('bioethics.composition');
 
 Route::get('/bioethics/npa', function () {
     return Inertia::render('Direction/Bioethics/NPA', [

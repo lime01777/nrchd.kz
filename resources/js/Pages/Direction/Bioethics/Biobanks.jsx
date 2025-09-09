@@ -74,27 +74,9 @@ export default function BioethicsBiobanks() {
         <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
             <FilesAccord 
                 folder="Bioethics/Biobanks/Regulation"
-                title="Регулирование деятельности биобанков"
+                title="Документы по биобанкам"
                 bgColor="bg-blue-200"
                 defaultOpen={true}
-            />
-            <FilesAccord 
-                folder="Bioethics/Biobanks/EthicalStandards"
-                title="Этические стандарты"
-                bgColor="bg-blue-200"
-                defaultOpen={false}
-            />
-            <FilesAccord 
-                folder="Bioethics/Biobanks/QualityControl"
-                title="Контроль качества"
-                bgColor="bg-blue-200"
-                defaultOpen={false}
-            />
-            <FilesAccord 
-                folder="Bioethics/Biobanks/Registration"
-                title="Регистрация биобанков"
-                bgColor="bg-blue-200"
-                defaultOpen={false}
             />
         </div>
     </section>
