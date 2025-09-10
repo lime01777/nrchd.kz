@@ -130,13 +130,13 @@ export default function ClinicalProtocolsCatalog() {
   const getFolderPath = () => {
     switch (selectedType) {
       case 'protocols':
-        return 'Клинические протоколы';
+        return 'Клинические протоколы\Поток — клинические протоколы';
       case 'guidelines':
-        return 'Клинические руководства';
+        return 'Клинические руководства\Клинические руководства МЗ РК';
       case 'archive':
-        return 'Архив клинических протоколов';
+        return 'Архив клинических протоколов\Архив клинических протоколов МЗ РК';
       default:
-        return 'Клинические протоколы'; // По умолчанию
+        return 'Клинические протоколы\Поток — клинические протоколы'; // По умолчанию
     }
   };
 

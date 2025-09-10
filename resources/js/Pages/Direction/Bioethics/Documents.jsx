@@ -2,6 +2,7 @@ import React from 'react';
 import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
+import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 
 export default function BioethicsDocuments() {
   return (
@@ -15,31 +16,14 @@ export default function BioethicsDocuments() {
             
             <div className="space-y-6">
               {/* Документы по биоэтике */}
-              <FilesAccord
-                title="Документы по биоэтике"
+              <SimpleFileDisplay
+                title="documents\Bioethics\Documents"
                 folderPath="Bioethics/Documents"
                 bgColor="bg-blue-50"
                 textColor="text-blue-800"
                 borderColor="border-blue-200"
               />
-              
-              {/* Формы и заявления */}
-              <FilesAccord
-                title="Формы и заявления"
-                folderPath="Bioethics/Forms"
-                bgColor="bg-green-50"
-                textColor="text-green-800"
-                borderColor="border-green-200"
-              />
-              
-              {/* Шаблоны документов */}
-              <FilesAccord
-                title="Шаблоны документов"
-                folderPath="Bioethics/Templates"
-                bgColor="bg-purple-50"
-                textColor="text-purple-800"
-                borderColor="border-purple-200"
-              />
+
             </div>
           </div>
         </div>
