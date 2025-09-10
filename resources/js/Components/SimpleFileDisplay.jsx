@@ -81,6 +81,11 @@ function SimpleFileDisplay({
           apiEndpoint = `${baseUrl}/api/clinical-protocols`;
           
           // Добавляем параметры фильтрации для клинических протоколов
+          if (folder) {
+            // Нормализуем путь, заменяя обратные слеши на прямые для корректной работы URL
+            const normalizedFolder = folder.replace(/\\/g, '/');
+            params.append('folder', normalizedFolder);
+          }
           if (searchTerm) params.append('search', searchTerm);
           if (medicine) params.append('medicine', medicine);
           if (mkb) params.append('mkb', mkb);
@@ -137,7 +142,8 @@ function SimpleFileDisplay({
           year, 
           fileType,
           type,
-          useClinicalProtocols
+          useClinicalProtocols,
+          folder
         });
         
         console.log(`Выполняем запрос к API: ${apiEndpoint}${params.toString() ? '?' + params.toString() : ''}`);

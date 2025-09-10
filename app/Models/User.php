@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -44,5 +45,29 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Проверяет, является ли пользователь администратором
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Проверяет, является ли пользователь менеджером документов
+     */
+    public function isDocumentManager(): bool
+    {
+        return $this->role === 'document_manager';
+    }
+
+    /**
+     * Проверяет, имеет ли пользователь доступ к админ-панели
+     */
+    public function hasAdminAccess(): bool
+    {
+        return $this->isAdmin() || $this->isDocumentManager();
     }
 }

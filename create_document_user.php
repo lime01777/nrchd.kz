@@ -16,7 +16,7 @@ if ($user) {
     // Обновляем существующего пользователя
     $user->name = 'Менеджер документов';
     $user->password = Hash::make('E32we32w@');
-    // $user->role = 'document_manager'; // Поле role пока не существует в БД
+    $user->role = 'document_manager'; // Устанавливаем роль менеджера документов
     $user->save();
     echo "Пользователь обновлен\n";
     fwrite($log, "Обновлен пользователь с email cp@nrchd.kz\n");
@@ -26,7 +26,7 @@ if ($user) {
     $user->name = 'Менеджер документов';
     $user->email = 'cp@nrchd.kz';
     $user->password = Hash::make('E32we32w@');
-    // $user->role = 'document_manager'; // Поле role пока не существует в БД
+    $user->role = 'document_manager'; // Устанавливаем роль менеджера документов
     $user->save();
     echo "Пользователь создан\n";
     fwrite($log, "Создан новый пользователь с email cp@nrchd.kz\n");

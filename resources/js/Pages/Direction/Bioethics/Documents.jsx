@@ -227,10 +227,8 @@ export default function BioethicsDocuments() {
               {/* Документы по биоэтике */}
               <SimpleFileDisplay
                 title="Документы по биоэтике"
-                folderPath="documents\Bioethics\Documents"
-                bgColor="bg-blue-50"
-                textColor="text-blue-800"
-                borderColor="border-blue-200"
+                folder='Bioethics/Documents'
+                bgColor="bg-white"
               />
               
             </div>

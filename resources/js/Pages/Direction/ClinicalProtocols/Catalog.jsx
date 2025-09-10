@@ -9,7 +9,7 @@ export default function ClinicalProtocolsCatalog() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMedicine, setSelectedMedicine] = useState('');
   const [selectedMkb, setSelectedMkb] = useState('');
-  const [selectedType, setSelectedType] = useState('');
+  const [selectedType, setSelectedType] = useState('protocols');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [availableCategories, setAvailableCategories] = useState([]);
@@ -80,7 +80,6 @@ export default function ClinicalProtocolsCatalog() {
 
   // Типы документов
   const documentTypes = [
-    { value: '', label: 'Все типы документов' },
     { value: 'protocols', label: 'Клинические протоколы' },
     { value: 'guidelines', label: 'Клинические руководства' },
     { value: 'archive', label: 'Архив' }
@@ -107,7 +106,7 @@ export default function ClinicalProtocolsCatalog() {
     setSearchTerm('');
     setSelectedMedicine('');
     setSelectedMkb('');
-    setSelectedType('');
+    setSelectedType('protocols');
     setError(null);
   };
 
@@ -128,16 +127,20 @@ export default function ClinicalProtocolsCatalog() {
 
   // Определение пути к папке на основе типа документа
   const getFolderPath = () => {
+    let path = '';
     switch (selectedType) {
       case 'protocols':
-        return 'Клинические протоколы\Поток — клинические протоколы';
+        path = 'Клинические протоколы/Поток клинические протоколы';
+        break;
       case 'guidelines':
-        return 'Клинические руководства\Клинические руководства МЗ РК';
+        path = 'Клинические протоколы/Клинические руководства МЗ РК';
+        break;
       case 'archive':
-        return 'Архив клинических протоколов\Архив клинических протоколов МЗ РК';
-      default:
-        return 'Клинические протоколы\Поток — клинические протоколы'; // По умолчанию
+        path = 'Клинические протоколы/Архив клинических протоколов МЗ РК';
+        break;
     }
+    console.log('getFolderPath called:', { selectedType, path });
+    return path;
   };
 
   return (
@@ -262,7 +265,7 @@ export default function ClinicalProtocolsCatalog() {
             
             {/* Список клинических протоколов */}
             <SimpleFileDisplay
-              folderPath={getFolderPath()}
+              folder={getFolderPath()}
               bgColor='bg-white'
               useClinicalProtocols={true}
               searchTerm={getSearchQuery()}

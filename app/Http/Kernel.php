@@ -70,5 +70,6 @@ class Kernel extends HttpKernel
         'autoLanguage' => \App\Http\Middleware\AutoLanguageDetectionMiddleware::class,
         'conference.subdomain' => \App\Http\Middleware\ConferenceSubdomainMiddleware::class,
         'locale' => \App\Http\Middleware\SetLocale::class,
+        'document.manager' => \App\Http\Middleware\DocumentManagerAccess::class,
     ];
 }

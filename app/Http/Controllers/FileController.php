@@ -29,16 +29,6 @@ class FileController extends Controller
         $category = $request->input('category', '');
         $folderPath = $request->input('folder', ''); // Получаем путь к папке
         
-        // Определяем тип документа по пути к папке
-        $type = '';
-        if (strpos($folderPath, 'Клинические протоколы') !== false && strpos($folderPath, 'Архив') === false) {
-            $type = 'protocols';
-        } elseif (strpos($folderPath, 'Клинические руководства') !== false) {
-            $type = 'guidelines';
-        } elseif (strpos($folderPath, 'Архив') !== false) {
-            $type = 'archive';
-        }
-        
         // Логируем параметры поиска для отладки
         Log::info('Параметры поиска клинических протоколов:', [
             'searchTerm' => $searchTerm,
@@ -47,187 +37,149 @@ class FileController extends Controller
             'year' => $year,
             'category' => $category,
             'folderPath' => $folderPath,
-            'determinedType' => $type
+            'allRequestInputs' => $request->all()
         ]);
         
-        $allProtocols = [];
+        // Используем тот же подход, что и в getFiles - сканируем файловую систему
+        $baseDirectory = public_path('storage/documents');
         
-        // Загружаем данные в зависимости от определенного типа
-        if ($type === 'protocols' || $type === '') {
-            // Загружаем клинические протоколы МЗ РК
-            $protocolsPath = public_path('data/clinical_protocols.json');
-            if (File::exists($protocolsPath)) {
-                try {
-                    $protocolsContent = File::get($protocolsPath);
-                    $protocolsData = json_decode($protocolsContent, true);
-                    
-                    if (json_last_error() === JSON_ERROR_NONE && isset($protocolsData['protocols'])) {
-                        // Добавляем тип к каждому протоколу
-                        foreach ($protocolsData['protocols'] as $protocol) {
-                            $protocol['type'] = 'protocols';
-                            $allProtocols[] = $protocol;
-                        }
-                        Log::info('Загружено клинических протоколов МЗ РК:', ['count' => count($protocolsData['protocols'])]);
-                    }
-                } catch (\Exception $e) {
-                    Log::error('Ошибка при чтении файла клинических протоколов:', ['error' => $e->getMessage()]);
-                }
-            }
-        }
-        
-        if ($type === 'guidelines' || $type === '') {
-            // Загружаем клинические руководства
-            $guidelinesPath = public_path('data/clinical_guidelines.json');
-            if (File::exists($guidelinesPath)) {
-                try {
-                    $guidelinesContent = File::get($guidelinesPath);
-                    $guidelinesData = json_decode($guidelinesContent, true);
-                    
-                    if (json_last_error() === JSON_ERROR_NONE && isset($guidelinesData['guidelines'])) {
-                        // Добавляем тип к каждому руководству
-                        foreach ($guidelinesData['guidelines'] as $guideline) {
-                            $guideline['type'] = 'guidelines';
-                            $allProtocols[] = $guideline;
-                        }
-                        Log::info('Загружено клинических руководств:', ['count' => count($guidelinesData['guidelines'])]);
-                    }
-                } catch (\Exception $e) {
-                    Log::error('Ошибка при чтении файла клинических руководств:', ['error' => $e->getMessage()]);
-                }
+        // Если указана конкретная папка
+        if ($folderPath) {
+            // Нормализуем путь, заменяя прямые слеши на системные разделители
+            $normalizedPath = str_replace('/', DIRECTORY_SEPARATOR, $folderPath);
+            $fullPath = $baseDirectory . DIRECTORY_SEPARATOR . $normalizedPath;
+            
+            // Проверяем существование папки
+            if (!File::isDirectory($fullPath)) {
+                return response()->json([
+                    'error' => 'Указанная папка не существует: ' . $folderPath
+                ], 404);
             }
             
-            // Также загружаем международные клинические руководства
-            $internationalGuidelinesPath = public_path('data/international_guidelines.json');
-            if (File::exists($internationalGuidelinesPath)) {
-                try {
-                    $internationalGuidelinesContent = File::get($internationalGuidelinesPath);
-                    $internationalGuidelinesData = json_decode($internationalGuidelinesContent, true);
-                    
-                    if (json_last_error() === JSON_ERROR_NONE && isset($internationalGuidelinesData['guidelines'])) {
-                        // Добавляем тип к каждому руководству
-                        foreach ($internationalGuidelinesData['guidelines'] as $guideline) {
-                            $guideline['type'] = 'guidelines';
-                            $allProtocols[] = $guideline;
-                        }
-                        Log::info('Загружено международных клинических руководств:', ['count' => count($internationalGuidelinesData['guidelines'])]);
-                    }
-                } catch (\Exception $e) {
-                    Log::error('Ошибка при чтении файла международных руководств:', ['error' => $e->getMessage()]);
-                }
-            }
-        }
-        
-        if ($type === 'archive') {
-            // Для архива пока возвращаем пустой массив
-            // В будущем здесь можно добавить загрузку архивных документов
-            Log::info('Запрос архивных документов - пока не реализовано');
-        }
-        
-        Log::info('Всего загружено документов:', ['count' => count($allProtocols)]);
-        
-        // Фильтруем протоколы
-        try {
-            $filteredProtocols = array_filter($allProtocols, function($protocol) use ($searchTerm, $medicine, $mkb, $year, $category) {
-                // Проверяем наличие необходимых полей
-                if (!isset($protocol['name']) || !isset($protocol['description'])) {
-                    Log::warning('Протокол без обязательных полей:', ['protocol' => $protocol]);
-                    return false;
-                }
-                
-                // Фильтрация по типу документа уже выполнена при загрузке данных
-                
-                // Фильтрация по поисковому запросу
-                if ($searchTerm && stripos($protocol['name'], $searchTerm) === false && 
-                    stripos($protocol['description'], $searchTerm) === false) {
-                    return false;
-                }
-                
-                // Фильтрация по разделу медицины
-                if ($medicine && (!isset($protocol['medicine']) || $protocol['medicine'] !== $medicine)) {
-                    return false;
-                }
-                
-                // Фильтрация по категории МКБ
-                if ($mkb && (!isset($protocol['mkb']) || stripos($protocol['mkb'], $mkb) === false)) {
-                    return false;
-                }
+            // Получаем все файлы и подпапки рекурсивно
+            $files = [];
+            $this->getFilesRecursively($fullPath, $files, $category);
+            
+            $documents = [];
+            
+            foreach ($files as $file) {
+                $fileName = $file->getFilename();
+                $fileExtension = $file->getExtension();
+                $fileSize = $file->getSize();
+                $lastModified = $file->getMTime();
+                $fileYear = date('Y', $lastModified);
                 
                 // Фильтрация по году
-                if ($year && (!isset($protocol['year']) || $protocol['year'] !== $year)) {
-                    return false;
-                }
-                
-                // Фильтрация по категории
-                if ($category && (!isset($protocol['category']) || $protocol['category'] !== $category)) {
-                    return false;
-                }
-                
-                return true;
-            });
-            
-            Log::info('После фильтрации осталось протоколов:', ['count' => count($filteredProtocols)]);
-        } catch (\Exception $e) {
-            Log::error('Ошибка при фильтрации протоколов:', ['error' => $e->getMessage()]);
-            return response()->json([
-                'error' => 'Ошибка при фильтрации протоколов: ' . $e->getMessage()
-            ], 500);
-        }
-        
-        // Преобразуем результаты в формат, совместимый с getFiles
-        try {
-            $documents = [];
-            foreach ($filteredProtocols as $protocol) {
-                // Проверяем наличие обязательных полей
-                if (!isset($protocol['name']) || !isset($protocol['url'])) {
-                    Log::warning('Пропускаем протокол без обязательных полей:', ['protocol' => $protocol]);
+                if ($year && $fileYear != $year) {
                     continue;
                 }
                 
-                $document = [
-                    'name' => $protocol['name'],
-                    'description' => $protocol['description'] ?? $protocol['name'],
-                    'url' => $protocol['url'],
-                    'size' => '1.2 MB', // Примерный размер
-                    'date' => isset($protocol['year']) ? date('Y-m-d', strtotime($protocol['year'] . '-01-01')) : date('Y-m-d'),
-                    'type' => $protocol['filetype'] ?? 'pdf',
-                    'imgType' => $this->getImageTypeForExtension($protocol['filetype'] ?? 'pdf'),
+                // Фильтрация по поисковому запросу
+                if ($searchTerm && stripos(pathinfo($fileName, PATHINFO_FILENAME), $searchTerm) === false) {
+                    continue;
+                }
+                
+                // Фильтрация по разделу медицины
+                if ($medicine) {
+                    // Проверяем наличие раздела медицины в имени файла или в пути
+                    $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
+                    $filePath = $file->getPathname();
+                    
+                    // Проверяем имя файла и путь на совпадение с разделом медицины
+                    if (stripos($fileContent, $medicine) === false && stripos($filePath, $medicine) === false) {
+                        continue;
+                    }
+                }
+                
+                // Фильтрация по категории МКБ
+                if ($mkb) {
+                    // Проверяем наличие кода МКБ в имени файла или в пути
+                    $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
+                    $filePath = $file->getPathname();
+                    
+                    // Проверяем имя файла и путь на совпадение с кодом МКБ
+                    if (stripos($fileContent, $mkb) === false && stripos($filePath, $mkb) === false) {
+                        continue;
+                    }
+                }
+                
+                // Относительный путь к файлу для URL
+                $relativePath = str_replace(public_path() . DIRECTORY_SEPARATOR, '', $file->getPathname());
+                $relativePath = str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
+                
+                // Определяем тип иконки на основе расширения файла
+                $imgType = $this->getImageTypeForExtension($fileExtension);
+                
+                // Получаем категорию из пути файла
+                $fileCategory = $this->getCategoryFromPath($file->getPathname(), $fullPath);
+                
+                // Определяем раздел медицины на основе имени файла и пути
+                $medicineSectionName = '';
+                $medicineSections = [
+                    'cardiology' => 'Кардиология',
+                    'gastroenterology' => 'Гастроэнтерология',
+                    'neurology' => 'Неврология',
+                    'pulmonology' => 'Пульмонология',
+                    'endocrinology' => 'Эндокринология',
+                    'oncology' => 'Онкология',
+                    'pediatrics' => 'Педиатрия',
+                    'surgery' => 'Хирургия',
+                    'obstetrics' => 'Акушерство и гинекология',
+                    'urology' => 'Урология',
+                    'ophthalmology' => 'Офтальмология',
+                    'otolaryngology' => 'Оториноларингология',
+                    'dermatology' => 'Дерматология',
+                    'infectious' => 'Инфекционные болезни',
+                    'psychiatry' => 'Психиатрия',
+                    'rheumatology' => 'Ревматология',
+                    'traumatology' => 'Травматология и ортопедия'
                 ];
                 
-                // Добавляем дополнительные поля, если они есть
-                if (isset($protocol['category'])) $document['category'] = $protocol['category'];
-                if (isset($protocol['year'])) $document['year'] = $protocol['year'];
-                if (isset($protocol['medicine'])) $document['medicine'] = $protocol['medicine'];
-                if (isset($protocol['mkb'])) $document['mkb'] = $protocol['mkb'];
-                if (isset($protocol['type'])) $document['type'] = $protocol['type'];
-                if (isset($protocol['source'])) $document['source'] = $protocol['source'];
+                $fileNameLower = strtolower(pathinfo($fileName, PATHINFO_FILENAME));
+                $filePathLower = strtolower($file->getPathname());
                 
-                $documents[] = $document;
+                foreach ($medicineSections as $key => $value) {
+                    if (stripos($fileNameLower, $key) !== false || 
+                        stripos($fileNameLower, $value) !== false ||
+                        stripos($filePathLower, $key) !== false ||
+                        stripos($filePathLower, $value) !== false) {
+                        $medicineSectionName = $value;
+                        break;
+                    }
+                }
+                
+                $documents[] = [
+                    'name' => pathinfo($fileName, PATHINFO_FILENAME),
+                    'url' => '/' . $relativePath,
+                    'size' => $fileSize,
+                    'extension' => $fileExtension,
+                    'imgType' => $imgType,
+                    'category' => $fileCategory,
+                    'year' => $fileYear,
+                    'medicine' => $medicineSectionName,
+                    'modified' => date('Y-m-d H:i:s', $lastModified),
+                    'type' => $this->getDocumentTypeFromPath($folderPath)
+                ];
             }
             
-            Log::info('Подготовлено документов для ответа:', ['count' => count($documents)]);
+            // Сортируем по названию
+            usort($documents, function($a, $b) {
+                return strcmp($a['name'], $b['name']);
+            });
             
-            $response = [
-                'title' => 'Клинические протоколы',
-                'documents' => array_values($documents)
-            ];
+            Log::info('Возвращаем файлы из файловой системы:', ['count' => count($documents)]);
             
-            Log::info('Отправляем ответ с клиническими протоколами:', ['document_count' => count($documents)]);
-            return response()->json($response);
-            
-        } catch (\Exception $e) {
-            Log::error('Ошибка при подготовке ответа:', ['error' => $e->getMessage()]);
             return response()->json([
-                'error' => 'Ошибка при подготовке ответа: ' . $e->getMessage()
-            ], 500);
+                'documents' => $documents,
+                'total' => count($documents)
+            ]);
         }
+        
+        return response()->json([
+            'error' => 'Не указан путь к папке'
+        ], 400);
     }
 
-    /**
-     * Получить список файлов из папки storage
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function getFiles(Request $request)
     {
         $baseDirectory = public_path('storage/documents');
@@ -873,5 +825,21 @@ class FileController extends Controller
         }
         
         return $documents;
+    }
+
+    /**
+     * Определяет тип документа по пути к папке
+     */
+    private function getDocumentTypeFromPath($folderPath)
+    {
+        if (strpos($folderPath, 'Поток — клинические протоколы') !== false) {
+            return 'protocols';
+        } elseif (strpos($folderPath, 'Клинические руководства МЗ РК') !== false) {
+            return 'guidelines';
+        } elseif (strpos($folderPath, 'Архив клинических протоколов МЗ РК') !== false) {
+            return 'archive';
+        }
+        
+        return 'unknown';
     }
 }

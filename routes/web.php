@@ -541,6 +541,15 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::resource('document-accordions', App\Http\Controllers\Admin\DocumentAccordionController::class, [
         'names' => 'admin.document-accordions'
     ]);
+
+    // Управление документами (для менеджеров документов)
+    Route::middleware(['document.manager'])->group(function () {
+        Route::get('/document-manager', [App\Http\Controllers\DocumentManagerController::class, 'index'])->name('admin.document-manager');
+        Route::get('/document-manager/documents', [App\Http\Controllers\DocumentManagerController::class, 'getDocuments'])->name('admin.document-manager.documents');
+        Route::post('/document-manager/rename', [App\Http\Controllers\DocumentManagerController::class, 'rename'])->name('admin.document-manager.rename');
+        Route::post('/document-manager/move', [App\Http\Controllers\DocumentManagerController::class, 'move'])->name('admin.document-manager.move');
+        Route::delete('/document-manager/delete', [App\Http\Controllers\DocumentManagerController::class, 'delete'])->name('admin.document-manager.delete');
+    });
 });
 
 // API для просмотра и управления файлами в public/storage
