@@ -226,18 +226,19 @@ export default function BioethicsDocuments() {
             <div className="space-y-6">
               {/* Документы по биоэтике */}
               <SimpleFileDisplay
-                title="documents\Bioethics\Documents"
-                folderPath="Bioethics/Documents"
+                title="Документы по биоэтике"
+                folderPath="documents\Bioethics\Documents"
                 bgColor="bg-blue-50"
                 textColor="text-blue-800"
                 borderColor="border-blue-200"
               />
-
+              
             </div>
           </div>
         </div>
       </section>
     </>
+
   );
 }
 
