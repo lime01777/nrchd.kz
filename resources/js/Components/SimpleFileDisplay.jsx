@@ -11,6 +11,7 @@ function SimpleFileDisplay({
   category = '',
   year = '',
   fileType = '',
+  type = '', // Добавляем параметр type для фильтрации по типу документа
   bgColor = 'bg-green-100',
   useClinicalProtocols = false,
   onFilesLoaded = null,
@@ -86,6 +87,7 @@ function SimpleFileDisplay({
           if (category) params.append('category', category);
           if (year) params.append('year', year);
           if (fileType) params.append('filetype', fileType);
+          // Убираем type для клинических протоколов, так как тип определяется через folderPath
         } else {
           // Стандартный режим работы с файлами из папки
           if (folder) {
@@ -114,6 +116,11 @@ function SimpleFileDisplay({
           if (category) {
             fullSearchTerm += ` category:${category}`;
           }
+
+          // Добавляем тип документа в строку поиска, если он указан
+          if (type) {
+            fullSearchTerm += ` type:${type}`;
+          }
           
           // Добавляем параметр поиска в URL
           if (fullSearchTerm.trim() !== '') {
@@ -129,6 +136,7 @@ function SimpleFileDisplay({
           category, 
           year, 
           fileType,
+          type,
           useClinicalProtocols
         });
         
@@ -171,6 +179,8 @@ function SimpleFileDisplay({
         } catch (error) {
           const errorMessage = `Ошибка при загрузке файлов: ${error.message}`;
           console.error('Ошибка при запросе к API:', error);
+          console.error('API Endpoint:', apiEndpoint);
+          console.error('Search Parameters:', { searchTerm, medicine, mkb, category, year, fileType, type });
           setError(errorMessage);
           
           // Передаем ошибку в родительский компонент, если проп предоставлен
@@ -197,8 +207,9 @@ function SimpleFileDisplay({
             console.log('Найдены протоколы в response.data.protocols:', response.data.protocols);
             filesData = response.data.protocols;
           } else {
-            const errorMessage = 'Не найдены ни documents, ни protocols в ответе API';
+            const errorMessage = 'Не найдены ни documents, ни protocols в ответе API. Response data: ' + JSON.stringify(response.data);
             console.error(errorMessage);
+            console.error('Full response:', response);
             
             // Передаем ошибку в родительский компонент, если проп предоставлен
             if (onError) {
@@ -572,7 +583,7 @@ function SimpleFileDisplay({
       
       return true;
     });
-  }, [files, searchTerm, medicine, mkb, category, year, fileType]);
+  }, [files, searchTerm, medicine, mkb, category, year, fileType, type]);
 
   if (loading) {
     return (

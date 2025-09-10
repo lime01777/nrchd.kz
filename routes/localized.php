@@ -117,4 +117,11 @@ Route::get('/bioethics/npa', function () {
     ]);
 })->name('bioethics.npa');
 
+Route::get('/bioethics/documents', function () {
+    return Inertia::render('Direction/Bioethics/Documents', [
+        'locale' => app()->getLocale(),
+        'translations' => TranslationService::getForPage('bioethics_documents', app()->getLocale()),
+    ]);
+})->name('bioethics.documents');
+
 // Add other routes here with the same translation pattern

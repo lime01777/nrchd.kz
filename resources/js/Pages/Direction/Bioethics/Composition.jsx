@@ -29,17 +29,6 @@ export default function BioethicsComposition() {
                 </p>
               </div>
 
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Члены комиссии</h3>
-              <div className="space-y-4">
-                <p className="text-gray-700">
-                  Информация о составе комиссии будет размещена после официального утверждения.
-                </p>
-                <p className="text-gray-700">
-                  Для получения актуальной информации о составе комиссии обращайтесь в рабочий орган 
-                  Центральной комиссии по биоэтике.
-                </p>
-              </div>
-
               <div className="bg-yellow-50 p-4 rounded-lg mt-6">
                 <h4 className="text-lg font-semibold text-gray-800 mb-2">Рабочий орган</h4>
                 <p className="text-gray-700 mb-2">
@@ -53,7 +42,7 @@ export default function BioethicsComposition() {
                   <strong>Телефон:</strong> 87172648-950; 87172648-951 (внут 1109)
                 </p>
                 <p className="text-gray-700">
-                  <strong>Email:</strong> <a href="mailto:ckb-amu@yandex.kz" className="text-blue-600 hover:text-blue-800">ckb-amu@yandex.kz</a>
+                  <strong>Email:</strong> <a href="mailto:bioethics@nrchd.kz" className="text-blue-600 hover:text-blue-800">bioethics@nrchd.kz</a>
                 </p>
               </div>
             </div>

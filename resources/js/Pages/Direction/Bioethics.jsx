@@ -212,6 +212,14 @@ export default function Bioethics() {
                 description="Нормативно-правовые акты по биоэтике"
                 href={route('bioethics.npa')}
               />
+              
+              <FolderChlank 
+                color="bg-gray-200"
+                colorsec="bg-gray-300"
+                title={tComponent('bioethics.documents', 'Документы')} 
+                description="Документы по биоэтике"
+                href={route('bioethics.documents')}
+              />
             
           </div>
         </div>

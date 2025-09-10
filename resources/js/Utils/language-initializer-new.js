@@ -6,6 +6,7 @@
  */
 
 import Translator from './new-translator';
+import LanguageManager from './LanguageManager';
 
 // Глобальный флаг инициализации
 let isInitialized = false;
@@ -19,7 +20,7 @@ export async function initializeLanguageSystem(verbose = false) {
   // Предотвращаем повторную инициализацию
   if (isInitialized) {
     if (verbose) console.log('[LanguageInitializer] Already initialized, skipping');
-    return Translator.getCurrentLanguage();
+    return LanguageManager.getCurrentLanguage();
   }
   
   if (verbose) console.log('[LanguageInitializer] Starting initialization...');
@@ -28,20 +29,21 @@ export async function initializeLanguageSystem(verbose = false) {
     // Убеждаемся, что CSRF токен присутствует
     ensureCsrfToken();
     
-    // Инициализируем переводчик
-    const currentLanguage = Translator.initialize();
-    if (verbose) console.log(`[LanguageInitializer] Translator initialized with language: ${currentLanguage}`);
+    // Используем LanguageManager для инициализации (он уже содержит всю логику)
+    // НЕ вызываем Translator.initialize() - это дублирование!
+    const currentLanguage = LanguageManager.getCurrentLanguage();
+    if (verbose) console.log(`[LanguageInitializer] LanguageManager already initialized with language: ${currentLanguage}`);
     
     // Проверяем язык в URL, возможно нужно переключиться
     const urlLanguage = checkUrlLanguage();
     if (urlLanguage && urlLanguage !== currentLanguage) {
       if (verbose) console.log(`[LanguageInitializer] URL language (${urlLanguage}) differs from current (${currentLanguage}), switching`);
-      await Translator.translatePage(urlLanguage);
+      await LanguageManager.switchLanguage(urlLanguage);
     } else {
-      // Если текущий язык не русский, применяем перевод
+      // Если текущий язык не русский, применяем перевод через LanguageManager
       if (currentLanguage !== 'ru') {
         if (verbose) console.log(`[LanguageInitializer] Applying initial translation to ${currentLanguage}`);
-        await Translator.translatePage(currentLanguage);
+        await LanguageManager.applyLanguage();
       }
     }
     
@@ -145,7 +147,7 @@ function setupDynamicContentHandlers(language, verbose) {
     // Если были добавлены новые элементы с текстом, переводим их
     if (needsTranslation && language !== 'ru') {
       if (verbose) console.log('[LanguageInitializer] New content detected, applying translation');
-      Translator.translatePage(language);
+      LanguageManager.applyLanguage();
     }
   });
   
@@ -176,10 +178,10 @@ function setupLanguageUrlHandler(verbose) {
       const langParam = urlObj.searchParams.get('lang');
       
       if (langParam && ['ru', 'en', 'kz'].includes(langParam)) {
-        const currentLanguage = Translator.getCurrentLanguage();
+        const currentLanguage = LanguageManager.getCurrentLanguage();
         if (langParam !== currentLanguage) {
           if (verbose) console.log(`[LanguageInitializer] URL language changed to ${langParam}, applying translation`);
-          Translator.translatePage(langParam);
+          LanguageManager.switchLanguage(langParam);
         }
       }
     }
@@ -196,10 +198,10 @@ function setupLanguageUrlHandler(verbose) {
       const langParam = urlObj.searchParams.get('lang');
       
       if (langParam && ['ru', 'en', 'kz'].includes(langParam)) {
-        const currentLanguage = Translator.getCurrentLanguage();
+        const currentLanguage = LanguageManager.getCurrentLanguage();
         if (langParam !== currentLanguage) {
           if (verbose) console.log(`[LanguageInitializer] URL language changed to ${langParam}, applying translation`);
-          Translator.translatePage(langParam);
+          LanguageManager.switchLanguage(langParam);
         }
       }
     }
@@ -222,13 +224,8 @@ export async function switchLanguage(language, forceTranslate = false) {
       return false;
     }
     
-    // Применяем перевод
-    await Translator.translatePage(language, forceTranslate);
-    
-    // Обновляем URL, добавляя параметр языка
-    const url = new URL(window.location.href);
-    url.searchParams.set('lang', language);
-    window.history.replaceState({}, '', url);
+    // Используем LanguageManager для переключения языка
+    await LanguageManager.switchLanguage(language);
     
     return true;
   } catch (error) {
@@ -256,6 +253,6 @@ export default {
   initialize: initializeLanguageSystem,
   switchLanguage,
   clearCache: clearTranslationCache,
-  getLanguage: () => Translator.getCurrentLanguage(),
+  getLanguage: () => LanguageManager.getCurrentLanguage(),
   getSupportedLanguages: () => Translator.getSupportedLanguages()
 };

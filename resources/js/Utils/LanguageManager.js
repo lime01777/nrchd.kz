@@ -66,17 +66,26 @@ class LanguageManager {
   }
   
   /**
-   * Получить сохраненный язык из разных источников (localStorage, cookies, URL, заголовки)
+   * Получить сохраненный язык из разных источников
+   * Порядок приоритета: localStorage -> браузер -> сервер
    */
   getSavedLanguage() {
-    // Сначала проверить localStorage (наивысший приоритет, т.к. это явный выбор пользователя)
+    // 1. Сначала проверить localStorage (наивысший приоритет, т.к. это явный выбор пользователя)
     const localLang = localStorage.getItem('preferredLanguage');
     if (localLang && AVAILABLE_LANGUAGES.includes(localLang)) {
       console.log(`[LanguageManager] Found language in localStorage: ${localLang}`);
       return localLang;
     }
     
-    // Затем проверить URL параметры
+    // 2. Проверить язык браузера
+    const browserLang = navigator.language.substring(0, 2);
+    if (AVAILABLE_LANGUAGES.includes(browserLang)) {
+      console.log(`[LanguageManager] Found language from browser: ${browserLang}`);
+      this.saveLanguagePreference(browserLang); // Сохранить в localStorage и cookies
+      return browserLang;
+    }
+    
+    // 3. Проверить URL параметры
     const urlParams = new URLSearchParams(window.location.search);
     const urlLang = urlParams.get('lang');
     if (urlLang && AVAILABLE_LANGUAGES.includes(urlLang)) {
@@ -85,7 +94,7 @@ class LanguageManager {
       return urlLang;
     }
     
-    // Проверить куки
+    // 4. Проверить куки
     const cookies = document.cookie.split(';');
     for (let i = 0; i < cookies.length; i++) {
       const cookie = cookies[i].trim().split('=');
@@ -97,7 +106,7 @@ class LanguageManager {
       }
     }
     
-    // Проверить заголовок X-App-Locale от сервера (если доступен)
+    // 5. Проверить заголовок X-App-Locale от сервера (если доступен)
     const serverLang = document.querySelector('meta[name="x-app-locale"]')?.getAttribute('content');
     if (serverLang && AVAILABLE_LANGUAGES.includes(serverLang)) {
       console.log(`[LanguageManager] Found language in meta tag: ${serverLang}`);
@@ -147,6 +156,7 @@ class LanguageManager {
   
   /**
    * Синхронизировать выбранный язык с сервером
+   * НЕ пересоздает переводчик, только обновляет язык через LanguageManager.set()
    */
   async syncLanguageWithServer() {
     try {
@@ -177,6 +187,13 @@ class LanguageManager {
       // Пробуем получить ответ в JSON
       const data = await response.json();
       console.log(`[LanguageManager] Language synced with server: ${this.currentLanguage}`, data);
+      
+      // Если сервер прислал язык, обновляем через LanguageManager.set() без переинициализации
+      if (data.language && data.language !== this.currentLanguage) {
+        console.log(`[LanguageManager] Server sent different language: ${data.language}, updating without reinitialization`);
+        this.currentLanguage = data.language;
+        this.saveLanguagePreference(data.language);
+      }
       
       // Добавить мета-тег с языком для использования в следующих загрузках
       let metaLang = document.querySelector('meta[name="x-app-locale"]');

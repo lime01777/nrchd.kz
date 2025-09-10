@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 class FileController extends Controller
 {
     /**
-     * Получить список клинических протоколов из JSON-файла
+     * Получить список клинических протоколов из JSON-файлов
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -21,55 +21,23 @@ class FileController extends Controller
     {
         Log::info('Запрос к методу getClinicalProtocols');
         
-        $jsonPath = public_path('data/clinical_protocols.json');
-        Log::info('Путь к JSON-файлу:', ['path' => $jsonPath]);
-        
-        // Проверяем существование файла
-        if (!File::exists($jsonPath)) {
-            Log::error('Файл с клиническими протоколами не найден:', ['path' => $jsonPath]);
-            return response()->json([
-                'error' => 'Файл с клиническими протоколами не найден'
-            ], 404);
-        }
-        
-        // Читаем JSON-файл
-        try {
-            $jsonContent = File::get($jsonPath);
-            Log::info('Файл успешно прочитан, размер:', ['size' => strlen($jsonContent)]);
-            
-            $data = json_decode($jsonContent, true);
-            
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                Log::error('Ошибка при декодировании JSON:', ['error' => json_last_error_msg()]);
-                return response()->json([
-                    'error' => 'Ошибка при чтении файла с клиническими протоколами: ' . json_last_error_msg()
-                ], 500);
-            }
-            
-            Log::info('Данные успешно декодированы:', ['keys' => array_keys($data)]);
-        } catch (\Exception $e) {
-            Log::error('Исключение при чтении файла:', ['error' => $e->getMessage()]);
-            return response()->json([
-                'error' => 'Ошибка при чтении файла: ' . $e->getMessage()
-            ], 500);
-        }
-        
-        if (!isset($data['protocols'])) {
-            Log::error('В JSON-файле отсутствует ключ "protocols":', ['available_keys' => array_keys($data)]);
-            return response()->json([
-                'error' => 'Некорректная структура JSON-файла: отсутствует ключ "protocols"'
-            ], 500);
-        }
-        
-        $protocols = $data['protocols'];
-        Log::info('Получено протоколов:', ['count' => count($protocols)]);
-        
         // Получаем параметры фильтрации
         $searchTerm = $request->input('search', '');
         $medicine = $request->input('medicine', '');
         $mkb = $request->input('mkb', '');
         $year = $request->input('year', '');
         $category = $request->input('category', '');
+        $folderPath = $request->input('folder', ''); // Получаем путь к папке
+        
+        // Определяем тип документа по пути к папке
+        $type = '';
+        if (strpos($folderPath, 'Клинические протоколы') !== false && strpos($folderPath, 'Архив') === false) {
+            $type = 'protocols';
+        } elseif (strpos($folderPath, 'Клинические руководства') !== false) {
+            $type = 'guidelines';
+        } elseif (strpos($folderPath, 'Архив') !== false) {
+            $type = 'archive';
+        }
         
         // Логируем параметры поиска для отладки
         Log::info('Параметры поиска клинических протоколов:', [
@@ -77,17 +45,96 @@ class FileController extends Controller
             'medicine' => $medicine,
             'mkb' => $mkb,
             'year' => $year,
-            'category' => $category
+            'category' => $category,
+            'folderPath' => $folderPath,
+            'determinedType' => $type
         ]);
+        
+        $allProtocols = [];
+        
+        // Загружаем данные в зависимости от определенного типа
+        if ($type === 'protocols' || $type === '') {
+            // Загружаем клинические протоколы МЗ РК
+            $protocolsPath = public_path('data/clinical_protocols.json');
+            if (File::exists($protocolsPath)) {
+                try {
+                    $protocolsContent = File::get($protocolsPath);
+                    $protocolsData = json_decode($protocolsContent, true);
+                    
+                    if (json_last_error() === JSON_ERROR_NONE && isset($protocolsData['protocols'])) {
+                        // Добавляем тип к каждому протоколу
+                        foreach ($protocolsData['protocols'] as $protocol) {
+                            $protocol['type'] = 'protocols';
+                            $allProtocols[] = $protocol;
+                        }
+                        Log::info('Загружено клинических протоколов МЗ РК:', ['count' => count($protocolsData['protocols'])]);
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Ошибка при чтении файла клинических протоколов:', ['error' => $e->getMessage()]);
+                }
+            }
+        }
+        
+        if ($type === 'guidelines' || $type === '') {
+            // Загружаем клинические руководства
+            $guidelinesPath = public_path('data/clinical_guidelines.json');
+            if (File::exists($guidelinesPath)) {
+                try {
+                    $guidelinesContent = File::get($guidelinesPath);
+                    $guidelinesData = json_decode($guidelinesContent, true);
+                    
+                    if (json_last_error() === JSON_ERROR_NONE && isset($guidelinesData['guidelines'])) {
+                        // Добавляем тип к каждому руководству
+                        foreach ($guidelinesData['guidelines'] as $guideline) {
+                            $guideline['type'] = 'guidelines';
+                            $allProtocols[] = $guideline;
+                        }
+                        Log::info('Загружено клинических руководств:', ['count' => count($guidelinesData['guidelines'])]);
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Ошибка при чтении файла клинических руководств:', ['error' => $e->getMessage()]);
+                }
+            }
+            
+            // Также загружаем международные клинические руководства
+            $internationalGuidelinesPath = public_path('data/international_guidelines.json');
+            if (File::exists($internationalGuidelinesPath)) {
+                try {
+                    $internationalGuidelinesContent = File::get($internationalGuidelinesPath);
+                    $internationalGuidelinesData = json_decode($internationalGuidelinesContent, true);
+                    
+                    if (json_last_error() === JSON_ERROR_NONE && isset($internationalGuidelinesData['guidelines'])) {
+                        // Добавляем тип к каждому руководству
+                        foreach ($internationalGuidelinesData['guidelines'] as $guideline) {
+                            $guideline['type'] = 'guidelines';
+                            $allProtocols[] = $guideline;
+                        }
+                        Log::info('Загружено международных клинических руководств:', ['count' => count($internationalGuidelinesData['guidelines'])]);
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Ошибка при чтении файла международных руководств:', ['error' => $e->getMessage()]);
+                }
+            }
+        }
+        
+        if ($type === 'archive') {
+            // Для архива пока возвращаем пустой массив
+            // В будущем здесь можно добавить загрузку архивных документов
+            Log::info('Запрос архивных документов - пока не реализовано');
+        }
+        
+        Log::info('Всего загружено документов:', ['count' => count($allProtocols)]);
         
         // Фильтруем протоколы
         try {
-            $filteredProtocols = array_filter($protocols, function($protocol) use ($searchTerm, $medicine, $mkb, $year, $category) {
+            $filteredProtocols = array_filter($allProtocols, function($protocol) use ($searchTerm, $medicine, $mkb, $year, $category) {
                 // Проверяем наличие необходимых полей
                 if (!isset($protocol['name']) || !isset($protocol['description'])) {
                     Log::warning('Протокол без обязательных полей:', ['protocol' => $protocol]);
                     return false;
                 }
+                
+                // Фильтрация по типу документа уже выполнена при загрузке данных
                 
                 // Фильтрация по поисковому запросу
                 if ($searchTerm && stripos($protocol['name'], $searchTerm) === false && 
@@ -151,6 +198,8 @@ class FileController extends Controller
                 if (isset($protocol['year'])) $document['year'] = $protocol['year'];
                 if (isset($protocol['medicine'])) $document['medicine'] = $protocol['medicine'];
                 if (isset($protocol['mkb'])) $document['mkb'] = $protocol['mkb'];
+                if (isset($protocol['type'])) $document['type'] = $protocol['type'];
+                if (isset($protocol['source'])) $document['source'] = $protocol['source'];
                 
                 $documents[] = $document;
             }

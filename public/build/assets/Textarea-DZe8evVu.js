@@ -1,1 +1,0 @@
-import{r as e,j as a}from"./app-BMWUoTTT.js";const c=e.forwardRef(({className:t="",...o},s)=>{const r=s||e.useRef();return e.useEffect(()=>{r.current.hasAttribute("autofocus")&&r.current.focus()},[]),a.jsx("textarea",{...o,className:"border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm "+t,ref:r})});export{c as T};

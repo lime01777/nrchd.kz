@@ -72,7 +72,7 @@ export default function ClinicalProtocols() {
             </div>
             <div className="flex justify-center mt-4">
                 <button 
-                    onClick={() => setShowFullTextComponent(!showFullText)} 
+                    onClick={() => setShowFullText(!showFullText)} 
                     className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3 transition-all duration-300 ease-in-out hover:bg-blue-50 transform hover:scale-105"
                 >
                     {showFullText ? 'Свернуть' : 'Читать далее'}

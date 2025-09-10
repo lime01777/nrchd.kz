@@ -4,167 +4,142 @@ import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 
 export default function ClinicalProtocolsCatalog() {
-  console.log('Инициализация компонента ClinicalProtocolsCatalog');
+  console.log('Catalog component rendering...');
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMedicine, setSelectedMedicine] = useState('');
   const [selectedMkb, setSelectedMkb] = useState('');
-  const [loading, setLoading] = useState(false); // Изменяем на false
-  const [error, setError] = useState(null); // Добавляем состояние для ошибок
+  const [selectedType, setSelectedType] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [availableCategories, setAvailableCategories] = useState([]);
+  const [filteredProtocols, setFilteredProtocols] = useState(0);
   
-  // Добавляем логирование при монтировании компонента
   useEffect(() => {
-    console.log('Компонент ClinicalProtocolsCatalog смонтирован');
-    
+    console.log('Catalog component mounted');
     return () => {
-      console.log('Компонент ClinicalProtocolsCatalog размонтирован');
+      console.log('Catalog component unmounted');
     };
   }, []);
-  
+
   // Разделы медицины
   const medicineSections = [
     { value: '', label: 'Все разделы медицины' },
     { value: 'cardiology', label: 'Кардиология' },
-    { value: 'gastroenterology', label: 'Гастроэнтерология' },
     { value: 'neurology', label: 'Неврология' },
-    { value: 'pulmonology', label: 'Пульмонология' },
-    { value: 'endocrinology', label: 'Эндокринология' },
     { value: 'oncology', label: 'Онкология' },
     { value: 'pediatrics', label: 'Педиатрия' },
     { value: 'surgery', label: 'Хирургия' },
-    { value: 'obstetrics', label: 'Акушерство и гинекология' },
-    { value: 'urology', label: 'Урология' },
+    { value: 'therapy', label: 'Терапия' },
+    { value: 'gynecology', label: 'Гинекология' },
+    { value: 'psychiatry', label: 'Психиатрия' },
+    { value: 'dermatology', label: 'Дерматология' },
     { value: 'ophthalmology', label: 'Офтальмология' },
     { value: 'otolaryngology', label: 'Оториноларингология' },
-    { value: 'dermatology', label: 'Дерматология' },
+    { value: 'urology', label: 'Урология' },
+    { value: 'orthopedics', label: 'Ортопедия' },
+    { value: 'anesthesiology', label: 'Анестезиология' },
+    { value: 'radiology', label: 'Радиология' },
+    { value: 'pathology', label: 'Патология' },
     { value: 'infectious', label: 'Инфекционные болезни' },
-    { value: 'psychiatry', label: 'Психиатрия' },
+    { value: 'endocrinology', label: 'Эндокринология' },
+    { value: 'gastroenterology', label: 'Гастроэнтерология' },
+    { value: 'pulmonology', label: 'Пульмонология' },
+    { value: 'nephrology', label: 'Нефрология' },
     { value: 'rheumatology', label: 'Ревматология' },
-    { value: 'traumatology', label: 'Травматология и ортопедия' },
+    { value: 'hematology', label: 'Гематология' },
+    { value: 'immunology', label: 'Иммунология' }
   ];
-  
+
   // Категории МКБ
   const mkbCategories = [
     { value: '', label: 'Все категории МКБ' },
-    { value: 'A00-B99', label: 'A00-B99: Инфекционные и паразитарные болезни' },
-    { value: 'C00-D48', label: 'C00-D48: Новообразования' },
-    { value: 'D50-D89', label: 'D50-D89: Болезни крови и иммунные нарушения' },
-    { value: 'E00-E90', label: 'E00-E90: Эндокринные и метаболические заболевания' },
-    { value: 'F00-F99', label: 'F00-F99: Психические расстройства' },
-    { value: 'G00-G99', label: 'G00-G99: Болезни нервной системы' },
-    { value: 'H00-H59', label: 'H00-H59: Болезни глаза и придаточного аппарата' },
-    { value: 'H60-H95', label: 'H60-H95: Болезни уха и сосцевидного отростка' },
-    { value: 'I00-I99', label: 'I00-I99: Болезни системы кровообращения' },
-    { value: 'J00-J99', label: 'J00-J99: Болезни органов дыхания' },
-    { value: 'K00-K93', label: 'K00-K93: Болезни органов пищеварения' },
-    { value: 'L00-L99', label: 'L00-L99: Болезни кожи и подкожной клетчатки' },
-    { value: 'M00-M99', label: 'M00-M99: Болезни костно-мышечной системы' },
-    { value: 'N00-N99', label: 'N00-N99: Болезни мочеполовой системы' },
-    { value: 'O00-O99', label: 'O00-O99: Беременность, роды и послеродовой период' },
-    { value: 'P00-P96', label: 'P00-P96: Отдельные состояния перинатального периода' },
-    { value: 'Q00-Q99', label: 'Q00-Q99: Врожденные аномалии' },
-    { value: 'R00-R99', label: 'R00-R99: Симптомы и признаки' },
-    { value: 'S00-T98', label: 'S00-T98: Травмы и отравления' },
-    { value: 'V01-Y98', label: 'V01-Y98: Внешние причины заболеваемости и смертности' },
-    { value: 'Z00-Z99', label: 'Z00-Z99: Факторы, влияющие на здоровье' },
+    { value: 'A00-B99', label: 'A00-B99 Инфекционные и паразитарные болезни' },
+    { value: 'C00-D48', label: 'C00-D48 Новообразования' },
+    { value: 'D50-D89', label: 'D50-D89 Болезни крови и кроветворных органов' },
+    { value: 'E00-E90', label: 'E00-E90 Болезни эндокринной системы' },
+    { value: 'F01-F99', label: 'F01-F99 Психические расстройства' },
+    { value: 'G00-G99', label: 'G00-G99 Болезни нервной системы' },
+    { value: 'H00-H59', label: 'H00-H59 Болезни глаза' },
+    { value: 'H60-H95', label: 'H60-H95 Болезни уха' },
+    { value: 'I00-I99', label: 'I00-I99 Болезни системы кровообращения' },
+    { value: 'J00-J99', label: 'J00-J99 Болезни органов дыхания' },
+    { value: 'K00-K93', label: 'K00-K93 Болезни органов пищеварения' },
+    { value: 'L00-L99', label: 'L00-L99 Болезни кожи' },
+    { value: 'M00-M99', label: 'M00-M99 Болезни костно-мышечной системы' },
+    { value: 'N00-N99', label: 'N00-N99 Болезни мочеполовой системы' },
+    { value: 'O00-O99', label: 'O00-O99 Беременность, роды и послеродовой период' },
+    { value: 'P00-P96', label: 'P00-P96 Отдельные состояния, возникающие в перинатальном периоде' },
+    { value: 'Q00-Q99', label: 'Q00-Q99 Врожденные аномалии' },
+    { value: 'R00-R99', label: 'R00-R99 Симптомы, признаки и отклонения от нормы' },
+    { value: 'S00-T98', label: 'S00-T98 Травмы, отравления и другие последствия воздействия внешних причин' },
+    { value: 'U00-U99', label: 'U00-U99 Коды для особых целей' },
+    { value: 'V01-Y98', label: 'V01-Y98 Внешние причины заболеваемости и смертности' },
+    { value: 'Z00-Z99', label: 'Z00-Z99 Факторы, влияющие на состояние здоровья' }
   ];
-  
-  
-  // Дополнительные состояния для отображения количества найденных протоколов
-  const [totalProtocols, setTotalProtocols] = useState(0);
-  const [filteredProtocols, setFilteredProtocols] = useState(0);
-  
-  // Обработчик для обновления счетчика протоколов и доступных категорий
-  const handleFilesLoaded = (data) => {
-    console.log('handleFilesLoaded вызван с данными:', data);
-    console.log('Тип полученных данных:', typeof data, Array.isArray(data) ? 'массив' : 'не массив');
-    
-    if (data) {
-      console.log('Количество элементов в данных:', Array.isArray(data) ? data.length : 'не массив');
-      if (Array.isArray(data) && data.length > 0) {
-        console.log('Первый элемент данных:', data[0]);
-      }
-    }
-    
-    setLoading(false); // Данные загружены, скрываем индикатор загрузки
-    setError(null); // Сбрасываем ошибку, если она была
-    
-    try {
-      if (data && Array.isArray(data)) {
-        setFilteredProtocols(data.length);
-        
-        // Извлекаем уникальные категории из данных, если они есть
-        if (data.length > 0) {
-          if (data[0].categories) {
-            const uniqueCategories = [...new Set(data.map(item => item.categories).flat())];
-            setAvailableCategories(uniqueCategories);
-          } else if (data[0].category) {
-            // Если категории хранятся в поле category
-            const uniqueCategories = [...new Set(data.map(item => item.category).filter(Boolean))];
-            setAvailableCategories(uniqueCategories);
-          } else {
-            // Если категорий нет в данных, устанавливаем пустой массив
-            setAvailableCategories([]);
-          }
-        } else {
-          setAvailableCategories([]);
-        }
-      } else {
-        console.log('Получены некорректные данные:', data);
-        setFilteredProtocols(0);
-        setAvailableCategories([]);
-      }
-    } catch (error) {
-      console.error('Ошибка при обработке данных протоколов:', error);
-      setFilteredProtocols(0);
-      setAvailableCategories([]);
-      // Не устанавливаем ошибку, чтобы не блокировать отображение
-    }
-  };
-  
-  // Обработка изменения поискового запроса
+
+  // Типы документов
+  const documentTypes = [
+    { value: '', label: 'Все типы документов' },
+    { value: 'protocols', label: 'Клинические протоколы' },
+    { value: 'guidelines', label: 'Клинические руководства' },
+    { value: 'archive', label: 'Архив' }
+  ];
+
+  // Обработчики событий
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    // Убираем setLoading(true) - не нужно показывать загрузку при каждом изменении
   };
-  
-  // Обработка изменения раздела медицины
+
   const handleMedicineChange = (e) => {
     setSelectedMedicine(e.target.value);
-    // Убираем setLoading(true) - не нужно показывать загрузку при каждом изменении
   };
-  
-  // Обработка изменения категории МКБ
+
   const handleMkbChange = (e) => {
     setSelectedMkb(e.target.value);
-    // Убираем setLoading(true) - не нужно показывать загрузку при каждом изменении
   };
-  
-  // Сброс всех фильтров
+
+  const handleTypeChange = (e) => {
+    setSelectedType(e.target.value);
+  };
+
   const resetFilters = () => {
     setSearchTerm('');
     setSelectedMedicine('');
     setSelectedMkb('');
-    // Убираем setLoading(true) - не нужно показывать загрузку при сбросе
-    setError(null); // Сбрасываем ошибку, если она была
+    setSelectedType('');
+    setError(null);
   };
-  
-  // Формируем поисковый запрос для SimpleFileDisplay
+
+  // Формирование поискового запроса
   const getSearchQuery = () => {
     let query = searchTerm;
     
     if (selectedMedicine) {
-      query += ` medicine:${selectedMedicine}`;
+      query += (query ? ' ' : '') + `medicine:${selectedMedicine}`;
     }
     
     if (selectedMkb) {
-      query += ` mkb:${selectedMkb}`;
+      query += (query ? ' ' : '') + `mkb:${selectedMkb}`;
     }
     
     return query;
   };
-  
+
+  // Определение пути к папке на основе типа документа
+  const getFolderPath = () => {
+    switch (selectedType) {
+      case 'protocols':
+        return 'Клинические протоколы';
+      case 'guidelines':
+        return 'Клинические руководства';
+      case 'archive':
+        return 'Архив клинических протоколов';
+      default:
+        return 'Клинические протоколы'; // По умолчанию
+    }
+  };
+
   return (
     <>
       <Head title='Клинические протоколы' />
@@ -197,7 +172,23 @@ export default function ClinicalProtocolsCatalog() {
               </div>
               
               <div className="flex flex-col space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Тип документа */}
+                  <div>
+                    <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">Тип документа</label>
+                    <select
+                      id="type"
+                      name="type"
+                      value={selectedType}
+                      onChange={handleTypeChange}
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    >
+                      {documentTypes.map((type) => (
+                        <option key={type.value} value={type.value}>{type.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
                   {/* Раздел медицины */}
                   <div>
                     <label htmlFor="medicine" className="block text-sm font-medium text-gray-700 mb-1">Раздел медицины</label>
@@ -270,13 +261,13 @@ export default function ClinicalProtocolsCatalog() {
             )}
             
             {/* Список клинических протоколов */}
-            <SimpleFileDisplay 
-              key={`${searchTerm}-${selectedMedicine}-${selectedMkb}`} // Добавляем key для пересоздания компонента при изменении фильтров
-              searchTerm={searchTerm} 
-              medicine={selectedMedicine}
-              mkb={selectedMkb}
-              bgColor="bg-white"
-              folder="Клинические протоколы\Поток — клинические протоколы" 
+            <SimpleFileDisplay
+              folderPath={getFolderPath()}
+              bgColor='bg-white'
+              useClinicalProtocols={true}
+              searchTerm={getSearchQuery()}
+              onFilesLoaded={(count) => setFilteredProtocols(count)}
+              onError={(errorMessage) => setError(errorMessage)}
             />
           </div>
         </div>
@@ -288,7 +279,7 @@ export default function ClinicalProtocolsCatalog() {
 ClinicalProtocolsCatalog.layout = page => <LayoutFolderChlank 
   bgColor="bg-white"
   h1="Утвержденные клинические протоколы" 
-  parentRoute={route('clinical.protocols')} 
+  parentRoute="/clinical-protocols" 
   parentName="Клинические протоколы"
   heroBgColor="bg-blue-100"
   buttonBgColor="bg-blue-100"
