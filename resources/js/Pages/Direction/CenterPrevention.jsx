@@ -122,4 +122,4 @@ export default function CenterPrevention() {
   );
 }
 
-CenterPrevention.layout = (page) => <LayoutDirection img="centerprevention" h1={t('directions.center_prevention', 'Центр профилактики и укрепления здоровья')}>{page}</LayoutDirection>;
+CenterPrevention.layout = (page) => <LayoutDirection img="zozh" h1={t('directions.center_prevention', 'Центр профилактики и укрепления здоровья')}>{page}</LayoutDirection>;
