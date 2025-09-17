@@ -9,4 +9,13 @@ use Illuminate\Support\Facades\Log;
 /** Eloquent-модель строк перевода. */
 class Translation extends Model {
     protected $fillable = ['key','locale','value','namespace','context'];
+
+    /**
+     * Заглушка метода поиска перевода по оригинальному тексту и языкам.
+     * Для совместимости со старыми вызовами возвращает null (перевод не найден).
+     */
+    public static function findTranslation(string $originalText, string $sourceLanguage, string $targetLanguage): ?string
+    {
+        return null;
+    }
 }
