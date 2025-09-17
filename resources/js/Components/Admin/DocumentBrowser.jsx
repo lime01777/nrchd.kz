@@ -17,7 +17,9 @@ export default function DocumentBrowser({
     onRename, 
     onMove, 
     onDelete,
-    onFolderChange 
+    onFolderChange,
+    onFiltersChange,
+    filters = {}
 }) {
     const [editingItem, setEditingItem] = useState(null);
     const [newName, setNewName] = useState('');
@@ -110,12 +112,149 @@ export default function DocumentBrowser({
         );
     }
 
+    // Разделы медицины
+    const medicineSections = [
+        { value: '', label: 'Все разделы медицины' },
+        { value: 'cardiology', label: 'Кардиология' },
+        { value: 'neurology', label: 'Неврология' },
+        { value: 'oncology', label: 'Онкология' },
+        { value: 'pediatrics', label: 'Педиатрия' },
+        { value: 'surgery', label: 'Хирургия' },
+        { value: 'gastroenterology', label: 'Гастроэнтерология' },
+        { value: 'pulmonology', label: 'Пульмонология' },
+        { value: 'endocrinology', label: 'Эндокринология' },
+        { value: 'urology', label: 'Урология' },
+        { value: 'ophthalmology', label: 'Офтальмология' },
+        { value: 'otolaryngology', label: 'Оториноларингология' },
+        { value: 'dermatology', label: 'Дерматология' },
+        { value: 'infectious', label: 'Инфекционные болезни' },
+        { value: 'psychiatry', label: 'Психиатрия' },
+        { value: 'rheumatology', label: 'Ревматология' },
+        { value: 'traumatology', label: 'Травматология и ортопедия' }
+    ];
+
+    // Категории МКБ
+    const mkbCategories = [
+        { value: '', label: 'Все категории МКБ' },
+        { value: 'A00-B99', label: 'A00-B99 Инфекционные и паразитарные болезни' },
+        { value: 'C00-D48', label: 'C00-D48 Новообразования' },
+        { value: 'D50-D89', label: 'D50-D89 Болезни крови и кроветворных органов' },
+        { value: 'E00-E90', label: 'E00-E90 Болезни эндокринной системы' },
+        { value: 'F01-F99', label: 'F01-F99 Психические расстройства' },
+        { value: 'G00-G99', label: 'G00-G99 Болезни нервной системы' },
+        { value: 'H00-H59', label: 'H00-H59 Болезни глаза' },
+        { value: 'H60-H95', label: 'H60-H95 Болезни уха' },
+        { value: 'I00-I99', label: 'I00-I99 Болезни системы кровообращения' },
+        { value: 'J00-J99', label: 'J00-J99 Болезни органов дыхания' },
+        { value: 'K00-K93', label: 'K00-K93 Болезни органов пищеварения' },
+        { value: 'L00-L99', label: 'L00-L99 Болезни кожи' },
+        { value: 'M00-M99', label: 'M00-M99 Болезни костно-мышечной системы' },
+        { value: 'N00-N99', label: 'N00-N99 Болезни мочеполовой системы' },
+        { value: 'O00-O99', label: 'O00-O99 Беременность, роды и послеродовой период' },
+        { value: 'P00-P96', label: 'P00-P96 Отдельные состояния, возникающие в перинатальном периоде' },
+        { value: 'Q00-Q99', label: 'Q00-Q99 Врожденные аномалии' },
+        { value: 'R00-R99', label: 'R00-R99 Симптомы, признаки и отклонения от нормы' },
+        { value: 'S00-T98', label: 'S00-T98 Травмы, отравления и другие последствия воздействия внешних причин' },
+        { value: 'U00-U99', label: 'U00-U99 Коды для особых целей' },
+        { value: 'V01-Y98', label: 'V01-Y98 Внешние причины заболеваемости и смертности' },
+        { value: 'Z00-Z99', label: 'Z00-Z99 Факторы, влияющие на состояние здоровья' }
+    ];
+
+    // Годы (последние 10 лет)
+    const currentYear = new Date().getFullYear();
+    const years = [
+        { value: '', label: 'Все годы' },
+        ...Array.from({ length: 10 }, (_, i) => ({
+            value: (currentYear - i).toString(),
+            label: (currentYear - i).toString()
+        }))
+    ];
+
+    const handleFilterChange = (filterType, value) => {
+        if (onFiltersChange) {
+            onFiltersChange({
+                ...filters,
+                [filterType]: value
+            });
+        }
+    };
+
     return (
         <div className="space-y-6">
             {/* Текущий путь */}
             <div className="flex items-center text-sm text-gray-600">
                 <span>Текущая папка:</span>
                 <span className="ml-2 font-medium text-gray-900">{currentPath}</span>
+            </div>
+
+            {/* Фильтры */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Фильтры</h3>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    {/* Поиск */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
+                        <input
+                            type="text"
+                            value={filters.search || ''}
+                            onChange={(e) => handleFilterChange('search', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Поиск по названию"
+                        />
+                    </div>
+
+                    {/* Раздел медицины */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Раздел медицины</label>
+                        <select
+                            value={filters.medicine || ''}
+                            onChange={(e) => handleFilterChange('medicine', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            {medicineSections.map((section) => (
+                                <option key={section.value} value={section.value}>{section.label}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Категория МКБ */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Категория МКБ</label>
+                        <select
+                            value={filters.mkb || ''}
+                            onChange={(e) => handleFilterChange('mkb', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            {mkbCategories.map((mkb) => (
+                                <option key={mkb.value} value={mkb.value}>{mkb.label}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Год */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Год</label>
+                        <select
+                            value={filters.year || ''}
+                            onChange={(e) => handleFilterChange('year', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            {years.map((year) => (
+                                <option key={year.value} value={year.value}>{year.label}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                {/* Кнопка сброса фильтров */}
+                <div className="mt-4 flex justify-end">
+                    <button
+                        onClick={() => onFiltersChange && onFiltersChange({})}
+                        className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
+                    >
+                        Сбросить фильтры
+                    </button>
+                </div>
             </div>
 
             {/* Папки */}
@@ -191,12 +330,32 @@ export default function DocumentBrowser({
                                                     <span>{formatFileSize(doc.size)}</span>
                                                     <span>•</span>
                                                     <span>Изменен: {new Date(doc.modified).toLocaleDateString()}</span>
+                                                    {doc.year && (
+                                                        <>
+                                                            <span>•</span>
+                                                            <span>Год: {doc.year}</span>
+                                                        </>
+                                                    )}
                                                 </div>
+                                                {(doc.medicine || doc.mkb) && (
+                                                    <div className="flex items-center space-x-4 text-xs text-blue-600 mt-1">
+                                                        {doc.medicine && (
+                                                            <span className="bg-blue-100 px-2 py-1 rounded">
+                                                                {doc.medicine}
+                                                            </span>
+                                                        )}
+                                                        {doc.mkb && (
+                                                            <span className="bg-green-100 px-2 py-1 rounded">
+                                                                МКБ: {doc.mkb}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                         
                                         <div className="flex items-center space-x-2">
-                                            {doc.extension === 'pdf' && (
+                                            {['pdf', 'jpg', 'jpeg', 'png', 'gif'].includes(doc.extension?.toLowerCase()) && (
                                                 <button
                                                     onClick={() => onDocumentSelect(doc)}
                                                     className="p-2 text-gray-400 hover:text-blue-600"

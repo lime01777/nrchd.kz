@@ -140,14 +140,14 @@ export default function DrugPolicy() {
               colorsec="bg-gray-300"
               title="Регламенты" 
               description="Нормативно-правовые акты в области лекарственной политики"
-              href={route('drug-policy.regulations')}
+              href={route('drug.policy.regulations')}
             />
             <FolderChlank 
               color="bg-gray-200"
               colorsec="bg-gray-300"
               title="Комиссия" 
               description="Информация о комиссии по лекарственной политике"
-              href={route('drug-policy.commission')}
+              href={route('drug.policy.commission')}
             />
           </div>
         </div>

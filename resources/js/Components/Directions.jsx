@@ -4,24 +4,24 @@ import { router } from '@inertiajs/react';
 
 const Directions = () => {
     const allDirections = [
-        { imgname: 1, title: "Медицинское образование", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "/medical-education", hasRoute: false, path: "/medical-education"},
-        { imgname: 2, title: "Кадровые ресурсы здравоохранения", bgcolor: "bg-rose-100", bgborder: "border-rose-200", url: "/human-resources", hasRoute: false, path: "/human-resources"},
-        { imgname: 3, title: "Электронное здравоохранение", bgcolor: "bg-fuchsia-100", bgborder: "border-fuchsia-200", url: "/electronic-health", hasRoute: false, path: "/electronic-health"},
-        { imgname: 4, title: "Аккредитация", bgcolor: "bg-yellow-100", bgborder: "border-yellow-200", url: "/medical-accreditation", hasRoute: false, path: "/medical-accreditation"},
-        { imgname: 5, title: "Оценка технологий здравоохранения", bgcolor: "bg-violet-100", bgborder: "border-violet-200", url: "/health-tech-assessment", hasRoute: false, path: "/health-tech-assessment"},
-        { imgname: 6, title: "Клинические протоколы", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "/clinical-protocols", hasRoute: false, path: "/clinical-protocols"},
-        { imgname: 7, title: "Стратегические инициативы и международное сотрудничество", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "/strategic-initiatives", hasRoute: false, path: "/strategic-initiatives"},
-        { imgname: 8, title: "Рейтинг медицинских организаций", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "/rating", hasRoute: false, path: "/rating"},
-        { imgname: 9, title: "Медицинская наука", bgcolor: "bg-gray-100", bgborder: "border-gray-200", url: "/medical-science", hasRoute: false, path: "/medical-science"},
-        { imgname: 8, title: "Центральная комиссия по биоэтике", bgcolor: "bg-indigo-100", bgborder: "border-indigo-200", url: "/bioethics", hasRoute: false, path: "/bioethics"},
-        { imgname: 10, title: "Лекарственная политика", bgcolor: "bg-yellow-100", bgborder: "border-yellow-200", url: "/drug-policy", hasRoute: false, path: "/drug-policy"},
-        { imgname: 12, title: "Первичная медико-санитарная помощь", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "/primary-healthcare", hasRoute: false, path: "/primary-healthcare"},
-        { imgname: 13, title: "Национальные счета здравоохранения", bgcolor: "bg-purple-200", bgborder: "border-purple-200", url: "/national-health-accounts", hasRoute: false, path: "/national-health-accounts"},
-        { imgname: 6, title: "Медицинская статистика", bgcolor: "bg-teal-100", bgborder: "border-teal-200", url: "/medical-statistics", hasRoute: false, path: "/medical-statistics"},
-        { imgname: 3, title: "Отраслевой центр технологических компетенций", bgcolor: "bg-orange-100", bgborder: "border-orange-200", url: "/tech-competence", hasRoute: false, path: "/tech-competence"},
-        { imgname: 16, title: "Центр профилактики и укрепления здоровья", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "/center-prevention", hasRoute: false, path: "/center-prevention"},
-        { imgname: 4, title: "Объединенная комиссия по качеству медицинских услуг", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "/quality-commission", hasRoute: false, path: "/quality-commission"},
-        { imgname: 7, title: "Медицинский туризм", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "/medical-tourism", hasRoute: false, path: "/medical-tourism"}
+        { imgname: 1, title: "Медицинское образование", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "medical.education", hasRoute: true, path: "/medical-education"},
+        { imgname: 2, title: "Кадровые ресурсы здравоохранения", bgcolor: "bg-rose-100", bgborder: "border-rose-200", url: "human.resources", hasRoute: true, path: "/human-resources"},
+        { imgname: 3, title: "Электронное здравоохранение", bgcolor: "bg-fuchsia-100", bgborder: "border-fuchsia-200", url: "electronic.health", hasRoute: true, path: "/electronic-health"},
+        { imgname: 4, title: "Аккредитация", bgcolor: "bg-yellow-100", bgborder: "border-yellow-200", url: "medical.accreditation", hasRoute: true, path: "/medical-accreditation"},
+        { imgname: 5, title: "Оценка технологий здравоохранения", bgcolor: "bg-violet-100", bgborder: "border-violet-200", url: "services.healthTechAssessment", hasRoute: true, path: "/health-tech-assessment"},
+        { imgname: 6, title: "Клинические протоколы", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "clinical.protocols", hasRoute: true, path: "/clinical-protocols"},
+        { imgname: 7, title: "Стратегические инициативы и международное сотрудничество", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "strategic.initiatives", hasRoute: true, path: "/strategic-initiatives"},
+        { imgname: 8, title: "Рейтинг медицинских организаций", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "medical.rating", hasRoute: true, path: "/medical-rating"},
+        { imgname: 9, title: "Медицинская наука", bgcolor: "bg-gray-100", bgborder: "border-gray-200", url: "medical.science", hasRoute: true, path: "/medical-science"},
+        { imgname: 8, title: "Центральная комиссия по биоэтике", bgcolor: "bg-indigo-100", bgborder: "border-indigo-200", url: "bioethics", hasRoute: true, path: "/bioethics"},
+        { imgname: 10, title: "Лекарственная политика", bgcolor: "bg-yellow-100", bgborder: "border-yellow-200", url: "drug.policy", hasRoute: true, path: "/drug-policy"},
+        { imgname: 12, title: "Первичная медико-санитарная помощь", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "primary.healthcare", hasRoute: true, path: "/primary-healthcare"},
+        { imgname: 13, title: "Национальные счета здравоохранения", bgcolor: "bg-purple-200", bgborder: "border-purple-200", url: "health.accounts", hasRoute: true, path: "/health-accounts"},
+        { imgname: 6, title: "Медицинская статистика", bgcolor: "bg-teal-100", bgborder: "border-teal-200", url: "medical.statistics", hasRoute: true, path: "/medical-statistics"},
+        { imgname: 3, title: "Отраслевой центр технологических компетенций", bgcolor: "bg-orange-100", bgborder: "border-orange-200", url: "direction.tech.competence", hasRoute: true, path: "/direction/tech-competence"},
+        { imgname: 16, title: "Центр профилактики и укрепления здоровья", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "center.prevention", hasRoute: true, path: "/center-prevention"},
+        { imgname: 4, title: "Объединенная комиссия по качеству медицинских услуг", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "quality.commission", hasRoute: true, path: "/quality-commission"},
+        { imgname: 7, title: "Медицинский туризм", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "medical.tourism", hasRoute: true, path: "/medical-tourism"}
     ];
 
     const [ showMore, setShowMore ] = useState(false);

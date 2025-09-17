@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import DocumentBrowser from '@/Components/Admin/DocumentBrowser';
-import PDFPreview from '@/Components/Admin/PDFPreview';
+import FilePreview from '@/Components/Admin/PDFPreview';
 
 export default function DocumentManagerIndex({ user, allowedFolders }) {
     const [currentFolder, setCurrentFolder] = useState('Клинические протоколы');
@@ -12,18 +12,29 @@ export default function DocumentManagerIndex({ user, allowedFolders }) {
     const [error, setError] = useState(null);
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [showPreview, setShowPreview] = useState(false);
+    const [filters, setFilters] = useState({});
 
-    // Загружаем документы при изменении папки
+    // Загружаем документы при изменении папки или фильтров
     useEffect(() => {
-        loadDocuments(currentFolder);
-    }, [currentFolder]);
+        loadDocuments(currentFolder, filters);
+    }, [currentFolder, filters]);
 
-    const loadDocuments = async (folder) => {
+    const loadDocuments = async (folder, currentFilters = {}) => {
         setLoading(true);
         setError(null);
         
         try {
-            const response = await fetch(`/admin/document-manager/documents?folder=${encodeURIComponent(folder)}`);
+            // Строим URL с параметрами фильтрации
+            const params = new URLSearchParams();
+            params.append('folder', folder);
+            
+            if (currentFilters.search) params.append('search', currentFilters.search);
+            if (currentFilters.medicine) params.append('medicine', currentFilters.medicine);
+            if (currentFilters.mkb) params.append('mkb', currentFilters.mkb);
+            if (currentFilters.year) params.append('year', currentFilters.year);
+            if (currentFilters.category) params.append('category', currentFilters.category);
+            
+            const response = await fetch(`/admin/document-manager/documents?${params.toString()}`);
             const data = await response.json();
             
             if (response.ok) {
@@ -43,8 +54,13 @@ export default function DocumentManagerIndex({ user, allowedFolders }) {
         setCurrentFolder(folder);
     };
 
+    const handleFiltersChange = (newFilters) => {
+        setFilters(newFilters);
+    };
+
     const handleDocumentSelect = (document) => {
-        if (document.extension === 'pdf') {
+        const previewableTypes = ['pdf', 'jpg', 'jpeg', 'png', 'gif'];
+        if (previewableTypes.includes(document.extension?.toLowerCase())) {
             setSelectedDocument(document);
             setShowPreview(true);
         }
@@ -195,15 +211,17 @@ export default function DocumentManagerIndex({ user, allowedFolders }) {
                                 onMove={handleMove}
                                 onDelete={handleDelete}
                                 onFolderChange={handleFolderChange}
+                                onFiltersChange={handleFiltersChange}
+                                filters={filters}
                             />
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Модальное окно предпросмотра PDF */}
+            {/* Модальное окно предпросмотра файлов */}
             {showPreview && selectedDocument && (
-                <PDFPreview
+                <FilePreview
                     document={selectedDocument}
                     onClose={() => {
                         setShowPreview(false);

@@ -265,42 +265,42 @@ export default function MedicalAccreditation() {
                     colorsec="bg-gray-300"
                     title="Активные стандарты" 
                     description="Действующие стандарты аккредитации"
-                    href={route('medical-accreditation.active-standards')}
+                    href={route('accreditation.standards')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
                     title="Архив стандартов" 
                     description="Архивные стандарты аккредитации"
-                    href={route('medical-accreditation.standards-archive')}
+                    href={route('accreditation.archive')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
                     title="Руководства" 
                     description="Руководства по аккредитации"
-                    href={route('medical-accreditation.guides')}
+                    href={route('accreditation.guides')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
                     title="Эксперты" 
                     description="Эксперты по аккредитации"
-                    href={route('medical-accreditation.experts')}
+                    href={route('accreditation.experts')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
                     title="Комиссия" 
                     description="Комиссия по аккредитации"
-                    href={route('medical-accreditation.commission')}
+                    href={route('accreditation.commission')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
                     title="Учебные материалы" 
                     description="Учебные материалы по аккредитации"
-                    href={route('medical-accreditation.training-materials')}
+                    href={route('accreditation.training')}
                 />
             </div>
         </div>

@@ -3,8 +3,9 @@
  * Uses Google Translate API through our backend
  */
 
-// Debug mode - set to true for console logs
-const DEBUG = true;
+// Debug mode - set to false and disable translator completely
+const DEBUG = false;
+const DISABLE_TRANSLATION = true;
 
 // Helper function for debugging
 function log(...args) {
@@ -35,6 +36,9 @@ function getCSRFToken() {
  * @param {string} targetLang - Target language code (en, kz, ru)
  */
 export const translatePage = async (targetLang) => {
+  if (DISABLE_TRANSLATION) {
+    return;
+  }
   // Get current language from localStorage or use default
   const currentLang = localStorage.getItem('preferredLanguage') || 'ru';
   

@@ -44,7 +44,7 @@ export default function HealthAccounts() {
           colorsec="bg-gray-300"
           title="Документы Национальных счетов здравоохранения" 
           description="Основные документы и отчеты"
-          href={route('health-accounts.documents')}
+          href={route('health.accounts')}
         />
       </div>
     </section>

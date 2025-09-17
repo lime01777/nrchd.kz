@@ -3,6 +3,8 @@
  * Обеспечивает мгновенное переключение языков за счет кэширования в БД
  */
 
+const DISABLE_TRANSLATION = true;
+
 class FastTranslationService {
   constructor() {
     this.currentLanguage = 'ru';
@@ -16,6 +18,9 @@ class FastTranslationService {
    * @param {string} targetLanguage - Целевой язык (en, kz, ru)
    */
   async translatePage(targetLanguage) {
+    if (DISABLE_TRANSLATION) {
+      return;
+    }
     if (this.isTranslating || targetLanguage === this.currentLanguage) {
       return;
     }
@@ -54,6 +59,9 @@ class FastTranslationService {
    * @returns {Object} Объект с переводами
    */
   async getPageTranslations(targetLanguage) {
+    if (DISABLE_TRANSLATION) {
+      return {};
+    }
     try {
       // Используем API маршрут для переводов
       const response = await fetch(`/api/translate-batch`, {
@@ -261,6 +269,9 @@ class FastTranslationService {
    * @param {string} targetLanguage - Целевой язык
    */
   async requestBackgroundTranslation(text, targetLanguage) {
+    if (DISABLE_TRANSLATION) {
+      return;
+    }
     try {
       const response = await fetch('/api/translate', {
         method: 'POST',

@@ -87,6 +87,13 @@ class TranslationAPIController extends Controller
     public function translate(Request $request)
     {
         try {
+            // Normalize legacy field names from frontend (source/target -> source_language/target_language)
+            if (!$request->has('target_language') && $request->has('target')) {
+                $request->merge(['target_language' => $request->input('target')]);
+            }
+            if (!$request->has('source_language') && $request->has('source')) {
+                $request->merge(['source_language' => $request->input('source')]);
+            }
             $request->validate([
                 'text' => 'required|string',
                 'target_language' => 'required|string|in:kz,ru,en',
@@ -137,6 +144,13 @@ class TranslationAPIController extends Controller
     public function translateBatch(Request $request)
     {
         try {
+            // Normalize legacy field names if present
+            if (!$request->has('target_language') && $request->has('target')) {
+                $request->merge(['target_language' => $request->input('target')]);
+            }
+            if (!$request->has('source_language') && $request->has('source')) {
+                $request->merge(['source_language' => $request->input('source')]);
+            }
             $request->validate([
                 'texts' => 'required|array',
                 'texts.*' => 'string',
@@ -206,6 +220,13 @@ class TranslationAPIController extends Controller
     public function saveTranslations(Request $request)
     {
         try {
+            // Normalize legacy field names if present
+            if (!$request->has('target_language') && $request->has('target')) {
+                $request->merge(['target_language' => $request->input('target')]);
+            }
+            if (!$request->has('source_language') && $request->has('source')) {
+                $request->merge(['source_language' => $request->input('source')]);
+            }
             $request->validate([
                 'translations' => 'required|array',
                 'target_language' => 'required|string|in:kz,ru,en',

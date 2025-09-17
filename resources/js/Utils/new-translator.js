@@ -21,7 +21,13 @@ const translationCache = {
 /**
  * Инициализирует систему перевода
  */
+const DISABLE_TRANSLATION = true;
+
 export function initialize() {
+  if (DISABLE_TRANSLATION) {
+    console.log('[Translator] Disabled');
+    return 'ru';
+  }
   console.log('[Translator] Initializing...');
   
   // Определяем текущий язык
@@ -318,6 +324,9 @@ function replaceTextInElement(element, originalText, translatedText) {
  * Переводит страницу на указанный язык (только из БД, без Google Translate)
  */
 export async function translatePage(targetLang, forceTranslate = false) {
+  if (DISABLE_TRANSLATION) {
+    return;
+  }
   console.time('translation');
   
   // Проверяем поддерживается ли запрошенный язык

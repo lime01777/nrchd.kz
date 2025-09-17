@@ -11,6 +11,9 @@
 const AVAILABLE_LANGUAGES = ['ru', 'kz', 'en'];
 const DEFAULT_LANGUAGE = 'kz';
 
+// Глобальный флаг: полностью отключить любые переводы и сетевые вызовы
+const DISABLE_TRANSLATION = true;
+
 // Класс для управления языком сайта
 class LanguageManager {
   constructor() {
@@ -54,9 +57,16 @@ class LanguageManager {
     
     this.initialized = true;
     
+    // Если переводы отключены — никаких сетевых вызовов и автоперевода
+    if (DISABLE_TRANSLATION) {
+      this.initialized = true;
+      console.log('[LanguageManager] Translations disabled. Skipping server sync and auto-apply.');
+      return;
+    }
+
     // Сообщить серверу о выбранном языке
     this.syncLanguageWithServer();
-    
+
     // Автоматически применить язык при загрузке - только если не дефолтный язык
     if (this.currentLanguage !== DEFAULT_LANGUAGE) {
       this.applyLanguage();
@@ -159,6 +169,17 @@ class LanguageManager {
    * НЕ пересоздает переводчик, только обновляет язык через LanguageManager.set()
    */
   async syncLanguageWithServer() {
+    if (DISABLE_TRANSLATION) {
+      // Локально обновим метку языка без сетевых вызовов
+      let metaLang = document.querySelector('meta[name="x-app-locale"]');
+      if (!metaLang) {
+        metaLang = document.createElement('meta');
+        metaLang.setAttribute('name', 'x-app-locale');
+        document.head.appendChild(metaLang);
+      }
+      metaLang.setAttribute('content', this.currentLanguage);
+      return { success: true, disabled: true, language: this.currentLanguage };
+    }
     try {
       // Получить CSRF токен
       const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
@@ -304,6 +325,9 @@ class LanguageManager {
    * @returns {Promise<string>} - Переведенный текст
    */
   async translateText(text, sourceLang, targetLang) {
+    if (DISABLE_TRANSLATION) {
+      return text;
+    }
     if (!text || text.trim() === '') {
       return text;
     }
@@ -360,6 +384,11 @@ class LanguageManager {
   }
   
   async applyLanguage() {
+    if (DISABLE_TRANSLATION) {
+      // Не выполняем никаких переводов DOM
+      document.documentElement.setAttribute('data-language', this.currentLanguage);
+      return;
+    }
     console.time('language-switch');
     // Проверяем и сохраняем текущий язык снова
     const savedLanguage = this.getSavedLanguage();
@@ -460,6 +489,9 @@ class LanguageManager {
    * @returns {Object} Полученные переводы
    */
   async fetchPageTranslations() {
+    if (DISABLE_TRANSLATION) {
+      return {};
+    }
     try {
       // Определяем URL текущей страницы
       const currentPageUrl = window.location.pathname;
@@ -543,6 +575,9 @@ class LanguageManager {
    * @param {string} pageUrl URL текущей страницы
    */
   saveTranslationsToServer(translations, pageUrl) {
+    if (DISABLE_TRANSLATION) {
+      return;
+    }
     if (!translations || Object.keys(translations).length === 0) {
       console.log('[LanguageManager] No translations to save');
       return;
@@ -836,6 +871,9 @@ class LanguageManager {
    * и автоматического перевода новых элементов
    */
   registerContentObserver() {
+    if (DISABLE_TRANSLATION) {
+      return;
+    }
     // Удалить существующий наблюдатель, если он есть
     if (this.observer) {
       this.observer.disconnect();
