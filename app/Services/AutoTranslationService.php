@@ -51,30 +51,8 @@ class AutoTranslationService
             return $existingTranslation;
         }
         
-        // Если нет API ключа, возвращаем исходный текст
-        if (!$this->apiKey) {
-            Log::warning('Google Translate API key not configured');
-            return $text;
-        }
-        
-        try {
-            // Выполняем перевод через Google Translate API
-            $translatedText = $this->translateWithGoogleAPI($text, $sourceLanguage, $targetLanguage);
-            
-            if (!empty($translatedText) && $translatedText !== $text) {
-                // Сохраняем перевод в базу данных
-                $this->storeTranslation($text, $translatedText, $sourceLanguage, $targetLanguage);
-                return $translatedText;
-            }
-        } catch (Exception $e) {
-            Log::error('Translation error: ' . $e->getMessage(), [
-                'text' => substr($text, 0, 50),
-                'source' => $sourceLanguage,
-                'target' => $targetLanguage
-            ]);
-        }
-        
-        // В случае ошибки возвращаем исходный текст
+        // Глобально отключаем обращения к внешнему Google Translate API
+        // Возвращаем исходный текст без сетевых вызовов и без сохранения
         return $text;
     }
     
