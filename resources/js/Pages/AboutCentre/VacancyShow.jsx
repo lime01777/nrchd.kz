@@ -1,11 +1,18 @@
-import React, { useState, useRef } from 'react';
-import { Head, Link, usePage } from '@inertiajs/react';
+import React, { useState } from 'react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 
 export default function VacancyShow({ vacancy }) {
-    // Состояние для хранения имени выбранного файла резюме
-    const [selectedFile, setSelectedFile] = useState("");
     const { locale } = usePage().props;
+    
+    // Используем useForm от Inertia для правильной обработки файлов и CSRF
+    const { data, setData, post, processing, errors, reset } = useForm({
+        name: '',
+        email: '',
+        phone: '',
+        resume: null,
+        cover_letter: '',
+    });
 
     // Преобразуем дату в формат ДД месяца ГГГГ года
     const formatDate = (dateStr) => {
@@ -14,6 +21,20 @@ export default function VacancyShow({ vacancy }) {
         const month = date.toLocaleString('ru-RU', { month: 'long' });
         const year = date.getFullYear();
         return `${day} ${month} ${year} года`;
+    };
+
+    // Обработчик отправки формы
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        // Отправка через Inertia с поддержкой файлов
+        post(route('vacancy.apply', vacancy.slug), {
+            forceFormData: true, // Принудительно использовать FormData для файлов
+            preserveScroll: true,
+            onSuccess: () => {
+                reset(); // Очищаем форму после успешной отправки
+            },
+        });
     };
 
     // Функция для отображения содержимого в Editor.js формате
@@ -130,9 +151,7 @@ export default function VacancyShow({ vacancy }) {
                             </div>
                         )}
                         
-                        <form action={route('vacancy.apply', vacancy.slug)} method="POST" encType="multipart/form-data">
-                            <input type="hidden" name="_token" value={usePage().props.csrf_token} />
-                            
+                        <form onSubmit={handleSubmit}>
                             <div className="mb-4">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     Ваше имя *
@@ -140,12 +159,15 @@ export default function VacancyShow({ vacancy }) {
                                 <input 
                                     type="text" 
                                     name="name"
-                                    className={`w-full px-3 py-2 border ${usePage().props.errors.name ? 'border-red-500' : 'border-gray-300'} rounded-md`}
+                                    value={data.name}
+                                    onChange={(e) => setData('name', e.target.value)}
+                                    className={`w-full px-3 py-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-md`}
                                     placeholder="Введите ваше имя"
                                     required
+                                    disabled={processing}
                                 />
-                                {usePage().props.errors.name && (
-                                    <p className="text-red-500 text-sm mt-1">{usePage().props.errors.name}</p>
+                                {errors.name && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.name}</p>
                                 )}
                             </div>
                             
@@ -156,12 +178,15 @@ export default function VacancyShow({ vacancy }) {
                                 <input 
                                     type="email" 
                                     name="email"
-                                    className={`w-full px-3 py-2 border ${usePage().props.errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md`}
+                                    value={data.email}
+                                    onChange={(e) => setData('email', e.target.value)}
+                                    className={`w-full px-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md`}
                                     placeholder="example@email.com"
                                     required
+                                    disabled={processing}
                                 />
-                                {usePage().props.errors.email && (
-                                    <p className="text-red-500 text-sm mt-1">{usePage().props.errors.email}</p>
+                                {errors.email && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
                                 )}
                             </div>
                             
@@ -172,12 +197,15 @@ export default function VacancyShow({ vacancy }) {
                                 <input 
                                     type="tel" 
                                     name="phone"
-                                    className={`w-full px-3 py-2 border ${usePage().props.errors.phone ? 'border-red-500' : 'border-gray-300'} rounded-md`}
+                                    value={data.phone}
+                                    onChange={(e) => setData('phone', e.target.value)}
+                                    className={`w-full px-3 py-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded-md`}
                                     placeholder="+7 (xxx) xxx-xx-xx"
                                     required
+                                    disabled={processing}
                                 />
-                                {usePage().props.errors.phone && (
-                                    <p className="text-red-500 text-sm mt-1">{usePage().props.errors.phone}</p>
+                                {errors.phone && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
                                 )}
                             </div>
                             
@@ -194,12 +222,10 @@ export default function VacancyShow({ vacancy }) {
                                     className="hidden"
                                     accept=".pdf,.doc,.docx"
                                     required
+                                    disabled={processing}
                                     onChange={(e) => {
-                                        // Показать имя выбранного файла
                                         if (e.target.files && e.target.files[0]) {
-                                            setSelectedFile(e.target.files[0].name);
-                                        } else {
-                                            setSelectedFile("");
+                                            setData('resume', e.target.files[0]);
                                         }
                                     }}
                                 />
@@ -210,7 +236,8 @@ export default function VacancyShow({ vacancy }) {
                                         cursor-pointer flex items-center space-x-2 px-4 py-2 rounded-md
                                         bg-yellow-100 hover:bg-yellow-200 text-green-700 border border-yellow-300
                                         transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-500
-                                        ${usePage().props.errors.resume ? 'border-red-500 bg-red-50' : ''}
+                                        ${errors.resume ? 'border-red-500 bg-red-50' : ''}
+                                        ${processing ? 'opacity-50 cursor-not-allowed' : ''}
                                     `}>
                                         {/* Иконка скрепки (paper clip) */}
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -220,14 +247,16 @@ export default function VacancyShow({ vacancy }) {
                                     </label>
                                     
                                     {/* Отображение имени выбранного файла */}
-                                    {selectedFile && (
-                                        <span className="text-sm text-gray-600 truncate max-w-xs">{selectedFile}</span>
+                                    {data.resume && (
+                                        <span className="text-sm text-green-600 truncate max-w-xs">
+                                            ✓ {data.resume.name}
+                                        </span>
                                     )}
                                 </div>
                                 
                                 <p className="text-xs text-gray-500 mt-1">Максимальный размер файла: 5MB</p>
-                                {usePage().props.errors.resume && (
-                                    <p className="text-red-500 text-sm mt-1">{usePage().props.errors.resume}</p>
+                                {errors.resume && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.resume}</p>
                                 )}
                             </div>
                             
@@ -237,20 +266,24 @@ export default function VacancyShow({ vacancy }) {
                                 </label>
                                 <textarea 
                                     name="cover_letter"
-                                    className={`w-full px-3 py-2 border ${usePage().props.errors.cover_letter ? 'border-red-500' : 'border-gray-300'} rounded-md`}
+                                    value={data.cover_letter}
+                                    onChange={(e) => setData('cover_letter', e.target.value)}
+                                    className={`w-full px-3 py-2 border ${errors.cover_letter ? 'border-red-500' : 'border-gray-300'} rounded-md`}
                                     rows="4"
                                     placeholder="Расскажите немного о себе и почему вы хотите работать с нами"
+                                    disabled={processing}
                                 ></textarea>
-                                {usePage().props.errors.cover_letter && (
-                                    <p className="text-red-500 text-sm mt-1">{usePage().props.errors.cover_letter}</p>
+                                {errors.cover_letter && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.cover_letter}</p>
                                 )}
                             </div>
                             
                             <button 
                                 type="submit" 
-                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                disabled={processing}
                             >
-                                Отправить заявку
+                                {processing ? 'Отправка...' : 'Отправить заявку'}
                             </button>
                         </form>
                     </div>

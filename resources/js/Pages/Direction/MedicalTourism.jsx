@@ -1,10 +1,11 @@
 import { Head, usePage, router } from '@inertiajs/react';
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
 
 export default function MedicalTourism() {
     const { translations } = usePage().props;
+    const [search, setSearch] = useState('');
     
     // Функция для получения перевода
     const t = (key, fallback = '') => {
@@ -78,6 +79,13 @@ export default function MedicalTourism() {
             route: "clinic.maternity"
         }
     ];
+
+  // Фильтрация клиник по названию
+  const filteredClinics = useMemo(() => {
+    const q = (search || '').toLowerCase().trim();
+    if (!q) return astanaClinics;
+    return astanaClinics.filter(c => c.name.toLowerCase().includes(q));
+  }, [search]);
 
   return (
     <>
@@ -157,15 +165,21 @@ export default function MedicalTourism() {
       {/* Клиники Астаны */}
       <section className="text-gray-600 body-font py-12">
         <div className="container px-5 mx-auto">
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
             <h2 className="text-3xl font-bold text-gray-800">Клиники Астаны</h2>
-            <a href={route('clinics')} className="text-green-600 hover:text-green-800 font-medium">
-              Смотреть все →
-            </a>
+            <div className="w-full md:w-96">
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Поиск по наименованию клиники"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+            </div>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {astanaClinics.map((clinic) => (
+            {filteredClinics.map((clinic) => (
               <div key={clinic.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
                 <div className="h-48 bg-gray-200 overflow-hidden">
                   <img 
@@ -206,6 +220,9 @@ export default function MedicalTourism() {
                 </div>
               </div>
             ))}
+            {filteredClinics.length === 0 && (
+              <div className="col-span-full text-center text-gray-600">Клиники не найдены</div>
+            )}
           </div>
         </div>
       </section>

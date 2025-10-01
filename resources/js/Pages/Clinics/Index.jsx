@@ -12,7 +12,12 @@ export default function ClinicsIndex({ clinics, filters, filterOptions, paginati
     const t = (key, fallback = '') => {
         return translations?.[key] || fallback;
     };
-    const [localFilters, setLocalFilters] = useState(filters);
+    const [localFilters, setLocalFilters] = useState({
+        search: filters?.search ?? '',
+        city: filters?.city ?? 'all',
+        specialty: filters?.specialty ?? 'all',
+        service: filters?.service ?? 'all',
+    });
 
     // Обновляем фильтры при изменении
     useEffect(() => {
@@ -44,10 +49,7 @@ export default function ClinicsIndex({ clinics, filters, filterOptions, paginati
 
     return (
         <>
-            <Head>
-                <title>{t('clinics.title')} - NRCHD</title>
-                <meta name="description" content={t('clinics.description')} />
-            </Head>
+            <Head title={`${t('clinics.title', 'Клиники')} - NRCHD`} meta={[{ name: 'description', content: t('clinics.description', 'Каталог медицинских клиник') }]} />
 
             <div className="min-h-screen bg-gray-50">
                 {/* Header */}
@@ -107,7 +109,7 @@ export default function ClinicsIndex({ clinics, filters, filterOptions, paginati
                     {/* Results Count */}
                     <div className="mb-6">
                         <p className="text-gray-600">
-                            {t('clinics.found_count', { count: pagination.total })}
+                            {t('clinics.found_count', '') || `Найдено: ${pagination.total}`}
                         </p>
                     </div>
 

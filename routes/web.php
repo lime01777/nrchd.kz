@@ -405,6 +405,11 @@ Route::get('/direction/medical-education/recommendations', function () {
     return Inertia::render('Direction/MedEducation/Recommendations');
 })->name('direction.medical.education.recommendations');
 
+// ГОСО и ТУП (Медицинское образование)
+Route::get('/direction/medical-education/goso-tup', function () {
+    return Inertia::render('Direction/MedEducation/GosoTup');
+})->name('direction.medical.education.goso_tup');
+
 Route::get('/direction/medical-education/rating', function () {
     return Inertia::render('Direction/MedEducation/Rating');
 })->name('direction.medical.education.rating');
@@ -703,6 +708,13 @@ Route::post('/about-centre/vacancies/{slug}/apply', [App\Http\Controllers\Vacanc
 // Маршруты для админ-панели вакансий (требуют авторизации)
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::resource('vacancies', AdminVacancyController::class);
+    
+    // Заявки на вакансии
+    Route::get('/vacancy-applications', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'index'])->name('admin.vacancy-applications.index');
+    Route::get('/vacancy-applications/{id}', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'show'])->name('admin.vacancy-applications.show');
+    Route::patch('/vacancy-applications/{id}/status', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'updateStatus'])->name('admin.vacancy-applications.update-status');
+    Route::patch('/vacancy-applications/{id}/notes', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'updateNotes'])->name('admin.vacancy-applications.update-notes');
+    Route::delete('/vacancy-applications/{id}', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'destroy'])->name('admin.vacancy-applications.destroy');
     
     // Управление клиниками
     Route::resource('clinics', \App\Http\Controllers\Admin\ClinicController::class, ['names' => 'admin.clinics']);

@@ -16,7 +16,12 @@ class ClinicController extends Controller
     public function index(Request $request)
     {
         $query = Clinic::published()
-            ->with('doctors.featured')
+            // Eager-load doctors; filter featured within the closure instead of invalid nested eager path
+            ->with(['doctors' => function ($q) {
+                // Если нужна сортировка/фильтрация избранных врачей – делаем это в запросе
+                $q->orderByDesc('is_featured')
+                  ->orderBy('name_ru');
+            }])
             ->orderBy('name_ru');
 
         // Поиск по ключевому слову

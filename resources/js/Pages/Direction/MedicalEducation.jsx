@@ -27,6 +27,9 @@ export default function MedicalEducation() {
     <Head title={tComponent('directions.medical_education', 'Медицинское образование')} meta={[{ name: 'description', content: 'Медицинское образование: программы, курсы и обучение в сфере здравоохранения.' }]} />
     <section className="text-gray-600 body-font pb-8">
       <div className="container px-5 py-12 mx-auto">
+        <h1 className="text-3xl font-semibold text-gray-900 mb-6">
+          {tComponent('directions.medical_education', 'Медицинское образование')}
+        </h1>
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-6" data-translate>Медицинское образование в Республике Казахстан</h2>
           <p className="text-gray-700 mb-4 leading-relaxed" data-translate>
@@ -127,6 +130,13 @@ export default function MedicalEducation() {
                     title="Документы" 
                     description="Документы по медицинскому образованию"
                     href={route('direction.medical.education.documents')}
+                />
+                <FolderChlank 
+                    color="bg-gray-200"
+                    colorsec="bg-gray-300"
+                    title="ГОСО и ТУП" 
+                    description="Стандарты образования и типовые учебные планы"
+                    href={route('direction.medical.education.goso_tup')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
