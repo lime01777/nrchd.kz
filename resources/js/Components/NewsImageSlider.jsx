@@ -29,24 +29,20 @@ export default function NewsImageSlider({
       return trimmedPath;
     }
     
-    // Если это старый путь к storage, преобразуем в новый путь к img
-    if (trimmedPath.startsWith('/storage/news/')) {
-      return trimmedPath.replace('/storage/news/', '/img/news/');
-    }
-    
-    // Если это новый путь к img, оставляем как есть
-    if (trimmedPath.startsWith('/img/news/')) {
+    // Если это путь к storage, оставляем как есть (правильный путь через симлинк)
+    if (trimmedPath.startsWith('/storage/')) {
       return trimmedPath;
     }
     
-    // Если это относительный путь без /storage/ или /img/, добавляем /img/news/
-    if (trimmedPath.startsWith('/') && !trimmedPath.startsWith('/storage/') && !trimmedPath.startsWith('/img/')) {
-      return `/img/news${trimmedPath}`;
+    // Если это путь к img, оставляем как есть
+    if (trimmedPath.startsWith('/img/')) {
+      return trimmedPath;
     }
     
-    // Если это просто имя файла, добавляем путь к новостям
+    // Если это относительный путь без начального слеша, добавляем /storage/
+    // (для путей типа "news/filename.jpg" из БД)
     if (!trimmedPath.startsWith('/')) {
-      return `/img/news/${trimmedPath}`;
+      return `/storage/${trimmedPath}`;
     }
     
     return trimmedPath;
