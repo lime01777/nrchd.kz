@@ -43,7 +43,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Казангапова Зарема Саламатовна",
+        name: "Казанганова Зарема Саламатовна",
         position: "Пресс-секретарь",
         contact: {
           email: "z.kazangapova@nrchd.kz"
@@ -57,7 +57,7 @@ export const fullOrganizationalStructureData = [
     description: "Управление персоналом и кадровые вопросы",
     employees: [
       {
-        name: "Ивутини Альфия Альфартовна",
+        name: "Ивутина Альфия Альфиртовна",
         position: "Директор",
         contact: {
           email: "a.ivutini@nrchd.kz"
@@ -71,7 +71,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Джаалыгильдиева Алия Булатовна",
+        name: "Джильгильдиева Алия Булатовна",
         position: "Главный специалист",
         contact: {
           email: "a.dzhalygyldieva@nrchd.kz"
@@ -85,7 +85,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Абдуллина Дина Жумажановна",
+        name: "Абдуллина Дина Жумажановна ",
         position: "Главный специалист",
         contact: {
           email: "d.abdullina@nrchd.kz"
@@ -106,7 +106,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Климова Жанар Сериккалиевна",
+        name: "Клюмова Жанар Сериккалиевна",
         position: "Главный специалист",
         contact: {
           email: "z.klimova@nrchd.kz"
@@ -134,7 +134,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Иншбаева Айткуль Пишбаевна",
+        name: "Иншбаева Айткуль Иншбаевна",
         position: "Главный специалист",
         contact: {
           email: "a.inshbaeva@nrchd.kz"
@@ -155,7 +155,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Оразова Мадина Зейнетовна",
+        name: "Оразова Минаш Зейнеловна",
         position: "Главный специалист",
         contact: {
           email: "m.orazova@nrchd.kz"
@@ -204,21 +204,21 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Бектась Магнуня Молдабаевна",
+        name: "Бактаев Магауия Молдабаевич",
         position: "Главный специалист по административно-хозяйственной работе",
         contact: {
           email: "m.bektas@nrchd.kz"
         }
       },
       {
-        name: "Жапжуазнова Наталья Жумагуловна",
+        name: "Жанжуманова Наталья Жумагуловна",
         position: "Главный специалист архивариус",
         contact: {
           email: "n.zhapzhuaznova@nrchd.kz"
         }
       },
       {
-        name: "Септенова Алия Асетовна",
+        name: "Септенова Алия Асеновна",
         position: "Главный специалист по внедрению государственного языка",
         contact: {
           email: "a.septenova@nrchd.kz"
@@ -239,14 +239,14 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Канева Халида Амантаевна",
+        name: "Каниева Халида Амантаевна",
         position: "Главный специалист",
         contact: {
           email: "k.kaneva@nrchd.kz"
         }
       },
       {
-        name: "Ибраев Арыстан Каиргельдыулы",
+        name: "Ибраев Арыстан Каиргелдыулы",
         position: "Главный специалист",
         contact: {
           email: "a.ibraev@nrchd.kz"
@@ -267,7 +267,7 @@ export const fullOrganizationalStructureData = [
     description: "Обеспечение деятельности председателя правления",
     employees: [
       {
-        name: "Ранкова Карокат Бакытжанкызы",
+        name: "Раисова Қарақат Бақытжанқызы",
         position: "Делопроизводитель",
         contact: {
           email: "k.rankova@nrchd.kz"
@@ -295,7 +295,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Жаканова Роза Масутутовна",
+        name: "Жаканова Роза Масугутовна",
         position: "Главный юрист",
         contact: {
           email: "r.zhakanova@nrchd.kz"
@@ -344,7 +344,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Сыздыкова Айнура Сайлаубаевна",
+        name: "Сыздыкова Аймура Сайлавбаевна",
         position: "Главный специалист",
         contact: {
           email: "a.syzdikova@nrchd.kz"
@@ -365,7 +365,7 @@ export const fullOrganizationalStructureData = [
     description: "Развитие научных исследований в области медицины",
     employees: [
       {
-        name: "Калымова Галия Тимуркызы",
+        name: "Калымжан Галия Тимуркызы",
         position: "Главный специалист",
         contact: {
           email: "g.kalymova@nrchd.kz"
@@ -393,7 +393,7 @@ export const fullOrganizationalStructureData = [
     description: "Оценка медицинских технологий",
     employees: [
       {
-        name: "Асенов Аят Беймбетович",
+        name: "Асемов Аят Беймбетович",
         position: "Главный специалист",
         contact: {
           email: "a.asenov@nrchd.kz"
@@ -414,14 +414,14 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Ташшагамбетова Нургуль Айнадиевна",
+        name: "Ташпагамбетова Нургуль Айнадиевна",
         position: "Главный специалист",
         contact: {
           email: "n.tashshagambetova@nrchd.kz"
         }
       },
       {
-        name: "Беккали Гульдана Беккалиқызы",
+        name: "Бекқали Гүлдана Бекқалиқызы",
         position: "Главный специалист",
         contact: {
           email: "g.bekkali@nrchd.kz"
@@ -435,7 +435,7 @@ export const fullOrganizationalStructureData = [
     description: "Развитие и совершенствование лекарственной политики",
     employees: [
       {
-        name: "Есбатырова Ляззат Муратовна",
+        name: "Есбатырова  Лаззат Муратовна",
         position: "Директор",
         contact: {
           email: "l.esbatyrova@nrchd.kz"
@@ -449,7 +449,7 @@ export const fullOrganizationalStructureData = [
     description: "Развитие формулярной системы и экспертиза лекарственных средств",
     employees: [
       {
-        name: "Мухтар Шаттык",
+        name: "Мұхтар Шаттық",
         position: "Начальник",
         contact: {
           email: "s.mukhtar@nrchd.kz"
@@ -470,14 +470,14 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Байтагирова Гульбену Базарбаевна",
+        name: "Байшагирова Гульбану Базарбаевна",
         position: "Главный специалист",
         contact: {
           email: "g.baitagirova@nrchd.kz"
         }
       },
       {
-        name: "Басибекова Айнур Рустемова",
+        name: "Басибекова Айнур Рустемовна",
         position: "Главный специалист",
         contact: {
           email: "a.basibekova@nrchd.kz"
@@ -498,7 +498,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Скакова Айым Амангельдиевна",
+        name: "Скакова Айым Амангельдиновна",
         position: "Главный специалист",
         contact: {
           email: "a.skakova@nrchd.kz"
@@ -526,10 +526,10 @@ export const fullOrganizationalStructureData = [
     description: "Развитие клинических исследований",
     employees: [
       {
-        name: "Гроф Маргарита Арнольдовна",
+        name: "Граф Маргарита Арнольдовна",
         position: "Руководитель",
         contact: {
-          email: "m.grof@nrchd.kz"
+          email: "m.graf@nrchd.kz"
         }
       }
     ]
@@ -554,17 +554,17 @@ export const fullOrganizationalStructureData = [
     description: "Организация и координация образовательных программ",
     employees: [
       {
-        name: "Ахметова Айжан Сериковна",
+        name: "Ахметова Айым Сериковна",
         position: "Главный специалист",
         contact: {
           email: "a.akhmetova@nrchd.kz"
         }
       },
       {
-        name: "Шарханова Меруерт Бисенбиқызы",
+        name: "Шариханова Меруерт Бисенбиқызы",
         position: "Главный специалист",
         contact: {
-          email: "m.sharkhanova@nrchd.kz"
+          email: "m.sharikhanova@nrchd.kz"
         }
       },
       {
@@ -582,7 +582,7 @@ export const fullOrganizationalStructureData = [
     description: "Совершенствование стандартов аккредитации",
     employees: [
       {
-        name: "Мейірханов Актанберді Темірханұлы",
+        name: "Мейірханов Ақтанберді Темірханұлы",
         position: "Начальник",
         contact: {
           email: "a.meirhanov@nrchd.kz"
@@ -610,7 +610,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Крымова Ляззат Досхалиевна",
+        name: "Крымова Ляззат Досханаевна",
         position: "Главный специалист",
         contact: {
           email: "l.krymova@nrchd.kz"
@@ -638,7 +638,7 @@ export const fullOrganizationalStructureData = [
     description: "Совершенствование организации медицинской помощи",
     employees: [
       {
-        name: "Мухопова Гульжан Темирхановна",
+        name: "Муханова Гулжан Темиржановна",
         position: "Директор",
         contact: {
           email: "g.mukhopova@nrchd.kz"
@@ -686,7 +686,7 @@ export const fullOrganizationalStructureData = [
     description: "Мониторинг кадровых ресурсов здравоохранения",
     employees: [
       {
-        name: "Демушкин Ольга Юрьевна",
+        name: "Демушкан Ольга Юрьевна",
         position: "Руководитель",
         contact: {
           email: "o.demushkin@nrchd.kz"
@@ -714,7 +714,7 @@ export const fullOrganizationalStructureData = [
     description: "Медико-статистический анализ данных",
     employees: [
       {
-        name: "Карашутова Жадыра Нургалиевна",
+        name: "Карашукова Жадыра Нургалиевна",
         position: "Директор",
         contact: {
           email: "z.karashutova@nrchd.kz"
@@ -749,7 +749,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Абушканова Гулим Багдатовна",
+        name: "Абушкенова Гулим Багдатовна",
         position: "Главный специалист",
         contact: {
           email: "g.abushkanova@nrchd.kz"
@@ -770,7 +770,7 @@ export const fullOrganizationalStructureData = [
     description: "Статистический учет и отчетность в здравоохранении",
     employees: [
       {
-        name: "Ильясова Жанагул Разыбековна",
+        name: "Ильясова Жанагул Рахымбековна",
         position: "Начальник",
         contact: {
           email: "z.ilyasova@nrchd.kz"
@@ -784,17 +784,17 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Магляния Айжан Мерекеқызы",
+        name: "Магавина Айжан Мерекеқызы",
         position: "Главный специалист",
         contact: {
-          email: "a.maglyaniya@nrchd.kz"
+          email: "a.magavianya@nrchd.kz"
         }
       },
       {
-        name: "Аханова Назерке Бексикызы",
+        name: "Ақанова Назерке Бекенқызы",
         position: "Ведущий специалист",
         contact: {
-          email: "n.akhanova@nrchd.kz"
+          email: "n.akaanova@nrchd.kz"
         }
       }
     ]
@@ -833,7 +833,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Испев Жаныбек Тобылович",
+        name: "Исаев Жаныбек Тобылович",
         position: "Главный специалист",
         contact: {
           email: "z.ispiev@nrchd.kz"
@@ -861,7 +861,7 @@ export const fullOrganizationalStructureData = [
     description: "Совершенствование стандартов электронного здравоохранения",
     employees: [
       {
-        name: "Шамшутдин Лаура Бактиярқызы",
+        name: "Шамшутдин Лаура Бахтиярқызы",
         position: "Начальник",
         contact: {
           email: "l.shamshutdin@nrchd.kz"
@@ -882,7 +882,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Куанышбеков Алихан Алтайұлы",
+        name: "Куанышбеков Алижан Алтайұлы",
         position: "Ведущий специалист",
         contact: {
           email: "a.kuanyshbekov@nrchd.kz"
@@ -917,7 +917,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Каримова Алинур Аскарызы",
+        name: "Каримова Айнұр Асқарызы  ",
         position: "Главный специалист",
         contact: {
           email: "a.karimova@nrchd.kz"
@@ -952,7 +952,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Топаева Нурайым Ерболқызы",
+        name: "Топаева Нұрайым Ерболқызы",
         position: "Ведущий специалист",
         contact: {
           email: "n.topaeva@nrchd.kz"
@@ -980,7 +980,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Топаева Нурайым Ерболқызы",
+        name: "Топаева Нұрайым Ерболқызы",
         position: "Координатор по работе с пациентами",
         contact: {
           email: "n.topaeva@nrchd.kz"
@@ -994,28 +994,28 @@ export const fullOrganizationalStructureData = [
     description: "Научно-практический центр первичной медико-санитарной помощи",
     employees: [
       {
-        name: "Хасенова Асель Жанабековна",
+        name: "Хасенова Асель Жанибековна",
         position: "Руководитель",
         contact: {
           email: "a.khasenova@nrchd.kz"
         }
       },
       {
-        name: "Мусралинов Әнуар Болатұлы",
+        name: "Мүсралинов Әнуар Болатұлы",
         position: "Главный специалист",
         contact: {
           email: "a.musralinov@nrchd.kz"
         }
       },
       {
-        name: "Давлетьярова Акмарал Маратовна",
+        name: "Давлетьярова Акмарал Маратовна ",
         position: "Главный специалист",
         contact: {
           email: "a.davletyarova@nrchd.kz"
         }
       },
       {
-        name: "Айнакова Жадыра Асалхановна",
+        name: "Айнекова Жадыра Асилхановна",
         position: "Главный специалист",
         contact: {
           email: "z.ainakova@nrchd.kz"
@@ -1029,14 +1029,14 @@ export const fullOrganizationalStructureData = [
     description: "Экономические исследования и финансирование здравоохранения",
     employees: [
       {
-        name: "Амангельдиев Дарын Милинович",
+        name: "Амангельдиев Дарын Миланович",
         position: "Главный специалист",
         contact: {
           email: "d.amangeldyev@nrchd.kz"
         }
       },
       {
-        name: "Омірбекова Нурай Сәрсенбекқызы",
+        name: "Әшірбекова Нурай Сәрсенбекқызы   ",
         position: "Главный специалист",
         contact: {
           email: "n.omirbekova@nrchd.kz"
@@ -1078,21 +1078,21 @@ export const fullOrganizationalStructureData = [
     description: "Координация деятельности в масштабах республики",
     employees: [
       {
-        name: "Квитова Амангуль Нурмаханбетовна",
+        name: "Кнатова Амангуль Нурмаханбетовна",
         position: "Руководитель",
         contact: {
           email: "a.kvitova@nrchd.kz"
         }
       },
       {
-        name: "Бахтияркызы Нурбола",
+        name: "Бахтиярқызы Нұрбала",
         position: "Главный специалист",
         contact: {
           email: "n.bakhtiyarkyzy@nrchd.kz"
         }
       },
       {
-        name: "Кенжекулова Рауза Нуравовна",
+        name: "Кенжекулова Рауза Нурановна",
         position: "Главный специалист",
         contact: {
           email: "r.kenzhekulova@nrchd.kz"
@@ -1127,14 +1127,14 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Сулейманова Наталья Абдулмажитовна",
+        name: "Сулейменова Наталья Абдулважитовна",
         position: "Главный специалист",
         contact: {
           email: "n.suleimanova@nrchd.kz"
         }
       },
       {
-        name: "Слиженкова Татьяна Ивановна",
+        name: "Слажнева Татьяна Ивановна",
         position: "Главный специалист",
         contact: {
           email: "t.slizhenkova@nrchd.kz"
@@ -1148,7 +1148,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Адиева Асель Акибаевна",
+        name: "Адаева Асел Ажибаевна",
         position: "Главный специалист",
         contact: {
           email: "a.adieva@nrchd.kz"
@@ -1169,7 +1169,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Жуманова Макпал Ерболатовна",
+        name: "Жуманова Макпал Ерболатовна дистан",
         position: "Главный специалист",
         contact: {
           email: "m.zhumanova@nrchd.kz"
