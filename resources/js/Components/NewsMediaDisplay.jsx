@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import MediaSlider from './MediaSlider';
 
 /**
  * Компонент для отображения медиа в новости
@@ -14,7 +15,7 @@ export default function NewsMediaDisplay({ media = [], className = '' }) {
   const getMediaType = (mediaItem) => {
     if (typeof mediaItem === 'string') {
       const extension = mediaItem.split('.').pop()?.toLowerCase();
-      const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'];
+      const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'ogg'];
       return videoExtensions.includes(extension) ? 'video' : 'image';
     }
     
@@ -24,7 +25,7 @@ export default function NewsMediaDisplay({ media = [], className = '' }) {
     
     if (mediaItem.path) {
       const extension = mediaItem.path.split('.').pop()?.toLowerCase();
-      const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'];
+      const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'ogg'];
       return videoExtensions.includes(extension) ? 'video' : 'image';
     }
     
@@ -61,9 +62,23 @@ export default function NewsMediaDisplay({ media = [], className = '' }) {
     return null;
   }
 
-  // Если есть видео, приоритет видео
-  if (videos.length > 0) {
-    const video = videos[0]; // Берем первое видео
+  // Если есть и изображения, и видео, или больше одного медиа - используем слайдер
+  if (media.length > 1 || (images.length > 0 && videos.length > 0)) {
+    return (
+      <div className={`mb-6 ${className}`}>
+        <MediaSlider 
+          media={media}
+          className="w-full"
+          autoPlay={true}
+          interval={5000}
+        />
+      </div>
+    );
+  }
+
+  // Если есть только одно видео
+  if (videos.length === 1 && images.length === 0) {
+    const video = videos[0];
     return (
       <div className={`mb-6 ${className}`}>
         <div className="relative">

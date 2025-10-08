@@ -30,9 +30,9 @@ export default function NewsSliderWithMain({
       return trimmedPath;
     }
     
-    // Если это старый путь к storage, преобразуем в новый путь к img
-    if (trimmedPath.startsWith('/storage/news/')) {
-      return trimmedPath.replace('/storage/news/', '/img/news/');
+    // Если это путь к storage, оставляем как есть (правильный путь через симлинк)
+    if (trimmedPath.startsWith('/storage/')) {
+      return trimmedPath;
     }
     
     // Если это новый путь к img, оставляем как есть

@@ -18,6 +18,14 @@ class NewsController extends Controller
             return null;
         }
         
+        // Если передан массив (новый формат медиа), извлекаем путь
+        if (is_array($path)) {
+            $path = $path['path'] ?? null;
+            if (empty($path)) {
+                return null;
+            }
+        }
+        
         // Если путь уже является полным URL
         if (strpos($path, 'http://') === 0 || strpos($path, 'https://') === 0) {
             return $path;
@@ -52,10 +60,21 @@ class NewsController extends Controller
      */
     private function processImagesForFrontend($news)
     {
-        // Преобразуем изображения в полные URL
+        // Обрабатываем медиа (новый формат - массив объектов)
         if (is_array($news->images)) {
-            $news->images = array_map(function($img) {
-                return $this->getFullImageUrl($img);
+            $news->images = array_map(function($mediaItem) {
+                if (is_array($mediaItem)) {
+                    // Новый формат: объект с полями path, type, name, size
+                    return [
+                        'path' => $this->getFullImageUrl($mediaItem['path'] ?? ''),
+                        'type' => $mediaItem['type'] ?? 'image',
+                        'name' => $mediaItem['name'] ?? basename($mediaItem['path'] ?? ''),
+                        'size' => $mediaItem['size'] ?? 0
+                    ];
+                } else {
+                    // Старый формат: просто строка пути
+                    return $this->getFullImageUrl($mediaItem);
+                }
             }, $news->images);
         }
         
@@ -63,7 +82,13 @@ class NewsController extends Controller
         if (!empty($news->main_image)) {
             $news->image = $this->getFullImageUrl($news->main_image);
         } elseif (!empty($news->images) && is_array($news->images) && count($news->images) > 0) {
-            $news->image = $news->images[0];
+            // Берем первое изображение из медиа
+            $firstMedia = $news->images[0];
+            if (is_array($firstMedia)) {
+                $news->image = $firstMedia['path'] ?? '';
+            } else {
+                $news->image = $firstMedia;
+            }
         } elseif (!empty($news->image)) {
             $news->image = $this->getFullImageUrl($news->image);
         }
@@ -71,7 +96,23 @@ class NewsController extends Controller
         // Убеждаемся, что main_image есть в массиве images
         if (!empty($news->main_image) && is_array($news->images)) {
             $mainImageUrl = $this->getFullImageUrl($news->main_image);
-            if (!in_array($mainImageUrl, $news->images)) {
+            $hasMainImage = false;
+            
+            foreach ($news->images as $mediaItem) {
+                if (is_array($mediaItem)) {
+                    if (($mediaItem['path'] ?? '') === $mainImageUrl) {
+                        $hasMainImage = true;
+                        break;
+                    }
+                } else {
+                    if ($mediaItem === $mainImageUrl) {
+                        $hasMainImage = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!$hasMainImage) {
                 array_unshift($news->images, $mainImageUrl);
             }
         }

@@ -14,7 +14,7 @@ export default function MedicalTourism() {
   // Данные о городе (только Астана)
   const cityData = {
     name: 'Астана',
-    dates: '13-15 октября 2025',
+    dates: '13-14 октября 2025',
     time: '18:00',
     venue: 'Место проведения: Президентский центр Республики Казахстан',
     color: 'from-blue-600 to-blue-800'

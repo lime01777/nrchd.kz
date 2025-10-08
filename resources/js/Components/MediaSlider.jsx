@@ -15,7 +15,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
     if (typeof item === 'string') {
       // Определяем тип по расширению
       const extension = item.split('.').pop()?.toLowerCase();
-      const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'];
+      const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'ogg'];
       return {
         path: item,
         type: videoExtensions.includes(extension) ? 'video' : 'image',

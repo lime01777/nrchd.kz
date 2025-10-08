@@ -1,9 +1,18 @@
 import React, { useState, useCallback } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
-import MediaManager from '@/Components/FileManager/MediaManager';
-import MediaSlider from '@/Components/MediaSlider';
+import ModernMediaUploader from '@/Components/Admin/News/ModernMediaUploader';
+import TagSelector from '@/Components/Admin/News/TagSelector';
+import CategorySelector from '@/Components/Admin/News/CategorySelector';
+import StatusSelector from '@/Components/Admin/News/StatusSelector';
+import DateTimePicker from '@/Components/Admin/News/DateTimePicker';
+import InputError from '@/Components/InputError';
+import InputLabel from '@/Components/InputLabel';
+import TextInput from '@/Components/TextInput';
+import Textarea from '@/Components/Textarea';
+import PrimaryButton from '@/Components/PrimaryButton';
 
+// Предустановленные категории и теги
 const DEFAULT_CATEGORIES = [
   'Общие',
   'Аккредитация',
@@ -12,525 +21,344 @@ const DEFAULT_CATEGORIES = [
   'Методические материалы',
   'Исследования',
   'Анонсы',
+  'Медицина',
+  'Здравоохранение',
+  'Технологии'
+];
+
+const POPULAR_TAGS = [
+  'важное',
+  'новости',
+  'медицина',
+  'здоровье',
+  'исследования',
+  'образование',
+  'конференция',
+  'технологии',
+  'инновации',
+  'лечение'
 ];
 
 export default function NewsEdit({ news }) {
-  const [showMediaManager, setShowMediaManager] = useState(false);
-  const [dragActive, setDragActive] = useState(false);
+  const [media, setMedia] = useState([]);
+  const [showPreview, setShowPreview] = useState(false);
 
-  // Преобразуем существующие изображения в новый формат
-  const existingMedia = news.images ? news.images.map((path, index) => ({
-    path: path,
-    type: path.includes('.mp4') || path.includes('.avi') || path.includes('.mov') ? 'video' : 'image',
-    name: path.split('/').pop(),
+  // Преобразуем существующие медиа в новый формат
+  const existingMedia = news.images ? (Array.isArray(news.images) ? news.images : JSON.parse(news.images || '[]')).map((item, index) => {
+    if (typeof item === 'string') {
+      return {
+        id: `existing-${index}`,
+        path: item,
+        type: item.includes('.mp4') || item.includes('.avi') || item.includes('.mov') || item.includes('.webm') || item.includes('.ogg') ? 'video' : 'image',
+        name: item.split('/').pop(),
+        source: 'existing'
+      };
+    } else {
+      return {
+        id: item.id || `existing-${index}`,
+        path: item.path || item,
+        type: item.type || (item.path && item.path.includes('.mp4') ? 'video' : 'image'),
+        name: item.name || item.path?.split('/').pop(),
     source: 'existing'
-  })) : [];
+      };
+    }
+  }) : [];
 
-  const { data, setData, put, processing, errors } = useForm({
+  // Маппинг статусов для совместимости
+  const mapStatusToNew = (oldStatus) => {
+    switch (oldStatus) {
+      case 'Черновик': return 'draft';
+      case 'Опубликовано': return 'published';
+      case 'Запланировано': return 'scheduled';
+      case 'Архив': return 'archived';
+      default: return 'draft';
+    }
+  };
+
+  const { data, setData, put, processing, errors, reset } = useForm({
     title: news.title || '',
     content: news.content || '',
-    category: news.category || [],
-    status: news.status || 'Черновик',
-    publish_date: news.publish_date || new Date().toISOString().substr(0, 10),
-    media: existingMedia, // Унифицированное поле для всех медиа-файлов
-    media_files: [], // Новые загружаемые файлы
+    category: Array.isArray(news.category) ? news.category : (news.category ? [news.category] : []),
+    tags: news.tags || [],
+    status: mapStatusToNew(news.status),
+    publish_date: news.publish_date ? new Date(news.publish_date).toISOString().slice(0, 16) : '',
+    media: existingMedia,
   });
 
-  const [selectedCategories, setSelectedCategories] = useState(news.category || []);
+  // Инициализируем медиа
+  React.useEffect(() => {
+    setMedia(existingMedia);
+  }, [news.id]);
 
-  // Обработка изменения категории
-  const handleCategoryChange = (category, checked) => {
-    let updated;
-    if (checked) {
-      updated = [...selectedCategories, category];
-    } else {
-      updated = selectedCategories.filter(cat => cat !== category);
-    }
-    setSelectedCategories(updated);
-    setData('category', updated);
-  };
-
-  // Выбрать все категории
-  const handleSelectAll = () => {
-    setSelectedCategories(DEFAULT_CATEGORIES);
-    setData('category', DEFAULT_CATEGORIES);
-  };
-
-  // Снять выбор со всех категорий
-  const handleDeselectAll = () => {
-    setSelectedCategories([]);
-    setData('category', []);
-  };
-
-  // Обработка выбора медиа из библиотеки
-  const handleMediaSelect = (mediaItems) => {
-    // Проверяем лимит файлов
-    const totalMedia = (data.media ? data.media.length : 0) + (data.media_files ? data.media_files.length : 0) + mediaItems.length;
-    
-    if (totalMedia > 15) {
-      alert(`Максимальное количество медиа-файлов: 15. У вас уже ${data.media ? data.media.length : 0} файлов из библиотеки и ${data.media_files ? data.media_files.length : 0} загруженных файлов.`);
-      return;
-    }
-    
-    const newMedia = mediaItems.map(item => ({
-      path: item.path,
-      type: item.type || (item.path.includes('.mp4') || item.path.includes('.avi') || item.path.includes('.mov') ? 'video' : 'image'),
-      name: item.name || item.path.split('/').pop(),
-      source: 'library'
-    }));
-    
-    setData('media', [...(data.media || []), ...newMedia]);
-  };
-
-  // Обработка загрузки файлов через input
-  const handleFileUpload = (event) => {
-    const files = Array.from(event.target.files);
-    processFiles(files);
-  };
-
-  // Обработка drag & drop
-  const handleDrag = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  }, []);
-
-  const handleDrop = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const files = Array.from(e.dataTransfer.files);
-      processFiles(files);
-    }
-  }, []);
-
-  // Обработка файлов
-  const processFiles = (files) => {
-    // Проверяем лимит файлов
-    const totalMedia = (data.media ? data.media.length : 0) + (data.media_files ? data.media_files.length : 0) + files.length;
-    
-    if (totalMedia > 15) {
-      alert(`Максимальное количество медиа-файлов: 15. У вас уже ${data.media ? data.media.length : 0} файлов из библиотеки и ${data.media_files ? data.media_files.length : 0} загруженных файлов.`);
-      return;
-    }
-
-    // Фильтруем и валидируем файлы
-    const validFiles = files.filter(file => {
-      const maxSize = 50 * 1024 * 1024; // 50MB для видео
-      const imageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-      const videoTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/flv', 'video/webm'];
-      
-      if (file.size > maxSize) {
-        alert(`Файл ${file.name} превышает лимит 50MB`);
-        return false;
-      }
-      
-      if (!imageTypes.includes(file.type) && !videoTypes.includes(file.type)) {
-        alert(`Файл ${file.name} имеет неподдерживаемый тип`);
-        return false;
-      }
-      
-      return true;
-    });
-
-    if (validFiles.length > 0) {
-      setData('media_files', [...(data.media_files || []), ...validFiles]);
-    }
-  };
-
-  // Удаление медиа-файла
-  const removeMedia = (index, source) => {
-    if (source === 'existing') {
-      // Для существующих файлов помечаем как удаленные
-      const newMedia = data.media.filter((_, i) => i !== index);
-      setData('media', newMedia);
-    } else if (source === 'library') {
-      const newMedia = data.media.filter((_, i) => i !== index);
-      setData('media', newMedia);
-    } else {
-      const newFiles = data.media_files.filter((_, i) => i !== index);
-      setData('media_files', newFiles);
-    }
-  };
-
-  // Перемещение медиа-файлов
-  const moveMedia = (fromIndex, toIndex, source) => {
-    if (source === 'existing' || source === 'library') {
-      const newMedia = [...data.media];
-      const [movedItem] = newMedia.splice(fromIndex, 1);
-      newMedia.splice(toIndex, 0, movedItem);
-      setData('media', newMedia);
-    } else {
-      const newFiles = [...data.media_files];
-      const [movedItem] = newFiles.splice(fromIndex, 1);
-      newFiles.splice(toIndex, 0, movedItem);
-      setData('media_files', newFiles);
-    }
-  };
-
-  // Получение всех медиа для предварительного просмотра
-  const getAllMedia = () => {
-    const existingMedia = data.media || [];
-    const fileMedia = (data.media_files || []).map((file, index) => ({
-      path: URL.createObjectURL(file),
-      type: file.type.startsWith('video/') ? 'video' : 'image',
-      name: file.name,
-      source: 'file',
-      fileIndex: index
-    }));
-    
-    return [...existingMedia, ...fileMedia];
-  };
-
-  // Отправка формы
+  // Обработка отправки формы
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Добавляем медиа к данным формы
+    const formData = {
+      ...data,
+      media: media
+    };
 
-    // Проверки
-    if (!data.title.trim()) {
-      alert('Заполните заголовок');
-      return;
-    }
-
-    if (!data.content.trim() || data.content.replace(/<[^>]*?>/g, '').trim().length < 10) {
-      alert('Содержимое должно содержать минимум 10 символов');
-      return;
-    }
-
-    if (data.category.length === 0) {
-      alert('Выберите хотя бы одну категорию');
-      return;
-    }
-
-    console.log('Отправка данных:', {
-      title: data.title,
-      content_length: data.content.length,
-      categories: data.category,
-      media_count: data.media.length,
-      files_count: data.media_files.length,
-      status: data.status
+    put(route('admin.news.update', news.id), {
+      data: formData,
+      onSuccess: () => {
+        // Форма успешно отправлена
+      }
     });
-
-    put(route('admin.news.update', news.id));
   };
 
-  const allMedia = getAllMedia();
+  // Обработка загрузки медиа
+  const handleMediaUploaded = (newMedia) => {
+    setMedia(prev => [...prev, ...newMedia]);
+  };
+
+  // Обработка удаления медиа
+  const handleMediaRemoved = (mediaId) => {
+    setMedia(prev => prev.filter(item => item.id !== mediaId));
+  };
+
+  // Обработка изменения статуса
+  const handleStatusChange = (newStatus) => {
+    setData('status', newStatus);
+    
+    // Если статус "scheduled", устанавливаем дату публикации
+    if (newStatus === 'scheduled' && !data.publish_date) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(9, 0, 0, 0);
+      setData('publish_date', tomorrow.toISOString());
+    }
+  };
 
   return (
     <AdminLayout>
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900">Редактирование новости</h2>
-            <Link
-              href={route('admin.news')}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            >
-              <svg className="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              Назад к списку
-            </Link>
+          {/* Заголовок */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Редактировать новость</h1>
+                <p className="mt-1 text-sm text-gray-600">
+                  Измените данные новости
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <Link
+                  href={route('admin.news')}
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                  Назад к списку
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setShowPreview(!showPreview)}
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  {showPreview ? 'Скрыть' : 'Показать'} превью
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-            <form onSubmit={handleSubmit} className="p-6">
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-6">
-                {/* Заголовок */}
-                <div className="sm:col-span-6">
-                  <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-                    Заголовок *
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      name="title"
-                      id="title"
-                      value={data.title}
-                      onChange={(e) => setData('title', e.target.value)}
-                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                      required
-                      placeholder="Введите заголовок новости"
-                    />
-                  </div>
-                  {errors.title && (
-                    <p className="mt-2 text-sm text-red-600">{errors.title}</p>
-                  )}
-                </div>
-
-                {/* Категории */}
-                <div className="sm:col-span-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Категории *</label>
-                  <div className="flex gap-2 mb-3">
-                    <button
-                      type="button"
-                      onClick={handleSelectAll}
-                      className="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
-                    >
-                      Выбрать все
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleDeselectAll}
-                      className="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
-                    >
-                      Снять выбор
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                    {DEFAULT_CATEGORIES.map((category) => (
-                      <label key={category} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedCategories.includes(category)}
-                          onChange={(e) => handleCategoryChange(category, e.target.checked)}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                        <span className="ml-2 text-sm text-gray-700">{category}</span>
-                      </label>
-                    ))}
-                  </div>
-                  {errors.category && (
-                    <p className="mt-2 text-sm text-red-600">{errors.category}</p>
-                  )}
-                </div>
-
-                {/* Содержимое */}
-                <div className="sm:col-span-6">
-                  <label htmlFor="content" className="block text-sm font-medium text-gray-700">
-                    Содержимое *
-                  </label>
-                  <div className="mt-1">
-                    <textarea
-                      name="content"
-                      id="content"
-                      rows={10}
-                      value={data.content}
-                      onChange={(e) => setData('content', e.target.value)}
-                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                      required
-                      placeholder="Введите содержимое новости"
-                    />
-                  </div>
-                  {errors.content && (
-                    <p className="mt-2 text-sm text-red-600">{errors.content}</p>
-                  )}
-                </div>
-
-                {/* Статус и дата */}
-                <div className="sm:col-span-3">
-                  <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-                    Статус
-                  </label>
-                  <div className="mt-1">
-                    <select
-                      name="status"
-                      id="status"
-                      value={data.status}
-                      onChange={(e) => setData('status', e.target.value)}
-                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    >
-                      <option value="Черновик">Черновик</option>
-                      <option value="Опубликовано">Опубликовано</option>
-                      <option value="Запланировано">Запланировано</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="sm:col-span-3">
-                  <label htmlFor="publish_date" className="block text-sm font-medium text-gray-700">
-                    Дата публикации
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="date"
-                      name="publish_date"
-                      id="publish_date"
-                      value={data.publish_date}
-                      onChange={(e) => setData('publish_date', e.target.value)}
-                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-                </div>
-
-                {/* Медиа-файлы */}
-                <div className="sm:col-span-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Медиа-файлы (до 15 файлов)
-                    <span className="ml-2 text-sm text-gray-500">
-                      {allMedia.length}/15
-                    </span>
-                  </label>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Основная форма */}
+            <div className="lg:col-span-2">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Основная информация */}
+                <div className="bg-white shadow rounded-lg p-6">
+                  <h2 className="text-lg font-medium text-gray-900 mb-4">Основная информация</h2>
                   
-                  {/* Drag & Drop зона */}
-                  <div
-                    className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                      dragActive 
-                        ? 'border-blue-500 bg-blue-50' 
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
-                    onDragEnter={handleDrag}
-                    onDragLeave={handleDrag}
-                    onDragOver={handleDrag}
-                    onDrop={handleDrop}
-                  >
-                    <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                      <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    <div className="mt-4">
-                      <p className="text-sm text-gray-600">
-                        Перетащите файлы сюда или{' '}
-                        <label className="text-blue-600 hover:text-blue-500 cursor-pointer">
-                          выберите файлы
-                          <input
-                            type="file"
-                            multiple
-                            accept="image/*,video/*"
-                            onChange={handleFileUpload}
-                            className="hidden"
-                          />
-                        </label>
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Поддерживаются изображения (JPG, PNG, GIF, WebP) и видео (MP4, AVI, MOV, WMV, FLV, WebM) до 50MB
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Библиотека медиа */}
-                  <div className="mt-4">
-                    <button
-                      type="button"
-                      onClick={() => setShowMediaManager(true)}
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                    >
-                      <svg className="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      Выбрать из библиотеки
-                    </button>
-                  </div>
-
-                  {/* Предварительный просмотр слайдера */}
-                  {allMedia.length > 0 && (
-                    <div className="mt-6">
-                      <h4 className="text-sm font-medium text-gray-700 mb-3">Предварительный просмотр слайдера:</h4>
-                      <MediaSlider 
-                        media={allMedia}
-                        className="w-full"
-                        autoPlay={false}
-                        interval={5000}
+                  <div className="space-y-4">
+                    {/* Заголовок */}
+                    <div>
+                      <InputLabel htmlFor="title" value="Заголовок *" />
+                      <TextInput
+                        id="title"
+                        type="text"
+                        value={data.title}
+                        onChange={(e) => setData('title', e.target.value)}
+                        className="mt-1 block w-full"
+                        placeholder="Введите заголовок новости"
+                        required
                       />
+                      <InputError message={errors.title} className="mt-2" />
                     </div>
-                  )}
 
-                  {/* Список медиа-файлов */}
-                  {allMedia.length > 0 && (
-                    <div className="mt-4">
-                      <h4 className="text-sm font-medium text-gray-700 mb-3">Загруженные файлы:</h4>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                        {allMedia.map((media, index) => (
-                          <div key={index} className="relative group">
-                            <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                              {media.type === 'video' ? (
-                                <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                                  <div className="text-center">
-                                    <div className="text-2xl mb-1">🎥</div>
-                                    <div className="text-xs text-gray-600">Видео</div>
-                                  </div>
-                                </div>
-                              ) : (
-                                <img
-                                  src={media.path}
-                                  alt={media.name}
-                                  className="w-full h-full object-cover"
-                                />
-                              )}
-                            </div>
-                            
-                            {/* Индикатор типа */}
-                            <div className="absolute top-1 left-1 bg-black bg-opacity-75 text-white text-xs px-1 py-0.5 rounded">
-                              {media.type === 'video' ? '🎥' : '🖼️'}
-                            </div>
-                            
-                            {/* Индикатор источника */}
-                            {media.source === 'existing' && (
-                              <div className="absolute top-1 right-1 bg-green-500 text-white text-xs px-1 py-0.5 rounded">
-                                Сущ.
-                              </div>
-                            )}
-                            
-                            {/* Кнопка удаления */}
-                            <button
-                              type="button"
-                              onClick={() => removeMedia(index, media.source)}
-                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              ×
-                            </button>
-                            
-                            {/* Название файла */}
-                            <div className="mt-1 text-xs text-gray-600 truncate">
-                              {media.name}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                    {/* Содержимое */}
+                    <div>
+                      <InputLabel htmlFor="content" value="Содержимое *" />
+                      <Textarea
+                        id="content"
+                        value={data.content}
+                        onChange={(e) => setData('content', e.target.value)}
+                        className="mt-1 block w-full"
+                        rows={8}
+                        placeholder="Введите содержимое новости"
+                        required
+                      />
+                      <InputError message={errors.content} className="mt-2" />
                     </div>
-                  )}
+                  </div>
                 </div>
 
-                {/* Кнопки */}
-                <div className="sm:col-span-6 flex justify-end space-x-3">
+                {/* Медиа */}
+                <div className="bg-white shadow rounded-lg p-6">
+                  <h2 className="text-lg font-medium text-gray-900 mb-4">Медиа файлы</h2>
+                  <ModernMediaUploader
+                    existingMedia={media}
+                    onMediaUploaded={handleMediaUploaded}
+                    onMediaRemoved={handleMediaRemoved}
+                    maxFiles={20}
+                  />
+                  <InputError message={errors.media} className="mt-2" />
+                </div>
+
+                {/* Кнопки действий */}
+                <div className="flex justify-end space-x-3">
                   <Link
                     href={route('admin.news')}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
                     Отмена
                   </Link>
-                  <button
-                    type="submit"
-                    disabled={processing}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-                  >
-                    {processing ? 'Сохранение...' : 'Сохранить'}
-                  </button>
+                  <PrimaryButton disabled={processing}>
+                    {processing ? 'Сохранение...' : 'Сохранить изменения'}
+                  </PrimaryButton>
+                </div>
+              </form>
+            </div>
+
+            {/* Боковая панель */}
+            <div className="space-y-6">
+              {/* Статус и дата публикации */}
+              <div className="bg-white shadow rounded-lg p-6">
+                <h2 className="text-lg font-medium text-gray-900 mb-4">Публикация</h2>
+                
+                <div className="space-y-4">
+                  {/* Статус */}
+                  <div>
+                    <InputLabel htmlFor="status" value="Статус *" />
+                    <StatusSelector
+                      value={data.status}
+                      onChange={handleStatusChange}
+                      className="mt-1"
+                    />
+                    <InputError message={errors.status} className="mt-2" />
+                  </div>
+
+                  {/* Дата публикации - всегда показываем */}
+                  <div>
+                    <InputLabel value="Дата и время публикации" />
+                    <DateTimePicker
+                      value={data.publish_date}
+                      onChange={(value) => setData('publish_date', value)}
+                      className="mt-1"
+                    />
+                    <InputError message={errors.publish_date} className="mt-2" />
+                  </div>
                 </div>
               </div>
-            </form>
+
+              {/* Категории */}
+              <div className="bg-white shadow rounded-lg p-6">
+                <h2 className="text-lg font-medium text-gray-900 mb-4">Категории</h2>
+                <CategorySelector
+                  selectedCategories={data.category}
+                  onCategoriesChange={(categories) => setData('category', categories)}
+                  availableCategories={DEFAULT_CATEGORIES}
+                  maxCategories={5}
+                  placeholder="Выберите категории..."
+                />
+                <InputError message={errors.category} className="mt-2" />
+              </div>
+
+              {/* Теги */}
+              <div className="bg-white shadow rounded-lg p-6">
+                <h2 className="text-lg font-medium text-gray-900 mb-4">Теги</h2>
+                <TagSelector
+                  selectedTags={data.tags}
+                  onTagsChange={(tags) => setData('tags', tags)}
+                  availableTags={POPULAR_TAGS}
+                  maxTags={10}
+                  placeholder="Добавить теги..."
+                />
+                <InputError message={errors.tags} className="mt-2" />
+              </div>
+
+              {/* Статистика */}
+              <div className="bg-white shadow rounded-lg p-6">
+                <h2 className="text-lg font-medium text-gray-900 mb-4">Статистика</h2>
+                <div className="space-y-2 text-sm text-gray-600">
+                  <div className="flex justify-between">
+                    <span>Символов в заголовке:</span>
+                    <span className="font-medium">{data.title.length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Символов в тексте:</span>
+                    <span className="font-medium">{data.content.length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Медиа файлов:</span>
+                    <span className="font-medium">{media.length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Категорий:</span>
+                    <span className="font-medium">{data.category.length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Тегов:</span>
+                    <span className="font-medium">{data.tags.length}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+
+          {/* Превью */}
+          {showPreview && (
+            <div className="mt-8 bg-white shadow rounded-lg p-6">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Превью новости</h2>
+              <div className="prose max-w-none">
+                <h1 className="text-2xl font-bold text-gray-900 mb-4">
+                  {data.title || 'Заголовок новости'}
+                </h1>
+                <div className="text-gray-600 mb-4">
+                  {data.content ? (
+                    <div dangerouslySetInnerHTML={{ __html: data.content }} />
+                  ) : (
+                    'Содержимое новости...'
+                  )}
+                </div>
+                {media.length > 0 && (
+                  <div className="mt-4">
+                    <h3 className="text-lg font-medium mb-2">Медиа файлы:</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {media.map((item, index) => (
+                        <div key={index} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                          {item.type === 'video' ? (
+                            <video src={item.path} className="w-full h-full object-cover" muted />
+                          ) : (
+                            <img src={item.path} alt={item.name} className="w-full h-full object-cover" />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Модальное окно библиотеки медиа */}
-      {showMediaManager && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">Библиотека медиа-файлов</h3>
-              <button
-                onClick={() => setShowMediaManager(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <MediaManager
-              onSelect={handleMediaSelect}
-              onClose={() => setShowMediaManager(false)}
-              multiple={true}
-            />
-          </div>
-        </div>
-      )}
     </AdminLayout>
   );
 }

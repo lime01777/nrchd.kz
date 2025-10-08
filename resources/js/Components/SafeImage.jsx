@@ -33,11 +33,17 @@ export default function SafeImage({
       onError(e);
     }
 
-    // Пытаемся загрузить fallback изображение
+    // Предотвращаем бесконечный цикл
+    if (e.target.dataset.fallbackAttempted) {
+      e.target.style.display = 'none';
+      return;
+    }
+
+    // Пытаемся загрузить fallback изображение только один раз
     if (fallbackSrc && e.target.src !== fallbackSrc) {
       try {
+        e.target.dataset.fallbackAttempted = 'true';
         e.target.src = fallbackSrc;
-        e.target.onerror = null; // Предотвращаем бесконечный цикл
       } catch (fallbackError) {
         console.error('Ошибка при загрузке fallback изображения:', fallbackError);
         e.target.style.display = 'none';

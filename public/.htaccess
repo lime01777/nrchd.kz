@@ -10,7 +10,7 @@
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
     # Разрешаем прямой доступ к статическим файлам в storage
-    RewriteCond %{REQUEST_URI} ^/storage/.*\.(jpg|jpeg|png|gif|webp|svg|ico|pdf|doc|docx|xls|xlsx|txt)$
+    RewriteCond %{REQUEST_URI} ^/storage/.*\.(jpg|jpeg|png|gif|webp|svg|ico|pdf|doc|docx|xls|xlsx|txt|mp4|avi|mov|wmv|flv|webm|ogg)$
     RewriteCond %{REQUEST_FILENAME} -f
     RewriteRule ^(.*)$ $1 [L]
 

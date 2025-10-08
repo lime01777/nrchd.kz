@@ -485,13 +485,32 @@ Route::prefix('api')->group(function () {
     });
     
     // Получение последних новостей
-    Route::get('/latest-news', function () {
-        $latestNews = App\Models\News::where('status', 'Опубликовано')
-            ->orderBy('publish_date', 'desc')
-            ->limit(2)
-            ->get();
-        
-        return response()->json($latestNews);
+    Route::get('/latest-news', function (Request $request) {
+        try {
+            $limit = $request->get('limit', 10);
+            
+            $latestNews = App\Models\News::where('status', 'Опубликовано')
+                ->orderBy('publish_date', 'desc')
+                ->limit($limit)
+                ->get();
+            
+            // Обрабатываем медиа для каждой новости
+            $latestNews->each(function ($news) {
+                if ($news->images) {
+                    // Нормализуем медиа если нужно
+                    $images = is_string($news->images) ? json_decode($news->images, true) : $news->images;
+                    $news->images = $images ?: [];
+                }
+            });
+            
+            return response()->json($latestNews);
+        } catch (\Exception $e) {
+            Log::error('Ошибка в API latest-news', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'Ошибка сервера'], 500);
+        }
     });
 });
 
@@ -506,6 +525,12 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::put('/news/{id}', [App\Http\Controllers\Admin\NewsController::class, 'update'])->name('admin.news.update');
     Route::delete('/news/{id}', [App\Http\Controllers\Admin\NewsController::class, 'destroy'])->name('admin.news.destroy');
     Route::post('/admin/news/bulk', [\App\Http\Controllers\Admin\NewsController::class, 'bulk'])->name('admin.news.bulk');
+    
+    // Управление медиа новостей
+    Route::post('/news/{newsId}/media', [App\Http\Controllers\Admin\NewsController::class, 'uploadMedia'])->name('admin.news.media.upload');
+    Route::patch('/news/{newsId}/media/order', [App\Http\Controllers\Admin\NewsController::class, 'updateMediaOrder'])->name('admin.news.media.order');
+    Route::delete('/news/{newsId}/media/{mediaId}', [App\Http\Controllers\Admin\NewsController::class, 'deleteMedia'])->name('admin.news.media.delete');
+    Route::patch('/news/{newsId}/cover/{mediaId}', [App\Http\Controllers\Admin\NewsController::class, 'setCover'])->name('admin.news.cover.set');
 
     // Управление заявками ОТЗ
     Route::resource('otz-applications', App\Http\Controllers\Admin\OtzApplicationController::class, [

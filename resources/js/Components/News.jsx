@@ -33,8 +33,8 @@ function News() {
             id: 1,
             title: 'Важные изменения в системе здравоохранения',
             description: 'Новые методики и практики в системе здравоохранения Казахстана',
-            image: '/img/news/news1.jpg',
-            images: ['/img/news/news1.jpg'],
+            image: '/img/placeholder.jpg',
+            images: ['/img/placeholder.jpg'],
             date: '2025-05-15',
             url: '/news/1'
           },
@@ -42,8 +42,8 @@ function News() {
             id: 2,
             title: 'Конференция по развитию медицинского образования',
             description: 'Состоялась ежегодная конференция по вопросам медицинского образования',
-            image: '/img/news/news2.jpg',
-            images: ['/img/news/news2.jpg'],
+            image: '/img/placeholder.jpg',
+            images: ['/img/placeholder.jpg'],
             date: '2025-04-28',
             url: '/news/2'
           }

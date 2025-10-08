@@ -347,14 +347,9 @@ export default function Program() {
                   onClick={() => setSelectedCity('astana')} 
                   className={`px-6 py-3 rounded-lg font-medium transition-all ${selectedCity === 'astana' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
                 >
-                  Астана (13-15 октября)
+                  Астана (13-14 октября)
                 </button>
-                <button 
-                  onClick={() => setSelectedCity('almaty')} 
-                  className={`px-6 py-3 rounded-lg font-medium transition-all ${selectedCity === 'almaty' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
-                >
-                  Алматы (16-17 октября)
-                </button>
+
               </div>
               
               <p className="text-lg text-gray-700 mb-6">

@@ -23,7 +23,7 @@ export default function Home({ locale }) {
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 leading-tight">Международная конференция и выставка</h1>
           <h2 className="text-lg sm:text-xl md:text-2xl mb-6 md:mb-8 leading-tight px-2">«Развитие медицинского туризма в Казахстане: перспективы и возможности»</h2>
-          <p className="text-base md:text-lg lg:text-xl mb-6 md:mb-8 px-2">13-15 октября 2025, г. Астана • 16-17 октября 2025, г. Алматы</p>
+          <p className="text-base md:text-lg lg:text-xl mb-6 md:mb-8 px-2">13-14 октября 2025, г. Астана • 16-17 октября 2025, г. Алматы</p>
           <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 px-4">
             <Link href={route('conference.registration')} className="bg-white text-blue-700 hover:bg-blue-100 px-6 md:px-8 py-2.5 md:py-3 rounded-full font-semibold text-base md:text-lg transition-colors w-full sm:w-auto">
               Регистрация
@@ -42,7 +42,7 @@ export default function Home({ locale }) {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-6 md:mb-8 px-2">
               <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 mb-3 md:mb-4 leading-tight">Международная научно-практическая конференция «Здравоохранение Казахстана: инновации, доступность, глобализация»</h3>
-              <p className="text-base md:text-lg font-semibold text-gray-700 mb-2">13-15 октября 2025, г.Астана</p>
+              <p className="text-base md:text-lg font-semibold text-gray-700 mb-2">13-14 октября 2025, г.Астана</p>
               <p className="text-base md:text-lg font-semibold text-gray-700 mb-3 md:mb-4">16-17 октября 2025, г.Алматы</p>
               <h4 className="text-base sm:text-lg md:text-xl font-bold text-gray-800 mb-4 md:mb-6 leading-tight">Международная конференция и выставка «Развитие медицинского туризма в Казахстане: перспективы и возможности»</h4>
             </div>
@@ -109,7 +109,7 @@ export default function Home({ locale }) {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-800 mb-1 md:mb-2 text-sm md:text-base">Дата проведения:</h4>
-                  <p className="text-gray-600 text-sm md:text-base">13-15 октября 2025 года</p>
+                  <p className="text-gray-600 text-sm md:text-base">13-14 октября 2025 года</p>
                 </div>
               </div>
             </div>

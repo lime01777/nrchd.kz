@@ -334,17 +334,6 @@ export default function Registration() {
                                 <input
                                   type="checkbox"
                                   name="attendance_days"
-                                  value="15_october_astana"
-                                  checked={data.attendance_days.includes('15_october_astana')}
-                                  onChange={handleChange}
-                                  className="border-gray-300 text-blue-600 focus:ring-blue-500 rounded"
-                                />
-                                <span className="ml-2">15 октября (Астана)</span>
-                              </label>
-                              <label className="flex items-center">
-                                <input
-                                  type="checkbox"
-                                  name="attendance_days"
                                   value="16_october_almaty"
                                   checked={data.attendance_days.includes('16_october_almaty')}
                                   onChange={handleChange}
@@ -623,7 +612,7 @@ export default function Registration() {
                                   onChange={handleChange}
                                   className="border-gray-300 text-blue-600 focus:ring-blue-500"
                                 />
-                                <span className="ml-2">Астана (13-15 октября)</span>
+                                <span className="ml-2">Астана (13-14 октября)</span>
                               </label>
                               <label className="flex items-center">
                                 <input

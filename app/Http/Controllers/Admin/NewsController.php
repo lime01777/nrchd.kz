@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\NewsRequest;
 use App\Models\News;
+use App\Services\MediaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +14,12 @@ use Inertia\Inertia;
 
 class NewsController extends Controller
 {
+    protected MediaService $mediaService;
+
+    public function __construct(MediaService $mediaService)
+    {
+        $this->mediaService = $mediaService;
+    }
     /**
      * Отображение списка новостей
      */
@@ -55,25 +63,9 @@ class NewsController extends Controller
     /**
      * Сохранение новости
      */
-    public function store(Request $request)
+    public function store(NewsRequest $request)
     {
-        // Валидация
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string|min:10',
-            'category' => 'required|array|min:1',
-            'category.*' => 'string',
-            'status' => 'required|string|in:Черновик,Опубликовано,Запланировано',
-            'publish_date' => 'nullable|date',
-            'media' => 'nullable|array|max:15',
-            'media.*' => 'nullable|array',
-            'media.*.path' => 'nullable|string',
-            'media.*.type' => 'nullable|string|in:image,video',
-            'media.*.name' => 'nullable|string',
-            'media.*.source' => 'nullable|string|in:library,file',
-            'media_files' => 'nullable|array|max:15',
-            'media_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,mp4,avi,mov,wmv,flv,webm|max:51200',
-        ]);
+        $validated = $request->validated();
 
         try {
             // Проверяем права на запись в storage
@@ -87,14 +79,7 @@ class NewsController extends Controller
             $slug = $this->generateUniqueSlug($validated['title']);
 
             // Обрабатываем медиа-файлы
-            $mediaPaths = $this->processMedia($request);
-
-            // Проверяем, что хотя бы один медиа-файл загружен
-            if (empty($mediaPaths)) {
-                Log::warning('Попытка создания новости без медиа-файлов', [
-                    'title' => $validated['title']
-                ]);
-            }
+            $mediaItems = $this->processMedia($request);
 
             // Создаем новость
             $news = new News();
@@ -102,16 +87,16 @@ class NewsController extends Controller
             $news->slug = $slug;
             $news->content = $validated['content'];
             $news->category = $validated['category'];
-            $news->status = $validated['status'];
+            $news->status = $this->mapStatus($validated['status']);
             $news->publish_date = $validated['publish_date'] ?? null;
-            $news->images = $mediaPaths; // Сохраняем в поле images для обратной совместимости
+            $news->images = $mediaItems; // Сохраняем в поле images для обратной совместимости
             $news->save();
 
             Log::info('Создана новость', [
                 'id' => $news->id,
                 'title' => $news->title,
-                'media_count' => count($mediaPaths),
-                'media' => $mediaPaths
+                'media_count' => count($mediaItems),
+                'media' => $mediaItems
             ]);
 
             return redirect()->route('admin.news')->with('success', 'Новость успешно создана');
@@ -171,7 +156,7 @@ class NewsController extends Controller
             'media.*.name' => 'nullable|string',
             'media.*.source' => 'nullable|string|in:existing,library,file',
             'media_files' => 'nullable|array|max:15',
-            'media_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,mp4,avi,mov,wmv,flv,webm|max:51200',
+            'media_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,mp4,avi,mov,wmv,flv,webm,ogg|max:51200',
         ]);
 
         try {
@@ -182,8 +167,8 @@ class NewsController extends Controller
                 $slug = $news->slug;
             }
 
-            // Обрабатываем медиа-файлы
-            $mediaPaths = $this->processMedia($request, $news->images);
+        // Обрабатываем медиа-файлы
+        $mediaPaths = $this->processMedia($request, $news->images ?? []);
 
             // Обновляем новость
             $news->title = $validated['title'];
@@ -226,8 +211,9 @@ class NewsController extends Controller
             
             // Удаляем медиа-файлы
             if ($news->images) {
-                foreach ($news->images as $mediaPath) {
-                    $this->deleteMedia($mediaPath);
+                foreach ($news->images as $mediaItem) {
+                    $path = is_array($mediaItem) ? $mediaItem['path'] : $mediaItem;
+                    $this->mediaService->deleteMedia($path);
                 }
             }
 
@@ -256,6 +242,28 @@ class NewsController extends Controller
     private function processMedia(Request $request, $existingMedia = [])
     {
         $mediaPaths = [];
+        
+        // Добавляем существующие медиа (если они в старом формате - строки)
+        if (is_array($existingMedia)) {
+            foreach ($existingMedia as $existingItem) {
+                if (is_string($existingItem)) {
+                    // Старый формат - строка пути
+                    $extension = strtolower(pathinfo($existingItem, PATHINFO_EXTENSION));
+                    $videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'ogg'];
+                    $mediaType = in_array($extension, $videoExtensions) ? 'video' : 'image';
+                    
+                    $mediaPaths[] = [
+                        'path' => $existingItem,
+                        'type' => $mediaType,
+                        'name' => basename($existingItem),
+                        'source' => 'existing'
+                    ];
+                } elseif (is_array($existingItem)) {
+                    // Новый формат - объект
+                    $mediaPaths[] = $existingItem;
+                }
+            }
+        }
 
         // Проверяем и создаем директорию если не существует
         $storagePath = storage_path('app/public/news');
@@ -303,13 +311,24 @@ class NewsController extends Controller
                         // Проверяем, что файл действительно сохранен
                         $fullPath = storage_path('app/public/' . $path);
                         if (file_exists($fullPath)) {
-                            $mediaPaths[] = '/storage/' . $path;
+                            // Определяем тип медиа
+                            $mediaType = in_array($file->getMimeType(), $allowedVideoTypes) ? 'video' : 'image';
+                            
+                            // Создаем объект медиа с типом
+                            $mediaItem = [
+                                'path' => '/storage/' . $path,
+                                'type' => $mediaType,
+                                'name' => $file->getClientOriginalName(),
+                                'size' => filesize($fullPath)
+                            ];
+                            
+                            $mediaPaths[] = $mediaItem;
                             
                             Log::info('Загружен медиа-файл', [
                                 'name' => $file->getClientOriginalName(),
-                                'path' => '/storage/' . $path,
-                                'size' => filesize($fullPath),
-                                'type' => in_array($file->getMimeType(), $allowedVideoTypes) ? 'video' : 'image'
+                                'path' => $mediaItem['path'],
+                                'size' => $mediaItem['size'],
+                                'type' => $mediaType
                             ]);
                         } else {
                             Log::error('Файл не сохранен', [
@@ -346,7 +365,20 @@ class NewsController extends Controller
                         $filepath = storage_path('app/public/news/' . $filename);
                         
                         if (file_exists($filepath)) {
-                            $mediaPaths[] = $path;
+                            // Определяем тип медиа по расширению
+                            $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                            $videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'ogg'];
+                            $mediaType = in_array($extension, $videoExtensions) ? 'video' : 'image';
+                            
+                            // Создаем объект медиа с типом
+                            $mediaObject = [
+                                'path' => $path,
+                                'type' => $mediaType,
+                                'name' => $mediaItem['name'] ?? $filename,
+                                'source' => $mediaItem['source'] ?? 'library'
+                            ];
+                            
+                            $mediaPaths[] = $mediaObject;
                         } else {
                             Log::warning('Отсутствует медиа-файл', [
                                 'path' => $path,
@@ -354,7 +386,14 @@ class NewsController extends Controller
                             ]);
                         }
                     } else {
-                        $mediaPaths[] = $path;
+                        // Для внешних URL сохраняем как есть
+                        $mediaObject = [
+                            'path' => $path,
+                            'type' => $mediaItem['type'] ?? 'image',
+                            'name' => $mediaItem['name'] ?? basename($path),
+                            'source' => $mediaItem['source'] ?? 'external'
+                        ];
+                        $mediaPaths[] = $mediaObject;
                     }
                 }
             }
@@ -371,19 +410,6 @@ class NewsController extends Controller
         return $mediaPaths;
     }
 
-    /**
-     * Удаление медиа-файла
-     */
-    private function deleteMedia($path)
-    {
-        if (strpos($path, '/storage/') === 0) {
-            $filePath = public_path('storage' . str_replace('/storage', '', $path));
-            if (file_exists($filePath)) {
-                unlink($filePath);
-                Log::info('Удален медиа-файл', ['path' => $filePath]);
-            }
-        }
-    }
 
     /**
      * Генерация уникального slug
@@ -404,5 +430,199 @@ class NewsController extends Controller
         }
 
         return $slug;
+    }
+
+    /**
+     * Загрузить медиа файлы для новости
+     */
+    public function uploadMedia(Request $request, $newsId)
+    {
+        $news = News::findOrFail($newsId);
+        
+        $request->validate([
+            'files' => 'required|array|max:10',
+            'files.*' => 'file|mimes:jpeg,png,jpg,gif,webp,mp4,avi,mov,wmv,flv,webm,ogg|max:51200',
+        ]);
+
+        try {
+            $uploadedMedia = $this->mediaService->uploadMultipleMedia($request->file('files'));
+            
+            // Добавляем к существующим медиа
+            $existingMedia = $news->images ?? [];
+            $allMedia = array_merge($existingMedia, $uploadedMedia);
+            
+            $news->images = $allMedia;
+            $news->save();
+
+            return response()->json([
+                'success' => true,
+                'media' => $uploadedMedia,
+                'message' => 'Медиа файлы успешно загружены'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Ошибка загрузки медиа', [
+                'news_id' => $newsId,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка загрузки медиа файлов: ' . $e->getMessage()
+            ], 422);
+        }
+    }
+
+    /**
+     * Обновить порядок медиа
+     */
+    public function updateMediaOrder(Request $request, $newsId)
+    {
+        $news = News::findOrFail($newsId);
+        
+        $request->validate([
+            'media' => 'required|array',
+            'media.*.id' => 'required|string',
+            'media.*.position' => 'required|integer',
+        ]);
+
+        try {
+            $orderedMedia = $this->mediaService->updateMediaOrder($request->input('media'));
+            $news->images = $orderedMedia;
+            $news->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Порядок медиа обновлен'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Ошибка обновления порядка медиа', [
+                'news_id' => $newsId,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка обновления порядка медиа'
+            ], 422);
+        }
+    }
+
+    /**
+     * Удалить медиа файл
+     */
+    public function deleteMedia(Request $request, $newsId, $mediaId)
+    {
+        $news = News::findOrFail($newsId);
+        
+        try {
+            $mediaItems = $news->images ?? [];
+            $mediaToDelete = null;
+            $updatedMedia = [];
+
+            // Находим и удаляем медиа
+            foreach ($mediaItems as $item) {
+                if (is_array($item) && ($item['id'] ?? '') === $mediaId) {
+                    $mediaToDelete = $item;
+                    // Удаляем физический файл
+                    if (isset($item['path'])) {
+                        $this->mediaService->deleteMedia($item['path']);
+                    }
+                } else {
+                    $updatedMedia[] = $item;
+                }
+            }
+
+            if (!$mediaToDelete) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Медиа файл не найден'
+                ], 404);
+            }
+
+            $news->images = $updatedMedia;
+            $news->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Медиа файл удален'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Ошибка удаления медиа', [
+                'news_id' => $newsId,
+                'media_id' => $mediaId,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка удаления медиа файла'
+            ], 422);
+        }
+    }
+
+    /**
+     * Установить обложку
+     */
+    public function setCover(Request $request, $newsId, $mediaId)
+    {
+        $news = News::findOrFail($newsId);
+        
+        try {
+            $mediaItems = $news->images ?? [];
+            $updatedMedia = $this->mediaService->setCover($mediaItems, $mediaId);
+            
+            $news->images = $updatedMedia;
+            $news->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Обложка установлена'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Ошибка установки обложки', [
+                'news_id' => $newsId,
+                'media_id' => $mediaId,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка установки обложки'
+            ], 422);
+        }
+    }
+
+    /**
+     * Маппинг статусов для обратной совместимости
+     */
+    private function mapStatus(string $status): string
+    {
+        $statusMap = [
+            'draft' => 'Черновик',
+            'scheduled' => 'Запланировано',
+            'published' => 'Опубликовано',
+            'archived' => 'Архив'
+        ];
+
+        return $statusMap[$status] ?? $status;
+    }
+
+    /**
+     * Обратное маппирование статусов
+     */
+    private function reverseMapStatus(string $status): string
+    {
+        $statusMap = [
+            'Черновик' => 'draft',
+            'Запланировано' => 'scheduled',
+            'Опубликовано' => 'published',
+            'Архив' => 'archived'
+        ];
+
+        return $statusMap[$status] ?? $status;
     }
 }

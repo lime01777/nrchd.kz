@@ -23,7 +23,7 @@ export default function ConferenceBanner() {
           {/* Даты и места проведения */}
           <div className="flex flex-col sm:flex-row justify-center items-center gap-3 md:gap-4 lg:gap-8 mb-6 md:mb-8">
             <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 md:px-6 py-2 md:py-3 w-full sm:w-auto">
-              <p className="text-base md:text-lg font-semibold">13-15 октября 2025</p>
+              <p className="text-base md:text-lg font-semibold">13-14 октября 2025</p>
               <p className="text-xs md:text-sm opacity-90">г. Астана</p>
             </div>
             <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 md:px-6 py-2 md:py-3 w-full sm:w-auto">
