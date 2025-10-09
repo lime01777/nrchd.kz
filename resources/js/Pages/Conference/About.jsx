@@ -67,7 +67,7 @@ export default function About() {
                 <div className="flex-1 border-b md:border-r md:border-b-0 border-blue-200 pb-3 md:pb-0 md:pr-4">
                   <h4 className="text-lg md:text-xl font-semibold text-blue-800">Астана</h4>
                   <p className="text-base md:text-lg">13-14 октября 2025 г.</p>
-                  <p className="text-sm md:text-base">Президентский центр Республики Казахстан</p>
+                  <p className="text-sm md:text-base">Фонд Президента, улица Бокейхана 1</p>
                 </div>
                 <div className="flex-1 pt-3 md:pt-0 md:pl-4">
                   <h4 className="text-lg md:text-xl font-semibold text-blue-800">Алматы</h4>

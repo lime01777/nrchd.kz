@@ -98,14 +98,14 @@ export default function Home({ locale }) {
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-6 md:mb-10">Место проведения конференции</h2>
           <div className="max-w-4xl mx-auto text-center">
             <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:p-8">
-              <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-3 md:mb-4 leading-tight">Место проведения: г. Астана - Президентский центр Республики Казахстан</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-3 md:mb-4 leading-tight">Место проведения: г. Астана - Фонд Президента, улица Бокейхана 1</h3>
               <p className="text-base md:text-lg text-gray-600 mb-4 md:mb-6 leading-relaxed">
                 Престижная площадка для проведения международных мероприятий, расположенная в сердце столицы Казахстана.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 text-left">
                 <div>
                   <h4 className="font-semibold text-gray-800 mb-1 md:mb-2 text-sm md:text-base">Адрес:</h4>
-                  <p className="text-gray-600 text-sm md:text-base">г. Астана, ул. Мангилик ел, 20</p>
+                  <p className="text-gray-600 text-sm md:text-base">г. Астана, ул. Бокейхана, 1</p>
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-800 mb-1 md:mb-2 text-sm md:text-base">Дата проведения:</h4>

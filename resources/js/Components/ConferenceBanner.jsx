@@ -58,7 +58,7 @@ export default function ConferenceBanner() {
           <div className="mt-6 md:mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 text-xs md:text-sm px-2">
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 md:p-4">
               <p className="font-semibold mb-1">Место проведения</p>
-              <p className="opacity-90 leading-tight">Президентский центр Республики Казахстан</p>
+              <p className="opacity-90 leading-tight">Фонд Президента, ул. Бокейхана 1</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 md:p-4">
               <p className="font-semibold mb-1">Участники</p>

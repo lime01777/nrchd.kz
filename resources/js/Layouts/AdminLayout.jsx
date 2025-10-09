@@ -114,6 +114,15 @@ export default function AdminLayout({ children, title }) {
             Заявки на вакансии
           </Link>
           <Link 
+            href={route('admin.contact-applications.index')} 
+            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${route().current('admin.contact-applications.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
+          >
+            <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Заявки обратной связи
+          </Link>
+          <Link 
             href={route('admin.settings')} 
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${route().current('admin.settings') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
           >

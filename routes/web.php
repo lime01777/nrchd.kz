@@ -730,6 +730,9 @@ Route::get('/about-centre/vacancies', [VacancyController::class, 'index'])->name
 Route::get('/about-centre/vacancies/{slug}', [VacancyController::class, 'show'])->name('vacancy.show');
 Route::post('/about-centre/vacancies/{slug}/apply', [App\Http\Controllers\VacancyApplicationController::class, 'store'])->name('vacancy.apply');
 
+// Маршруты для форм обратной связи (публичные)
+Route::post('/contact/submit', [App\Http\Controllers\ContactApplicationController::class, 'store'])->name('contact.submit');
+
 // Маршруты для админ-панели вакансий (требуют авторизации)
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::resource('vacancies', AdminVacancyController::class);
@@ -740,6 +743,14 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::patch('/vacancy-applications/{id}/status', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'updateStatus'])->name('admin.vacancy-applications.update-status');
     Route::patch('/vacancy-applications/{id}/notes', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'updateNotes'])->name('admin.vacancy-applications.update-notes');
     Route::delete('/vacancy-applications/{id}', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'destroy'])->name('admin.vacancy-applications.destroy');
+    
+    // Заявки обратной связи
+    Route::get('/contact-applications', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'index'])->name('admin.contact-applications.index');
+    Route::get('/contact-applications/{id}', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'show'])->name('admin.contact-applications.show');
+    Route::patch('/contact-applications/{id}/status', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'updateStatus'])->name('admin.contact-applications.update-status');
+    Route::patch('/contact-applications/{id}/notes', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'updateNotes'])->name('admin.contact-applications.update-notes');
+    Route::patch('/contact-applications/{id}/assign', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'assign'])->name('admin.contact-applications.assign');
+    Route::delete('/contact-applications/{id}', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'destroy'])->name('admin.contact-applications.destroy');
     
     // Управление клиниками
     Route::resource('clinics', \App\Http\Controllers\Admin\ClinicController::class, ['names' => 'admin.clinics']);

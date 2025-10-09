@@ -1,5 +1,5 @@
-import { Head, usePage } from '@inertiajs/react';
-import React from 'react';
+import { Head, usePage, useForm } from '@inertiajs/react';
+import React, { useState } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 
 // Глобальная функция для получения перевода
@@ -9,11 +9,37 @@ const t = (key, fallback = '') => {
 
 
 export default function Contacts() {
-    const { translations } = usePage().props;
+    const { translations, flash } = usePage().props;
     
     // Функция для получения перевода
     const tComponent = (key, fallback = '') => {
         return translations?.[key] || fallback;
+    };
+
+    // State для формы
+    const { data, setData, post, processing, errors, reset } = useForm({
+        category: 'general',
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: '',
+    });
+
+    const [isSubmitted, setIsSubmitted] = useState(false);
+
+    // Обработчик отправки формы
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        
+        post(route('contact.submit'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                reset();
+                setIsSubmitted(true);
+                setTimeout(() => setIsSubmitted(false), 5000);
+            },
+        });
     };
 
     return (
@@ -95,28 +121,87 @@ export default function Contacts() {
                         <div className="w-full">
                             <div className="bg-white p-6 rounded-lg shadow-md">
                                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Форма обратной связи</h2>
-                                <form className="space-y-4">
+                                
+                                {/* Сообщения об успехе/ошибке */}
+                                {isSubmitted && (
+                                    <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
+                                        Ваша заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.
+                                    </div>
+                                )}
+                                {flash?.error && (
+                                    <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
+                                        {flash.error}
+                                    </div>
+                                )}
+
+                                <form onSubmit={handleSubmit} className="space-y-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">ФИО</label>
-                                            <input type="text" id="name" className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border" />
+                                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">ФИО *</label>
+                                            <input 
+                                                type="text" 
+                                                id="name" 
+                                                value={data.name}
+                                                onChange={(e) => setData('name', e.target.value)}
+                                                className={`mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border ${errors.name ? 'border-red-500' : ''}`}
+                                                required
+                                            />
+                                            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                                         </div>
                                         <div>
-                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-                                            <input type="email" id="email" className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border" />
+                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email *</label>
+                                            <input 
+                                                type="email" 
+                                                id="email" 
+                                                value={data.email}
+                                                onChange={(e) => setData('email', e.target.value)}
+                                                className={`mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border ${errors.email ? 'border-red-500' : ''}`}
+                                                required
+                                            />
+                                            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                                         </div>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Телефон *</label>
+                                        <input 
+                                            type="tel" 
+                                            id="phone" 
+                                            value={data.phone}
+                                            onChange={(e) => setData('phone', e.target.value)}
+                                            className={`mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border ${errors.phone ? 'border-red-500' : ''}`}
+                                            required
+                                        />
+                                        {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                                     </div>
                                     <div>
                                         <label htmlFor="subject" className="block text-sm font-medium text-gray-700">Тема</label>
-                                        <input type="text" id="subject" className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border" />
+                                        <input 
+                                            type="text" 
+                                            id="subject" 
+                                            value={data.subject}
+                                            onChange={(e) => setData('subject', e.target.value)}
+                                            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border" 
+                                        />
                                     </div>
                                     <div>
-                                        <label htmlFor="message" className="block text-sm font-medium text-gray-700">Сообщение</label>
-                                        <textarea id="message" rows="4" className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border"></textarea>
+                                        <label htmlFor="message" className="block text-sm font-medium text-gray-700">Сообщение *</label>
+                                        <textarea 
+                                            id="message" 
+                                            rows="4" 
+                                            value={data.message}
+                                            onChange={(e) => setData('message', e.target.value)}
+                                            className={`mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2 border ${errors.message ? 'border-red-500' : ''}`}
+                                            required
+                                        ></textarea>
+                                        {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message}</p>}
                                     </div>
                                     <div>
-                                        <button type="submit" className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                            Отправить сообщение
+                                        <button 
+                                            type="submit" 
+                                            disabled={processing}
+                                            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            {processing ? 'Отправка...' : 'Отправить сообщение'}
                                         </button>
                                     </div>
                                 </form>

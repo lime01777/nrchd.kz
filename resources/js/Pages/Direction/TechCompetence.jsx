@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Head, usePage } from '@inertiajs/react';
+import React, { useState } from 'react';
+import { Head, usePage, useForm } from '@inertiajs/react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import VideoModal from '@/Components/VideoModal';
 import FilesAccord from '@/Components/FilesAccord';
@@ -11,25 +11,28 @@ const t = (key, fallback = '') => {
 
 
 export default function TechCompetence() {
-    const { translations } = usePage().props;
+    const { translations, flash } = usePage().props;
     
     // Функция для получения перевода
     const tComponent = (key, fallback = '') => {
         return translations?.[key] || fallback;
     };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');
-  const [formData, setFormData] = useState({
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
+  // State для формы с использованием useForm от Inertia
+  const { data, setData, post, processing, errors, reset } = useForm({
+    category: 'tech_competence',
     name: '',
     phone: '',
     email: '',
-    projectName: '',
-    message: ''
+    project_name: '',
+    message: '',
+    attachment: null,
   });
-  const [fileName, setFileName] = useState('');
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const fileInputRef = useRef(null);
 
   const openVideoModal = (videoUrl, fileName) => {
     setSelectedVideo(videoUrl);
@@ -43,179 +46,17 @@ export default function TechCompetence() {
     setSelectedFileName('');
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFileName(file.name);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefaultComponent();
-    console.log('Form submission started');
+  const handleSubmit = (e) => {
+    e.preventDefault();
     
-    // Создаем FormData для отправки файла
-    const formDataToSend = new FormData();
-    formDataToSend.append('name', formData.name);
-    formDataToSend.append('phone', formData.phone);
-    formDataToSend.append('email', formData.email);
-    formDataToSend.append('projectName', formData.projectName);
-    formDataToSend.append('message', formData.message);
-    
-    // Добавляем файл, если он есть
-    if (fileInputRef.current?.files[0]) {
-      formDataToSend.append('file', fileInputRef.current.files[0]);
-    }
-
-    console.log('FormData created:', {
-      name: formData.name,
-      phone: formData.phone,
-      email: formData.email,
-      projectName: formData.projectName,
-      message: formData.message,
-      hasFile: !!fileInputRef.current?.files[0]
-    });
-
-    try {
-      console.log('Sending POST request to /api/contact/tech-competence');
-      
-      // Попробуем сначала fetch
-      let response;
-      try {
-        // Получаем CSRF токен из мета-тега
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-        console.log('CSRF Token:', csrfToken);
-        
-        if (!csrfToken) {
-          throw new Error('CSRF token not found. Please refresh the page.');
-        }
-        
-        response = await fetch('/api/contact/tech-competence', {
-          method: 'POST',
-          headers: {
-            'X-CSRF-TOKEN': csrfToken,
-          },
-          body: formDataToSend,
-        });
-      } catch (fetchError) {
-        console.log('Fetch failed, trying XMLHttpRequest:', fetchError);
-        
-        // Альтернативный способ через XMLHttpRequest
-        response = await new Promise((resolve, reject) => {
-          const xhr = new XMLHttpRequestComponent();
-          xhr.open('POST', '/api/contact/tech-competence', true);
-          
-          // Добавляем CSRF токен
-          const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-          console.log('CSRF Token (XMLHttpRequest):', csrfToken);
-          
-          if (!csrfToken) {
-            rejectComponent(new Error('CSRF token not found. Please refresh the page.'));
-            return;
-          }
-          
-          xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
-          
-          xhr.onload = function() {
-            if (xhr.status >= 200 && xhr.status < 300) {
-              resolve({
-                ok: true,
-                status: xhr.status,
-                statusText: xhr.statusText,
-                json: () => JSON.parse(xhr.responseText)
-              });
-            } else {
-              rejectComponent(new Error(`HTTP error! status: ${xhr.status}`));
-            }
-          };
-          
-          xhr.onerror = function() {
-            rejectComponent(new Error('Network error'));
-          };
-          
-          xhr.send(formDataToSend);
-        });
-      }
-
-      console.log('Response received:', response.status, response.statusText);
-      console.log('Response headers:', response.headers);
-
-      // Проверяем Content-Type ответа
-      const contentType = response.headers.getComponent('content-type');
-      console.log('Content-Type:', contentType);
-
-      if (!response.ok) {
-        const errorText = await response.textComponent();
-        console.error('Error response:', errorText);
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-      }
-
-      // Проверяем, что ответ действительно JSON
-      if (!contentType || !contentType.includes('application/json')) {
-        const responseText = await response.textComponent();
-        console.error('Non-JSON response:', responseText);
-        throw new Error(`Server returned non-JSON response. Content-Type: ${contentType}`);
-      }
-
-      const result = await response.json();
-      console.log('Response data:', result);
-
-      if (result.success) {
-        // Показываем сообщение об успехе
+    post(route('contact.submit'), {
+      preserveScroll: true,
+      onSuccess: () => {
+        reset();
         setFormSubmitted(true);
-        
-        // Сбрасываем форму
-        setFormData({
-          name: '',
-          phone: '',
-          email: '',
-          projectName: '',
-          message: ''
-        });
-        setFileName('');
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
-        
-        // Скрываем сообщение через 5 секунд
-        setTimeoutComponent(() => {
-          setFormSubmitted(false);
-        }, 5000);
-      } else {
-        // Показываем ошибку
-        alertComponent(result.message || 'Произошла ошибка при отправке заявки');
-      }
-    } catch (error) {
-      console.error('Ошибка при отправке формы:', error);
-      
-      // Более информативное сообщение об ошибке
-      let errorMessage = 'Произошла ошибка при отправке заявки. Попробуйте позже.';
-      
-      if (error.message.includes('Failed to fetch')) {
-        errorMessage = 'Ошибка соединения с сервером. Проверьте интернет-соединение и попробуйте снова.';
-      } else if (error.message.includes('422')) {
-        errorMessage = 'Пожалуйста, проверьте правильность заполнения всех обязательных полей.';
-      } else if (error.message.includes('500')) {
-        errorMessage = 'Внутренняя ошибка сервера. Попробуйте позже или свяжитесь с администратором.';
-      } else if (error.message.includes('non-JSON response')) {
-        errorMessage = 'Сервер вернул неверный формат ответа. Попробуйте обновить страницу и повторить попытку.';
-      } else if (error.message.includes('JSON.parse')) {
-        errorMessage = 'Ошибка обработки ответа сервера. Попробуйте обновить страницу и повторить попытку.';
-      } else if (error.message.includes('CSRF token not found')) {
-        errorMessage = 'Ошибка безопасности. Пожалуйста, обновите страницу и попробуйте снова.';
-      }
-      
-      console.error('Показываем пользователю:', errorMessage);
-      alertComponent(errorMessage);
-    }
+        setTimeout(() => setFormSubmitted(false), 5000);
+      },
+    });
   };
 
   return (
@@ -327,6 +168,12 @@ export default function TechCompetence() {
                     Спасибо за вашу заявку! Мы свяжемся с вами в ближайшее время.
                   </div>
                 )}
+
+                {flash?.error && (
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md my-4">
+                    {flash.error}
+                  </div>
+                )}
               </div>
               
               {/* Форма справа (1/3) */}
@@ -338,11 +185,12 @@ export default function TechCompetence() {
                     <input 
                       type="text"
                       name="name"
-                      value={formData.name}
-                      onChange={handleChange}
+                      value={data.name}
+                      onChange={(e) => setData('name', e.target.value)}
                       required
-                      className="w-full border-0 border-b-2 border-gray-300 py-2 text-lg focus:outline-none focus:border-blue-500 bg-transparent"
+                      className={`w-full border-0 border-b-2 py-2 text-lg focus:outline-none focus:border-blue-500 bg-transparent ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
                     />
+                    {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                   </div>
                   
                   {/* Phone field */}
@@ -351,24 +199,26 @@ export default function TechCompetence() {
                     <input 
                       type="tel"
                       name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
+                      value={data.phone}
+                      onChange={(e) => setData('phone', e.target.value)}
                       required
-                      className="w-full border-0 border-b-2 border-gray-300 py-2 text-lg focus:outline-none focus:border-blue-500 bg-transparent"
+                      className={`w-full border-0 border-b-2 py-2 text-lg focus:outline-none focus:border-blue-500 bg-transparent ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
                     />
+                    {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                   </div>
                   
                   {/* Email field */}
                   <div className="mb-8">
-                    <div className="text-base text-gray-700 mb-2 font-medium">E-mail <span className="text-red-500">*</span></div>
+                    <div className="text-base text-gray-700 mb-2 font-medium">Email <span className="text-red-500">*</span></div>
                     <input 
                       type="email"
                       name="email"
-                      value={formData.email}
-                      onChange={handleChange}
+                      value={data.email}
+                      onChange={(e) => setData('email', e.target.value)}
                       required
-                      className="w-full border-0 border-b-2 border-gray-300 py-2 text-lg focus:outline-none focus:border-blue-500 bg-transparent"
+                      className={`w-full border-0 border-b-2 py-2 text-lg focus:outline-none focus:border-blue-500 bg-transparent ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
                     />
+                    {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                   </div>
                   
                   {/* Project name field */}
@@ -376,65 +226,47 @@ export default function TechCompetence() {
                     <div className="text-base text-gray-700 mb-2 font-medium">Название проекта</div>
                     <input 
                       type="text"
-                      name="projectName"
-                      value={formData.projectName}
-                      onChange={handleChange}
+                      name="project_name"
+                      value={data.project_name}
+                      onChange={(e) => setData('project_name', e.target.value)}
                       className="w-full border-0 border-b-2 border-gray-300 py-2 text-lg focus:outline-none focus:border-blue-500 bg-transparent"
                     />
                   </div>
                   
-                  {/* Detailed request field */}
+                  {/* Message field */}
                   <div className="mb-8">
-                    <div className="text-base text-gray-700 mb-2 font-medium">Расскажите о запросе</div>
-                    <textarea
+                    <div className="text-base text-gray-700 mb-2 font-medium">Ваше сообщение <span className="text-red-500">*</span></div>
+                    <textarea 
                       name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      rows="3"
-                      className="w-full border-0 border-b-2 border-gray-300 py-2 text-lg focus:outline-none focus:border-blue-500 bg-transparent resize-none"
+                      rows="4"
+                      value={data.message}
+                      onChange={(e) => setData('message', e.target.value)}
+                      required
+                      className={`w-full border-2 border-gray-300 rounded-md px-3 py-2 text-lg focus:outline-none focus:border-blue-500 bg-transparent resize-none ${errors.message ? 'border-red-500' : ''}`}
                     ></textarea>
+                    {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message}</p>}
                   </div>
                   
-
-                  
-                  {/* Submit and file upload buttons */}
-                  <div className="w-full mb-4">
-                    {fileName && (
-                      <div className="flex items-center mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <span className="text-blue-600">{fileName}</span>
-                        <span className="text-xs text-gray-500 ml-2">(.pdf, .doc, .docx, .ppt, .pptx)</span>
-                      </div>
-                    )}
-                    <div className="flex justify-end space-x-4">
-                      <label htmlFor="file-upload" className="cursor-pointer px-6 py-3 bg-gray-200 text-gray-700 text-sm uppercase tracking-wider hover:bg-gray-300 focus:outline-none flex items-center font-medium rounded-sm">
-                        <input
-                          id="file-upload"
-                          name="file-upload"
-                          type="file"
-                          className="sr-only"
-                          ref={fileInputRef}
-                          onChange={handleFileChange}
-                          accept=".pdf,.doc,.docx,.ppt,.pptx"
-                        />
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0l-4 4m4-4v12" />
-                        </svg>
-                        Прикрепить файл
-                      </label>
-                      <button
-                        type="submit"
-                        className="px-8 py-3 bg-blue-600 text-white text-sm uppercase tracking-wider hover:bg-blue-700 focus:outline-none flex items-center font-medium"
-                      >
-                        подать заявку
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                      </button>
-                    </div>
+                  {/* File upload field */}
+                  <div className="mb-8">
+                    <div className="text-base text-gray-700 mb-2 font-medium">Прикрепить файл (опционально)</div>
+                    <input 
+                      type="file"
+                      accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                      onChange={(e) => setData('attachment', e.target.files[0])}
+                      className="w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    />
+                    {errors.attachment && <p className="text-red-500 text-xs mt-1">{errors.attachment}</p>}
                   </div>
+                  
+                  {/* Submit button */}
+                  <button 
+                    type="submit" 
+                    disabled={processing}
+                    className="w-full bg-blue-600 text-white font-medium py-3 rounded-md hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {processing ? 'Отправка...' : 'Отправить заявку'}
+                  </button>
                 </form>
               </div>
             </div>
@@ -445,4 +277,4 @@ export default function TechCompetence() {
   );
 }
 
-TechCompetence.layout = (page) => <LayoutDirection img={'techcomtence'} h1={t('directions.tech_competence', 'Отраслевой центр технологических компетенций')} useVideo={false}>{page}</LayoutDirection>;
+TechCompetence.layout = (page) => <LayoutDirection img="science" h1={t('directions.medical_science', 'Медицинская наука')}>{page}</LayoutDirection>;
