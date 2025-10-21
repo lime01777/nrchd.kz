@@ -1,0 +1,228 @@
+═══════════════════════════════════════════════════════════════════════════════
+  ИНСТРУКЦИЯ ПО ЗАПУСКУ НОВОЙ СИСТЕМЫ ПЕРЕВОДОВ (I18N)
+═══════════════════════════════════════════════════════════════════════════════
+
+Новая система переводов полностью установлена и готова к запуску!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. ЧТО БЫЛО СДЕЛАНО
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Удалены старые сервисы переводов:
+   - AutoTranslationService
+   - TranslationService
+   - DatabaseTranslationService
+   - TranslationExceptionsService
+   - Старые контроллеры и команды
+
+✅ Созданы новые компоненты:
+   - Контракт TranslateProvider (Google, Null провайдеры)
+   - TextProtector (защита имен собственных)
+   - Основной сервис Translator
+   - TranslateJob (очереди)
+   - Модели Translation и GlossaryTerm
+   - Middleware SetLocale
+   - I18nController и админ-контроллеры
+   - React хук useI18n и компонент LangSwitch
+
+✅ Настроены маршруты:
+   - POST /locale/{locale} - установка языка
+   - GET /api/i18n - получение словаря
+   - POST /api/i18n/ensure - массовое добавление переводов
+   - Админ-маршруты для управления
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. НАСТРОЙКА ОКРУЖЕНИЯ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Добавьте в файл .env следующие переменные:
+
+# Локализация
+I18N_DEFAULT_LOCALE=ru
+I18N_LOCALES=ru,kk,en
+I18N_PROVIDER=null
+I18N_CACHE_TTL=86400
+
+# Google Translate (если используется)
+GOOGLE_TRANSLATE_API_KEY=your-api-key-here
+I18N_PROVIDER=google
+
+# Очереди
+QUEUE_CONNECTION=database
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. ЗАПУСК СИСТЕМЫ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Выполните следующие команды по порядку:
+
+1. Запустите миграции:
+   php artisan migrate
+
+2. Наполните глоссарий базовыми терминами:
+   php artisan i18n:seed
+
+3. Импортируйте ФИО сотрудников (если есть таблица employees):
+   php artisan i18n:seed --employees
+
+4. Настройте очереди (для фонового перевода):
+   php artisan queue:table
+   php artisan migrate
+   php artisan queue:work --queue=translations
+
+5. Очистите кеш:
+   php artisan cache:clear
+   php artisan config:cache
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. ИСПОЛЬЗОВАНИЕ В КОДЕ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+▸ PHP (Backend):
+
+use App\Services\Translator;
+
+// Получить перевод
+$translator = app(Translator::class);
+$text = $translator->t('ui', 'welcome_message');
+
+// Массово добавить переводы
+$translator->bulkEnsure('ui', [
+    'welcome' => 'Добро пожаловать',
+    'hello' => 'Привет',
+]);
+
+▸ React (Frontend):
+
+import { useI18n } from '@/hooks/useI18n';
+
+function MyComponent() {
+    const { t, locale, setLocale } = useI18n('ui');
+    
+    return (
+        <div>
+            <h1>{t('welcome', 'Добро пожаловать')}</h1>
+            <button onClick={() => setLocale('kk')}>
+                Қазақша
+            </button>
+        </div>
+    );
+}
+
+▸ Компонент переключения языка:
+
+import LangSwitch from '@/components/LangSwitch';
+
+<LangSwitch currentLocale={locale} />
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. КОМАНДЫ ARTISAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+php artisan i18n:seed              # Наполнить глоссарий
+php artisan i18n:seed --employees  # Импортировать ФИО
+
+php artisan i18n:rehash --scope=ui # Пересчитать хеши и перевести
+php artisan i18n:rehash --all      # Пересчитать все scope
+
+php artisan i18n:export --scope=ui --locale=kk --output=ui_kk.json
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. АДМИН-ПАНЕЛЬ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Добавьте маршруты в routes/web.php внутри группы admin:
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    
+    // Управление глоссарием
+    Route::prefix('glossary')->name('admin.glossary.')->group(function () {
+        Route::get('/', [GlossaryController::class, 'index'])->name('index');
+        Route::post('/', [GlossaryController::class, 'store'])->name('store');
+        Route::put('/{term}', [GlossaryController::class, 'update'])->name('update');
+        Route::delete('/{term}', [GlossaryController::class, 'destroy'])->name('destroy');
+        Route::post('/{term}/toggle', [GlossaryController::class, 'toggle'])->name('toggle');
+        Route::post('/import-employees', [GlossaryController::class, 'importEmployees'])->name('import-employees');
+    });
+    
+    // Управление переводами
+    Route::prefix('translations')->name('admin.translations.')->group(function () {
+        Route::get('/', [TranslationManagementController::class, 'index'])->name('index');
+        Route::get('/{translation}/edit', [TranslationManagementController::class, 'edit'])->name('edit');
+        Route::put('/{translation}', [TranslationManagementController::class, 'update'])->name('update');
+        Route::delete('/{translation}', [TranslationManagementController::class, 'destroy'])->name('destroy');
+        Route::post('/{translation}/retranslate', [TranslationManagementController::class, 'retranslate'])->name('retranslate');
+        Route::post('/retranslate-scope', [TranslationManagementController::class, 'retranslateScope'])->name('retranslate-scope');
+        Route::post('/clear-cache', [TranslationManagementController::class, 'clearCache'])->name('clear-cache');
+        Route::get('/export', [TranslationManagementController::class, 'export'])->name('export');
+    });
+});
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. ЗАЩИТА ИМЕН СОБСТВЕННЫХ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+По умолчанию защищены:
+✓ Салидат Каирбекова
+✓ Все ФИО из таблицы employees (после импорта)
+✓ Email-адреса
+✓ Телефонные номера
+✓ Даты и числа с единицами измерения
+
+Для добавления новых терминов:
+1. Через админ-панель (рекомендуется)
+2. Программно:
+   GlossaryTerm::addTermForAllLocales('Имя Фамилия', ['person']);
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. API ENDPOINTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+GET  /api/i18n?scope=ui&locale=ru          # Получить словарь
+POST /api/i18n/ensure                       # Массовое добавление переводов
+GET  /api/i18n/stats                        # Статистика
+POST /api/locale                            # Установить локаль
+GET  /api/locale                            # Получить текущую локаль
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. ОСОБЕННОСТИ И ПРЕИМУЩЕСТВА
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Защита имен собственных от перевода
+✅ Кеширование на 24 часа (настраивается)
+✅ Фоновый перевод через очереди
+✅ Автоматический пересчет при изменении RU текста
+✅ Админ-панель для управления
+✅ Поддержка Google Translate API
+✅ Режим без API (NullProvider)
+✅ Логирование в отдельный канал (storage/logs/i18n.log)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+▸ Переводы не работают:
+  - Проверьте, что миграции выполнены
+  - Очистите кеш: php artisan cache:clear
+  - Проверьте логи: storage/logs/i18n.log
+
+▸ Имена переводятся:
+  - Убедитесь, что запущен i18n:seed
+  - Проверьте таблицу glossary_terms
+  - Добавьте термин вручную через админку
+
+▸ Очереди не работают:
+  - Запустите queue worker: php artisan queue:work --queue=translations
+  - Проверьте настройку QUEUE_CONNECTION в .env
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Система готова к использованию! 🎉
+
+Для вопросов смотрите код в:
+- app/Services/Translator.php
+- app/Models/Translation.php
+- resources/js/hooks/useI18n.ts
+
+═══════════════════════════════════════════════════════════════════════════════
+

@@ -2,8 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TranslationController;
-use App\Http\Controllers\Api\TranslationAPIController;
+use App\Http\Controllers\I18nController;
 use App\Http\Controllers\FileController;
 
 /*
@@ -17,57 +16,28 @@ use App\Http\Controllers\FileController;
 |
 */
 
-// Новые маршруты для переводов с DeepL
-Route::get('/i18n/{locale}', [TranslationController::class, 'dictionary']);
-Route::post('/translate/ensure', [TranslationController::class, 'ensure']);
-
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// API маршруты для переводов
-Route::prefix('translations')->group(function () {
-    Route::get('/{language}', [TranslationAPIController::class, 'getTranslations']);
-    Route::post('/translate', [TranslationAPIController::class, 'translate']);
-    Route::post('/save', [TranslationAPIController::class, 'saveTranslations']);
+// Новые API маршруты для переводов (i18n система)
+Route::prefix('i18n')->group(function () {
+    Route::get('/', [I18nController::class, 'getDictionary']);
+    Route::post('/ensure', [I18nController::class, 'ensureTranslations']);
+    Route::get('/stats', [I18nController::class, 'getStats']);
 });
 
-// Прямые маршруты для совместимости с существующим JavaScript кодом
-Route::post('/translate', [TranslationAPIController::class, 'translate']);
-Route::post('/translate-batch', [TranslationAPIController::class, 'translateBatch']);
+// API маршруты для управления локалью
+Route::post('/locale', [I18nController::class, 'setLocale']);
+Route::get('/locale', [I18nController::class, 'getLocale']);
 
-// Маршрут для получения переводов страницы
-Route::post('/page-translations', [\App\Http\Controllers\LanguageController::class, 'getPageTranslations']);
-
-// API маршруты для управления языками
-Route::prefix('language')->group(function () {
-    Route::post('/set', [TranslationAPIController::class, 'setLanguage']);
-    Route::get('/current', [TranslationAPIController::class, 'getCurrentLanguage']);
-});
+// API маршруты для переводов страниц
+Route::get('/page-translations', [I18nController::class, 'getPageTranslations']);
+Route::post('/page-translations', [I18nController::class, 'updatePageTranslations']);
 
 // API маршруты для файлов
 Route::get('/files', [FileController::class, 'getFiles']);
 Route::get('/clinical-protocols', [FileController::class, 'getClinicalProtocols']);
-
-// Маршрут для установки языка (для LanguageManager)
-Route::post('/set-language', function (Request $request) {
-    $language = $request->input('language');
-    
-    // Проверяем, что язык валидный
-    $validLanguages = ['ru', 'kz', 'en'];
-    if (!in_array($language, $validLanguages)) {
-        return response()->json(['error' => 'Invalid language'], 400);
-    }
-    
-    // Устанавливаем язык в сессии
-    session(['locale' => $language]);
-    
-    return response()->json([
-        'success' => true,
-        'language' => $language,
-        'message' => 'Language set successfully'
-    ]);
-});
 
 // Маршруты для контактных форм
 Route::post('/contact/tech-competence', [\App\Http\Controllers\ContactController::class, 'sendTechCompetenceForm']);

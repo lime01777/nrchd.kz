@@ -28,6 +28,7 @@ class News extends Model
         'slug',
         'content',
         'category',
+        'tags',
         'status',
         'publish_date',
         'image',
@@ -45,6 +46,7 @@ class News extends Model
         'publish_date' => 'datetime',
         'views' => 'integer',
         'category' => 'array',
+        'tags' => 'array',
         // 'images' => 'array', // Убираем cast, так как используем кастомный аксессор
     ];
 

@@ -12,7 +12,7 @@ const AVAILABLE_LANGUAGES = ['ru', 'kz', 'en'];
 const DEFAULT_LANGUAGE = 'kz';
 
 // Глобальный флаг: полностью отключить любые переводы и сетевые вызовы
-const DISABLE_TRANSLATION = true;
+const DISABLE_TRANSLATION = false;
 
 // Класс для управления языком сайта
 class LanguageManager {
@@ -189,20 +189,25 @@ class LanguageManager {
       }
       
       // Отправить запрос на сервер для обновления языка в сессии
-      const response = await fetch('/api/set-language', {
+      const response = await fetch(`/locale/${this.currentLanguage}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': token
+          'X-CSRF-TOKEN': token,
+          'Accept': 'application/json', // Указываем, что ожидаем JSON
         },
-        body: JSON.stringify({
-          language: this.currentLanguage
-        }),
         credentials: 'include' // Важно для отправки и получения куки
       });
       
       if (!response.ok) {
         throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+      }
+      
+      // Проверяем тип контента перед парсингом
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        console.warn('[LanguageManager] Server returned non-JSON response, but language should be saved in session');
+        return { success: true, language: this.currentLanguage };
       }
       
       // Пробуем получить ответ в JSON

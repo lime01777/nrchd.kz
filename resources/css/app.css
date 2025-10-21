@@ -10,6 +10,9 @@
 /* Import leadership styles */
 @import 'leadership.css';
 
+/* TipTap editor styles */
+@import 'tiptap-editor.css';
+
 /* Tailwind CSS directives - required for Tailwind to work */
 @tailwind base;
 @tailwind components;

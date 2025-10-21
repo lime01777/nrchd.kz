@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VacancyController;
 use App\Http\Controllers\Admin\VacancyController as AdminVacancyController;
 use App\Http\Controllers\ConferenceRegistrationController;
+use App\Http\Controllers\Admin\GlossaryController;
+use App\Http\Controllers\Admin\TranslationManagementController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
@@ -130,7 +132,6 @@ Route::middleware([LanguageMiddleware::class])->group(function () {
             'laravelVersion' => Application::VERSION,
             'phpVersion' => PHP_VERSION,
             'locale' => app()->getLocale(),
-            'translations' => \App\Services\TranslationService::getForPage('home', app()->getLocale()),
         ]);
     })->name('home');
 }); // Конец мидлвара языка
@@ -527,6 +528,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::post('/admin/news/bulk', [\App\Http\Controllers\Admin\NewsController::class, 'bulk'])->name('admin.news.bulk');
     
     // Управление медиа новостей
+    Route::post('/news/upload-media', [App\Http\Controllers\Admin\NewsController::class, 'uploadMediaFiles'])->name('admin.news.upload-media');
     Route::post('/news/{newsId}/media', [App\Http\Controllers\Admin\NewsController::class, 'uploadMedia'])->name('admin.news.media.upload');
     Route::patch('/news/{newsId}/media/order', [App\Http\Controllers\Admin\NewsController::class, 'updateMediaOrder'])->name('admin.news.media.order');
     Route::delete('/news/{newsId}/media/{mediaId}', [App\Http\Controllers\Admin\NewsController::class, 'deleteMedia'])->name('admin.news.media.delete');
@@ -560,12 +562,26 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::put('/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
     Route::post('/settings/backup', [App\Http\Controllers\Admin\SettingController::class, 'createBackup'])->name('admin.settings.backup');
     
+    // Глоссарий
+    Route::resource('glossary', GlossaryController::class)->names([
+        'index' => 'admin.glossary.index',
+        'create' => 'admin.glossary.create',
+        'store' => 'admin.glossary.store',
+        'show' => 'admin.glossary.show',
+        'edit' => 'admin.glossary.edit',
+        'update' => 'admin.glossary.update',
+        'destroy' => 'admin.glossary.destroy',
+    ]);
+    Route::post('glossary/{term}/toggle', [GlossaryController::class, 'toggle'])->name('admin.glossary.toggle');
+    Route::post('glossary/import-employees', [GlossaryController::class, 'importEmployees'])->name('admin.glossary.import-employees');
+    
     // Управление переводами
-    Route::get('/translations', [App\Http\Controllers\Admin\TranslationController::class, 'index'])->name('admin.translations');
-    Route::post('/translations/translate-all', [App\Http\Controllers\Admin\TranslationController::class, 'translateAll'])->name('admin.translations.translate-all');
-    Route::get('/translations/page', [App\Http\Controllers\Admin\TranslationController::class, 'getPageTranslations'])->name('admin.translations.page');
-    Route::delete('/translations/{id}', [App\Http\Controllers\Admin\TranslationController::class, 'deleteTranslation'])->name('admin.translations.delete');
-    Route::put('/translations/{id}', [App\Http\Controllers\Admin\TranslationController::class, 'updateTranslation'])->name('admin.translations.update');
+    Route::get('translations', [TranslationManagementController::class, 'index'])->name('admin.translations');
+    Route::post('translations/translate-all', [TranslationManagementController::class, 'translateAll'])->name('admin.translations.translate-all');
+    Route::put('translations/{translation}', [TranslationManagementController::class, 'update'])->name('admin.translations.update');
+    Route::post('translations/{translation}/retranslate', [TranslationManagementController::class, 'retranslate'])->name('admin.translations.retranslate');
+    Route::post('translations/retranslate-scope', [TranslationManagementController::class, 'retranslateScope'])->name('admin.translations.retranslate-scope');
+    Route::post('translations/clear-cache', [TranslationManagementController::class, 'clearCache'])->name('admin.translations.clear-cache');
 
     // Маршруты для управления аккордеонами документов
     Route::resource('document-accordions', App\Http\Controllers\Admin\DocumentAccordionController::class, [
@@ -705,14 +721,6 @@ Route::get('/abay', function () {
 })->name('branches.abay');
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-    // Админ-панель
-    Route::prefix('admin')->name('admin.')->group(function () {
-        // Управление переводами
-        Route::get('/translations', function () {
-            return Inertia::render('Admin/Translation/TranslationManager');
-        })->name('translations');
-    });
-    
     // Пример интеграции с Google Drive
     Route::get('/examples/google-drive', function () {
         return Inertia::render('Examples/GoogleDriveExample');

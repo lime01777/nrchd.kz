@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Artisan;
-use App\Services\TranslationService;
 
 class ProjectAudit extends Command
 {
@@ -149,29 +148,32 @@ class ProjectAudit extends Command
     {
         $this->info('🌐 Проверка системы переводов...');
         
-        $languages = ['kz', 'ru', 'en'];
-        $pages = ['home', 'news', 'about', 'contacts', 'services'];
-        
-        foreach ($languages as $lang) {
-            foreach ($pages as $page) {
-                try {
-                    $translations = TranslationService::getForPage($page, $lang);
-                    if (empty($translations)) {
-                        $this->issues[] = "⚠️ Нет переводов для страницы {$page} на языке {$lang}";
-                    }
-                } catch (\Exception $e) {
-                    $this->issues[] = "❌ Ошибка загрузки переводов для {$page}/{$lang}: " . $e->getMessage();
-                }
-            }
-        }
-        
         // Проверка языковых файлов
         $langFiles = ['kz/common.php', 'ru/common.php', 'en/common.php'];
         foreach ($langFiles as $file) {
             $path = resource_path("lang/{$file}");
             if (!File::exists($path)) {
                 $this->issues[] = "❌ Языковой файл не найден: {$file}";
+            } else {
+                $this->info("✅ Языковой файл найден: {$file}");
             }
+        }
+        
+        // Проверка таблицы переводов в базе данных
+        if (Schema::hasTable('stored_translations')) {
+            $translationsCount = DB::table('stored_translations')->count();
+            $this->info("✅ Переводов в базе данных: {$translationsCount}");
+            
+            // Проверка по языкам
+            $languages = ['kz', 'ru', 'en'];
+            foreach ($languages as $lang) {
+                $count = DB::table('stored_translations')
+                    ->where('target_language', $lang)
+                    ->count();
+                $this->info("   - {$lang}: {$count} переводов");
+            }
+        } else {
+            $this->issues[] = "❌ Таблица stored_translations не найдена";
         }
     }
 

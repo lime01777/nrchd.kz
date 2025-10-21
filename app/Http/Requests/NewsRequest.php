@@ -28,7 +28,7 @@ class NewsRequest extends FormRequest
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:50',
             'status' => 'required|string|in:draft,scheduled,published,archived',
-            'publish_date' => 'nullable|date|after_or_equal:now',
+            'publish_date' => 'nullable|date',
             'media' => 'nullable|array|max:20',
             'media.*' => 'nullable|array',
             'media.*.id' => 'nullable|string',
@@ -73,7 +73,6 @@ class NewsRequest extends FormRequest
             'status.required' => 'Статус новости обязателен',
             'status.in' => 'Недопустимый статус новости',
             'publish_date.date' => 'Дата публикации должна быть корректной датой',
-            'publish_date.after_or_equal' => 'Дата публикации не может быть в прошлом',
             'media.array' => 'Медиа должны быть массивом',
             'media.max' => 'Максимум 20 медиа файлов',
             'media.*.type.in' => 'Тип медиа должен быть image или video',
@@ -111,6 +110,14 @@ class NewsRequest extends FormRequest
             // Дополнительная валидация для запланированных новостей
             if ($this->input('status') === 'scheduled' && !$this->input('publish_date')) {
                 $validator->errors()->add('publish_date', 'Для запланированных новостей необходимо указать дату публикации');
+            }
+
+            // Для запланированных новостей дата должна быть в будущем
+            if ($this->input('status') === 'scheduled' && $this->input('publish_date')) {
+                $publishDate = \Carbon\Carbon::parse($this->input('publish_date'));
+                if ($publishDate->isPast()) {
+                    $validator->errors()->add('publish_date', 'Для запланированных новостей дата публикации должна быть в будущем');
+                }
             }
 
             // Проверяем, что есть хотя бы одно медиа или контент достаточно длинный

@@ -3,8 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\TranslationService;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class TestTranslations extends Command
 {
@@ -25,12 +26,20 @@ class TestTranslations extends Command
         // Устанавливаем локаль
         App::setLocale($locale);
         
-        // Получаем переводы
-        $translations = TranslationService::getForPage('home', $locale);
+        // Проверяем таблицу переводов
+        if (!Schema::hasTable('stored_translations')) {
+            $this->error("❌ Table 'stored_translations' does not exist");
+            return 1;
+        }
         
-        $this->info("📊 Total translations loaded: " . count($translations));
+        // Получаем переводы из базы данных
+        $translationsCount = DB::table('stored_translations')
+            ->where('target_language', $locale)
+            ->count();
         
-        // Тестируем основные ключи
+        $this->info("📊 Total translations in database: {$translationsCount}");
+        
+        // Тестируем основные ключи через функцию trans()
         $testKeys = [
             'home' => 'Домой',
             'about' => 'О нас',
@@ -44,14 +53,15 @@ class TestTranslations extends Command
             'logout' => 'Выйти'
         ];
         
-        $this->info("\n📋 Testing key translations:");
+        $this->info("\n📋 Testing Laravel translation keys:");
         $this->line("┌─────────────────┬─────────────────┬─────────────────┐");
         $this->line("│ Key             │ Expected        │ Actual          │");
         $this->line("├─────────────────┼─────────────────┼─────────────────┤");
         
         foreach ($testKeys as $key => $expected) {
-            $actual = $translations[$key] ?? 'NOT FOUND';
-            $status = isset($translations[$key]) ? '✅' : '❌';
+            // Пробуем получить перевод через trans()
+            $actual = trans("common.{$key}", [], $locale);
+            $status = $actual !== "common.{$key}" ? '✅' : '❌';
             
             $this->line(sprintf(
                 "│ %-15s │ %-15s │ %-15s │ %s",
@@ -64,26 +74,30 @@ class TestTranslations extends Command
         
         $this->line("└─────────────────┴─────────────────┴─────────────────┘");
         
-        // Показываем несколько примеров переводов
-        $this->info("\n🎯 Sample translations:");
-        $sampleKeys = array_slice(array_keys($translations), 0, 10);
+        // Показываем примеры переводов из базы данных
+        $this->info("\n🎯 Sample translations from database:");
+        $samples = DB::table('stored_translations')
+            ->where('target_language', $locale)
+            ->limit(10)
+            ->get(['original_text', 'translated_text']);
         
-        foreach ($sampleKeys as $key) {
-            $translation = $translations[$key];
-            $this->line("  {$key}: {$translation}");
+        foreach ($samples as $sample) {
+            $original = mb_substr($sample->original_text, 0, 30);
+            $translated = mb_substr($sample->translated_text, 0, 30);
+            $this->line("  {$original} => {$translated}");
         }
         
-        // Проверяем, что переводы не пустые
-        $emptyTranslations = array_filter($translations, function($value) {
-            if (is_array($value)) return false;
-            return empty(trim($value));
-        });
+        // Проверяем пустые переводы
+        $emptyCount = DB::table('stored_translations')
+            ->where('target_language', $locale)
+            ->where(function($query) {
+                $query->whereNull('translated_text')
+                      ->orWhere('translated_text', '');
+            })
+            ->count();
         
-        if (count($emptyTranslations) > 0) {
-            $this->warn("\n⚠️  Found " . count($emptyTranslations) . " empty translations:");
-            foreach (array_keys($emptyTranslations) as $key) {
-                $this->line("  - {$key}");
-            }
+        if ($emptyCount > 0) {
+            $this->warn("\n⚠️  Found {$emptyCount} empty translations");
         }
         
         $this->info("\n✅ Translation test completed!");

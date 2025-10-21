@@ -917,7 +917,7 @@ export const fullOrganizationalStructureData = [
         }
       },
       {
-        name: "Каримова Айнұр Асқарызы  ",
+        name: "Каримова Айнұр Асқарқызы  ",
         position: "Главный специалист",
         contact: {
           email: "a.karimova@nrchd.kz"

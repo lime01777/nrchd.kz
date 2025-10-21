@@ -38,7 +38,19 @@ class NewsController extends Controller
 
         // Фильтрация по статусу
         if ($request->filled('status')) {
-            $query->where('status', $request->input('status'));
+            $statusMap = [
+                'published' => 'Опубликовано',
+                'draft' => 'Черновик',
+                'scheduled' => 'Запланировано',
+                'archived' => 'Архив'
+            ];
+            $status = $statusMap[$request->input('status')] ?? $request->input('status');
+            $query->where('status', $status);
+        }
+
+        // Фильтрация по категории
+        if ($request->filled('category')) {
+            $query->whereJsonContains('category', $request->input('category'));
         }
 
         // Сортировка
@@ -46,9 +58,9 @@ class NewsController extends Controller
 
         $news = $query->paginate(20);
 
-        return Inertia::render('Admin/News/Index', [
+        return Inertia::render('Admin/News/IndexNew', [
             'news' => $news,
-            'filters' => $request->only(['search', 'status'])
+            'filters' => $request->only(['search', 'status', 'category'])
         ]);
     }
 
@@ -57,7 +69,35 @@ class NewsController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/News/Create');
+        // Получаем доступные категории из существующих новостей
+        $availableCategories = News::whereNotNull('category')
+            ->where('category', '!=', '')
+            ->distinct()
+            ->pluck('category')
+            ->flatten()
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
+
+        // Если категорий нет, добавляем базовые
+        if (empty($availableCategories)) {
+            $availableCategories = [
+                'Общие новости',
+                'Медицина',
+                'Наука',
+                'Образование',
+                'Спорт',
+                'Культура',
+                'Политика',
+                'Экономика'
+            ];
+        }
+
+        return Inertia::render('Admin/News/CreateNew', [
+            'availableCategories' => $availableCategories
+        ]);
     }
 
     /**
@@ -120,17 +160,48 @@ class NewsController extends Controller
     {
         $news = News::findOrFail($id);
 
-        return Inertia::render('Admin/News/Edit', [
+        // Получаем доступные категории из существующих новостей
+        $availableCategories = News::whereNotNull('category')
+            ->where('category', '!=', '')
+            ->distinct()
+            ->pluck('category')
+            ->flatten()
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
+
+        // Если категорий нет, добавляем базовые
+        if (empty($availableCategories)) {
+            $availableCategories = [
+                'Общие новости',
+                'Медицина',
+                'Наука',
+                'Образование',
+                'Спорт',
+                'Культура',
+                'Политика',
+                'Экономика'
+            ];
+        }
+
+        return Inertia::render('Admin/News/EditNew', [
             'news' => [
                 'id' => $news->id,
                 'title' => $news->title,
                 'slug' => $news->slug,
                 'content' => $news->content,
                 'category' => $news->category,
+                'tags' => $news->tags ?? [],
                 'status' => $news->status,
                 'publish_date' => $news->formatted_publish_date,
                 'images' => $news->images ?? [],
+                'views' => $news->views ?? 0,
+                'created_at' => $news->created_at,
+                'updated_at' => $news->updated_at,
             ],
+            'availableCategories' => $availableCategories
         ]);
     }
 
@@ -242,6 +313,15 @@ class NewsController extends Controller
     private function processMedia(Request $request, $existingMedia = [])
     {
         $mediaPaths = [];
+        
+        // Обрабатываем images из запроса (загруженные через ModernMediaUploader)
+        if ($request->has('images') && is_array($request->input('images'))) {
+            foreach ($request->input('images') as $imageData) {
+                if (is_array($imageData) && isset($imageData['path'])) {
+                    $mediaPaths[] = $imageData;
+                }
+            }
+        }
         
         // Добавляем существующие медиа (если они в старом формате - строки)
         if (is_array($existingMedia)) {
@@ -399,8 +479,17 @@ class NewsController extends Controller
             }
         }
 
-        // Удаляем дубликаты
-        $mediaPaths = array_unique($mediaPaths);
+        // Удаляем дубликаты по пути
+        $uniquePaths = [];
+        $seenPaths = [];
+        foreach ($mediaPaths as $mediaItem) {
+            $path = is_array($mediaItem) ? $mediaItem['path'] : $mediaItem;
+            if (!in_array($path, $seenPaths)) {
+                $uniquePaths[] = $mediaItem;
+                $seenPaths[] = $path;
+            }
+        }
+        $mediaPaths = $uniquePaths;
 
         Log::info('Обработка медиа-файлов завершена', [
             'total_media' => count($mediaPaths),
@@ -624,5 +713,35 @@ class NewsController extends Controller
         ];
 
         return $statusMap[$status] ?? $status;
+    }
+
+    /**
+     * Загрузка медиа файлов (без привязки к новости)
+     */
+    public function uploadMediaFiles(Request $request)
+    {
+        $request->validate([
+            'media_files' => 'required|array|max:10',
+            'media_files.*' => 'file|mimes:jpeg,png,jpg,gif,webp,mp4,avi,mov,wmv,flv,webm,ogg|max:51200',
+        ]);
+
+        try {
+            $uploadedMedia = $this->mediaService->uploadMultipleMedia($request->file('media_files'));
+            
+            return response()->json([
+                'success' => true,
+                'media' => $uploadedMedia
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Ошибка загрузки медиа файлов', [
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка загрузки медиа файлов'
+            ], 500);
+        }
     }
 }

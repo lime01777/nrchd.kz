@@ -3,7 +3,6 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Services\TranslationService;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +14,7 @@ use App\Services\TranslationService;
 |
 */
 
-// Home page with translations
+// Home page
 Route::get('/', function () {
     return Inertia::render('Home', [
         'canLogin' => Route::has('login'),
@@ -23,47 +22,56 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
         'locale' => app()->getLocale(),
-        'translations' => TranslationService::getForPage('home', app()->getLocale()),
+        'locales' => config('i18n.locales', ['ru', 'kk', 'en']),
     ]);
 })->name('home');
 
-// Route for switching languages
+// Route for switching languages (POST with JSON response for API)
+Route::post('locale/{locale}', function ($locale) {
+    if (!in_array($locale, ['ru', 'kk', 'en'])) {
+        $locale = config('i18n.default_locale', 'ru');
+    }
+    
+    // Сохраняем в сессии
+    session(['locale' => $locale]);
+    
+    // Устанавливаем локаль приложения
+    app()->setLocale($locale);
+    
+    // Если это AJAX/Fetch запрос, возвращаем JSON
+    if (request()->ajax() || request()->wantsJson() || request()->expectsJson()) {
+        return response()->json([
+            'success' => true,
+            'language' => $locale,
+            'message' => 'Language updated successfully'
+        ]);
+    }
+    
+    // Иначе редирект обратно (для обычных форм)
+    return redirect()->back();
+})->name('locale.set');
+
+// Старый маршрут для совместимости (GET)
 Route::get('change-language/{locale}', function ($locale) {
-    if (!in_array($locale, ['ru', 'en', 'kz'])) {
-        $locale = 'kz';
+    if (!in_array($locale, ['ru', 'kk', 'en'])) {
+        $locale = config('i18n.default_locale', 'ru');
     }
     
-    $currentUrl = url()->previous();
-    $segments = explode('/', parse_url($currentUrl, PHP_URL_PATH));
+    session(['locale' => $locale]);
     
-    // Remove first empty segment
-    array_shift($segments);
-    
-    // Replace language segment or add it if it doesn't exist
-    if (count($segments) > 0 && in_array($segments[0], ['ru', 'en', 'kz'])) {
-        $segments[0] = $locale;
-    } else {
-        array_unshift($segments, $locale);
-    }
-    
-    // Reconstruct the URL
-    $redirectPath = '/' . implode('/', $segments);
-    
-    return redirect($redirectPath);
+    return redirect()->back();
 })->name('change.language');
 
-// Example routes - each needs to pass translations
+// Example routes - переводы обрабатываются на фронтенде через систему i18n
 Route::get('/medical-education', function () {
     return Inertia::render('Direction/MedicalEducation', [
         'locale' => app()->getLocale(),
-        'translations' => TranslationService::getForPage('medical_education', app()->getLocale()),
     ]);
 })->name('medical.education');
 
 Route::get('/news', function () {
     return Inertia::render('News', [
         'locale' => app()->getLocale(),
-        'translations' => TranslationService::getForPage('news', app()->getLocale()),
     ]);
 })->name('news');
 
@@ -71,56 +79,48 @@ Route::get('/news', function () {
 Route::get('/bioethics', function () {
     return Inertia::render('Direction/Bioethics', [
         'locale' => app()->getLocale(),
-        'translations' => TranslationService::getForPage('bioethics', app()->getLocale()),
     ]);
 })->name('bioethics');
 
 Route::get('/bioethics/expertise', function () {
     return Inertia::render('Direction/Bioethics/Expertise', [
         'locale' => app()->getLocale(),
-        'translations' => TranslationService::getForPage('bioethics_expertise', app()->getLocale()),
     ]);
 })->name('bioethics.expertise');
 
 Route::get('/bioethics/certification', function () {
     return Inertia::render('Direction/Bioethics/Certification', [
         'locale' => app()->getLocale(),
-        'translations' => TranslationService::getForPage('bioethics_certification', app()->getLocale()),
     ]);
 })->name('bioethics.certification');
 
 Route::get('/bioethics/biobanks', function () {
     return Inertia::render('Direction/Bioethics/Biobanks', [
         'locale' => app()->getLocale(),
-        'translations' => TranslationService::getForPage('bioethics_biobanks', app()->getLocale()),
     ]);
 })->name('bioethics.biobanks');
 
 Route::get('/bioethics/local-commissions', function () {
     return Inertia::render('Direction/Bioethics/LocalCommissions', [
         'locale' => app()->getLocale(),
-        'translations' => TranslationService::getForPage('bioethics_local_commissions', app()->getLocale()),
     ]);
 })->name('bioethics.local_commissions');
 
 Route::get('/bioethics/composition', function () {
     return Inertia::render('Direction/Bioethics/Composition', [
         'locale' => app()->getLocale(),
-        'translations' => TranslationService::getForPage('bioethics_composition', app()->getLocale()),
     ]);
 })->name('bioethics.composition');
 
 Route::get('/bioethics/npa', function () {
     return Inertia::render('Direction/Bioethics/NPA', [
         'locale' => app()->getLocale(),
-        'translations' => TranslationService::getForPage('bioethics_npa', app()->getLocale()),
     ]);
 })->name('bioethics.npa');
 
 Route::get('/bioethics/documents', function () {
     return Inertia::render('Direction/Bioethics/Documents', [
         'locale' => app()->getLocale(),
-        'translations' => TranslationService::getForPage('bioethics_documents', app()->getLocale()),
     ]);
 })->name('bioethics.documents');
 

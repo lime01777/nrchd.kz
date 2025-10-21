@@ -70,8 +70,8 @@ export default function AboutCentre() {
             bgColor="bg-fuchsia-100"
           />
           <FilesAccord 
-            folder="О центре/Фин отчётность" 
-            title="Финансовая отчетность" 
+            folder="О центре/Политика" 
+            title="Антикоррупционная политика" 
             bgColor="bg-fuchsia-100"
             defaultOpen={true}
           />

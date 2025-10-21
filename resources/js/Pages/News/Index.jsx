@@ -96,9 +96,28 @@ export default function NewsIndex() {
             {news.data.map((item) => {
               // Определяем изображения для отображения
               const displayImages = [];
-              if (item.images && Array.isArray(item.images) && item.images.length > 0) {
-                displayImages.push(...item.images);
-              } else if (item.image) {
+              
+              // Обрабатываем разные форматы данных
+              if (item.images) {
+                try {
+                  // Если это JSON строка
+                  if (typeof item.images === 'string') {
+                    const parsed = JSON.parse(item.images);
+                    if (Array.isArray(parsed)) {
+                      displayImages.push(...parsed);
+                    }
+                  } 
+                  // Если это уже массив
+                  else if (Array.isArray(item.images)) {
+                    displayImages.push(...item.images);
+                  }
+                } catch (e) {
+                  console.error('Error parsing images:', e, item.images);
+                }
+              }
+              
+              // Добавляем одиночное изображение если есть
+              if (item.image) {
                 displayImages.push(item.image);
               }
               
@@ -107,7 +126,17 @@ export default function NewsIndex() {
                 if (typeof img === 'string') {
                   return !isValidVideoUrl(img);
                 }
-                return true; // Если это объект, считаем изображением
+                // Если это объект, проверяем тип
+                if (typeof img === 'object' && img.type) {
+                  return img.type === 'image';
+                }
+                return true; // Если это объект без типа, считаем изображением
+              }).map(img => {
+                // Преобразуем объекты в строки для NewsImageSlider
+                if (typeof img === 'object' && img.path) {
+                  return img.path;
+                }
+                return img;
               });
 
               return (
@@ -165,8 +194,13 @@ export default function NewsIndex() {
                       : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   }`}
                   preserveScroll
-                  dangerouslySetInnerHTML={{ __html: link.label }}
-                />
+                >
+                  {link.label === '&laquo; Previous' ? '‹' : 
+                   link.label === 'Next &raquo;' ? '›' :
+                   link.label === 'pagination.previous' ? '‹' :
+                   link.label === 'pagination.next' ? '›' :
+                   link.label}
+                </Link>
               ))}
             </nav>
           </div>

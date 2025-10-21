@@ -3,7 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\TranslationService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class CheckInertiaProps extends Command
 {
@@ -20,18 +21,29 @@ class CheckInertiaProps extends Command
         // Устанавливаем локаль
         app()->setLocale('kz');
         
-        // Получаем переводы
-        $translations = TranslationService::getForPage('/', 'kz');
-        
-        $this->info('📊 TranslationService results:');
-        $this->info('Total translations: ' . count($translations));
-        
-        // Показываем несколько примеров
-        $this->info('Sample translations:');
-        $sampleKeys = ['home', 'about', 'news', 'directions', 'services'];
-        foreach ($sampleKeys as $key) {
-            $value = $translations[$key] ?? 'NOT FOUND';
-            $this->info("  {$key}: {$value}");
+        // Проверяем переводы из базы данных
+        if (Schema::hasTable('stored_translations')) {
+            $translationsCount = DB::table('stored_translations')
+                ->where('target_language', 'kz')
+                ->count();
+            
+            $this->info('📊 Translation system status:');
+            $this->info("Total translations in database for 'kz': {$translationsCount}");
+            
+            // Получаем несколько примеров
+            $samples = DB::table('stored_translations')
+                ->where('target_language', 'kz')
+                ->limit(5)
+                ->get(['original_text', 'translated_text']);
+            
+            $this->info('Sample translations:');
+            foreach ($samples as $sample) {
+                $original = mb_substr($sample->original_text, 0, 30);
+                $translated = mb_substr($sample->translated_text, 0, 30);
+                $this->info("  {$original} => {$translated}");
+            }
+        } else {
+            $this->error('❌ Table stored_translations not found');
         }
         
         // Проверяем HandleInertiaRequests

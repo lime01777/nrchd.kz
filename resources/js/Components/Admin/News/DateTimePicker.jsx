@@ -6,6 +6,7 @@ export default function DateTimePicker({
   value, 
   onChange, 
   minDate, 
+  allowPast = false,
   error, 
   className = '' 
 }) {
@@ -27,6 +28,7 @@ export default function DateTimePicker({
 
   // Получаем минимальную дату в правильном формате
   const getMinDate = () => {
+    if (allowPast) return ''; // Если разрешены даты в прошлом, не устанавливаем min
     if (!minDate) return '';
     return formatDateForInput(minDate);
   };

@@ -9,34 +9,43 @@ export default function ModernMediaUploader({
 }) {
   const [uploading, setUploading] = useState(false);
 
-  const handleFileSelect = useCallback((event) => {
+  const handleFileSelect = useCallback(async (event) => {
     const files = Array.from(event.target.files);
     if (files.length === 0) return;
 
     setUploading(true);
     
-    // Имитируем загрузку файлов
-    const newMedia = files.map((file, index) => ({
-      id: `temp-${Date.now()}-${index}`,
-      path: URL.createObjectURL(file),
-      type: file.type.startsWith('video/') ? 'video' : 'image',
-      name: file.name,
-      size: file.size,
-      isUploading: true
-    }));
+    try {
+      // Создаем FormData для загрузки файлов
+      const formData = new FormData();
+      files.forEach((file, index) => {
+        formData.append(`media_files[${index}]`, file);
+      });
 
-    // Имитируем завершение загрузки
-    setTimeout(() => {
-      const processedMedia = newMedia.map(item => ({
-        ...item,
-        isUploading: false
-      }));
-      
-      if (onMediaUploaded) {
-        onMediaUploaded(processedMedia);
+      // Загружаем файлы на сервер
+      const response = await fetch('/admin/news/upload-media', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Ошибка загрузки файлов');
       }
+
+      const result = await response.json();
+      
+      if (onMediaUploaded && result.success && result.media) {
+        onMediaUploaded(result.media);
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки медиа:', error);
+      alert('Ошибка загрузки файлов: ' + error.message);
+    } finally {
       setUploading(false);
-    }, 2000);
+    }
   }, [onMediaUploaded]);
 
   const handleRemove = (mediaId) => {
@@ -77,8 +86,8 @@ export default function ModernMediaUploader({
         <div className="mt-4">
           <h4 className="text-sm font-medium text-gray-700 mb-3">Загруженные файлы:</h4>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-            {existingMedia.map((media) => (
-              <div key={media.id} className="relative group">
+            {existingMedia.map((media, index) => (
+              <div key={media.id || `media-${index}`} className="relative group">
                 <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
                   {media.type === 'video' ? (
                     <video

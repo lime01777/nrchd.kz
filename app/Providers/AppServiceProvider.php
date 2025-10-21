@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Services\Translation\DeepLClient;
-use App\Services\Translation\TranslationService;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,13 +12,32 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(DeepLClient::class, function ($app) {
-            $cfg = $app['config']->get('services.deepl');
-            return new DeepLClient($cfg['key'] ?? '', $cfg['base'] ?? 'https://api-free.deepl.com');
+        // Регистрируем провайдер переводов
+        $this->app->singleton(\App\Contracts\TranslateProvider::class, function ($app) {
+            $provider = config('i18n.provider', 'null');
+            
+            return match($provider) {
+                'google' => new \App\Services\Providers\GoogleTranslateProvider(
+                    config('i18n.google.api_key')
+                ),
+                default => new \App\Services\Providers\NullTranslateProvider(),
+            };
         });
-        
-        $this->app->singleton(TranslationService::class, function ($app) {
-            return new TranslationService($app->make(DeepLClient::class), config('app.locale','kk'));
+
+        // Регистрируем TextProtector
+        $this->app->singleton(\App\Services\TextProtector::class, function ($app) {
+            return new \App\Services\TextProtector();
+        });
+
+        // Регистрируем основной сервис Translator
+        $this->app->singleton(\App\Services\Translator::class, function ($app) {
+            return new \App\Services\Translator(
+                $app->make(\App\Contracts\TranslateProvider::class),
+                $app->make(\App\Services\TextProtector::class),
+                config('i18n.cache_ttl', 86400),
+                config('i18n.default_locale', 'ru'),
+                config('i18n.locales', ['ru', 'kk', 'en'])
+            );
         });
     }
 
