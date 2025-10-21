@@ -20,9 +20,9 @@ class MediaService
     const ALLOWED_VIDEO_TYPES = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'ogg'];
     
     /**
-     * Максимальный размер файла (50MB)
+     * Максимальный размер файла (100MB)
      */
-    const MAX_FILE_SIZE = 51200; // KB
+    const MAX_FILE_SIZE = 102400; // KB
     
     /**
      * Загрузить медиа файл
@@ -30,6 +30,15 @@ class MediaService
     public function uploadMedia(UploadedFile $file, string $directory = 'news'): array
     {
         try {
+            // Отладочная информация
+            Log::info('Загрузка медиа файла', [
+                'name' => $file->getClientOriginalName(),
+                'extension' => $file->getClientOriginalExtension(),
+                'mime_type' => $file->getMimeType(),
+                'size' => $file->getSize(),
+                'max_size' => self::MAX_FILE_SIZE * 1024
+            ]);
+            
             // Валидация файла
             $this->validateFile($file);
             
@@ -193,7 +202,9 @@ class MediaService
         $allowedMimeTypes = [
             'image/jpeg', 'image/png', 'image/gif', 'image/webp',
             'video/mp4', 'video/avi', 'video/quicktime', 'video/x-msvideo',
-            'video/x-ms-wmv', 'video/x-flv', 'video/webm', 'video/ogg'
+            'video/x-ms-wmv', 'video/x-flv', 'video/webm', 'video/ogg',
+            'video/mp4v-es', 'video/x-ms-wm', 'video/x-ms-wmx', 'video/x-ms-wvx',
+            'video/x-flv', 'video/x-m4v', 'video/3gpp', 'video/x-matroska'
         ];
         
         if (!in_array($mimeType, $allowedMimeTypes)) {

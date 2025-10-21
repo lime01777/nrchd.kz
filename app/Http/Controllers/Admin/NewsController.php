@@ -212,23 +212,8 @@ class NewsController extends Controller
     {
         $news = News::findOrFail($id);
 
-        // Валидация
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string|min:10',
-            'category' => 'required|array|min:1',
-            'category.*' => 'string',
-            'status' => 'required|string|in:Черновик,Опубликовано,Запланировано',
-            'publish_date' => 'nullable|date',
-            'media' => 'nullable|array|max:15',
-            'media.*' => 'nullable|array',
-            'media.*.path' => 'nullable|string',
-            'media.*.type' => 'nullable|string|in:image,video',
-            'media.*.name' => 'nullable|string',
-            'media.*.source' => 'nullable|string|in:existing,library,file',
-            'media_files' => 'nullable|array|max:15',
-            'media_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,mp4,avi,mov,wmv,flv,webm,ogg|max:51200',
-        ]);
+        // Используем NewsRequest для валидации
+        $validated = (new \App\Http\Requests\NewsRequest())->validate($request->all());
 
         try {
             // Генерируем новый slug если изменился заголовок
@@ -246,7 +231,7 @@ class NewsController extends Controller
             $news->slug = $slug;
             $news->content = $validated['content'];
             $news->category = $validated['category'];
-            $news->status = $validated['status'];
+            $news->status = $this->mapStatus($validated['status']);
             $news->publish_date = $validated['publish_date'] ?? null;
             $news->images = $mediaPaths; // Сохраняем в поле images для обратной совместимости
             $news->save();

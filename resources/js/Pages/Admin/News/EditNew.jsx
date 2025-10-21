@@ -22,7 +22,11 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
     content: news.content || '',
     category: news.category || [],
     tags: news.tags || [],
-    status: news.status === 'Опубликовано' ? 'published' : news.status === 'Черновик' ? 'draft' : news.status === 'Запланировано' ? 'scheduled' : 'draft',
+    status: news.status === 'Опубликовано' ? 'published' : 
+            news.status === 'Черновик' ? 'draft' : 
+            news.status === 'Запланировано' ? 'scheduled' : 
+            news.status === 'Архив' ? 'archived' :
+            news.status || 'draft',
     publish_date: news.publish_date || '',
     media: news.images || [],
   });
@@ -33,7 +37,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
     
     const formData = {
       ...data,
-      media: media
+      images: media
     };
 
     put(route('admin.news.update', news.id), {

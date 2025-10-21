@@ -205,26 +205,30 @@ class I18nController extends Controller
     {
         try {
             $request->validate([
-                'translations' => 'required|array',
-                'locale' => 'required|string|in:ru,kk,en',
-                'scope' => 'required|string',
+                'page_url' => 'required|string',
+                'language' => 'required|string|in:ru,kk,en',
+                'save_all' => 'boolean',
             ]);
 
-            $translations = $request->input('translations');
-            $locale = $request->input('locale');
-            $scope = $request->input('scope');
+            $pageUrl = $request->input('page_url');
+            $language = $request->input('language');
+            $saveAll = $request->input('save_all', false);
 
-            // TODO: Реализовать обновление переводов
-            // Пока просто логируем полученные данные
-            Log::info('Page translations update request', [
-                'scope' => $scope,
-                'locale' => $locale,
-                'translations_count' => count($translations)
+            // Получаем переводы для страницы
+            $scope = 'ui'; // Используем общий scope для UI переводов
+            $dictionary = $this->translator->getDictionary($scope, $language);
+
+            Log::info('Page translations request', [
+                'page_url' => $pageUrl,
+                'language' => $language,
+                'save_all' => $saveAll,
+                'translations_count' => count($dictionary)
             ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Translations updated successfully',
+                'translations' => $dictionary,
+                'message' => 'Page translations retrieved successfully',
             ]);
 
         } catch (\Exception $e) {
@@ -234,7 +238,7 @@ class I18nController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update translations',
+                'message' => 'Failed to get page translations',
             ], 500);
         }
     }
