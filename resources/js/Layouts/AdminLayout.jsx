@@ -123,6 +123,16 @@ export default function AdminLayout({ children, title }) {
             Заявки обратной связи
           </Link>
           <Link 
+            href={route('admin.youth-health-centers.index')} 
+            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${route().current('admin.youth-health-centers.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
+          >
+            <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            МЦЗ (Карта)
+          </Link>
+          <Link 
             href={route('admin.settings')} 
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${route().current('admin.settings') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
           >

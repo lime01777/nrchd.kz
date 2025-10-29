@@ -41,3 +41,9 @@ Route::get('/clinical-protocols', [FileController::class, 'getClinicalProtocols'
 
 // Маршруты для контактных форм
 Route::post('/contact/tech-competence', [\App\Http\Controllers\ContactController::class, 'sendTechCompetenceForm']);
+
+// API маршруты для молодежных центров здоровья (МЦЗ)
+Route::prefix('youth-health-centers')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Api\YouthHealthCenterApiController::class, 'index']);
+    Route::get('/regions', [\App\Http\Controllers\Api\YouthHealthCenterApiController::class, 'regions']);
+});

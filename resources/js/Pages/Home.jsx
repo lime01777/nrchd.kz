@@ -60,11 +60,11 @@ export default function Home() {
         },
         {
             id: 2,
-            title: "Конференция по медицинскому туризму",
-            subtitle: "Присоединяйтесь к международной конференции с ведущими экспертами",
-            buttonText: "Узнать больше",
-            buttonLink: route('medical.tourism.conference'),
-            image: "/img/HeroImg/medical-tourism.png"
+            title: "Клинические протоколы",
+            subtitle: "Национальные клинические протоколы и руководства по диагностике и лечению",
+            buttonText: "Просмотр",
+            buttonLink: route('clinical.protocols'),
+            image: "/img/HeroImg/clinicalprotocols.png"
         },
         {
             id: 3,

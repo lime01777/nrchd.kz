@@ -44,7 +44,7 @@ export default function Header() {
     const allDirectionsSubLinks = [
         { title: t('directionsSubLinks.medical_education', "Медицинское образование"), url: "medical.education"},
         { title: t('directionsSubLinks.human_resources', "Кадровые ресурсы здравоохранения"), url: "human.resources"},
-        { title: t('directionsSubLinks.electronic_health', "Электронное здравоохранение"), url: "electronic.health"},
+        { title: t('directionsSubLinks.electronic_health', "Цифровое здравоохранение"), url: "electronic.health"},
         { title: t('directionsSubLinks.medical_accreditation', "Аккредитация"), url: "medical.accreditation"},
         { title: t('directionsSubLinks.health_rate', "Оценка технологий здравоохранения"), url: "health.rate"},
         { title: t('directionsSubLinks.clinical_protocols', "Клинические протоколы"), url: "clinical.protocols"},

@@ -29,8 +29,8 @@ export default function Standards() {
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6">
             <SimpleFileDisplay 
-              folder="Электронное здравоохранение/Папка — Стандарты" 
-              title="Технический комитет по стандартизации № 83 Электронное здравоохранение" 
+              folder="Цифровое здравоохранение/Папка — Стандарты" 
+              title="Технический комитет по стандартизации № 83 Цифровое здравоохранение" 
               bgColor="bg-white"
               onVideoClick={openVideoModal}
             />
@@ -54,7 +54,7 @@ Standards.layout = page => <LayoutFolderChlank
   bgColor="bg-white"
   h1="Стандарты" 
   parentRoute={route('electronic.health')} 
-  parentName="Электронное здравоохранение"
+  parentName="Цифровое здравоохранение"
   heroBgColor="bg-fuchsia-100"
   buttonBgColor="bg-fuchsia-100"
   buttonHoverBgColor="hover:bg-fuchsia-200"

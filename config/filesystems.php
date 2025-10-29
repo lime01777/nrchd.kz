@@ -45,6 +45,15 @@ return [
             'throw' => false,
         ],
 
+        // Диск для хранения файлов прямо в папке public (без symlink)
+        'public_direct' => [
+            'driver' => 'local',
+            'root' => public_path(),
+            'url' => env('APP_URL'),
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

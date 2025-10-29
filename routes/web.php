@@ -765,6 +765,11 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::post('/clinics/{clinic}/images', [\App\Http\Controllers\Admin\ClinicController::class, 'uploadImages'])->name('admin.clinics.upload-images');
     Route::delete('/clinics/{clinic}/images', [\App\Http\Controllers\Admin\ClinicController::class, 'deleteImage'])->name('admin.clinics.delete-image');
     Route::put('/clinics/{clinic}/gallery/reorder', [\App\Http\Controllers\Admin\ClinicController::class, 'reorderGallery'])->name('admin.clinics.reorder-gallery');
+    
+    // Управление молодежными центрами здоровья (МЦЗ)
+    Route::resource('youth-health-centers', \App\Http\Controllers\Admin\YouthHealthCenterController::class, ['names' => 'admin.youth-health-centers']);
+    Route::post('/youth-health-centers/bulk-destroy', [\App\Http\Controllers\Admin\YouthHealthCenterController::class, 'bulkDestroy'])->name('admin.youth-health-centers.bulk-destroy');
+    Route::post('/youth-health-centers/{youthHealthCenter}/toggle-active', [\App\Http\Controllers\Admin\YouthHealthCenterController::class, 'toggleActive'])->name('admin.youth-health-centers.toggle-active');
 });
 
 require __DIR__.'/auth.php';

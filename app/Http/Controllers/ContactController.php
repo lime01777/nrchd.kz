@@ -35,12 +35,13 @@ class ContactController extends Controller
         Log::info('Валидация прошла успешно');
 
         try {
-            // Сохраняем файл, если он есть
+            // Сохраняем файл прямо в папку public (без symlink)
             $filePath = null;
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $filePath = $file->storeAs('tech-competence-files', $fileName, 'public');
+                $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
+                // Сохраняем в public/tech-competence-files/
+                $filePath = $file->storeAs('tech-competence-files', $fileName, 'public_direct');
                 Log::info('Файл сохранен:', ['path' => $filePath]);
             }
 

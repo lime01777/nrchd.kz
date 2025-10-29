@@ -71,7 +71,7 @@ export default function TestLanguageSwitch() {
                                 <div className="bg-purple-50 p-4 rounded-lg">
                                     <p><strong>Медицинское образование:</strong> {t('directionsSubLinks.medical_education', 'НЕ НАЙДЕНО')}</p>
                                     <p><strong>Кадровые ресурсы:</strong> {t('directionsSubLinks.human_resources', 'НЕ НАЙДЕНО')}</p>
-                                    <p><strong>Электронное здравоохранение:</strong> {t('directionsSubLinks.electronic_health', 'НЕ НАЙДЕНО')}</p>
+                                    <p><strong>Цифровое здравоохранение:</strong> {t('directionsSubLinks.electronic_health', 'НЕ НАЙДЕНО')}</p>
                                     <p><strong>Аккредитация:</strong> {t('directionsSubLinks.medical_accreditation', 'НЕ НАЙДЕНО')}</p>
                                     <p><strong>Оценка технологий:</strong> {t('directionsSubLinks.health_rate', 'НЕ НАЙДЕНО')}</p>
                                 </div>

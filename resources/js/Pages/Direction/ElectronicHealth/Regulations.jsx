@@ -29,7 +29,7 @@ export default function Regulations() {
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6">
             <SimpleFileDisplay 
-              folder="Электронное здравоохранение/Нормативно-правовые акты" 
+              folder="Цифровое здравоохранение/Нормативно-правовые акты" 
               title="" 
               bgColor="bg-white"
               onVideoClick={openVideoModal}
@@ -54,7 +54,7 @@ Regulations.layout = page => <LayoutFolderChlank
   bgColor="bg-white"
   h1="Нормативно-правовые акты" 
   parentRoute={route('electronic.health')} 
-  parentName="Электронное здравоохранение"
+  parentName="Цифровое здравоохранение"
   heroBgColor="bg-fuchsia-100"
   buttonBgColor="bg-fuchsia-100"
   buttonHoverBgColor="hover:bg-fuchsia-200"

@@ -1,0 +1,283 @@
+═══════════════════════════════════════════════════════════════
+НАСТРОЙКА ХРАНЕНИЯ ФАЙЛОВ В ПАПКЕ PUBLIC
+═══════════════════════════════════════════════════════════════
+
+ОБНОВЛЕНО: Файлы теперь сохраняются напрямую в папку public,
+без использования символических ссылок storage.
+
+═══════════════════════════════════════════════════════════════
+ЧТО ИЗМЕНЕНО
+═══════════════════════════════════════════════════════════════
+
+НОВЫЙ ПУТЬ ХРАНЕНИЯ:
+-------------------
+✅ Было:       storage/app/public/contact_attachments/ (требуется symlink)
+✅ Стало:      public/contact_attachments/ (прямой доступ)
+
+ПРЕИМУЩЕСТВА:
+-------------------
+✅ Не требуется символическая ссылка
+✅ Работает на любом хостинге (включая Windows)
+✅ Не нужно настраивать права доступа для symlink
+✅ Прямой доступ к файлам через URL
+✅ Нет ошибки 403
+
+═══════════════════════════════════════════════════════════════
+ГДЕ ХРАНЯТСЯ ФАЙЛЫ
+═══════════════════════════════════════════════════════════════
+
+1. Вложения из форм обратной связи:
+   Путь:  public/contact_attachments/
+   URL:   /contact_attachments/файл.pdf
+
+2. Резюме из вакансий:
+   Путь:  public/resumes/
+   URL:   /resumes/файл.pdf
+
+3. Файлы из формы ОЦТК:
+   Путь:  public/tech-competence-files/
+   URL:   /tech-competence-files/файл.pdf
+
+4. Изображения новостей (не изменено):
+   Путь:  storage/app/public/news/
+   URL:   /storage/news/файл.jpg
+
+5. Документы (не изменено):
+   Путь:  storage/app/public/documents/
+   URL:   /storage/documents/файл.pdf
+
+═══════════════════════════════════════════════════════════════
+НАСТРОЙКА НА ХОСТИНГЕ
+═══════════════════════════════════════════════════════════════
+
+ШАГ 1: Подключитесь к хостингу по SSH
+---------------------------------------
+ssh username@nrchd.kz
+
+ШАГ 2: Перейдите в корень проекта
+---------------------------------------
+cd /home/username/domains/nrchd.kz/public_html
+
+ШАГ 3: Создайте папки для хранения файлов
+---------------------------------------
+mkdir -p public/contact_attachments
+mkdir -p public/resumes
+mkdir -p public/tech-competence-files
+
+ШАГ 4: Установите правильные права доступа
+---------------------------------------
+chmod 755 public/contact_attachments
+chmod 755 public/resumes
+chmod 755 public/tech-competence-files
+
+# Для shared hosting может потребоваться:
+chmod 775 public/contact_attachments
+chmod 775 public/resumes
+chmod 775 public/tech-competence-files
+
+ШАГ 5: Создайте .htaccess в каждой папке (опционально)
+---------------------------------------
+Создайте файл public/contact_attachments/.htaccess:
+
+Options -Indexes
+<FilesMatch "\.(pdf|doc|docx|jpg|jpeg|png|txt)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Для Apache 2.4+
+<IfModule mod_authz_core.c>
+    <FilesMatch "\.(pdf|doc|docx|jpg|jpeg|png|txt)$">
+        Require all granted
+    </FilesMatch>
+</IfModule>
+
+Скопируйте этот файл в другие папки:
+cp public/contact_attachments/.htaccess public/resumes/.htaccess
+cp public/contact_attachments/.htaccess public/tech-competence-files/.htaccess
+
+ШАГ 6: Проверьте владельца файлов
+---------------------------------------
+# Установите владельца (замените username на ваше имя пользователя)
+chown -R username:username public/contact_attachments
+chown -R username:username public/resumes
+chown -R username:username public/tech-competence-files
+
+═══════════════════════════════════════════════════════════════
+МИГРАЦИЯ СУЩЕСТВУЮЩИХ ФАЙЛОВ (если есть)
+═══════════════════════════════════════════════════════════════
+
+Если у вас уже есть файлы в storage/app/public/, перенесите их:
+
+ШАГ 1: Проверьте существующие файлы
+---------------------------------------
+ls -la storage/app/public/contact_attachments/
+ls -la storage/app/public/resumes/
+ls -la storage/app/public/tech-competence-files/
+
+ШАГ 2: Скопируйте файлы в public
+---------------------------------------
+# Если папки существуют и в них есть файлы:
+cp -r storage/app/public/contact_attachments/* public/contact_attachments/ 2>/dev/null || true
+cp -r storage/app/public/resumes/* public/resumes/ 2>/dev/null || true
+cp -r storage/app/public/tech-competence-files/* public/tech-competence-files/ 2>/dev/null || true
+
+ШАГ 3: Проверьте копирование
+---------------------------------------
+ls -la public/contact_attachments/
+ls -la public/resumes/
+ls -la public/tech-competence-files/
+
+ШАГ 4: Обновите права доступа для скопированных файлов
+---------------------------------------
+chmod -R 644 public/contact_attachments/*
+chmod -R 644 public/resumes/*
+chmod -R 644 public/tech-competence-files/*
+
+═══════════════════════════════════════════════════════════════
+ПРОВЕРКА ПОСЛЕ НАСТРОЙКИ
+═══════════════════════════════════════════════════════════════
+
+1. Откройте админку: https://nrchd.kz/admin/contact-applications
+
+2. Откройте любую заявку с файлом
+
+3. Нажмите "Скачать вложение"
+
+4. Файл должен открыться/скачаться без ошибок
+
+5. Проверьте доступность через curl:
+   curl -I https://nrchd.kz/contact_attachments/файл.pdf
+   
+   Должен вернуть: HTTP/1.1 200 OK
+
+═══════════════════════════════════════════════════════════════
+ТЕХНИЧЕСКИЕ ДЕТАЛИ
+═══════════════════════════════════════════════════════════════
+
+КОНФИГУРАЦИЯ В LARAVEL:
+-------------------
+Файл: config/filesystems.php
+
+Добавлен новый диск 'public_direct':
+'public_direct' => [
+    'driver' => 'local',
+    'root' => public_path(),
+    'url' => env('APP_URL'),
+    'visibility' => 'public',
+    'throw' => false,
+],
+
+ИЗМЕНЕНИЯ В КОНТРОЛЛЕРАХ:
+-------------------
+1. ContactApplicationController.php
+   Было:  $file->storeAs('...', $fileName, 'public');
+   Стало: $file->storeAs('...', $fileName, 'public_direct');
+
+2. VacancyApplicationController.php
+   Было:  $file->storeAs('resumes', $fileName, 'public');
+   Стало: $file->storeAs('resumes', $fileName, 'public_direct');
+
+3. ContactController.php (ОЦТК)
+   Было:  $file->storeAs('tech-competence-files', $fileName, 'public');
+   Стало: $file->storeAs('tech-competence-files', $fileName, 'public_direct');
+
+ФОРМИРОВАНИЕ URL:
+-------------------
+Было:  Storage::url($path)              // Вернет /storage/contact_attachments/file.pdf
+Стало: '/' . $path                       // Вернет /contact_attachments/file.pdf
+
+СТРУКТУРА ПАПОК:
+-------------------
+public/
+├── contact_attachments/          ← Новое расположение
+│   ├── .htaccess
+│   └── файлы...
+├── resumes/                       ← Новое расположение
+│   ├── .htaccess
+│   └── файлы...
+├── tech-competence-files/         ← Новое расположение
+│   ├── .htaccess
+│   └── файлы...
+└── storage/                       ← Symlink (только для news, documents, videos)
+    ├── news/
+    ├── documents/
+    └── videos/
+
+═══════════════════════════════════════════════════════════════
+БЕЗОПАСНОСТЬ
+═══════════════════════════════════════════════════════════════
+
+РЕКОМЕНДАЦИИ:
+-------------------
+1. Убедитесь, что .htaccess запрещает листинг директорий (Options -Indexes)
+2. Разрешите доступ только к определенным типам файлов
+3. Установите правильные права: 755 для папок, 644 для файлов
+4. Регулярно проверяйте логи доступа к файлам
+5. Используйте уникальные имена файлов (timestamp + оригинальное имя)
+
+РАЗРЕШЕННЫЕ ТИПЫ ФАЙЛОВ:
+-------------------
+- Формы обратной связи: pdf, doc, docx, jpg, jpeg, png (до 10MB)
+- Резюме: pdf, doc, docx (до 5MB)
+- ОЦТК: pdf, doc, docx, ppt, pptx (до 10MB)
+
+═══════════════════════════════════════════════════════════════
+КОМАНДЫ ДЛЯ ОТЛАДКИ
+═══════════════════════════════════════════════════════════════
+
+# Проверить существование папок
+ls -la public/ | grep -E "(contact_attachments|resumes|tech-competence-files)"
+
+# Проверить права доступа
+stat public/contact_attachments/
+
+# Проверить количество файлов
+find public/contact_attachments -type f | wc -l
+find public/resumes -type f | wc -l
+find public/tech-competence-files -type f | wc -l
+
+# Проверить доступность через web
+curl -I https://nrchd.kz/contact_attachments/файл.pdf
+
+# Посмотреть логи
+tail -f storage/logs/laravel.log
+tail -f /var/log/apache2/access.log
+
+# Найти большие файлы
+find public/contact_attachments -type f -size +10M
+
+═══════════════════════════════════════════════════════════════
+ЧАСТО ЗАДАВАЕМЫЕ ВОПРОСЫ
+═══════════════════════════════════════════════════════════════
+
+Q: Почему мы отказались от storage/app/public?
+A: Чтобы избежать проблем с символическими ссылками на хостинге.
+   Прямое хранение в public проще и надежнее.
+
+Q: Безопасно ли хранить файлы в public?
+A: Да, если:
+   - .htaccess настроен правильно
+   - Разрешены только определенные типы файлов
+   - Используются уникальные имена файлов
+
+Q: Что делать со старыми файлами в storage/app/public?
+A: Скопируйте их в новое расположение (см. раздел "Миграция")
+
+Q: Нужно ли удалять папку public/storage?
+A: Нет! Она нужна для изображений новостей и документов.
+
+Q: Работает ли это на Windows хостинге?
+A: Да! В отличие от symlink, это работает везде.
+
+═══════════════════════════════════════════════════════════════
+КОНТАКТЫ ПОДДЕРЖКИ
+═══════════════════════════════════════════════════════════════
+
+Если после выполнения всех шагов проблема сохраняется:
+1. Проверьте логи: storage/logs/laravel.log
+2. Проверьте права доступа к папкам
+3. Свяжитесь с технической поддержкой хостинга
+
+═══════════════════════════════════════════════════════════════
+

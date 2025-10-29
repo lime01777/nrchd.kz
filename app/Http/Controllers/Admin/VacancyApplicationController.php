@@ -108,7 +108,8 @@ class VacancyApplicationController extends Controller
                 'phone' => $application->phone,
                 'cover_letter' => $application->cover_letter,
                 'resume_path' => $application->resume_path,
-                'resume_url' => Storage::url($application->resume_path),
+                // Файлы теперь хранятся прямо в public, поэтому URL = /путь_к_файлу
+                'resume_url' => '/' . $application->resume_path,
                 'status' => $application->status,
                 'status_label' => $application->status_label,
                 'status_color' => $application->status_color,
@@ -168,9 +169,9 @@ class VacancyApplicationController extends Controller
     {
         $application = VacancyApplication::findOrFail($id);
         
-        // Удаляем файл резюме
-        if ($application->resume_path && Storage::disk('public')->exists($application->resume_path)) {
-            Storage::disk('public')->delete($application->resume_path);
+        // Удаляем файл резюме (теперь в public_direct)
+        if ($application->resume_path && Storage::disk('public_direct')->exists($application->resume_path)) {
+            Storage::disk('public_direct')->delete($application->resume_path);
         }
         
         $application->delete();

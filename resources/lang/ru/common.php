@@ -276,7 +276,7 @@ return array (
   'branchesSubLinks.shymkent' => 'г. Шымкент',
   'directionsSubLinks.medical_education' => 'Медицинское образование',
   'directionsSubLinks.human_resources' => 'Кадровые ресурсы здравоохранения',
-  'directionsSubLinks.electronic_health' => 'Электронное здравоохранение',
+  'directionsSubLinks.electronic_health' => 'Цифровое здравоохранение',
   'directionsSubLinks.medical_accreditation' => 'Аккредитация',
   'directionsSubLinks.health_rate' => 'Оценка технологий здравоохранения',
   'directionsSubLinks.clinical_protocols' => 'Клинические протоколы',

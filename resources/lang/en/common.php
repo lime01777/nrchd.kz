@@ -276,7 +276,7 @@ return array (
   'branchesSubLinks.shymkent' => 'Shymkent',
   'directionsSubLinks.medical_education' => 'Medical Education',
   'directionsSubLinks.human_resources' => 'Healthcare Human Resources',
-  'directionsSubLinks.electronic_health' => 'Electronic Healthcare',
+  'directionsSubLinks.electronic_health' => 'Digital Healthcare',
   'directionsSubLinks.medical_accreditation' => 'Accreditation',
   'directionsSubLinks.health_rate' => 'Healthcare Technology Assessment',
   'directionsSubLinks.clinical_protocols' => 'Clinical Protocols',

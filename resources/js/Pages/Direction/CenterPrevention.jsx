@@ -97,7 +97,7 @@ export default function CenterPrevention() {
         <div className="container px-5 pb-16 mx-auto">
           <TabsFileDisplay
             tabs={[
-              { label: 'Законадательство', folder: 'ЗОЖ/Законадательство' },
+              { label: 'Законодательство', folder: 'ЗОЖ/Законадательство' },
               { label: 'Подкасты', folder: 'ЗОЖ/Подкасты' },
               { label: 'Инструменты', folder: 'ЗОЖ/Инструменты' },
             ]}

@@ -36,13 +36,14 @@ class ContactApplicationController extends Controller
         ]);
         
         try {
-            // Сохраняем файл, если он есть
+            // Сохраняем файл прямо в папку public (без symlink)
             $attachmentPath = null;
             if ($request->hasFile('attachment')) {
                 $file = $request->file('attachment');
                 // Генерируем безопасное имя файла
                 $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
-                $attachmentPath = $file->storeAs('contact_attachments', $fileName, 'public');
+                // Сохраняем в public/contact_attachments/
+                $attachmentPath = $file->storeAs('contact_attachments', $fileName, 'public_direct');
             }
             
             // Сохраняем заявку в базу данных

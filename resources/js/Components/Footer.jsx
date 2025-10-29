@@ -23,7 +23,7 @@ const FooterLinks = () => {
         'Направления': [
             { title: "Медицинское образование", url: "medical.education", translate: true },
             { title: "Кадровые ресурсы здравоохранения", url: "human.resources", translate: true },
-            { title: "Электронное здравоохранение", url: "electronic.health", translate: true },
+            { title: "Цифровое здравоохранение", url: "electronic.health", translate: true },
             { title: "Аккредитация", url: "medical.accreditation", translate: true },
             { title: "Оценка технологий здравоохранения", url: "health.rate", translate: true },
             { title: "Клинические протоколы", url: "clinical.protocols", translate: true },

@@ -37,13 +37,14 @@ class VacancyApplicationController extends Controller
         ]);
         
         try {
-            // Сохраняем файл резюме
+            // Сохраняем файл резюме прямо в папку public (без symlink)
             $resumePath = null;
             if ($request->hasFile('resume')) {
                 $file = $request->file('resume');
                 // Генерируем безопасное имя файла
                 $fileName = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
-                $resumePath = $file->storeAs('resumes', $fileName, 'public');
+                // Сохраняем в public/resumes/
+                $resumePath = $file->storeAs('resumes', $fileName, 'public_direct');
             }
             
             // Сохраняем заявку в базу данных

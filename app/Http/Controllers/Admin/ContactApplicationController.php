@@ -129,7 +129,8 @@ class ContactApplicationController extends Controller
                 'organization' => $application->organization,
                 'project_name' => $application->project_name,
                 'attachment_path' => $application->attachment_path,
-                'attachment_url' => $application->attachment_path ? Storage::url($application->attachment_path) : null,
+                // Файлы теперь хранятся прямо в public, поэтому URL = /путь_к_файлу
+                'attachment_url' => $application->attachment_path ? '/' . $application->attachment_path : null,
                 'status' => $application->status,
                 'status_label' => $application->status_label,
                 'status_color' => $application->status_color,
@@ -205,9 +206,9 @@ class ContactApplicationController extends Controller
     {
         $application = ContactApplication::findOrFail($id);
         
-        // Удаляем файл вложения, если он есть
-        if ($application->attachment_path && Storage::disk('public')->exists($application->attachment_path)) {
-            Storage::disk('public')->delete($application->attachment_path);
+        // Удаляем файл вложения, если он есть (теперь в public_direct)
+        if ($application->attachment_path && Storage::disk('public_direct')->exists($application->attachment_path)) {
+            Storage::disk('public_direct')->delete($application->attachment_path);
         }
         
         $application->delete();

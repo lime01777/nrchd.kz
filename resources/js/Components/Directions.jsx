@@ -6,7 +6,7 @@ const Directions = () => {
     const allDirections = [
         { imgname: 1, title: "Медицинское образование", bgcolor: "bg-green-100", bgborder: "border-green-200", url: "medical.education", hasRoute: true, path: "/medical-education"},
         { imgname: 2, title: "Кадровые ресурсы здравоохранения", bgcolor: "bg-rose-100", bgborder: "border-rose-200", url: "human.resources", hasRoute: true, path: "/human-resources"},
-        { imgname: 3, title: "Электронное здравоохранение", bgcolor: "bg-fuchsia-100", bgborder: "border-fuchsia-200", url: "electronic.health", hasRoute: true, path: "/electronic-health"},
+        { imgname: 3, title: "Цифровое здравоохранение", bgcolor: "bg-fuchsia-100", bgborder: "border-fuchsia-200", url: "electronic.health", hasRoute: true, path: "/electronic-health"},
         { imgname: 4, title: "Аккредитация", bgcolor: "bg-yellow-100", bgborder: "border-yellow-200", url: "medical.accreditation", hasRoute: true, path: "/medical-accreditation"},
         { imgname: 5, title: "Оценка технологий здравоохранения", bgcolor: "bg-violet-100", bgborder: "border-violet-200", url: "services.healthTechAssessment", hasRoute: true, path: "/health-tech-assessment"},
         { imgname: 6, title: "Клинические протоколы", bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "clinical.protocols", hasRoute: true, path: "/clinical-protocols"},

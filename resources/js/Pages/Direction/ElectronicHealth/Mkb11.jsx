@@ -29,7 +29,7 @@ export default function Mkb11() {
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6">
             <SimpleFileDisplay 
-              folder="Электронное здравоохранение\Папка — МКБ 11" 
+              folder="Цифровое здравоохранение\Папка — МКБ 11" 
               title="" 
               bgColor="bg-white"
               onVideoClick={openVideoModal}
@@ -54,7 +54,7 @@ Mkb11.layout = page => <LayoutFolderChlank
   bgColor="bg-white"
   h1="МКБ-11" 
   parentRoute={route('electronic.health')} 
-  parentName="Электронное здравоохранение"
+  parentName="Цифровое здравоохранение"
   heroBgColor="bg-fuchsia-100"
   buttonBgColor="bg-fuchsia-100"
   buttonHoverBgColor="hover:bg-fuchsia-200"

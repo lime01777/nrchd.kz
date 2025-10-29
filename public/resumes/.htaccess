@@ -1,0 +1,30 @@
+# Запрещаем листинг директории
+Options -Indexes
+
+# Разрешаем доступ только к резюме
+<FilesMatch "\.(pdf|doc|docx)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Для Apache 2.4+
+<IfModule mod_authz_core.c>
+    <FilesMatch "\.(pdf|doc|docx)$">
+        Require all granted
+    </FilesMatch>
+</IfModule>
+
+# Для старых версий Apache
+<IfModule !mod_authz_core.c>
+    <FilesMatch "\.(pdf|doc|docx)$">
+        Order Allow,Deny
+        Allow from all
+    </FilesMatch>
+</IfModule>
+
+# Запрещаем выполнение PHP
+<FilesMatch "\.php$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+

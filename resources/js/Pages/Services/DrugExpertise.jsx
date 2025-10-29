@@ -158,4 +158,4 @@ export default function DrugExpertise() {
   );
 }
 
-DrugExpertise.layout = (page) => <ServicesPageLayout title={t('services.drug_expertise', 'Экспертиза лекарственных средств')} img="service-drug" bgColor="bg-purple-100">{page}</ServicesPageLayout>;
+DrugExpertise.layout = (page) => <ServicesPageLayout title={t('services.drug_expertise', 'Профессиональная экспертиза лекарственных средств')} img="service-drug" bgColor="bg-purple-100">{page}</ServicesPageLayout>;

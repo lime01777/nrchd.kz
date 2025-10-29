@@ -107,7 +107,6 @@ export default function MedicalTourism() {
         <div className="container px-5 pt-8 mx-auto">
           <div className='flex md:flex-row flex-wrap'>
             <FolderChlank h1="Направления работы" color="bg-green-100" colorsec="bg-green-200" href={route('medical.tourism.directions')} />
-            <FolderChlank h1="Сертификация клиник" color="bg-green-100" colorsec="bg-green-200" href={route('medical.tourism.certification')} />
             <FolderChlank h1="Популярные услуги" color="bg-green-100" colorsec="bg-green-200" href={route('medical.tourism.services')} />
             <FolderChlank h1={t('documents', 'Документы')} color="bg-green-100" colorsec="bg-green-200" href={route('medical.tourism.documents')} />
             <FolderChlank h1={t('contacts', 'Контакты')} color="bg-green-100" colorsec="bg-green-200" href={route('medical.tourism.contacts')} />
