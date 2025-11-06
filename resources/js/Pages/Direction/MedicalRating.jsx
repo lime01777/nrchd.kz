@@ -4,19 +4,14 @@ import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
 import ActualFile from '@/Components/ActualFile';
 import FilesAccord from '@/Components/FilesAccord';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 export default function MedicalRating() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода внутри компонента
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -36,13 +31,12 @@ export default function MedicalRating() {
 
   return (
     <>
-      <Head title={tComponent('directions.medical_rating', 'Рейтинг медицинских организаций')} meta={[{ name: 'description', content: 'Рейтинг медицинских организаций Казахстана: результаты и аналитика.' }]} />
+      <Head title={t('directionsPages.medicalRating.title', 'Рейтинг медицинских организаций')} />
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>
             <p className="tracking-wide leading-relaxed">
-              Рейтинговая оценка медицинских организаций позволяет выявить клиники с наилучшими результатами деятельности, а также даёт инструменты менеджменту клиник сфокусироваться на улучшении качества предоставляемой медицинской помощи.
-              Целью рейтинговой оценки является выстраивание доверительных отношений между социумом и системой здравоохранения.
+              {t('directionsPages.medicalRating.intro')}
             </p>
           </div>
         </div>
@@ -55,8 +49,8 @@ export default function MedicalRating() {
             <FolderChlank 
               color="bg-gray-200"
               colorsec="bg-gray-300"
-              title="Архив рейтингов" 
-              description="Исторические данные рейтингов"
+              title={t('directionsPages.medicalRating.subfolders.archive.title')} 
+              description={t('directionsPages.medicalRating.subfolders.archive.description')}
               href={route('medical.rating.regional')}
             />
           </div>
@@ -65,8 +59,8 @@ export default function MedicalRating() {
 
       {/* Блок с лучшими организациями */}
       <ActualFile 
-        title="Лучшие из лучших в здравоохранении Республики Казахстан"
-        folder={tComponent('directions.medical_rating', 'Рейтинг медицинских организаций')} 
+        title={t('directionsPages.medicalRating.bestOrganizationsTitle')}
+        folder={t('directions.medical_rating', 'Рейтинг медицинских организаций')} 
         bgColor="bg-blue-100"
       />
 
@@ -75,8 +69,8 @@ export default function MedicalRating() {
         <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
             {/* Первый аккордеон */}
             <FilesAccord 
-                folder="Рейтинг медицинских организаций/Набор - Методические руководства по рейтингу медицинских организаций"
-                title="Методические рекомендации"
+                folder={t('directionsPages.medicalRating.methodologicalFolder')}
+                title={t('directionsPages.medicalRating.methodologicalRecommendations')}
                 bgColor="bg-blue-100"
                 defaultOpen={true}
             />

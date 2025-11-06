@@ -3,11 +3,11 @@ import React, {useState, useEffect} from 'react';
 import DirectionsSubLinks from './DirectionsSubLinks';
 import LanguageSwitcher from './LanguageSwitcher';
 import ImprovedLanguageSwitcher from './ImprovedLanguageSwitcher';
-// Импортируем новый быстрый сервис переводов
-import TranslationService from '../Services/SimpleFastTranslationService';
+// Импортируем новый сервис переводов
+import translationService from '../services/TranslationService';
 
 export default function Header() {
-    const { auth, translations } = usePage().props;
+    const { auth } = usePage().props;
     const [isScrolled, setIsScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -15,72 +15,71 @@ export default function Header() {
     
     // Функция для получения перевода
     const t = (key, fallback = '') => {
-        return translations?.[key] || fallback;
+        return translationService.t(key, fallback);
     };
 
     const branchesSubLinks = [
-        { title: t('branchesSubLinks.astana', "г. Астана"), url: "branches.astana" },
-        { title: t('branchesSubLinks.almaty', "г. Алматы"), url: "branches.almaty" },
-        { title: t('branchesSubLinks.abay', "Абайская область"), url: "branches.abay" },
-        { title: t('branchesSubLinks.akmola', "Акмолинская область"), url: "branches.akmola" },
-        { title: t('branchesSubLinks.aktobe', "Актюбинская область"), url: "branches.aktobe" },
-        { title: t('branchesSubLinks.almatyregion', "Алматинская область"), url: "branches.almatyregion" },
-        { title: t('branchesSubLinks.atyrau', "Атырауская область"), url: "branches.atyrau" },
-        { title: t('branchesSubLinks.east', "Восточно-Казахстанская область"), url: "branches.east" },
-        { title: t('branchesSubLinks.zhambyl', "Жамбылская область"), url: "branches.zhambyl" },
-        { title: t('branchesSubLinks.zhetisu', "Жетысуская область"), url: "branches.zhetisu" },
-        { title: t('branchesSubLinks.west', "Западно-Казахстанская область"), url: "branches.west" },
-        { title: t('branchesSubLinks.karaganda', "Карагандинская область"), url: "branches.karaganda" },
-        { title: t('branchesSubLinks.kostanay', "Костанайская область"), url: "branches.kostanay" },
-        { title: t('branchesSubLinks.kyzylorda', "Кызылординская область"), url: "branches.kyzylorda" },
-        { title: t('branchesSubLinks.mangistau', "Мангистауская область"), url: "branches.mangistau" },
-        { title: t('branchesSubLinks.pavlodar', "Павлодарская область"), url: "branches.pavlodar" },
-        { title: t('branchesSubLinks.north', "Северо-Казахстанская область"), url: "branches.north" },
-        { title: t('branchesSubLinks.turkestan', "Туркестанская область"), url: "branches.turkestan" },
-        { title: t('branchesSubLinks.ulytau', "Улытауская область"), url: "branches.ulytau" },
-        { title: t('branchesSubLinks.shymkent', "г. Шымкент"), url: "branches.shymkent" }
+        { title: t('branches.astana'), url: "branches.astana" },
+        { title: t('branches.almaty'), url: "branches.almaty" },
+        { title: t('branches.abay'), url: "branches.abay" },
+        { title: t('branches.akmola'), url: "branches.akmola" },
+        { title: t('branches.aktobe'), url: "branches.aktobe" },
+        { title: t('branches.almatyregion'), url: "branches.almatyregion" },
+        { title: t('branches.atyrau'), url: "branches.atyrau" },
+        { title: t('branches.east'), url: "branches.east" },
+        { title: t('branches.zhambyl'), url: "branches.zhambyl" },
+        { title: t('branches.zhetisu'), url: "branches.zhetisu" },
+        { title: t('branches.west'), url: "branches.west" },
+        { title: t('branches.karaganda'), url: "branches.karaganda" },
+        { title: t('branches.kostanay'), url: "branches.kostanay" },
+        { title: t('branches.kyzylorda'), url: "branches.kyzylorda" },
+        { title: t('branches.mangistau'), url: "branches.mangistau" },
+        { title: t('branches.pavlodar'), url: "branches.pavlodar" },
+        { title: t('branches.north'), url: "branches.north" },
+        { title: t('branches.turkestan'), url: "branches.turkestan" },
+        { title: t('branches.ulytau'), url: "branches.ulytau" },
+        { title: t('branches.shymkent'), url: "branches.shymkent" }
     ];
 
     const allDirectionsSubLinks = [
-        { title: t('directionsSubLinks.medical_education', "Медицинское образование"), url: "medical.education"},
-        { title: t('directionsSubLinks.human_resources', "Кадровые ресурсы здравоохранения"), url: "human.resources"},
-        { title: t('directionsSubLinks.electronic_health', "Цифровое здравоохранение"), url: "electronic.health"},
-        { title: t('directionsSubLinks.medical_accreditation', "Аккредитация"), url: "medical.accreditation"},
-        { title: t('directionsSubLinks.health_rate', "Оценка технологий здравоохранения"), url: "health.rate"},
-        { title: t('directionsSubLinks.clinical_protocols', "Клинические протоколы"), url: "clinical.protocols"},
-        { title: t('directionsSubLinks.strategic_initiatives', "Стратегические инициативы и международное сотрудничество"), url: "strategic.initiatives"},
-        { title: t('directionsSubLinks.medical_rating', "Рейтинг медицинских организаций"), url: "medical.rating"},
-        { title: t('directionsSubLinks.medical_science', "Медицинская наука"), url: "medical.science"},
-        { title: t('directionsSubLinks.bioethics', "Центральная комиссия по биоэтике"), url: "bioethics" },
-        { title: t('directionsSubLinks.drug_policy', "Лекарственная политика"), url: "drug.policy"},
-        { title: t('directionsSubLinks.primary_healthcare', "Первичная медико-санитарная помощь"), url: "primary.healthcare"},
-        { title: t('directionsSubLinks.health_accounts', "Национальные счета здравоохранения"), url: "health.accounts"},
-        { title: t('directionsSubLinks.medical_statistics', "Медицинская статистика"), url: "medical.statistics"},
-        { title: t('directionsSubLinks.direction_tech_competence', "Отраслевой центр технологических компетенций"), url: "direction.tech.competence" },
-        { title: t('directionsSubLinks.center_prevention', "Центр профилактики и укрепления здоровья"), url: "center.prevention" },
-        { title: t('directionsSubLinks.medical_tourism', "Медицинский туризм"), url: "medical.tourism" },
-        { title: "Объединенная комиссия по качеству медицинских услуг", url: "quality.commission" },
+        { title: t('directions.medical_education'), url: "medical.education"},
+        { title: t('directions.human_resources'), url: "human.resources"},
+        { title: t('directions.electronic_health'), url: "electronic.health"},
+        { title: t('directions.medical_accreditation'), url: "medical.accreditation"},
+        { title: t('directions.health_rate'), url: "health.rate"},
+        { title: t('directions.clinical_protocols'), url: "clinical.protocols"},
+        { title: t('directions.strategic_initiatives'), url: "strategic.initiatives"},
+        { title: t('directions.medical_rating'), url: "medical.rating"},
+        { title: t('directions.medical_science'), url: "medical.science"},
+        { title: t('directions.bioethics'), url: "bioethics" },
+        { title: t('directions.drug_policy'), url: "drug.policy"},
+        { title: t('directions.primary_healthcare'), url: "primary.healthcare"},
+        { title: t('directions.health_accounts'), url: "health.accounts"},
+        { title: t('directions.medical_statistics'), url: "medical.statistics"},
+        { title: t('directions.direction_tech_competence'), url: "direction.tech.competence" },
+        { title: t('directions.center_prevention'), url: "center.prevention" },
+        { title: t('directions.medical_tourism'), url: "medical.tourism" },
+        { title: t('directions.quality_commission'), url: "quality.commission" },
     ];
 
     const allAboutCentreSubLinks = [
-        { title: "О Центре", url: "about.centre"},
-        { title: "Салидат Каирбекова", url: "salidat.kairbekova"},
-        { title: "Вакансии", url: "vacancy.jobs"},
-        { title: "Вопросы и ответы", url: "about.faq"},
-        { title: "Контактная информация", url: "about.contacts"},
-        { title: "Партнеры", url: "about.partners"},
-        
+        { title: t('aboutCenter.about'), url: "about.centre"},
+        { title: t('aboutCenter.leader'), url: "salidat.kairbekova"},
+        { title: t('aboutCenter.vacancies'), url: "vacancy.jobs"},
+        { title: t('aboutCenter.faq'), url: "about.faq"},
+        { title: t('aboutCenter.contacts'), url: "about.contacts"},
+        { title: t('aboutCenter.partners'), url: "about.partners"},
     ];
 
     const allServicesSubLinks = [
-        { title: "Организация и проведение обучающих циклов по дополнительному и неформальному образованию", url: "services.training" },
-        { title: "Оценка рекламных материалов", url: "services.adsEvaluation" },
-        { title: "Оценка технологий здравоохранения", url: "services.healthTechAssessment" },
-        { title: "Экспертиза лекарственных средств", url: "services.drugExpertise" },
-        { title: "Экспертиза научно-образовательных программ дополнительного образования", url: "services.educationPrograms" },
-        { title: "Научно-медицинская экспертиза", url: "services.medicalExpertise" },
-        { title: "Аккредитация медицинских организаций и организаций здравоохранения", url: "services.accreditation" },
-        { title: "Постаккредитационный мониторинг", url: "services.postAccreditationMonitoring" },
+        { title: t('services.training'), url: "services.training" },
+        { title: t('services.adsEvaluation'), url: "services.adsEvaluation" },
+        { title: t('services.healthTechAssessment'), url: "services.healthTechAssessment" },
+        { title: t('services.drugExpertise'), url: "services.drugExpertise" },
+        { title: t('services.educationPrograms'), url: "services.educationPrograms" },
+        { title: t('services.medicalExpertise'), url: "services.medicalExpertise" },
+        { title: t('services.accreditation'), url: "services.accreditation" },
+        { title: t('services.postAccreditationMonitoring'), url: "services.postAccreditationMonitoring" },
     ];
 
 
@@ -135,7 +134,7 @@ export default function Header() {
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
-                        Направления
+                        {t('header.directions')}
                     </button>
 
                     {/* Контейнер для двойного меню */}
@@ -172,7 +171,7 @@ export default function Header() {
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
-                        Услуги
+                        {t('header.services')}
                     </button>
 
                     {/* Контейнер для "Услуги" меню */}
@@ -199,7 +198,7 @@ export default function Header() {
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
-                        О центре
+                        {t('header.aboutCenter')}
                     </button>
 
                     {/* Контейнер для "О центре" меню */}
@@ -226,7 +225,7 @@ export default function Header() {
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
-                        Филиалы
+                        {t('header.branches')}
                     </button>
 
                     {/* Контейнер для двойного меню */}
@@ -255,7 +254,7 @@ export default function Header() {
 
                 {/* Пункт меню Новости */}
                 <Link href={route('news')} className="mr-8 hover:text-gray-900 flex items-center cursor-pointer">
-                    Новости
+                    {t('header.news')}
                 </Link>
 
                 {/* Кнопка Медицинский туризм */}
@@ -266,7 +265,7 @@ export default function Header() {
                         animation: 'bgBlink 2s ease-in-out infinite'
                     }}
                 >
-                    Медицинский туризм
+                    {t('header.medicalTourism')}
                 </Link>
 
                 <a className="mr-8 hover:text-gray-900"></a>
@@ -281,7 +280,7 @@ export default function Header() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        Админ
+                        {t('header.admin')}
                     </Link>
                 )}
                 {/* Новый улучшенный переключатель языков */}
@@ -290,7 +289,7 @@ export default function Header() {
                 <button
                     className={`mx-1 inline-flex items-center ${accessibilityMode ? 'bg-blue-600 text-white' : 'bg-transparent text-gray-600'} border border-gray-300 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-xs mt-4 md:mt-0`}
                     onClick={toggleAccessibilityMode}
-                    title="Версия для слабовидящих"
+                    title={t('header.accessibilityMode')}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -302,7 +301,7 @@ export default function Header() {
             {/* Бургер-меню (мобильная версия) */}
             <div className="lg:hidden flex justify-between w-full">
                 <Link href={route('home')} className="flex font-medium items-start text-gray-900 mb-4 md:mb-0">
-                <span className="text-xs uppercase leading-tight" data-translate>национальный научный центр развития <br />здравоохранения им. салидат каирбековой</span>
+                <span className="text-xs uppercase leading-tight" data-translate>{t('header.siteName')}</span>
                 </Link>
                 <button onClick={()=> setMenuOpen(!menuOpen)}
                     className="text-gray-900 focus:outline-none content-center mb-4"
@@ -338,7 +337,7 @@ export default function Header() {
                         <button 
                             onClick={() => setDropdownOpen(dropdownOpen === 'directions' ? null : 'directions')}
                             className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
-                            <span>Направления</span>
+                            <span>{t('header.directions')}</span>
                             <svg xmlns="http://www.w3.org/2000/svg" 
                                 className={`h-5 w-5 transition-transform ${dropdownOpen === 'directions' ? 'rotate-180' : ''}`} 
                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -363,7 +362,7 @@ export default function Header() {
                         <button 
                             onClick={() => setDropdownOpen(dropdownOpen === 'services' ? null : 'services')}
                             className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
-                            <span>Услуги</span>
+                            <span>{t('header.services')}</span>
                             <svg xmlns="http://www.w3.org/2000/svg" 
                                 className={`h-5 w-5 transition-transform ${dropdownOpen === 'services' ? 'rotate-180' : ''}`} 
                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -388,7 +387,7 @@ export default function Header() {
                         <button 
                             onClick={() => setDropdownOpen(dropdownOpen === 'about' ? null : 'about')}
                             className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
-                            <span>О центре</span>
+                            <span>{t('header.aboutCenter')}</span>
                             <svg xmlns="http://www.w3.org/2000/svg" 
                                 className={`h-5 w-5 transition-transform ${dropdownOpen === 'about' ? 'rotate-180' : ''}`} 
                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -413,7 +412,7 @@ export default function Header() {
                         <button 
                             onClick={() => setDropdownOpen(dropdownOpen === 'branches' ? null : 'branches')}
                             className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
-                            <span>Филиалы</span>
+                            <span>{t('header.branches')}</span>
                             <svg xmlns="http://www.w3.org/2000/svg" 
                                 className={`h-5 w-5 transition-transform ${dropdownOpen === 'branches' ? 'rotate-180' : ''}`} 
                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -441,7 +440,7 @@ export default function Header() {
                                 window.location.href = route('news');
                             }}
                             className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
-                            <span>Новости</span>
+                            <span>{t('header.news')}</span>
                         </button>
                     </div>
 
@@ -455,7 +454,7 @@ export default function Header() {
                                 animation: 'bgBlink 2s ease-in-out infinite'
                             }}
                         >
-                            <span>Медицинский туризм</span>
+                            <span>{t('header.medicalTourism')}</span>
                         </Link>
                     </div>
                 </nav>
@@ -469,7 +468,7 @@ export default function Header() {
                         <button 
                             className={`px-2 py-1 rounded text-sm font-medium border ${accessibilityMode ? 'bg-blue-600 text-white border-blue-700' : 'bg-white text-blue-600 border-blue-500'}`}
                             onClick={toggleAccessibilityMode}
-                            title="Версия для слабовидящих"
+                            title={t('header.accessibilityMode')}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -491,7 +490,7 @@ export default function Header() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                            Админ
+                            {t('header.admin')}
                         </Link>
                     )}
                 </div>

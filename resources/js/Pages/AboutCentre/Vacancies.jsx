@@ -1,10 +1,11 @@
 import React from 'react';
 import { Head, Link, usePage } from '@inertiajs/react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
@@ -21,7 +22,7 @@ const VacancyCard = ({ vacancy }) => {
     return (
         <div className="bg-pink-50 rounded-lg p-6 mb-6">
             <div className="text-sm text-gray-600 mb-2">
-                {vacancy.published_at ? formatDate(vacancy.published_at) : 'Черновик'}
+                {vacancy.published_at ? formatDate(vacancy.published_at) : t('vacancies.draft')}
             </div>
             
             <h3 className="text-xl font-medium mb-3">{vacancy.title}</h3>
@@ -36,7 +37,7 @@ const VacancyCard = ({ vacancy }) => {
                 href={route('vacancy.show', vacancy.slug)} 
                 className="inline-flex items-center px-4 py-2 border border-black rounded-md text-sm font-medium text-gray-900 hover:bg-gray-100"
             >
-                Открыть вакансию
+                {t('vacancies.openVacancy')}
                 <svg className="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -46,20 +47,14 @@ const VacancyCard = ({ vacancy }) => {
 };
 
 export default function Vacancies({ vacancies }) {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
 
     return (
         <>
-            <Head title={tComponent('vacancies', 'Вакансии')} />
+            <Head title={t('vacancies.pageTitle')} />
             
             <div className="py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
-                    <h1 className="text-3xl font-bold mb-8">Вакансии</h1>
+                    <h1 className="text-3xl font-bold mb-8">{t('vacancies.pageTitle')}</h1>
                     
                     {vacancies && vacancies.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -69,7 +64,7 @@ export default function Vacancies({ vacancies }) {
                         </div>
                     ) : (
                         <div className="bg-white p-6 rounded-lg shadow-md">
-                            <p className="text-gray-600">На данный момент активных вакансий нет</p>
+                            <p className="text-gray-600">{t('vacancies.noVacancies')}</p>
                         </div>
                     )}
                 </div>
@@ -78,4 +73,4 @@ export default function Vacancies({ vacancies }) {
     );
 }
 
-Vacancies.layout = page => <LayoutDirection img={'humanresources'} h1={t('vacancies', 'Вакансии')} children={page} useVideo={true}/>;
+Vacancies.layout = page => <LayoutDirection img={'humanresources'} h1={t('vacancies.pageTitle')} children={page} useVideo={true}/>;

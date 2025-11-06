@@ -2,8 +2,10 @@ import { Head } from "@inertiajs/react";
 import React from 'react';
 import LayoutFolderChlank from "@/Layouts/LayoutFolderChlank";
 import NormativeDocumentsList from '@/Components/NormativeDocumentsList';
+import translationService from '@/services/TranslationService';
 
 export default function BioethicsNPA() {
+    const t = (key, fallback = '') => translationService.t(key, fallback);
     // Национальное законодательство
     const nationalLegislation = [
         {
@@ -54,21 +56,21 @@ export default function BioethicsNPA() {
 
     return (
         <>
-            <Head title="НПА" meta={[{ name: 'description', content: 'Нормативно-правовые акты в области биоэтики: национальное законодательство и международные документы.' }]} />
+            <Head title={t('directionsPages.bioethicsSubpages.npa.title', 'НПА')} />
             
             <section className="text-gray-600 body-font pb-8">
                 <div className="container px-5 py-12 mx-auto">
                     <div className='flex flex-wrap px-12 text-justify mb-4'>
                         <h2 className="text-2xl font-bold text-gray-800 mb-6 w-full">
-                            НПА
+                            {t('directionsPages.bioethicsSubpages.npa.mainTitle')}
                         </h2>
                         
                         <p className="tracking-wide leading-relaxed mb-4">
-                            Центральная комиссия по биоэтике при Министерстве здравоохранения Республики Казахстан осуществляет свою деятельность в соответствии с национальным законодательством Республики Казахстан и международными стандартами в области биоэтики.
+                            {t('directionsPages.bioethicsSubpages.npa.intro1')}
                         </p>
                         
                         <p className="tracking-wide leading-relaxed mb-4">
-                            В данном разделе представлены основные нормативно-правовые акты, регулирующие деятельность в области биоэтики, включая национальное законодательство Республики Казахстан и международные документы, признанные мировым сообществом.
+                            {t('directionsPages.bioethicsSubpages.npa.intro2')}
                         </p>
                     </div>
                 </div>
@@ -79,12 +81,12 @@ export default function BioethicsNPA() {
                 <div className="container px-5 mx-auto">
                     <div className="px-12">
                         <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">
-                            Национальное законодательство
+                            {t('directionsPages.bioethicsSubpages.npa.nationalTitle')}
                         </h2>
                         
                         <div className="mb-6">
                             <p className="text-gray-700 mb-6 text-center">
-                                Основные нормативно-правовые акты Республики Казахстан, регулирующие деятельность в области биоэтики, проведения биомедицинских исследований и обеспечения безопасности участников исследований.
+                                {t('directionsPages.bioethicsSubpages.npa.nationalIntro')}
                             </p>
                         </div>
 
@@ -101,12 +103,12 @@ export default function BioethicsNPA() {
                 <div className="container px-5 mx-auto">
                     <div className="px-12">
                         <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">
-                            Международные документы по биоэтике
+                            {t('directionsPages.bioethicsSubpages.npa.internationalTitle')}
                         </h2>
                         
                         <div className="mb-6">
                             <p className="text-gray-700 mb-6 text-center">
-                                Международные стандарты и руководящие принципы в области биоэтики, признанные мировым сообществом и применяемые в деятельности Центральной комиссии по биоэтике.
+                                {t('directionsPages.bioethicsSubpages.npa.internationalIntro')}
                             </p>
                         </div>
 
@@ -124,17 +126,17 @@ export default function BioethicsNPA() {
                     <div className="px-12">
                         <div className="bg-white p-8 rounded-lg shadow-md">
                             <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                                Важная информация
+                                {t('directionsPages.bioethicsSubpages.npa.importantInfoTitle')}
                             </h3>
                             <div className="space-y-4 text-gray-700">
                                 <p>
-                                    <strong>Обновление документов:</strong> Нормативно-правовые акты могут обновляться в соответствии с изменениями в законодательстве. Рекомендуется регулярно проверять актуальность документов на официальных источниках.
+                                    <strong>Обновление документов:</strong> {t('directionsPages.bioethicsSubpages.npa.infoUpdate')}
                                 </p>
                                 <p>
-                                    <strong>Применение стандартов:</strong> Все биомедицинские исследования в Республике Казахстан должны проводиться в соответствии с действующими нормативно-правовыми актами и международными стандартами.
+                                    <strong>Применение стандартов:</strong> {t('directionsPages.bioethicsSubpages.npa.infoApplication')}
                                 </p>
                                 <p>
-                                    <strong>Консультации:</strong> По вопросам применения нормативно-правовых актов в области биоэтики можно обращаться в Центральную комиссию по биоэтике.
+                                    <strong>Консультации:</strong> {t('directionsPages.bioethicsSubpages.npa.infoConsultations')}
                                 </p>
                             </div>
                         </div>
@@ -146,12 +148,17 @@ export default function BioethicsNPA() {
 }
 
 BioethicsNPA.layout = page => <LayoutFolderChlank 
-    h1="НПА"
+    h1={translationService.t('directionsPages.bioethicsSubpages.npa.h1')}
     title="Нормативно-правовые акты"
     parentRoute={route('bioethics')}
-    parentName="Центральная комиссия по биоэтике"
+    parentName={translationService.t('directionsPages.bioethicsSubpages.npa.parentName')}
     heroBgColor="bg-blue-100"
     buttonBgColor="bg-blue-100"
     buttonHoverBgColor="hover:bg-blue-200"
     buttonBorderColor="border-blue-200"
+    breadcrumbs={[
+      { name: translationService.t('directionsPages.bioethicsSubpages.npa.breadcrumbDirections'), route: 'directions' },
+      { name: translationService.t('directionsPages.bioethicsSubpages.npa.breadcrumbBioethics'), route: 'bioethics' },
+      { name: translationService.t('directionsPages.bioethicsSubpages.npa.h1'), route: null }
+    ]}
 >{page}</LayoutFolderChlank>

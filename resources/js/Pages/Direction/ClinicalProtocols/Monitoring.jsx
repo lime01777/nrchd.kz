@@ -3,8 +3,10 @@ import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import VideoModal from '@/Components/VideoModal';
+import translationService from '@/services/TranslationService';
 
 export default function ClinicalProtocolsMonitoring() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');
@@ -23,14 +25,14 @@ export default function ClinicalProtocolsMonitoring() {
 
   return (
     <>
-    <Head title='Мониторинг клинических протоколов' />
+    <Head title={t('directionsPages.clinicalProtocolsSubpages.monitoring.title', 'Мониторинг')} />
 
     <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6">
             <SimpleFileDisplay 
-              folder="Клинические протоколы\Папка - Мониторинг клинических протоколов\Набор - Материалы" 
-              title="Материалы" 
+              folder={t('directionsPages.clinicalProtocolsSubpages.monitoring.materialsFolder')} 
+              title={t('directionsPages.clinicalProtocolsSubpages.monitoring.materialsTitle')} 
               bgColor="bg-white"
               onVideoClick={openVideoModal}
             />
@@ -42,8 +44,8 @@ export default function ClinicalProtocolsMonitoring() {
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6">
             <SimpleFileDisplay 
-              folder="Клинические протоколы\Папка - Мониторинг клинических протоколов\Папка - Отчеты" 
-              title="Отчеты" 
+              folder={t('directionsPages.clinicalProtocolsSubpages.monitoring.reportsFolder')} 
+              title={t('directionsPages.clinicalProtocolsSubpages.monitoring.reportsTitle')} 
               bgColor="bg-white"
               onVideoClick={openVideoModal}
             />
@@ -65,10 +67,15 @@ export default function ClinicalProtocolsMonitoring() {
 
 ClinicalProtocolsMonitoring.layout = page => <LayoutFolderChlank 
   bgColor="bg-white"
-  h1="Мониторинг" 
+  h1={translationService.t('directionsPages.clinicalProtocolsSubpages.monitoring.h1')} 
   parentRoute={route('clinical.protocols')} 
-  parentName="Клинические протоколы"
+  parentName={translationService.t('directionsPages.clinicalProtocolsSubpages.monitoring.parentName')}
   heroBgColor="bg-blue-100"
   buttonBgColor="bg-blue-100"
   buttonHoverBgColor="hover:bg-blue-200"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.clinicalProtocolsSubpages.monitoring.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.clinicalProtocolsSubpages.monitoring.breadcrumbClinicalProtocols'), route: 'clinical.protocols' },
+    { name: translationService.t('directionsPages.clinicalProtocolsSubpages.monitoring.h1'), route: null }
+  ]}
 >{page}</LayoutFolderChlank>;

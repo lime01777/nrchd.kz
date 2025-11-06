@@ -2,36 +2,38 @@ import { Head } from '@inertiajs/react';
 import React from 'react';
 import { Link } from '@inertiajs/react';
 import FolderChlank from '@/Components/FolderChlank';
+import translationService from '@/services/TranslationService';
 
 export default function Quality() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  
   return (
     <>
-      <Head title="Итоги рейтингования медицинских организаций" meta={[{ name: 'description', content: 'Итоги рейтингования медицинских организаций: результаты оценки качества и эффективности.' }]} />
+      <Head title={t('directionsPages.medicalRatingSubpages.quality.title', 'Качество')} />
       
       <div className="container mx-auto px-5 py-8">
         <Link 
           href={route('medical.rating')} 
           className="inline-flex items-center justify-center bg-red-500 text-white px-4 py-2 rounded-lg mb-6 hover:bg-red-600 transition-all"
         >
-          ← Назад к рейтингам
+          {t('directionsPages.medicalRatingSubpages.quality.backButton')}
         </Link>
         
-        <h1 className="text-2xl font-bold mb-6">Итоги рейтингования медицинских организаций по критериям доступности и качества медицинской помощи</h1>
+        <h1 className="text-2xl font-bold mb-6">{t('directionsPages.medicalRatingSubpages.quality.mainTitle')}</h1>
         
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <p className="mb-4">
-            Представляем итоги комплексного рейтингования медицинских организаций Республики Казахстан 
-            по критериям доступности и качества оказываемой медицинской помощи.
+            {t('directionsPages.medicalRatingSubpages.quality.intro')}
           </p>
           
           <div className="bg-blue-50 p-4 rounded-lg mb-6">
-            <h2 className="text-lg font-semibold mb-2">Основные критерии оценки:</h2>
+            <h2 className="text-lg font-semibold mb-2">{t('directionsPages.medicalRatingSubpages.quality.criteriaTitle')}</h2>
             <ul className="list-disc pl-6">
-              <li>Время ожидания приема специалистов</li>
-              <li>Доступность диагностических процедур</li>
-              <li>Результативность лечения</li>
-              <li>Уровень послеоперационных осложнений</li>
-              <li>Удовлетворенность пациентов качеством обслуживания</li>
+              <li>{t('directionsPages.medicalRatingSubpages.quality.criteria1')}</li>
+              <li>{t('directionsPages.medicalRatingSubpages.quality.criteria2')}</li>
+              <li>{t('directionsPages.medicalRatingSubpages.quality.criteria3')}</li>
+              <li>{t('directionsPages.medicalRatingSubpages.quality.criteria4')}</li>
+              <li>{t('directionsPages.medicalRatingSubpages.quality.criteria5')}</li>
             </ul>
           </div>
           
@@ -40,16 +42,16 @@ export default function Quality() {
               <thead>
                 <tr>
                   <th className="px-4 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Место
+                    {t('directionsPages.medicalRatingSubpages.quality.tableHeaderRank')}
                   </th>
                   <th className="px-4 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Наименование организации
+                    {t('directionsPages.medicalRatingSubpages.quality.tableHeaderOrganization')}
                   </th>
                   <th className="px-4 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Регион
+                    {t('directionsPages.medicalRatingSubpages.quality.tableHeaderRegion')}
                   </th>
                   <th className="px-4 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Общий балл
+                    {t('directionsPages.medicalRatingSubpages.quality.tableHeaderScore')}
                   </th>
                 </tr>
               </thead>
@@ -95,7 +97,7 @@ export default function Quality() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Скачать полный отчет (PDF)
+              {t('directionsPages.medicalRatingSubpages.quality.downloadButton')}
               <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
               </svg>

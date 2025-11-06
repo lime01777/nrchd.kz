@@ -1,21 +1,27 @@
 import React from 'react';
 import FooterNav from './FooterNav';
 import { Link } from '@inertiajs/react';
+import translationService from '@/services/TranslationService';
 
 const FooterLinks = () => {
+    // Функция для получения перевода
+    const t = (key, fallback = '') => {
+        return translationService.t(key, fallback);
+    };
+    
     const navLinks1 = [
-        {label: 'Направления', url:'medical.education', translate: true}, // Начинаем с первого направления вместо общей страницы
-        {label: 'Услуги', url:'services.training', translate: true}, // Первая услуга вместо общей страницы
-        {label: 'Филиалы', url:'branches.astana', translate: true}, // Первый филиал вместо общей страницы
-        {label: 'Новости', url:'home', translate: true}, // Временно используем маршрут home вместо news.index
-        {label: 'Вакансии', url:'vacancy.jobs', translate: true},
+        {label: t('footer.menu.directions'), url:'medical.education', translate: true},
+        {label: t('footer.menu.services'), url:'services.training', translate: true},
+        {label: t('footer.menu.branches'), url:'branches.astana', translate: true},
+        {label: t('footer.menu.news'), url:'home', translate: true},
+        {label: t('footer.menu.vacancies'), url:'vacancy.jobs', translate: true},
     ];
     
     const navLinks2 = [
-        {label: 'Новости ННЦРЗ', url:'home', translate: true}, // Временно используем маршрут home вместо news.index
-        {label: 'Новости по направлениям', url:'home', translate: true}, // Временно используем маршрут home вместо news.directions
-        {label: 'Новости филиалов', url:'home', translate: true}, // Временно используем маршрут home вместо news.branches
-        {label: 'Салидат Каирбекова', url:'salidat.kairbekova', translate: true},
+        {label: t('footer.menu.newsCenter'), url:'home', translate: true},
+        {label: t('footer.menu.newsDirections'), url:'home', translate: true},
+        {label: t('footer.menu.newsBranches'), url:'home', translate: true},
+        {label: t('footer.menu.leader'), url:'salidat.kairbekova', translate: true},
     ];
     
     // Подменю для пунктов главного меню
@@ -83,11 +89,10 @@ const FooterLinks = () => {
 
             <div className="container px-5 py-24 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
                 <div className="flex-grow flex flex-wrap -mb-10 md:mt-0 mt-10 md:text-left text-center">
-                    <FooterNav title='Главное меню' links={navLinks1} subMenus={mainMenuSubmenus} />
-                    <FooterNav title='О центре' links={navLinks2} />
+                    <FooterNav title={t('footer.mainMenu')} links={navLinks1} subMenus={mainMenuSubmenus} />
+                    <FooterNav title={t('footer.aboutCenter')} links={navLinks2} />
                     <div className="lg:w-1/4 md:w-1/2 w-full px-4">
-                        <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3" data-translate>Контактная
-                            информация</h2>
+                        <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3" data-translate>{t('footer.contacts.title')}</h2>
 
                             <div className="flex items-center mb-2">
                                 <a href="mailto:office@nrchd.kz" className="hover:text-blue-600 hover:underline">
@@ -107,15 +112,15 @@ const FooterLinks = () => {
 
                     </div>
                     <div className="lg:w-1/4 md:w-1/2 w-full px-4">
-                        <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3">График работы</h2>
+                        <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3">{t('footer.workingHours.title')}</h2>
 
                             <div className="flex flex-col space-y-2">
                                 <div className="flex items-center">
-                                    <span className="text-gray-700">Пн–Пт: <span className="">9:00–18:00</span></span>
+                                    <span className="text-gray-700">{t('footer.workingHours.weekdays')} <span className="">{t('footer.workingHours.time')}</span></span>
                                 </div>
                                 <div className="flex items-center">
 
-                                    <span className="text-gray-700">Обед: <span className="">13:00–14:00</span></span>
+                                    <span className="text-gray-700">{t('footer.workingHours.lunch')} <span className="">{t('footer.workingHours.lunchTime')}</span></span>
                                 </div>
                             </div>
 
@@ -124,9 +129,7 @@ const FooterLinks = () => {
             </div>
             <div className="bg-gray-100">
                 <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
-                    <p className="inline text-gray-500 md:text-sm text-xs text-center sm:text-left">Республиканское государственное
-                        предприятие на праве хозяйственного ведения <br />
-                        «Национальный научный центр развития здравоохранения имени Салидат Каирбековой»</p>
+                    <p className="inline text-gray-500 md:text-sm text-xs text-center sm:text-left">{t('footer.legalName')}</p>
                     <span className="inline-flex sm:ml-auto sm:mt-0 mt-2 justify-center sm:justify-start">
                         <p className="text-gray-500 text-sm text-center sm:text-left">2025</p>
                     </span>

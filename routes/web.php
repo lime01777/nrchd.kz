@@ -578,6 +578,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     // Управление переводами
     Route::get('translations', [TranslationManagementController::class, 'index'])->name('admin.translations');
     Route::post('translations/translate-all', [TranslationManagementController::class, 'translateAll'])->name('admin.translations.translate-all');
+    Route::post('translations/translate-single', [TranslationManagementController::class, 'translateSingle'])->name('admin.translations.translate-single');
     Route::put('translations/{translation}', [TranslationManagementController::class, 'update'])->name('admin.translations.update');
     Route::post('translations/{translation}/retranslate', [TranslationManagementController::class, 'retranslate'])->name('admin.translations.retranslate');
     Route::post('translations/retranslate-scope', [TranslationManagementController::class, 'retranslateScope'])->name('admin.translations.retranslate-scope');

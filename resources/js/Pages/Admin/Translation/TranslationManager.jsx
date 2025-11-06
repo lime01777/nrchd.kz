@@ -157,7 +157,7 @@ const TranslationManager = ({ errors = {}, success = null }) => {
 
     // Рендеринг таблицы переводов
     const renderTranslationsTable = () => {
-        const languages = ['ru', 'en', 'kz'];
+        const languages = ['ru', 'en', 'kk'];
         const entries = Object.entries(translations);
 
         if (entries.length === 0) {
@@ -318,7 +318,7 @@ const TranslationManager = ({ errors = {}, success = null }) => {
                                         >
                                             <option value="ru">Русский (RU)</option>
                                             <option value="en">Английский (EN)</option>
-                                            <option value="kz">Казахский (KZ)</option>
+                                            <option value="kk">Казахский (KK)</option>
                                         </select>
                                     </div>
                                     <button

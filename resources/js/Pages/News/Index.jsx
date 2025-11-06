@@ -5,21 +5,15 @@ import { Link } from '@inertiajs/react';
 import LayoutNews from '@/Layouts/LayoutNews';
 import NewsImageSlider from '@/Components/NewsImageSlider';
 import { isValidVideoUrl } from '@/Utils/mediaUtils';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
 export default function NewsIndex() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
-    
     const { news, categories, filters } = usePage().props;
   const { data, setData, get, processing } = useForm({
     search: filters.search || '',
@@ -27,8 +21,8 @@ export default function NewsIndex() {
   });
 
   const handleSearch = (e) => {
-    e.preventDefaultComponent();
-    getComponent(route('news'), {
+    e.preventDefault();
+    get(route('news'), {
       preserveState: true,
       preserveScroll: true,
     });
@@ -36,7 +30,7 @@ export default function NewsIndex() {
 
   const handleCategoryChange = (category) => {
     setData('category', category);
-    getComponent(route('news'), {
+    get(route('news'), {
       preserveState: true,
       preserveScroll: true,
     });
@@ -44,7 +38,7 @@ export default function NewsIndex() {
 
   return (
     <>
-              <Head title={tComponent('news', 'Новости')} meta={[{ name: 'description', content: 'Последние новости Национального научного центра развития здравоохранения.' }]} />
+              <Head title={t('news', 'Новости')} meta={[{ name: 'description', content: 'Последние новости Национального научного центра развития здравоохранения.' }]} />
       
       <div className="container mx-auto px-4 py-8">
         {/* Поиск и фильтры */}

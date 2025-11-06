@@ -1,8 +1,10 @@
 import { Head } from "@inertiajs/react";
 import React from 'react';
 import LayoutFolderChlank from "@/Layouts/LayoutFolderChlank";
+import translationService from '@/services/TranslationService';
 
 export default function BioethicsLocalCommissions() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
   // Данные о сертифицированных ЛКБ
   const medicalUniversities = [
     {
@@ -113,7 +115,7 @@ export default function BioethicsLocalCommissions() {
           <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
-          Открыть
+          {translationService.t('directionsPages.bioethicsSubpages.localCommissions.openButton')}
         </a>
       </td>
     </tr>
@@ -121,17 +123,17 @@ export default function BioethicsLocalCommissions() {
 
   return (
     <>
-      <Head title="Перечень ЛКБ" meta={[{ name: 'description', content: 'Перечень сертифицированных локальных комиссий по биоэтике в Республике Казахстан.' }]} />
+      <Head title={t('directionsPages.bioethicsSubpages.localCommissions.title', 'Перечень ЛКБ')} />
       
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-8'>
             <h2 className="text-2xl font-bold text-gray-800 mb-6 w-full">
-              Перечень ЛКБ
+              {t('directionsPages.bioethicsSubpages.localCommissions.mainTitle')}
             </h2>
             
             <p className="tracking-wide leading-relaxed mb-4">
-              Список сертифицированных локальных комиссий по биоэтике, имеющих право на проведение этической экспертизы биомедицинских исследований в Республике Казахстан.
+              {t('directionsPages.bioethicsSubpages.localCommissions.intro')}
             </p>
           </div>
 
@@ -141,7 +143,7 @@ export default function BioethicsLocalCommissions() {
               <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
-              Медицинские ВУЗы
+              {t('directionsPages.bioethicsSubpages.localCommissions.medicalUniversitiesTitle')}
             </h3>
             
             <div className="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
@@ -182,7 +184,7 @@ export default function BioethicsLocalCommissions() {
               <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
               </svg>
-              НИИ/НЦ
+              {t('directionsPages.bioethicsSubpages.localCommissions.researchInstitutesTitle')}
             </h3>
             
             <div className="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
@@ -191,19 +193,19 @@ export default function BioethicsLocalCommissions() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
-                        №
+                        {t('directionsPages.bioethicsSubpages.localCommissions.tableHeaderNumber')}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Наименование организации
+                        {t('directionsPages.bioethicsSubpages.localCommissions.tableHeaderOrganization')}
                       </th>
                       <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
-                        Сертификация
+                        {t('directionsPages.bioethicsSubpages.localCommissions.tableHeaderCertification')}
                       </th>
                       <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-40">
-                        Срок действия
+                        {t('directionsPages.bioethicsSubpages.localCommissions.tableHeaderValidity')}
                       </th>
                       <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
-                        Ссылка
+                        {t('directionsPages.bioethicsSubpages.localCommissions.tableHeaderLink')}
                       </th>
                     </tr>
                   </thead>
@@ -223,12 +225,17 @@ export default function BioethicsLocalCommissions() {
 }
 
 BioethicsLocalCommissions.layout = page => <LayoutFolderChlank 
-  h1="Перечень ЛКБ"
+  h1={translationService.t('directionsPages.bioethicsSubpages.localCommissions.h1')}
   title="Перечень ЛКБ"
   parentRoute={route('bioethics')}
-  parentName="Центральная комиссия по биоэтике"
+  parentName={translationService.t('directionsPages.bioethicsSubpages.localCommissions.parentName')}
   heroBgColor="bg-blue-100"
   buttonBgColor="bg-blue-100"
   buttonHoverBgColor="hover:bg-blue-200"
   buttonBorderColor="border-blue-200"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.bioethicsSubpages.localCommissions.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.bioethicsSubpages.localCommissions.breadcrumbBioethics'), route: 'bioethics' },
+    { name: translationService.t('directionsPages.bioethicsSubpages.localCommissions.h1'), route: null }
+  ]}
 >{page}</LayoutFolderChlank>

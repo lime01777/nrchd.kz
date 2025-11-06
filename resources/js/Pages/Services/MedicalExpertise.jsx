@@ -2,29 +2,24 @@ import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 import ServiceTimeline from '@/Components/ServiceTimeline';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
 export default function MedicalExpertise() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
   const timelineItems = [
-    { title: "Регистрация заявки", value: "1 рабочий день" },
-    { title: "Срок проведения экспертизы", value: "15 рабочих дней" },
-    { title: "Предоставление экспертного заключения", value: "3 рабочих дня" }
+    { title: t('servicesPages.accreditation.applicationRegistration'), value: `1 ${t('servicesPages.commonElements.workingDay')}` },
+    { title: "Срок проведения экспертизы", value: `15 ${t('servicesPages.commonElements.workingDays')}` },
+    { title: "Предоставление экспертного заключения", value: `3 ${t('servicesPages.commonElements.workingDays')}` }
   ];
 
   return (
     <>
-              <Head title={tComponent('services.medical_expertise', 'Научно-медицинская экспертиза')} meta={[{ name: 'description', content: 'Услуги научно-медицинской экспертизы.' }]} />
+              <Head title={t('servicesPages.medicalExpertise.title')} />
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-2/3 px-4">

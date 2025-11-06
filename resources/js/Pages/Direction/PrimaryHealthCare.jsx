@@ -4,58 +4,50 @@ import LayoutDirection from '@/Layouts/LayoutDirection';
 import ChartHead from '@/Components/ChartHead'
 import PageAccordions from '@/Components/PageAccordions';
 import FolderChlank from '@/Components/FolderChlank';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
 export default function PrimaryHealthCare() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
   const [showFullText, setShowFullText] = useState(false);
   
   return (
     <>
-          <Head title={tComponent('directions.primary_healthcare', 'Первичная медико-санитарная помощь')} meta={[{ name: 'description', content: 'Первичная медико-санитарная помощь: информация о развитии и организации первичной медицинской помощи.' }]} />
+          <Head title={t('directionsPages.primaryHealthcare.title', 'Первичная медико-санитарная помощь')} />
     <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify'>
             <p className={`tracking-wide leading-relaxed ${!showFullText ? 'line-clamp-5' : ''}`}>
-                Первичная медико-санитарная помощь (ПМСП) – это ключевой компонент системы здравоохранения, обеспечивающий 
-                доступные и качественные медицинские услуги населению на уровне первого контакта с системой здравоохранения. 
-                ПМСП включает в себя основные медицинские услуги, которые доступны всем гражданам, независимо от социально-экономического 
-                статуса и географического положения.
+                {t('directionsPages.primaryHealthcare.intro')}
                 <br /><br />
-                Основные принципы ПМСП:
-                <br />- Доступность и всеобщий охват населения медицинскими услугами
-                <br />- Ориентированность на нужды и потребности пациентов
-                <br />- Профилактическая направленность медицинской помощи
-                <br />- Преемственность и непрерывность оказания медицинской помощи
-                <br />- Координация с другими уровнями здравоохранения
+                {t('directionsPages.primaryHealthcare.principlesTitle')}
+                <br />- {t('directionsPages.primaryHealthcare.principle1')}
+                <br />- {t('directionsPages.primaryHealthcare.principle2')}
+                <br />- {t('directionsPages.primaryHealthcare.principle3')}
+                <br />- {t('directionsPages.primaryHealthcare.principle4')}
+                <br />- {t('directionsPages.primaryHealthcare.principle5')}
                 <br /><br />
-                Основные направления развития ПМСП:
-                <br />- Укрепление кадрового потенциала и повышение статуса медицинских работников
-                <br />- Развитие инфраструктуры ПМСП в соответствии с современными требованиями
-                <br />- Внедрение цифровых технологий и информационных систем
-                <br />- Совершенствование механизмов финансирования ПМСП
-                <br />- Расширение профилактических программ и скрининговых исследований
-                <br />- Улучшение доступности лекарственного обеспечения
+                {t('directionsPages.primaryHealthcare.directionsTitle')}
+                <br />- {t('directionsPages.primaryHealthcare.direction1')}
+                <br />- {t('directionsPages.primaryHealthcare.direction2')}
+                <br />- {t('directionsPages.primaryHealthcare.direction3')}
+                <br />- {t('directionsPages.primaryHealthcare.direction4')}
+                <br />- {t('directionsPages.primaryHealthcare.direction5')}
+                <br />- {t('directionsPages.primaryHealthcare.direction6')}
             </p>
           </div>
             
             <div className="flex justify-center mt-4">
                 <button 
-                  onClick={() => setShowFullTextComponent(!showFullText)} 
+                  onClick={() => setShowFullText(!showFullText)} 
                   className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px]
                   rounded-xl p-3 transition-all duration-300 ease-in-out hover:bg-gray-100 transform hover:scale-105"
                 >
-                                          {showFullText ? tComponent('hide', 'Скрыть') : 'Читать далее'}
+                                          {showFullText ? t('directionsPages.primaryHealthcare.hide') : t('directionsPages.primaryHealthcare.readMore')}
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="currentColor" className={`ml-1 transition-transform duration-500 ease-in-out ${showFullText ? 'rotate-45' : ''}`}>
                         <rect x="11.5" y="5" width="1" height="14" />
@@ -71,15 +63,15 @@ export default function PrimaryHealthCare() {
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
-                    title="Амбулаторная помощь" 
-                    description="Информация об амбулаторной помощи"
+                    title={t('directionsPages.primaryHealthcare.subfolders.outpatient.title')} 
+                    description={t('directionsPages.primaryHealthcare.subfolders.outpatient.description')}
                     href={route('primary.healthcare.outpatient')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
-                    title="Профилактика и скрининг" 
-                    description="Информация о профилактике и скрининге"
+                    title={t('directionsPages.primaryHealthcare.subfolders.prevention.title')} 
+                    description={t('directionsPages.primaryHealthcare.subfolders.prevention.description')}
                     href={route('primary.healthcare.prevention')}
                 />
             </div>

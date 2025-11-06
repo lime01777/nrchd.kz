@@ -2,25 +2,28 @@ import { Head } from "@inertiajs/react";
 import React from 'react';
 import LayoutFolderChlank from "@/Layouts/LayoutFolderChlank";
 import FilesAccord from '@/Components/FilesAccord';
+import translationService from '@/services/TranslationService';
 
 export default function BioethicsCertification() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  
   return (
     <>
-      <Head title="Сертификация локальных комиссий по биоэтике" meta={[{ name: 'description', content: 'Сертификация локальных комиссий по биоэтике: процедуры и требования.' }]} />
+      <Head title={t('directionsPages.bioethicsSubpages.certification.title', 'Сертификация локальных комиссий по биоэтике')} />
       
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>
             <p className="tracking-wide leading-relaxed mb-4">
-              Локальные комиссии по биоэтике имеют право на выдачу заключений на проведение биомедицинских исследований при условии наличия сертификата соответствия стандартам деятельности биоэтических комиссий, выдаваемого Центральной комиссией по биоэтике Министерства здравоохранения Республики Казахстан (пункт 8 статья 228 Кодекс РК «О здоровье народа и системе здравоохранения»).
+              {t('directionsPages.bioethicsSubpages.certification.intro')}
             </p>
 
             <div className="w-full mb-6 p-6 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
               <h3 className="text-lg font-semibold text-blue-800 mb-3">
-                Нормативно-правовая основа
+                {t('directionsPages.bioethicsSubpages.certification.legalTitle')}
               </h3>
               <p className="text-blue-700 mb-3">
-                Деятельность по сертификации локальных комиссий по биоэтике осуществляется в соответствии с приказом Министра здравоохранения Республики Казахстан от 9 декабря 2020 года № ҚР ДСМ-243/2020 «Об утверждении правил выдачи и срока действия сертификата соответствия требованиям деятельности биоэтических комиссий».
+                {t('directionsPages.bioethicsSubpages.certification.legalText')}
               </p>
               <a 
                 href="https://adilet.zan.kz/rus/docs/V2000021774" 
@@ -31,12 +34,12 @@ export default function BioethicsCertification() {
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
-                Открыть приказ
+                {t('directionsPages.bioethicsSubpages.certification.openOrder')}
               </a>
             </div>
 
             <h2 className="text-xl font-semibold text-gray-800 mb-4 w-full">
-              Порядок сертификации локальных комиссий по биоэтике (ЛКБ)
+              {t('directionsPages.bioethicsSubpages.certification.procedureTitle')}
             </h2>
 
             <div className="w-full mb-6">
@@ -156,8 +159,8 @@ export default function BioethicsCertification() {
       <section className="text-gray-600 body-font">
         <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
             <FilesAccord 
-                folder="Bioethics/Certification/Documents"
-                title="Полезные документы"
+                folder={t('directionsPages.bioethicsSubpages.certification.folder')}
+                title={t('directionsPages.bioethicsSubpages.certification.documentsTitle')}
                 bgColor="bg-blue-200"
                 defaultOpen={true}
             />
@@ -168,12 +171,17 @@ export default function BioethicsCertification() {
 }
 
 BioethicsCertification.layout = page => <LayoutFolderChlank 
-  h1="Сертификация локальных комиссий по биоэтике"
+  h1={translationService.t('directionsPages.bioethicsSubpages.certification.h1')}
   title="Сертификация локальных комиссий по биоэтике"
   parentRoute={route('bioethics')}
-  parentName="Центральная комиссия по биоэтике"
+  parentName={translationService.t('directionsPages.bioethicsSubpages.certification.parentName')}
   heroBgColor="bg-blue-100"
   buttonBgColor="bg-blue-100"
   buttonHoverBgColor="hover:bg-blue-200"
   buttonBorderColor="border-blue-200"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.bioethicsSubpages.certification.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.bioethicsSubpages.certification.breadcrumbBioethics'), route: 'bioethics' },
+    { name: translationService.t('directionsPages.bioethicsSubpages.certification.h1'), route: null }
+  ]}
 >{page}</LayoutFolderChlank>

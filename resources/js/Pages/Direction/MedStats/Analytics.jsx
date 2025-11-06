@@ -2,11 +2,14 @@ import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
+import translationService from '@/services/TranslationService';
 
 export default function Analytics() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  
   return (
     <>
-      <Head title="Аналитические материалы" meta={[{ name: 'description', content: 'Аналитические материалы по медицинской статистике и здравоохранению.' }]} />
+      <Head title={t('directionsPages.medStatsSubpages.analytics.title', 'Аналитика')} />
       
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
@@ -14,7 +17,7 @@ export default function Analytics() {
           </div>
           <div className="bg-white rounded-lg shadow-md p-6 border border-gray-300">
             <SimpleFileDisplay 
-              folder="Медицинская статистика/Аналитические материалы" 
+              folder={t('directionsPages.medStatsSubpages.analytics.folder')} 
               title="" 
             />
           </div>
@@ -25,9 +28,15 @@ export default function Analytics() {
 }
 
 Analytics.layout = page => <LayoutFolderChlank  
-h1="Аналитические материалы" 
-parentRoute={route('medical.statistics')} 
-parentName="Медицинская статистика"
-heroBgColor="bg-gray-200"
-buttonBgColor="bg-gray-200"
-buttonHoverBgColor="hover:bg-gray-300">{page}</LayoutFolderChlank>;
+  h1={translationService.t('directionsPages.medStatsSubpages.analytics.h1')} 
+  parentRoute={route('medical.statistics')} 
+  parentName={translationService.t('directionsPages.medStatsSubpages.analytics.parentName')}
+  heroBgColor="bg-gray-200"
+  buttonBgColor="bg-gray-200"
+  buttonHoverBgColor="hover:bg-gray-300"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.medStatsSubpages.analytics.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.medStatsSubpages.analytics.breadcrumbMedicalStatistics'), route: 'medical.statistics' },
+    { name: translationService.t('directionsPages.medStatsSubpages.analytics.h1'), route: null }
+  ]}
+>{page}</LayoutFolderChlank>;

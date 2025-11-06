@@ -159,6 +159,7 @@ class TranslationManagementController extends Controller
 
     /**
      * Массовый перевод всех текстов
+     * Проверяет наличие перевода в БД, если нет - переводит через Google Translate
      */
     public function translateAll(Request $request): JsonResponse
     {
@@ -182,6 +183,8 @@ class TranslationManagementController extends Controller
                     'message' => 'Нет переводов для обработки. Все тексты уже переведены.',
                     'stats' => [
                         'translated' => 0,
+                        'from_db' => 0,
+                        'from_google' => 0,
                         'failed' => 0,
                         'total' => 0,
                     ],
@@ -189,34 +192,68 @@ class TranslationManagementController extends Controller
             }
 
             $translated = 0;
+            $fromDb = 0;
+            $fromGoogle = 0;
             $failed = 0;
 
             foreach ($translations as $translation) {
                 try {
-                    // Переводим через сервис Translator
-                    $translatedText = $this->translator->translateDirect(
-                        $translation->ru,
-                        'ru',
-                        $targetLang,
-                        true
-                    );
+                    // 1. Проверяем, есть ли уже перевод в БД для этого текста
+                    $existingTranslation = Translation::where('ru', $translation->ru)
+                        ->whereNotNull($targetLang)
+                        ->where($targetLang, '!=', '')
+                        ->first();
 
-                    $translation->update([
-                        $targetLang => $translatedText,
-                    ]);
+                    if ($existingTranslation) {
+                        // Используем существующий перевод из БД
+                        $translatedText = $existingTranslation->{$targetLang};
+                        
+                        $translation->update([
+                            $targetLang => $translatedText,
+                            'updated_by' => auth()->id(),
+                        ]);
+                        
+                        $fromDb++;
+                        $translated++;
+                        
+                        Log::info("Использован существующий перевод из БД для: {$translation->scope}.{$translation->key}");
+                    } else {
+                        // 2. Если перевода нет в БД - переводим через Google Translate
+                        $translatedText = $this->translator->translateDirect(
+                            $translation->ru,
+                            'ru',
+                            $targetLang,
+                            true // Защита терминов
+                        );
 
-                    $translated++;
+                        // Сохраняем перевод в БД
+                        $translation->update([
+                            $targetLang => $translatedText,
+                            'updated_by' => auth()->id(),
+                        ]);
+
+                        $fromGoogle++;
+                        $translated++;
+                        
+                        Log::info("Создан новый перевод через Google для: {$translation->scope}.{$translation->key}");
+                    }
+                    
+                    // Очищаем кеш для этого перевода
+                    $this->translator->clearCacheFor($translation->scope, $translation->key);
+                    
                 } catch (\Exception $e) {
                     $failed++;
-                    Log::error("Translation failed for ID {$translation->id}: " . $e->getMessage());
+                    Log::error("Ошибка перевода для ID {$translation->id}: " . $e->getMessage());
                 }
             }
 
             return response()->json([
                 'success' => true,
-                'message' => "Переведено: {$translated}, ошибок: {$failed}",
+                'message' => "Переведено: {$translated} (из БД: {$fromDb}, через Google: {$fromGoogle}), ошибок: {$failed}",
                 'stats' => [
                     'translated' => $translated,
+                    'from_db' => $fromDb,
+                    'from_google' => $fromGoogle,
                     'failed' => $failed,
                     'total' => $translations->count(),
                 ],
@@ -311,5 +348,86 @@ class TranslationManagementController extends Controller
         }, $filename, [
             'Content-Type' => 'application/json',
         ]);
+    }
+
+    /**
+     * Проверить и перевести отдельный текст
+     * Сначала ищет в БД, если не находит - переводит через Google Translate
+     */
+    public function translateSingle(Request $request): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'text' => 'required|string',
+                'target_language' => 'required|in:kk,en',
+                'scope' => 'nullable|string|max:120',
+                'key' => 'nullable|string|max:190',
+            ]);
+
+            $text = $validated['text'];
+            $targetLang = $validated['target_language'];
+            $scope = $validated['scope'] ?? 'manual';
+            $key = $validated['key'] ?? md5($text);
+
+            // 1. Проверяем наличие перевода в БД
+            $existingTranslation = Translation::where('ru', $text)
+                ->whereNotNull($targetLang)
+                ->where($targetLang, '!=', '')
+                ->first();
+
+            if ($existingTranslation) {
+                // Найден существующий перевод
+                return response()->json([
+                    'success' => true,
+                    'translation' => $existingTranslation->{$targetLang},
+                    'source' => 'database',
+                    'message' => 'Перевод найден в базе данных',
+                ]);
+            }
+
+            // 2. Если не найден - переводим через Google Translate
+            try {
+                $translatedText = $this->translator->translateDirect(
+                    $text,
+                    'ru',
+                    $targetLang,
+                    true
+                );
+
+                // 3. Сохраняем новый перевод в БД
+                Translation::updateOrCreate(
+                    ['scope' => $scope, 'key' => $key],
+                    [
+                        'ru' => $text,
+                        'hash' => Translation::generateHash($text),
+                        $targetLang => $translatedText,
+                        'updated_by' => auth()->id(),
+                    ]
+                );
+
+                return response()->json([
+                    'success' => true,
+                    'translation' => $translatedText,
+                    'source' => 'google_translate',
+                    'message' => 'Текст переведен через Google Translate и сохранен в БД',
+                ]);
+
+            } catch (\Exception $e) {
+                Log::error('Ошибка перевода через Google Translate: ' . $e->getMessage());
+                
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ошибка перевода: ' . $e->getMessage(),
+                    'translation' => $text, // Возвращаем оригинал
+                ], 500);
+            }
+
+        } catch (\Exception $e) {
+            Log::error('TranslateSingle error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }

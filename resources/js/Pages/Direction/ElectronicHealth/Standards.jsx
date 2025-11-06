@@ -3,8 +3,10 @@ import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import VideoModal from '@/Components/VideoModal';
+import translationService from '@/services/TranslationService';
 
 export default function Standards() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');
@@ -23,14 +25,14 @@ export default function Standards() {
 
   return (
     <>
-      <Head title="Стандарты" />
+      <Head title={t('directionsPages.electronicHealthSubpages.standards.title', 'Стандарты')} />
 
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6">
             <SimpleFileDisplay 
-              folder="Цифровое здравоохранение/Папка — Стандарты" 
-              title="Технический комитет по стандартизации № 83 Цифровое здравоохранение" 
+              folder={t('directionsPages.electronicHealthSubpages.standards.folder')} 
+              title={t('directionsPages.electronicHealthSubpages.standards.displayTitle')} 
               bgColor="bg-white"
               onVideoClick={openVideoModal}
             />
@@ -52,11 +54,16 @@ export default function Standards() {
 
 Standards.layout = page => <LayoutFolderChlank 
   bgColor="bg-white"
-  h1="Стандарты" 
+  h1={translationService.t('directionsPages.electronicHealthSubpages.standards.h1')} 
   parentRoute={route('electronic.health')} 
-  parentName="Цифровое здравоохранение"
+  parentName={translationService.t('directionsPages.electronicHealthSubpages.standards.parentName')}
   heroBgColor="bg-fuchsia-100"
   buttonBgColor="bg-fuchsia-100"
   buttonHoverBgColor="hover:bg-fuchsia-200"
   buttonBorderColor="border-fuchsia-200"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.electronicHealthSubpages.standards.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.electronicHealthSubpages.standards.breadcrumbElectronicHealth'), route: 'electronic.health' },
+    { name: translationService.t('directionsPages.electronicHealthSubpages.standards.h1'), route: null }
+  ]}
 >{page}</LayoutFolderChlank>;

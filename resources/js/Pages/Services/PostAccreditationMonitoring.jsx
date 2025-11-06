@@ -3,6 +3,12 @@ import React, { useState, useRef } from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 import FilesAccord from '@/Components/FilesAccord';
 import VideoModal from '@/Components/VideoModal';
+import translationService from '@/services/TranslationService';
+
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return translationService.t(key, fallback);
+};
 
 // Компонент формы постаккредитационного мониторинга для отображения в шапке
 const PostMonitoringForm = () => {
@@ -251,12 +257,6 @@ const PostMonitoringForm = () => {
 };
 
 export default function PostAccreditationMonitoring() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const t = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');

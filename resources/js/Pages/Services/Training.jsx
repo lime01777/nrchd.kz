@@ -3,26 +3,21 @@ import React from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 import FAQ from '@/Components/FAQ'; 
 import FilesAccord from '@/Components/FilesAccord';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 export default function Training() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода внутри компонента
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
   return (
     <>
-    <Head title="Организация и проведение обучающих циклов по дополнительному и неформальному образованию ЦМОП" meta={[{ name: 'description', content: 'Обучающие циклы по дополнительному и неформальному образованию ЦМОП.' }]} />
+    <Head title={t('servicesPages.training.title')} />
     <section className="text-gray-600 body-font pb-8">
       <div className="container px-5 py-12 mx-auto">
         <div className='flex flex-wrap px-12 text-justify mb-4'>
-          <h1 className="text-3xl font-semibold text-gray-900 mb-6 w-full">Организация и проведение обучающих циклов по дополнительному и неформальному образованию</h1>
+          <h1 className="text-3xl font-semibold text-gray-900 mb-6 w-full">{t('servicesPages.training.title')}</h1>
           <p className="tracking-wide leading-relaxed">
             РГП на ПХВ «Национальный научный центр развития здравоохранения имени Салидат Каирбековой» Министерства здравоохранения РК (далее - ННЦРЗ) организовывает обучение курсов повышения квалификации и семинаров в сфере здравоохранения Республики Казахстан.
           </p>
@@ -47,7 +42,7 @@ export default function Training() {
             rel="noopener noreferrer"
             className="cursor-pointer text-black inline-flex items-center border-yellow-500 border-[1px] bg-yellow-50 hover:bg-yellow-100
               rounded-xl p-3 transition-all duration-150 ease-in">
-            Правила организации образовательной деятельности
+            {t('servicesPages.training.rulesButton')}
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
               <polyline points="15 3 21 3 21 9"></polyline>
@@ -60,7 +55,7 @@ export default function Training() {
 
     <section className="text-gray-600 body-font">
         <div className="container px-5 py-12 mx-auto">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-8">Часто задаваемые вопросы</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-8">{t('servicesPages.commonElements.faqTitle')}</h2>
             <FAQ 
                 items={[
                     {

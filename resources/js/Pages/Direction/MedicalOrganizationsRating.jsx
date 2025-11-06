@@ -6,18 +6,17 @@ import FileAccordTitle from '@/Components/FileAccordTitle';
 import FileAccordChlank from '@/Components/FileAccordChlank';
 import FilesAccord from '@/Components/FilesAccord';
 import PageAccordions from "@/Components/PageAccordions";
+import translationService from '@/services/TranslationService';
 
 export default function MedicalOrganizationsRating() {
-    const { translations } = usePage().props;
-    
     // Функция для получения перевода
     const t = (key, fallback = '') => {
-        return translations?.[key] || fallback;
+        return translationService.t(key, fallback);
     };
 
     return (
         <>
-            <Head title={t('directions.medical_rating', 'Рейтинг медицинских организаций')} />
+            <Head title={t('directionsPages.medicalRating.title', 'Рейтинг медицинских организаций')} />
             
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">

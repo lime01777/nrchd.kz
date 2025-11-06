@@ -4,8 +4,10 @@ import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import FilesAccord from '@/Components/FilesAccord';
 import VideoModal from '@/Components/VideoModal';
+import translationService from '@/services/TranslationService';
 
 export default function Tech() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');
@@ -24,33 +26,30 @@ export default function Tech() {
 
   return (
     <>
-      <Head title="Отраслевой центр технологических компетенций" meta={[{ name: 'description', content: 'Отраслевой центр технологических компетенций: развитие инноваций в медицине.' }]} />
+      <Head title={t('directionsPages.medicalScienceSubpages.tech.title', 'Технологии')} />
       <br /><br />
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6 rounded-lg shadow-md">
             <div className="mb-6">
               <p className="text-lg text-gray-700 mb-4">
-
-              Отраслевой центр технологических компетенций (ОЦТК) в здравоохранении, создан на основании приказа Министра здравоохранения Республики Казахстан №667 от 18.10.2021 года на базе Национального научного центра развития здравоохранения имени Салидат Каирбековой,  
+              {t('directionsPages.medicalScienceSubpages.tech.intro')}
               <br />
-              ОЦТК является ключевым элементом в развитии и внедрении инновационных технологий в систему здравоохранения.
               <br />
-              Основные задачи деятельности ОЦТК:
+              {t('directionsPages.medicalScienceSubpages.tech.tasksTitle')}
               <br />
               <ul className="list-disc pl-6">
-                <li className="list-item">Foresight прогнозирование в сфере науки и технологий, новых профессий и компетенций для системы здравоохранения;</li>
-                <li className="list-item">участие в формировании технологических политик (стратегий);</li>
-                <li className="list-item">содействие организациям здравоохранения во внедрении технологий мирового уровня и разработок казахстанских исследователей, в соответствии со спецификой организации.</li>
+                <li className="list-item">{t('directionsPages.medicalScienceSubpages.tech.task1')}</li>
+                <li className="list-item">{t('directionsPages.medicalScienceSubpages.tech.task2')}</li>
+                <li className="list-item">{t('directionsPages.medicalScienceSubpages.tech.task3')}</li>
               </ul>
-              ОЦТК ориентирован на содействие технологическому развитию и укреплению компетенций, способствуя прогрессу и инновациям.
-
+              {t('directionsPages.medicalScienceSubpages.tech.conclusion')}
               </p>
             </div>
             
             <SimpleFileDisplay 
-              folder="Медицинская наука\Папка - Отраслевой центр технологических компетенций\Набор-НПА" 
-              title="Нормативно правовые акты" 
+              folder={t('directionsPages.medicalScienceSubpages.tech.npaFolder')} 
+              title={t('directionsPages.medicalScienceSubpages.tech.npaTitle')} 
               bgColor="bg-white"
               onVideoClick={openVideoModal}
             />
@@ -73,10 +72,15 @@ export default function Tech() {
 
 Tech.layout = page => <LayoutFolderChlank 
   bgColor="bg-white"
-  h1="Отраслевой центр технологических компетенций" 
+  h1={translationService.t('directionsPages.medicalScienceSubpages.tech.h1')} 
   parentRoute={route('medical.science')} 
-  parentName="Медицинская наука"
+  parentName={translationService.t('directionsPages.medicalScienceSubpages.tech.parentName')}
   heroBgColor="bg-gray-200"
   buttonBgColor="bg-gray-200"
   buttonHoverBgColor="hover:bg-gray-300"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.medicalScienceSubpages.tech.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.medicalScienceSubpages.tech.breadcrumbMedicalScience'), route: 'medical.science' },
+    { name: translationService.t('directionsPages.medicalScienceSubpages.tech.h1'), route: null }
+  ]}
 >{page}</LayoutFolderChlank>;

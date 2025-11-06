@@ -2,8 +2,10 @@ import React from 'react'
 import { Link } from '@inertiajs/react';
 import NewsSliderWithMain from './NewsSliderWithMain';
 import { isValidVideoUrl } from '../Utils/mediaUtils';
+import translationService from '@/services/TranslationService';
 
 function News_chlank({ date, description, slug, image, images = [] }) {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
   // Определяем изображения для отображения
   const displayImages = images && images.length > 0 ? images : (image ? [image] : []);
   
@@ -40,7 +42,7 @@ function News_chlank({ date, description, slug, image, images = [] }) {
                     href={route('news.show', slug)} 
                     className="mt-auto text-black inline-flex items-center border-gray-300 border rounded-lg px-4 py-2 text-sm hover:bg-gray-50 transition-colors duration-200"
                   >
-                    Читать новость
+                    {t('common.readNews')}
                     <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
                         strokeWidth="2" className="w-4 h-4 ml-2" viewBox="0 0 24 24">
                         <path d="M5 12h14M12 5l7 7-7 7"></path>

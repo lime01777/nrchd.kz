@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from '@inertiajs/react';
+import translationService from '@/services/TranslationService';
 
 function FolderChlank({ 
   title, 
@@ -10,6 +11,23 @@ function FolderChlank({
   color = "bg-blue-500", 
   colorsec = "bg-blue-600" 
 }) {
+  // Состояние для реактивности при смене языка
+  const [buttonText, setButtonText] = useState('');
+
+  // Обновление текста кнопки при изменении языка
+  useEffect(() => {
+    const updateButtonText = () => {
+      setButtonText(translationService.t('common.open', 'Открыть'));
+    };
+
+    updateButtonText();
+    window.addEventListener('languageChanged', updateButtonText);
+
+    return () => {
+      window.removeEventListener('languageChanged', updateButtonText);
+    };
+  }, []);
+
   // Поддержка как новых пропсов (title, description, icon), так и старых (h1, color, colorsec)
   const displayTitle = title || h1;
   const displayColor = color;
@@ -34,7 +52,7 @@ function FolderChlank({
                     <Link
                         href={href}
                         className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3 hover:bg-white hover:bg-opacity-20 transition-colors">
-                        Открыть
+                        {buttonText}
                     </Link>
                 ) : (
                     <a
@@ -42,7 +60,7 @@ function FolderChlank({
                         target="_blank"
                         rel="noopener noreferrer"
                         className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3 hover:bg-white hover:bg-opacity-20 transition-colors">
-                        Открыть
+                        {buttonText}
                     </a>
                 )}
             </div>

@@ -2,27 +2,25 @@ import { Head } from '@inertiajs/react';
 import React from 'react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
+import translationService from '@/services/TranslationService';
 
 export default function Coalition() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  
   return (
     <>
-      <Head title="Коалиция | NNCRZ" meta={[{ name: 'description', content: 'Коалиция в рамках стратегических инициатив центра.' }]} />
+      <Head title={t('directionsPages.strategicInitiativesSubpages.coalition.title', 'Коалиция')} />
       <section className="text-gray-600 body-font">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-8'>
             <p className="tracking-wide leading-relaxed">
-              Коалиция по развитию здравоохранения – это объединение заинтересованных сторон, созданное 
-              под эгидой Национального научного центра развития здравоохранения имени Салидат Каирбековой. 
-              Коалиция объединяет представителей государственного и частного секторов здравоохранения, 
-              научно-исследовательских и образовательных учреждений, профессиональных сообществ, 
-              пациентских организаций и других заинтересованных сторон для совместного решения актуальных 
-              проблем здравоохранения.
+              {t('directionsPages.strategicInitiativesSubpages.coalition.intro')}
             </p>
           </div>
           
           <div className="flex flex-col md:flex-row flex-wrap mb-8">
             <div className="lg:w-1/2 md:w-full px-8 py-6">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Цели коалиции:</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">{t('directionsPages.strategicInitiativesSubpages.coalition.goalsTitle')}</h3>
               <ul className="list-disc pl-6 space-y-3 text-gray-700">
                 <li>Создание платформы для диалога и сотрудничества между всеми участниками системы здравоохранения</li>
                 <li>Консолидация усилий для решения приоритетных задач здравоохранения</li>
@@ -34,7 +32,7 @@ export default function Coalition() {
             </div>
             
             <div className="lg:w-1/2 md:w-full px-8 py-6">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Участники коалиции:</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">{t('directionsPages.strategicInitiativesSubpages.coalition.participantsTitle')}</h3>
               <div className="grid grid-cols-1 gap-4">
                 <div className="border-l-4 border-green-500 pl-4 py-2">
                   <h4 className="text-lg font-semibold text-gray-800">Государственные органы и организации</h4>
@@ -65,7 +63,7 @@ export default function Coalition() {
           </div>
           
           <div className="px-8 mb-12">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4 px-4">Направления деятельности коалиции:</h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 px-4">{t('directionsPages.strategicInitiativesSubpages.coalition.activitiesTitle')}</h3>
             <div className="bg-gray-50 p-6 rounded-lg mb-8">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
@@ -101,7 +99,7 @@ export default function Coalition() {
             </div>
             
             <FilesAccord
-              title="Документы коалиции"
+              title={t('directionsPages.strategicInitiativesSubpages.coalition.documentsTitle')}
               items={[
                 { title: 'Меморандум о создании Коалиции по развитию здравоохранения', description: 'PDF, 1.3 МБ' },
                 { title: 'План работы Коалиции на 2024 год', description: 'PDF, 0.9 МБ' },
@@ -117,11 +115,16 @@ export default function Coalition() {
 }
 
 Coalition.layout = page => <LayoutFolderChlank 
-  h1="Коалиция" 
+  h1={translationService.t('directionsPages.strategicInitiativesSubpages.coalition.h1')} 
   parentRoute={route('strategic.initiatives')}
-  parentName="Стратегические инициативы и международное сотрудничество" 
+  parentName={translationService.t('directionsPages.strategicInitiativesSubpages.coalition.parentName')} 
   heroBgColor="bg-green-100"
   buttonBgColor="bg-green-100"
   buttonHoverBgColor="hover:bg-green-200"
   buttonBorderColor="border-green-200"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.strategicInitiativesSubpages.coalition.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.strategicInitiativesSubpages.coalition.breadcrumbStrategic'), route: 'strategic.initiatives' },
+    { name: translationService.t('directionsPages.strategicInitiativesSubpages.coalition.h1'), route: null }
+  ]}
   >{page}</LayoutFolderChlank>;

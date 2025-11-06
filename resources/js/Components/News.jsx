@@ -2,12 +2,18 @@ import React, { useState, useEffect } from 'react';
 import News_chlank from './News_chlank';
 import { Link } from '@inertiajs/react';
 import Slider from 'react-slick';
+import translationService from '@/services/TranslationService';
 
 // Импортируем CSS для слайдера
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 function News() {
+  // Функция для получения перевода
+  const t = (key, fallback = '') => {
+    return translationService.t(key, fallback);
+  };
+
   const [latestNews, setLatestNews] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -58,10 +64,10 @@ function News() {
         <div className="container px-5 py-24 mx-auto">
             <div className="flex flex-row w-full justify-between text-center mb-10">
                 <div className='flex'>
-                <h1 className="sm:text-2xl text-2xl font-semibold title-font text-gray-900 mb-2" data-translate>Новости</h1>
+                <h1 className="sm:text-2xl text-2xl font-semibold title-font text-gray-900 mb-2">{t('newsComponent.title')}</h1>
                 </div>
                 <div className='flex'>
-                <Link href={route('news')} className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3 transition-all duration-300 ease-in-out hover:bg-gray-100 transform hover:scale-105" data-translate>Все новости
+                <Link href={route('news')} className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3 transition-all duration-300 ease-in-out hover:bg-gray-100 transform hover:scale-105">{t('newsComponent.allNews')}
                     <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
                         strokeWidth="2" className="w-4 h-4 ml-2" viewBox="0 0 24 24">
                         <path d="M5 12h14M12 5l7 7-7 7"></path>
@@ -72,7 +78,7 @@ function News() {
             {loading ? (
                 <div className="text-center py-10">
                     <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
-                    <p className="mt-2">Загрузка новостей...</p>
+                    <p className="mt-2">{t('newsComponent.loading')}</p>
                 </div>
             ) : latestNews.length > 0 ? (
                 <div className="relative news-slider-container">
@@ -123,7 +129,7 @@ function News() {
                 </div>
             ) : (
                 <div className="text-center py-10">
-                    <p>Нет доступных новостей</p>
+                    <p>{t('newsComponent.noNews')}</p>
                 </div>
             )}
         </div>

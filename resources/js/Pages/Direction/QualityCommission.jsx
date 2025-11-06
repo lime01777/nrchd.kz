@@ -5,8 +5,10 @@ import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import FilesAccord from '@/Components/FilesAccord';
 import PageAccordions from "@/Components/PageAccordions";
 import axios from 'axios';
+import translationService from '@/services/TranslationService';
 
 export default function QualityCommission() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
   const [showFullText, setShowFullText] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [totalDocuments, setTotalDocuments] = useState(0);
@@ -105,59 +107,48 @@ export default function QualityCommission() {
   
   return (
     <>
-    <Head title="Объединенная комиссия по качеству медицинских услуг" meta={[{ name: 'description', content: 'Информация о деятельности Объединенной комиссии по качеству медицинских услуг Республики Казахстан.' }]} />
+    <Head title={t('directionsPages.qualityCommission.title', 'Объединенная комиссия по качеству медицинских услуг')} />
     <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
             <div className='flex flex-wrap px-12 text-justify mb-4'>
                 <div className="tracking-wide leading-relaxed">
                     <p className="mb-4">
-                        <strong>Объединенная комиссия по качеству медицинских услуг</strong>
+                        <strong>{t('directionsPages.qualityCommission.mainTitle')}</strong>
                     </p>
                     <p className="mb-4">
-                        Объединенная комиссия по качеству медицинских услуг (ОКК) является консультативно-совещательным 
-                        органом при уполномоченном органе в области здравоохранения Республики Казахстан. Комиссия 
-                        занимается оценкой и мониторингом качества медицинских услуг, рассматривает результаты оценки 
-                        технологий здравоохранения и принимает решения по их внедрению в систему здравоохранения.
+                        {t('directionsPages.qualityCommission.intro1')}
                     </p>
                     <p className="mb-4">
-                        В полномочия Объединенной комиссии входит рассмотрение и утверждение клинических протоколов, 
-                        стандартов оказания медицинской помощи, а также принятие решений о возможности включения 
-                        новых технологий и лекарственных средств в систему финансирования в рамках ГОБМП и ОСМС.
+                        {t('directionsPages.qualityCommission.intro2')}
                     </p>
                     
                     {showFullText && (
                         <>
                             <p className="mb-4">
-                                Комиссия проводит регулярные заседания для рассмотрения вопросов качества медицинской помощи, 
-                                анализирует результаты оценки технологий здравоохранения и разрабатывает рекомендации по 
-                                улучшению системы здравоохранения Республики Казахстан.
+                                {t('directionsPages.qualityCommission.additionalInfo1')}
                             </p>
                             <p className="mb-4">
-                                <strong>Основные функции Объединенной комиссии:</strong>
+                                <strong>{t('directionsPages.qualityCommission.functionsTitle')}</strong>
                             </p>
                             <ul className="list-disc list-inside px-4 mb-4">
-                                <li>Рассмотрение и утверждение клинических протоколов диагностики и лечения</li>
-                                <li>Оценка качества медицинских услуг и стандартов оказания медицинской помощи</li>
-                                <li>Принятие решений о включении новых технологий в систему финансирования</li>
-                                <li>Мониторинг эффективности внедренных медицинских технологий</li>
-                                <li>Разработка рекомендаций по улучшению качества медицинской помощи</li>
-                                <li>Координация деятельности по обеспечению качества медицинских услуг</li>
+                                <li>{t('directionsPages.qualityCommission.function1')}</li>
+                                <li>{t('directionsPages.qualityCommission.function2')}</li>
+                                <li>{t('directionsPages.qualityCommission.function3')}</li>
+                                <li>{t('directionsPages.qualityCommission.function4')}</li>
+                                <li>{t('directionsPages.qualityCommission.function5')}</li>
+                                <li>{t('directionsPages.qualityCommission.function6')}</li>
                             </ul>
                             <p className="mb-4">
-                                <strong>Состав комиссии:</strong>
+                                <strong>{t('directionsPages.qualityCommission.compositionTitle')}</strong>
                             </p>
                             <p className="mb-4">
-                                В состав Объединенной комиссии входят ведущие специалисты в области здравоохранения, 
-                                представители медицинских организаций, научных учреждений и общественных организаций. 
-                                Комиссия работает на принципах коллегиальности, независимости и объективности.
+                                {t('directionsPages.qualityCommission.compositionInfo')}
                             </p>
                             <p className="mb-4">
-                                <strong>Результаты работы:</strong>
+                                <strong>{t('directionsPages.qualityCommission.resultsTitle')}</strong>
                             </p>
                             <p className="mb-4">
-                                Деятельность комиссии направлена на повышение качества медицинской помощи, 
-                                обеспечение доступности современных медицинских технологий для населения и 
-                                эффективное использование ресурсов системы здравоохранения Республики Казахстан.
+                                {t('directionsPages.qualityCommission.resultsInfo')}
                             </p>
                         </>
                     )}
@@ -168,7 +159,7 @@ export default function QualityCommission() {
                     onClick={() => setShowFullText(!showFullText)} 
                     className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3 transition-all duration-150 ease-in hover:bg-gray-100"
                 >
-                    {showFullText ? 'Свернуть' : 'Читать далее'}
+                    {showFullText ? t('directionsPages.qualityCommission.hide') : t('directionsPages.qualityCommission.readMore')}
                     <svg 
                         xmlns="http://www.w3.org/2000/svg" 
                         width="24" 
@@ -207,7 +198,7 @@ export default function QualityCommission() {
                             id="search"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Поиск по названию файла..."
+                            placeholder={t('directionsPages.qualityCommission.searchPlaceholder')}
                             className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                         />
                         {searchTerm && (
@@ -227,7 +218,7 @@ export default function QualityCommission() {
                 <div className="flex justify-between items-center">
                     <div className="text-sm text-gray-600">
                         {getFilteredFiles().length > 0 && (
-                            <span>Всего найдено: <strong className="text-gray-800">{getFilteredFiles().length}</strong> документов</span>
+                            <span>{t('directionsPages.qualityCommission.foundDocuments')} <strong className="text-gray-800">{getFilteredFiles().length}</strong> {t('directionsPages.qualityCommission.documentsCount')}</span>
                         )}
                     </div>
                     {searchTerm && (
@@ -235,7 +226,7 @@ export default function QualityCommission() {
                             onClick={() => setSearchTerm('')}
                             className="text-sm text-blue-600 hover:text-blue-800 underline"
                         >
-                            Сбросить фильтры
+                            {t('directionsPages.qualityCommission.resetFilters')}
                         </button>
                     )}
                 </div>
@@ -245,17 +236,17 @@ export default function QualityCommission() {
             {loading ? (
                 <div className="py-8 text-center">
                     <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-                    <p className="mt-2">Загрузка файлов...</p>
+                    <p className="mt-2">{t('directionsPages.qualityCommission.loadingFiles')}</p>
                 </div>
             ) : error ? (
                 <div className="py-8 text-center text-red-500">
-                    {error}
+                    {t('directionsPages.qualityCommission.loadingError')}
                 </div>
             ) : (
                 <div className="py-6 bg-white">
                     {getFilteredFiles().length === 0 ? (
                         <div className="py-8 text-center text-gray-500 bg-white rounded-lg shadow border border-gray-200">
-                            Нет доступных документов
+                            {t('directionsPages.qualityCommission.noDocuments')}
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -275,12 +266,12 @@ export default function QualityCommission() {
                                                 <div className="flex flex-wrap gap-1 mb-2">
                                                     {file.medicine && (
                                                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                                                            Раздел: {file.medicine}
+                                                            {t('directionsPages.qualityCommission.sectionLabel')} {file.medicine}
                                                         </span>
                                                     )}
                                                     {file.mkb && (
                                                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
-                                                            МКБ: {file.mkb}
+                                                            {t('directionsPages.qualityCommission.mkbLabel')} {file.mkb}
                                                         </span>
                                                     )}
                                                 </div>
@@ -290,13 +281,13 @@ export default function QualityCommission() {
                                                     <button
                                                         onClick={() => window.open(file.url, '_blank')}
                                                         className="cursor-pointer text-black inline-flex items-center border-gray-300 border rounded-lg px-3 py-2 text-sm hover:bg-gray-50 transition-colors duration-200">
-                                                        <span>Открыть</span>
+                                                        <span>{t('directionsPages.qualityCommission.openButton')}</span>
                                                     </button>
                                                     <a
                                                         href={file.url}
                                                         download
                                                         className="cursor-pointer text-black inline-flex items-center border-gray-300 border rounded-lg px-3 py-2 text-sm hover:bg-gray-50 transition-colors duration-200">
-                                                        <span>Скачать</span>
+                                                        <span>{t('directionsPages.qualityCommission.downloadButton')}</span>
                                                     </a>
                                                 </div>
                                                 <div className="flex flex-col text-sm">
@@ -321,4 +312,4 @@ export default function QualityCommission() {
   )
 }
 
-QualityCommission.layout = (page) => <LayoutDirection img={'humanresources'} h1={'Объединенная комиссия по качеству медицинских услуг'}>{page}</LayoutDirection>
+QualityCommission.layout = (page) => <LayoutDirection img={'humanresources'} h1={translationService.t('directionsPages.qualityCommission.title', 'Объединенная комиссия по качеству медицинских услуг')}>{page}</LayoutDirection>

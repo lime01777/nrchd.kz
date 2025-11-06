@@ -5,8 +5,10 @@ import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import FilesAccord from '@/Components/FilesAccord';
 import NameDoctor from '@/Components/NameDoctor';
 import VideoModal from '@/Components/VideoModal';
+import translationService from '@/services/TranslationService';
 
 export default function Council() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');
@@ -39,16 +41,15 @@ export default function Council() {
 
   return (
     <>
-      <Head title="Учёный совет" meta={[{ name: 'description', content: 'Учёный совет Национального научного центра развития здравоохранения им. Салидат Каирбековой.' }]} />
+      <Head title={t('directionsPages.medicalScienceSubpages.council.title', 'Совет')} />
       <br /><br />
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6 rounded-lg">
             <div className="mb-6">
               <p className="text-lg text-gray-700 mb-4">
-              РГП на ПХВ «Национальный научный центр развития здравоохранения имени Салидат Каирбековой» МЗ РК имеет статус организации, занимающейся научной деятельностью.
-  В этой связи, в составе организации функционирует Ученый Совет, возглавляемый руководителем и являющимся постоянно действующим консультативно-совещательным органом, создаваемым в целях научно-методического обеспечения деятельности ННЦРЗ.
-      <br />Основными задачами Совета являются:
+              {t('directionsPages.medicalScienceSubpages.council.intro')}
+      <br />{t('directionsPages.medicalScienceSubpages.council.tasksTitle')}
       <br />1) рассмотрение вопросов научной, исследовательской и инновационной деятельности Центра, выработка предложений по ее совершенствованию и внесение рекомендаций;
       <br />2) содействие реализации приоритетных направлений научной, и инновационной деятельности Республики Казахстан, определенных Президентом Республики Казахстан, Правительством Республики Казахстан и Министерством здравоохранения Республики Казахстан в области системы здравоохранения и смежных сферах экономики;
       <br />3) рассмотрение стратегических и текущих планов деятельности ННЦРЗ;
@@ -57,14 +58,14 @@ export default function Council() {
       <br />6) популяризация и пропаганда результатов научной, исследовательской деятельности, содействие их коммерциализации;
       <br />7) содействие развития международного сотрудничества в области науки и инноваций в здравоохранении;
       <br />8) содействие повышению эффективности работы ННЦРЗ и его структурных подразделений в области исследовательской деятельности.
-      <br />Всю необходимую информацию по научно-методической деятельности вы можете получить по следующим телефонам: 8 (7172) 700950 доп. (1057) 
+      <br />{t('directionsPages.medicalScienceSubpages.council.contactInfo')} 
               </p>
             </div>
             
             <div className="mt-8">
               <FilesAccord 
-                folder="Медицинская наука/Набор - Ученый совет"
-                title="Учёный совет"
+                folder={t('directionsPages.medicalScienceSubpages.council.folder')}
+                title={t('directionsPages.medicalScienceSubpages.council.accordionTitle')}
                 bgColor="bg-gray-200"
                 defaultOpen={true}
               />
@@ -76,7 +77,7 @@ export default function Council() {
       <section className="text-gray-600 body-font">
       <div className="container px-5 pt-24 mx-auto">
         <div className="flex flex-col text-left w-full">
-          <h1 className="sm:text-2xl text-2xl font-semibold title-font text-gray-900 mb-6">Учёный совет</h1>
+          <h1 className="sm:text-2xl text-2xl font-semibold title-font text-gray-900 mb-6">{t('directionsPages.medicalScienceSubpages.council.membersTitle')}</h1>
         </div>
         <div className="flex flex-wrap -m-2">
           {allNameDoctors.map((namedoctor, index) =>(
@@ -93,10 +94,15 @@ export default function Council() {
 
 Council.layout = page => <LayoutFolderChlank 
   bgColor="bg-white"
-  h1="Учёный совет" 
+  h1={translationService.t('directionsPages.medicalScienceSubpages.council.h1')} 
   parentRoute={route('medical.science')} 
-  parentName="Медицинская наука"
+  parentName={translationService.t('directionsPages.medicalScienceSubpages.council.parentName')}
   heroBgColor="bg-gray-200"
   buttonBgColor="bg-gray-200"
   buttonHoverBgColor="hover:bg-gray-300"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.medicalScienceSubpages.council.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.medicalScienceSubpages.council.breadcrumbMedicalScience'), route: 'medical.science' },
+    { name: translationService.t('directionsPages.medicalScienceSubpages.council.h1'), route: null }
+  ]}
 >{page}</LayoutFolderChlank>;

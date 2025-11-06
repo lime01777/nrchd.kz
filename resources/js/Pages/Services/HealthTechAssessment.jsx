@@ -2,31 +2,26 @@ import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 import ServiceTimeline from '@/Components/ServiceTimeline';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
 export default function HealthTechAssessmentComponent() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
   const timelineItems = [
-    { title: "Регистрация заявки", value: "10 рабочих дней" },
-    { title: "Полный отчет оценки технологий здравоохранения", value: "не более 3 месяцев" },
-    { title: "Краткий отчет оценки технологий здравоохранения", value: "от 1 до 3 месяцев" },
-    { title: "Справочный обзор технологии здравоохранения", value: "не более 1 месяца" }
+    { title: t('servicesPages.commonElements.applicationForm'), value: `10 ${t('servicesPages.commonElements.workingDays')}` },
+    { title: t('servicesPages.healthTechAssessment.fullReport'), value: `${t('servicesPages.commonElements.notMoreThan')} 3 ${t('servicesPages.commonElements.months')}` },
+    { title: t('servicesPages.healthTechAssessment.shortReport'), value: `1-3 ${t('servicesPages.commonElements.months')}` },
+    { title: t('servicesPages.healthTechAssessment.refOverview'), value: `${t('servicesPages.commonElements.notMoreThan')} 1 ${t('servicesPages.commonElements.month')}` }
   ];
 
   const handleDownloadForm = () => {
     const fileUrl = '/storage/documents/Услуги/Оценка технологий здравоохранения/Форма заявки на проведение ОТЗ.docx';
     
-    const link = document.createElementComponent('a');
+    const link = document.createElement('a');
     link.href = fileUrl;
     link.setAttribute('download', 'Форма заявки на проведение ОТЗ.docx');
     link.setAttribute('target', '_blank');
@@ -39,7 +34,7 @@ export default function HealthTechAssessmentComponent() {
   const handleDownloadLetter = () => {
     const fileUrl = '/storage/documents/Услуги/Оценка технологий здравоохранения/Сопроводительное письмо на проведение ОТЗ.docx';
     
-    const link = document.createElementComponent('a');
+    const link = document.createElement('a');
     link.href = fileUrl;
     link.setAttribute('download', 'Сопроводительное письмо на проведение ОТЗ.docx');
     link.setAttribute('target', '_blank');
@@ -51,7 +46,7 @@ export default function HealthTechAssessmentComponent() {
 
   return (
     <>
-              <Head title={tComponent('services.health_tech_assessment', 'Оценка технологий здравоохранения')} meta={[{ name: 'description', content: 'Оценка технологий здравоохранения для медицинских организаций.' }]} />
+              <Head title={t('servicesPages.healthTechAssessment.title')} />
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-2/3 px-4">

@@ -2,21 +2,24 @@ import { Head } from "@inertiajs/react";
 import React from 'react';
 import LayoutFolderChlank from "@/Layouts/LayoutFolderChlank";
 import FilesAccord from '@/Components/FilesAccord';
+import translationService from '@/services/TranslationService';
 
 export default function BioethicsBiobanks() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  
   return (
     <>
-      <Head title="Биобанки" meta={[{ name: 'description', content: 'Биобанки: надзор, регулирование и этические аспекты.' }]} />
+      <Head title={t('directionsPages.bioethicsSubpages.biobanks.title', 'Биобанки')} />
       
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>
             <p className="tracking-wide leading-relaxed mb-4">
-              В соответствии с приказом и.о. Министра здравоохранения Республики Казахстан от 24 декабря 2020 года № ҚР ДСМ-328/2020 «Об утверждении правил создания и деятельности биобанков», биобанки создаются на основе положительного заключения Центральной комиссии по биоэтике.
+              {t('directionsPages.bioethicsSubpages.biobanks.intro')}
             </p>
 
             <h2 className="text-xl font-semibold text-gray-800 mb-4 w-full">
-              Порядок получения заключения Центральной комиссии по биоэтике
+              {t('directionsPages.bioethicsSubpages.biobanks.procedureTitle')}
             </h2>
 
             <div className="w-full mb-6">
@@ -39,7 +42,7 @@ export default function BioethicsBiobanks() {
             </div>
 
             <h3 className="text-lg font-semibold text-gray-800 mb-4 w-full">
-              Пакет документов для получения заключения Центральной комиссии по биоэтике:
+              {t('directionsPages.bioethicsSubpages.biobanks.packagesTitle')}
             </h3>
 
             <div className="w-full mb-6">
@@ -56,7 +59,7 @@ export default function BioethicsBiobanks() {
 
             <div className="w-full mb-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                Мониторинг и контроль деятельности
+                {t('directionsPages.bioethicsSubpages.biobanks.monitoringTitle')}
               </h3>
               <p className="text-gray-700 mb-3">
                 Деятельность биобанка подлежит внешнему мониторингу со стороны Центральной комиссии по биоэтике один раз в 5 лет.
@@ -73,8 +76,8 @@ export default function BioethicsBiobanks() {
       <section className="text-gray-600 body-font">
         <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
             <FilesAccord 
-                folder="Bioethics/Biobanks/Regulation"
-                title="Документы по биобанкам"
+                folder={t('directionsPages.bioethicsSubpages.biobanks.folder')}
+                title={t('directionsPages.bioethicsSubpages.biobanks.documentsTitle')}
                 bgColor="bg-blue-200"
                 defaultOpen={true}
             />
@@ -85,12 +88,17 @@ export default function BioethicsBiobanks() {
 }
 
 BioethicsBiobanks.layout = page => <LayoutFolderChlank    
-  h1="Биобанки"
+  h1={translationService.t('directionsPages.bioethicsSubpages.biobanks.h1')}
   title="Биобанки"
   parentRoute={route('bioethics')}
-  parentName="Центральная комиссия по биоэтике"
+  parentName={translationService.t('directionsPages.bioethicsSubpages.biobanks.parentName')}
   heroBgColor="bg-blue-100"
   buttonBgColor="bg-blue-100"
   buttonHoverBgColor="hover:bg-blue-200"
   buttonBorderColor="border-blue-200"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.bioethicsSubpages.biobanks.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.bioethicsSubpages.biobanks.breadcrumbBioethics'), route: 'bioethics' },
+    { name: translationService.t('directionsPages.bioethicsSubpages.biobanks.h1'), route: null }
+  ]}
 >{page}</LayoutFolderChlank>

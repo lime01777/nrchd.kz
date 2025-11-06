@@ -2,25 +2,25 @@ import { Head } from '@inertiajs/react';
 import React from 'react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
+import translationService from '@/services/TranslationService';
 
 export default function Expert() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  
   return (
     <>
-      <Head title="Экспертный совет | NNCRZ" meta={[{ name: 'description', content: 'Экспертный совет по стратегическим инициативам в здравоохранении.' }]} />
+      <Head title={t('directionsPages.strategicInitiativesSubpages.expert.title', 'Экспертный совет')} />
       <section className="text-gray-600 body-font">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-8'>
             <p className="tracking-wide leading-relaxed">
-              Экспертный совет Национального научного центра развития здравоохранения имени Салидат Каирбековой – 
-              это коллегиальный орган, объединяющий ведущих специалистов в различных областях медицины и 
-              здравоохранения. Совет осуществляет научно-методическую и экспертную поддержку деятельности Центра, 
-              способствует продвижению инновационных подходов и лучших практик в системе здравоохранения.
+              {t('directionsPages.strategicInitiativesSubpages.expert.intro')}
             </p>
           </div>
           
           <div className="flex flex-col md:flex-row flex-wrap mb-8">
             <div className="lg:w-1/2 md:w-full px-8 py-6">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Функции экспертного совета:</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">{t('directionsPages.strategicInitiativesSubpages.expert.functionsTitle')}</h3>
               <ul className="list-disc pl-6 space-y-3 text-gray-700">
                 <li>Экспертиза научных и прикладных разработок в области здравоохранения</li>
                 <li>Анализ эффективности внедрения новых медицинских технологий</li>
@@ -32,9 +32,9 @@ export default function Expert() {
             </div>
             
             <div className="lg:w-1/2 md:w-full px-8 py-6">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Состав экспертного совета:</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">{t('directionsPages.strategicInitiativesSubpages.expert.compositionTitle')}</h3>
               <p className="text-gray-700 mb-4">
-                В состав Экспертного совета входят:
+                {t('directionsPages.strategicInitiativesSubpages.expert.compositionIntro')}
               </p>
               <ul className="list-disc pl-6 space-y-3 text-gray-700">
                 <li>Ведущие ученые в области медицины и здравоохранения</li>
@@ -47,7 +47,7 @@ export default function Expert() {
           </div>
           
           <div className="px-8 mb-12">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4 px-4">Направления работы экспертного совета:</h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 px-4">{t('directionsPages.strategicInitiativesSubpages.expert.activitiesTitle')}</h3>
             <div className="grid md:grid-cols-2 gap-6 mb-8 px-4">
               <div className="bg-purple-50 p-5 rounded-lg">
                 <h4 className="text-lg font-semibold text-purple-800 mb-3">Научно-исследовательская деятельность</h4>
@@ -83,7 +83,7 @@ export default function Expert() {
             </div>
             
             <FilesAccord
-              title="Документы"
+              title={t('directionsPages.strategicInitiativesSubpages.expert.documentsTitle')}
               items={[
                 { title: 'Положение об Экспертном совете ННЦРЗ', description: 'PDF, 0.8 МБ' },
                 { title: 'План работы Экспертного совета на 2024 год', description: 'PDF, 1.1 МБ' },
@@ -98,11 +98,16 @@ export default function Expert() {
 }
 
 Expert.layout = page => <LayoutFolderChlank 
-  h1="Экспертный совет" 
+  h1={translationService.t('directionsPages.strategicInitiativesSubpages.expert.h1')} 
   parentRoute={route('strategic.initiatives')}
-  parentName="Стратегические инициативы и международное сотрудничество" 
+  parentName={translationService.t('directionsPages.strategicInitiativesSubpages.expert.parentName')} 
   heroBgColor="bg-green-100"
   buttonBgColor="bg-green-100"
   buttonHoverBgColor="hover:bg-green-200"
   buttonBorderColor="border-green-200"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.strategicInitiativesSubpages.expert.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.strategicInitiativesSubpages.expert.breadcrumbStrategic'), route: 'strategic.initiatives' },
+    { name: translationService.t('directionsPages.strategicInitiativesSubpages.expert.h1'), route: null }
+  ]}
   >{page}</LayoutFolderChlank>;

@@ -1,48 +1,46 @@
 import { Head } from "@inertiajs/react";
 import React from 'react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
+import translationService from '@/services/TranslationService';
 
 export default function BioethicsComposition() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  
   return (
     <>
-      <Head title="Состав Центральной комиссии по биоэтике" />
+      <Head title={t('directionsPages.bioethicsSubpages.composition.title', 'Состав Центральной комиссии по биоэтике')} />
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6 rounded-lg shadow-md">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Состав Центральной комиссии по биоэтике</h2>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('directionsPages.bioethicsSubpages.composition.mainTitle')}</h2>
               
               <div className="bg-blue-50 p-4 rounded-lg mb-6">
                 <p className="text-gray-700 mb-4">
-                  <strong>Приказом Министра здравоохранения Республики Казахстан №961 от 31 декабря 2024 года</strong> 
-                  «О внесении изменения в приказ Министра здравоохранения Республики Казахстан от 20 декабря 2020 года №854/1 
-                  «Об утверждении состава Центральной комиссии по биоэтике»» утвержден новый состав Центральной комиссии по биоэтике.
+                  {t('directionsPages.bioethicsSubpages.composition.orderInfo')}
                 </p>
               </div>
 
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Председатель комиссии</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">{t('directionsPages.bioethicsSubpages.composition.chairmanTitle')}</h3>
               <div className="bg-gray-50 p-4 rounded-lg mb-6">
                 <p className="text-gray-700">
-                  <strong>Ергалиев Куаныш Асылханович</strong> - доктор общественного здравоохранения, 
-                  ассистент профессор практики Школа медицины АОО «Назарбаев Университет», 
-                  Председатель Совета ассоциации менеджеров здравоохранения Казахстана
+                  {t('directionsPages.bioethicsSubpages.composition.chairmanInfo')}
                 </p>
               </div>
 
               <div className="bg-yellow-50 p-4 rounded-lg mt-6">
-                <h4 className="text-lg font-semibold text-gray-800 mb-2">Рабочий орган</h4>
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">{t('directionsPages.bioethicsSubpages.composition.workingBodyTitle')}</h4>
                 <p className="text-gray-700 mb-2">
-                  <strong>«Национальный научный центр развития здравоохранения имени Салидат Каирбековой»</strong> 
-                  Министерства здравоохранения Республики Казахстан
+                  <strong>{t('directionsPages.bioethicsSubpages.composition.workingBodyName')}</strong>
                 </p>
                 <p className="text-gray-700 mb-2">
-                  <strong>Адрес:</strong> г. Астана, ул. Мангилик ел 20, блок С, 5 этаж, 507 кабинет
+                  <strong>{t('directionsPages.bioethicsSubpages.composition.addressLabel')}</strong> {t('directionsPages.bioethicsSubpages.composition.addressValue')}
                 </p>
                 <p className="text-gray-700 mb-2">
-                  <strong>Телефон:</strong> 87172648-950; 87172648-951 (внут 1109)
+                  <strong>{t('directionsPages.bioethicsSubpages.composition.phoneLabel')}</strong> {t('directionsPages.bioethicsSubpages.composition.phoneValue')}
                 </p>
                 <p className="text-gray-700">
-                  <strong>Email:</strong> <a href="mailto:bioethics@nrchd.kz" className="text-blue-600 hover:text-blue-800">bioethics@nrchd.kz</a>
+                  <strong>{t('directionsPages.bioethicsSubpages.composition.emailLabel')}</strong> <a href="mailto:bioethics@nrchd.kz" className="text-blue-600 hover:text-blue-800">bioethics@nrchd.kz</a>
                 </p>
               </div>
             </div>
@@ -55,10 +53,15 @@ export default function BioethicsComposition() {
 
 BioethicsComposition.layout = page => <LayoutFolderChlank 
   bgColor="bg-white"
-  h1="Состав Центральной комиссии по биоэтике" 
+  h1={translationService.t('directionsPages.bioethicsSubpages.composition.h1')} 
   parentRoute={route('bioethics')} 
-  parentName="Центральная комиссия по биоэтике"
+  parentName={translationService.t('directionsPages.bioethicsSubpages.composition.parentName')}
   heroBgColor="bg-blue-100"
   buttonBgColor="bg-blue-100"
   buttonHoverBgColor="hover:bg-blue-200"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.bioethicsSubpages.composition.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.bioethicsSubpages.composition.breadcrumbBioethics'), route: 'bioethics' },
+    { name: translationService.t('directionsPages.bioethicsSubpages.composition.h1'), route: null }
+  ]}
 >{page}</LayoutFolderChlank>

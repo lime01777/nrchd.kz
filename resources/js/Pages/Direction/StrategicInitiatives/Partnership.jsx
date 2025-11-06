@@ -3,51 +3,44 @@ import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import PageAccordions from '@/Components/PageAccordions';
 import Sponsors from '@/Components/Sponsors';
+import translationService from '@/services/TranslationService';
 
 export default function Partnership() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  
   return (
     <>
-      <Head title="Партнерство - Стратегические инициативы" meta={[{ name: 'description', content: 'Партнерство в рамках стратегических инициатив ННЦРЗ.' }]} />
+      <Head title={t('directionsPages.strategicInitiativesSubpages.partnership.title', 'Партнерство')} />
       
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className="flex flex-wrap px-12 text-justify mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 w-full">Международное партнерство</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 w-full">{t('directionsPages.strategicInitiativesSubpages.partnership.mainTitle')}</h2>
             <p className="tracking-wide leading-relaxed mb-4">
-              Национальный научный центр развития здравоохранения имени Салидат Каирбековой активно развивает 
-              партнерские отношения с ведущими международными организациями здравоохранения, научными и 
-              образовательными учреждениями разных стран.
+              {t('directionsPages.strategicInitiativesSubpages.partnership.intro1')}
             </p>
             <p className="tracking-wide leading-relaxed mb-4">
-              Партнерство с международными организациями позволяет Центру обмениваться опытом, внедрять 
-              лучшие мировые практики в систему здравоохранения Казахстана, участвовать в глобальных 
-              инициативах по улучшению здоровья населения.
+              {t('directionsPages.strategicInitiativesSubpages.partnership.intro2')}
             </p>
           </div>
           
           <div className="flex flex-wrap px-12 text-justify mb-8">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4 w-full">Ключевые международные партнеры:</h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 w-full">{t('directionsPages.strategicInitiativesSubpages.partnership.partnersTitle')}</h3>
             <ul className="list-disc pl-6 space-y-3 text-gray-700 w-full">
               <li>
-                <strong>Всемирная организация здравоохранения (ВОЗ)</strong> - сотрудничество в области 
-                разработки политики здравоохранения, обмена опытом и экспертизы, участие в глобальных 
-                программах по борьбе с инфекционными и неинфекционными заболеваниями.
+                <strong>{t('directionsPages.strategicInitiativesSubpages.partnership.partner1Title')}</strong> - {t('directionsPages.strategicInitiativesSubpages.partnership.partner1Text')}
               </li>
               <li>
-                <strong>ЮНИСЕФ</strong> - совместные проекты по охране здоровья матери и ребенка, 
-                вакцинации и питанию, развитию педиатрической службы.
+                <strong>{t('directionsPages.strategicInitiativesSubpages.partnership.partner2Title')}</strong> - {t('directionsPages.strategicInitiativesSubpages.partnership.partner2Text')}
               </li>
               <li>
-                <strong>Всемирный банк</strong> - проекты по модернизации системы здравоохранения и 
-                повышению эффективности медицинских услуг, финансирование инфраструктурных проектов.
+                <strong>{t('directionsPages.strategicInitiativesSubpages.partnership.partner3Title')}</strong> - {t('directionsPages.strategicInitiativesSubpages.partnership.partner3Text')}
               </li>
               <li>
-                <strong>Европейское региональное бюро ВОЗ</strong> - сотрудничество по вопросам 
-                общественного здравоохранения, профилактики заболеваний, укрепления систем здравоохранения.
+                <strong>{t('directionsPages.strategicInitiativesSubpages.partnership.partner4Title')}</strong> - {t('directionsPages.strategicInitiativesSubpages.partnership.partner4Text')}
               </li>
               <li>
-                <strong>Программа развития ООН (ПРООН)</strong> - проекты по устойчивому развитию 
-                здравоохранения, доступу к медицинским услугам, борьбе с ВИЧ/СПИД и туберкулезом.
+                <strong>{t('directionsPages.strategicInitiativesSubpages.partnership.partner5Title')}</strong> - {t('directionsPages.strategicInitiativesSubpages.partnership.partner5Text')}
               </li>
             </ul>
           </div>
@@ -59,11 +52,16 @@ export default function Partnership() {
 }
 
 Partnership.layout = page => <LayoutFolderChlank 
-  h1="Международное партнерство" 
+  h1={translationService.t('directionsPages.strategicInitiativesSubpages.partnership.h1')} 
   parentRoute={route('strategic.initiatives')} 
-  parentName="Стратегические инициативы и международное сотрудничество"
+  parentName={translationService.t('directionsPages.strategicInitiativesSubpages.partnership.parentName')}
   heroBgColor="bg-green-100"
   buttonBgColor="bg-green-100"
   buttonHoverBgColor="hover:bg-green-200"
   buttonBorderColor="border-green-200"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.strategicInitiativesSubpages.partnership.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.strategicInitiativesSubpages.partnership.breadcrumbStrategic'), route: 'strategic.initiatives' },
+    { name: translationService.t('directionsPages.strategicInitiativesSubpages.partnership.h1'), route: null }
+  ]}
 >{page}</LayoutFolderChlank>;

@@ -1,11 +1,14 @@
 import { Head } from '@inertiajs/react';
 import React from 'react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
+import translationService from '@/services/TranslationService';
 
 export default function MedicalTourismDirections() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  
   return (
     <>
-      <Head title="Направления работы | Медицинский туризм | NNCRZ" meta={[{ name: 'description', content: 'Основные направления работы в сфере медицинского туризма в Казахстане.' }]} />
+      <Head title={t('directionsPages.medicalTourismSubpages.directions.title', 'Направления')} />
       <section className="text-gray-600 body-font">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-8'>

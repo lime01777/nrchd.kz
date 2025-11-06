@@ -3,8 +3,10 @@ import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import OtzApplicationCard from '@/Components/OtzApplicationCard';
 import OtzApplicationModal from '@/Components/OtzApplicationModal';
+import translationService from '@/services/TranslationService';
 
 export default function OtzReports({ applications: initialApplications, categories, stages }) {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
   const [applications, setApplications] = useState(initialApplications || []);
   const [loading, setLoading] = useState(false);
   
@@ -66,58 +68,53 @@ export default function OtzReports({ applications: initialApplications, categori
   return (
     <>
       <Head 
-        title="Отчеты ОТЗ" 
-        meta={[{ name: 'description', content: 'Отчеты по оценке технологий здравоохранения (ОТЗ) для здравоохранения Казахстана.' }]} 
+        title={t('directionsPages.healthRateSubpages.otzReports.title', 'ОТЗ отчеты')} 
       />
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6 rounded-lg shadow-md">
             <div className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Отчеты по оценке технологий здравоохранения</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">{t('directionsPages.healthRateSubpages.otzReports.mainTitle')}</h3>
               
               <p className="text-gray-700 mb-4">
-                В данном разделе представлены отчеты по оценке технологий здравоохранения (ОТЗ), 
-                подготовленные Национальным научным центром развития здравоохранения имени 
-                Салидат Каирбековой. Отчеты содержат анализ клинической эффективности, 
-                безопасности и экономической целесообразности технологий здравоохранения для 
-                принятия решений о их внедрении в систему здравоохранения.
+                {t('directionsPages.healthRateSubpages.otzReports.intro')}
               </p>
 
               {/* Фильтры */}
               <div className="bg-gray-50 p-4 rounded-lg mb-6">
-                <h4 className="font-semibold text-gray-800 mb-3">Фильтры</h4>
+                <h4 className="font-semibold text-gray-800 mb-3">{t('directionsPages.healthRateSubpages.otzReports.filtersTitle')}</h4>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('directionsPages.healthRateSubpages.otzReports.searchLabel')}</label>
                     <input
                       type="text"
-                      placeholder="Поиск по названию или ID"
+                      placeholder={t('directionsPages.healthRateSubpages.otzReports.searchPlaceholder')}
                       value={filters.search}
                       onChange={(e) => handleFilterChange('search', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Категория</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('directionsPages.healthRateSubpages.otzReports.categoryLabel')}</label>
                     <select
                       value={filters.category}
                       onChange={(e) => handleFilterChange('category', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
                     >
-                      <option value="">Все категории</option>
+                      <option value="">{t('directionsPages.healthRateSubpages.otzReports.allCategories')}</option>
                       {categories.map((category) => (
                         <option key={category} value={category}>{category}</option>
                       ))}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Этап</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('directionsPages.healthRateSubpages.otzReports.stageLabel')}</label>
                     <select
                       value={filters.stage}
                       onChange={(e) => handleFilterChange('stage', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
                     >
-                      <option value="">Все этапы</option>
+                      <option value="">{t('directionsPages.healthRateSubpages.otzReports.allStages')}</option>
                       {stages.map((stage) => (
                         <option key={stage} value={stage}>{stage}</option>
                       ))}
@@ -128,7 +125,7 @@ export default function OtzReports({ applications: initialApplications, categori
                       onClick={resetFilters}
                       className="w-full px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
                     >
-                      Сбросить
+                      {t('directionsPages.healthRateSubpages.otzReports.resetButton')}
                     </button>
                   </div>
                 </div>
@@ -136,11 +133,11 @@ export default function OtzReports({ applications: initialApplications, categori
 
               {/* Отладочная информация */}
               <div className="bg-yellow-100 p-4 rounded-lg mb-6">
-                <h4 className="font-semibold text-gray-800 mb-2">Отладочная информация:</h4>
-                <p>Всего заявок: {applications.length}</p>
-                <p>Отфильтрованных заявок: {filteredApplications.length}</p>
-                <p>Категории: {categories ? categories.join(', ') : 'не загружены'}</p>
-                <p>Этапы: {stages ? stages.join(', ') : 'не загружены'}</p>
+                <h4 className="font-semibold text-gray-800 mb-2">{t('directionsPages.healthRateSubpages.otzReports.debugInfoTitle')}</h4>
+                <p>{t('directionsPages.healthRateSubpages.otzReports.totalApplications')} {applications.length}</p>
+                <p>{t('directionsPages.healthRateSubpages.otzReports.filteredApplications')} {filteredApplications.length}</p>
+                <p>{t('directionsPages.healthRateSubpages.otzReports.categories')} {categories ? categories.join(', ') : t('directionsPages.healthRateSubpages.otzReports.notLoaded')}</p>
+                <p>{t('directionsPages.healthRateSubpages.otzReports.stages')} {stages ? stages.join(', ') : t('directionsPages.healthRateSubpages.otzReports.notLoaded')}</p>
               </div>
 
               {/* Карточки заявок */}
@@ -157,15 +154,15 @@ export default function OtzReports({ applications: initialApplications, categori
               ) : (
                 <div className="text-center py-12">
                   <p className="text-gray-500 text-lg">
-                    {applications.length > 0 ? 'Заявки не найдены по заданным фильтрам' : 'Заявки не найдены'}
+                    {applications.length > 0 ? t('directionsPages.healthRateSubpages.otzReports.noApplicationsFiltered') : t('directionsPages.healthRateSubpages.otzReports.noApplicationsFound')}
                   </p>
                   {applications.length === 0 && (
                     <div className="mt-4 text-sm text-gray-400">
-                      <p>Проверьте:</p>
+                      <p>{t('directionsPages.healthRateSubpages.otzReports.checkTitle')}</p>
                       <ul className="list-disc list-inside">
-                        <li>Есть ли данные в базе</li>
-                        <li>Правильно ли настроен контроллер</li>
-                        <li>Передаются ли данные через Inertia</li>
+                        <li>{t('directionsPages.healthRateSubpages.otzReports.checkDatabase')}</li>
+                        <li>{t('directionsPages.healthRateSubpages.otzReports.checkController')}</li>
+                        <li>{t('directionsPages.healthRateSubpages.otzReports.checkInertia')}</li>
                       </ul>
                     </div>
                   )}
@@ -190,11 +187,16 @@ export default function OtzReports({ applications: initialApplications, categori
 
 OtzReports.layout = page => <LayoutFolderChlank 
   bgColor="bg-white"
-  h1="Отчеты ОТЗ" 
+  h1={translationService.t('directionsPages.healthRateSubpages.otzReports.h1')} 
   parentRoute={route('health.rate')} 
-  parentName="Оценка медицинских технологий"
+  parentName={translationService.t('directionsPages.healthRateSubpages.otzReports.parentName')}
   heroBgColor="bg-fuchsia-100"
   buttonBgColor="bg-fuchsia-100"
   buttonHoverBgColor="hover:bg-fuchsia-200"
   buttonBorderColor="border-fuchsia-200"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.healthRateSubpages.otzReports.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.healthRateSubpages.otzReports.breadcrumbHealthRate'), route: 'health.rate' },
+    { name: translationService.t('directionsPages.healthRateSubpages.otzReports.h1'), route: null }
+  ]}
 >{page}</LayoutFolderChlank>;

@@ -2,18 +2,17 @@ import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 import FilesAccord from '@/Components/FilesAccord';
+import translationService from '@/services/TranslationService';
 
 export default function EducationPrograms() {
-    const { translations } = usePage().props;
-    
     // Функция для получения перевода
     const t = (key, fallback = '') => {
-        return translations?.[key] || fallback;
+        return translationService.t(key, fallback);
     };
 
   return (
     <>
-              <Head title={t('services.education_programs', 'Экспертиза научно-образовательных программ дополнительного образования')} meta={[{ name: 'description', content: 'Экспертиза программ дополнительного образования в сфере медицины.' }]} />
+              <Head title={t('servicesPages.educationPrograms.title')} />
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-full px-4">

@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
-
 
 // Компонент формы обратной связи
 const ContactForm = () => {
@@ -46,18 +46,18 @@ const ContactForm = () => {
         organization: '',
         message: ''
       });
-      alert('Форма отправлена успешно!');
+      alert('Заявка отправлена успешно!');
     }, 1000);
   };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">Оставить заявку</h3>
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">{t('directionsPages.medicalAccreditation.contactForm.title')}</h3>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-            ФИО *
+            {t('directionsPages.medicalAccreditation.contactForm.name')} *
           </label>
           <input
             type="text"
@@ -72,7 +72,7 @@ const ContactForm = () => {
 
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Email *
+            {t('directionsPages.medicalAccreditation.contactForm.email')} *
           </label>
           <input
             type="email"
@@ -87,7 +87,7 @@ const ContactForm = () => {
 
         <div>
           <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-            Телефон
+            {t('directionsPages.medicalAccreditation.contactForm.phone')}
           </label>
           <input
             type="tel"
@@ -101,7 +101,7 @@ const ContactForm = () => {
 
         <div>
           <label htmlFor="organization" className="block text-sm font-medium text-gray-700 mb-1">
-            Организация
+            {t('directionsPages.medicalAccreditation.contactForm.organization')}
           </label>
           <input
             type="text"
@@ -115,7 +115,7 @@ const ContactForm = () => {
 
         <div>
           <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-            Сообщение
+            {t('directionsPages.medicalAccreditation.contactForm.message')}
           </label>
           <textarea
             id="message"
@@ -133,16 +133,16 @@ const ContactForm = () => {
             className={`bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-1.5 px-4 rounded-md text-sm transition duration-300 w-auto ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Отправка...' : 'Отправить'}
+            {isSubmitting ? t('directionsPages.medicalAccreditation.contactForm.submitting') : t('directionsPages.medicalAccreditation.contactForm.submit')}
           </button>
         </div>
       </form>
       
       <div className="mt-4 pt-3 border-t border-gray-200">
         <p className="text-sm text-gray-800">
-          <span className="font-medium">Для получения коммерческого предложения нажмите на </span>
-          <a href="/storage/documents/Услуги/Аккредитация/шаблон_заявки.docx" className="text-yellow-600 hover:text-yellow-800 font-bold" download>
-            скачать шаблон заявки
+          <span className="font-medium">{t('directionsPages.medicalAccreditation.contactForm.downloadInfo')} </span>
+          <a href="/storage/documents/Услуги/Аккредитация/Заявка_образец.docx" className="text-yellow-600 hover:text-yellow-800 font-bold" download>
+            {t('directionsPages.medicalAccreditation.contactForm.downloadLink')}
           </a>
         </p>
       </div>
@@ -152,90 +152,82 @@ const ContactForm = () => {
 
 export default function MedicalAccreditation() {
     const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
 
-  // Состояние для отслеживания, показывать ли описания
-  const [showDescriptions, setShowDescriptions] = useState(false);
+  // Состояние для отображения, показывает какая карточка в hover состоянии (по id)
+  const [hoveredStepId, setHoveredStepId] = useState(null);
   
-  // Данные о шагах процесса аккредитации
+  // Данные о этапах процесса аккредитации
   const evaluationSteps = [
     {
       id: 1,
-      title: "Бесплатная консультация по аккредитации",
-      description: "Бесплатная телефонная консультация по вопросам аккредитации по номеру телефона 8 (7172) 648-951 (вн. 1000,1143,1127, 1046, 1064, 1014)" 
+      title: t('directionsPages.medicalAccreditation.step1Title'),
+      description: t('directionsPages.medicalAccreditation.step1Description')
     },
     {
       id: 2,
-      title: "Заявление на прохождение внешней комплексной оценки",
-      description: "Инициирование процесса прохождения внешней комплексной оценки."
+      title: t('directionsPages.medicalAccreditation.step2Title'),
+      description: t('directionsPages.medicalAccreditation.step2Description')
     },
     {
       id: 3,
-      title: "Расчёт стоимости услуг",
-      description: "Расчет стоимости производится индивидуально в зависимости от типа и размера организации."
+      title: t('directionsPages.medicalAccreditation.step3Title'),
+      description: t('directionsPages.medicalAccreditation.step3Description')
     },
     {
       id: 4,
-      title: "Заключение договора и оплата услуг",
-      description: "Рассмотрение результатов внешней комплексной оценки комиссией по аккредитации. Принятие решения о выдаче свидетельства об аккредитации."
+      title: t('directionsPages.medicalAccreditation.step4Title'),
+      description: t('directionsPages.medicalAccreditation.step4Description')
     },
     {
       id: 5,
-      title: "Прохождение внешней комплексной оценки",
-      description: "Прохождение внешней комплексной оценки. Эксперты проводят оценку на соответствие стандартам аккредитации непосредственно в медицинской организации."
+      title: t('directionsPages.medicalAccreditation.step5Title'),
+      description: t('directionsPages.medicalAccreditation.step5Description')
     },
     {
-        id: 6,
-        title: "Свидетельство об аккредитации/мотивированный отказ",
-        description: "Выдача свидетельства об аккредитации или мотивированный отказ. Свидетельство действительно в течение 3 лет."
-      }
+      id: 6,
+      title: t('directionsPages.medicalAccreditation.step6Title'),
+      description: t('directionsPages.medicalAccreditation.step6Description')
+    }
   ];
   
-  // Обработчики событий для всплывающих подсказок
-  const handleMouseEnter = () => {
-    setShowDescriptions(true);
+  // Обработчики событий для подсказываний описаний
+  const handleMouseEnter = (stepId) => {
+    setHoveredStepId(stepId);
   };
   
   const handleMouseLeave = () => {
-    setShowDescriptions(false);
+    setHoveredStepId(null);
   };
 
   return (
     <>
-    <Head title="NNCRZ" meta={[{ name: 'description', content: 'Аккредитация медицинских организаций и образовательных программ в сфере здравоохранения.' }]} />
+    <Head title={t('directionsPages.medicalAccreditation.title', 'Аккредитация')} />
     <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
             <div className='flex flex-wrap px-12 text-justify mb-4'>
                 <p className="tracking-wide leading-relaxed">
-               Эффективность, доступность, качество и безопасность — важнейшие аспекты оказания медицинской помощи в Республике Казахстан. 
-Основным оцениваемым показателем системы здравоохранения со стороны населения на сегодняшний день является качество медицинской помощи. 
-Ключевым процессом оценки качества и безопасности оказываемых услуг выступает аккредитация медицинских организаций, подразумевающая под собой определение уровня соответствия установленным нормам и требованиям.
-Аккредитация (внешняя комплексная оценка) медицинских организаций является добровольной процедурой, проводится вне зависимости от формы собственности и профиля медицинской организации и включает: 
-                    </p>
-                    <ul className='list-disc list-inside px-12 my-4'>
-                        <li>Добровольное участие заявителя.</li>
-                        <li>Самооценку на основе стандартов аккредитации и собственных нормативов.</li>
-                        <li>Внешнюю оценку качества по установленным стандартам.</li>
-                    </ul>
+                    {t('directionsPages.medicalAccreditation.intro')}
+                </p>
+                <ul className='list-disc list-inside px-12 my-4'>
+                    <li>{t('directionsPages.medicalAccreditation.benefitsItem1')}</li>
+                    <li>{t('directionsPages.medicalAccreditation.benefitsItem2')}</li>
+                    <li>{t('directionsPages.medicalAccreditation.benefitsItem3')}</li>
+                </ul>
             </div>
         </div>
     </section>
 
-    {/* Блок этапов аккредитации */}
+    {/* Блок этапами аккредитации */}
     <section className="text-gray-700 body-font py-12 bg-gray-50">
         <div className="container px-5 mx-auto">
-            <h2 className="text-2xl font-semibold text-center mb-12">Этапы подачи заявки</h2>
+            <h2 className="text-2xl font-semibold text-center mb-12">{t('directionsPages.medicalAccreditation.stepsTitle')}</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {evaluationSteps.map((step, index) => (
                 <div
                   key={step.id}
                   className="bg-white p-6 rounded-lg shadow-md relative"
-                  onMouseEnter={handleMouseEnter}
+                  onMouseEnter={() => handleMouseEnter(step.id)}
                   onMouseLeave={handleMouseLeave}
                 >
                   <div className="flex items-center mb-4">
@@ -245,7 +237,7 @@ export default function MedicalAccreditation() {
                     <h3 className="text-lg font-semibold text-gray-800">{step.title}</h3>
                   </div>
                   
-                  {showDescriptions && (
+                  {hoveredStepId === step.id && (
                     <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg p-4 mt-2 z-10">
                       <p className="text-sm text-gray-600">{step.description}</p>
                     </div>
@@ -256,50 +248,50 @@ export default function MedicalAccreditation() {
         </div>
     </section>
 
-    {/* Блок с направлениями */}
+    {/* Блок с управлениями */}
     <section className="text-gray-600 body-font">
         <div className="container pt-8 mx-auto">
             <div className='flex flex-wrap'>
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
-                    title="Активные стандарты" 
-                    description="Действующие стандарты аккредитации"
+                    title={t('directionsPages.medicalAccreditation.subfolders.activeStandards.title')} 
+                    description={t('directionsPages.medicalAccreditation.subfolders.activeStandards.description')}
                     href={route('accreditation.standards')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
-                    title="Архив стандартов" 
-                    description="Архивные стандарты аккредитации"
+                    title={t('directionsPages.medicalAccreditation.subfolders.archive.title')} 
+                    description={t('directionsPages.medicalAccreditation.subfolders.archive.description')}
                     href={route('accreditation.archive')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
-                    title="Руководства" 
-                    description="Руководства по аккредитации"
+                    title={t('directionsPages.medicalAccreditation.subfolders.guides.title')} 
+                    description={t('directionsPages.medicalAccreditation.subfolders.guides.description')}
                     href={route('accreditation.guides')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
-                    title="Эксперты" 
-                    description="Эксперты по аккредитации"
+                    title={t('directionsPages.medicalAccreditation.subfolders.experts.title')} 
+                    description={t('directionsPages.medicalAccreditation.subfolders.experts.description')}
                     href={route('accreditation.experts')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
-                    title="Комиссия" 
-                    description="Комиссия по аккредитации"
+                    title={t('directionsPages.medicalAccreditation.subfolders.commission.title')} 
+                    description={t('directionsPages.medicalAccreditation.subfolders.commission.description')}
                     href={route('accreditation.commission')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
-                    title="Учебные материалы" 
-                    description="Учебные материалы по аккредитации"
+                    title={t('directionsPages.medicalAccreditation.subfolders.training.title')} 
+                    description={t('directionsPages.medicalAccreditation.subfolders.training.description')}
                     href={route('accreditation.training')}
                 />
             </div>

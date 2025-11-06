@@ -5,24 +5,19 @@ import ServiceTimeline from '@/Components/ServiceTimeline';
 import PriceList from '@/Components/PriceList';
 import FilesAccord from '@/Components/FilesAccord';
 import FAQ from '@/Components/FAQ';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
 export default function DrugExpertise() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
   const timelineItems = [
-    { title: "Первичная оценка", value: "5 рабочих дней" },
-    { title: "Проведение профессиональной экспертизы", value: "20 рабочих дней / 30 рабочих дней / 40 рабочих дней" },
-    { title: "Формирование и предоставление заключения", value: "5 рабочих дней" },
+    { title: t('servicesPages.drugExpertise.initialEvaluation'), value: `5 ${t('servicesPages.commonElements.workingDays')}` },
+    { title: t('servicesPages.drugExpertise.professionalExpertise'), value: `20 / 30 / 40 ${t('servicesPages.commonElements.workingDays')}` },
+    { title: t('servicesPages.drugExpertise.conclusion'), value: `5 ${t('servicesPages.commonElements.workingDays')}` },
   ];
 
   const faqItems = [
@@ -56,7 +51,7 @@ export default function DrugExpertise() {
       )
     },
     {
-      question: "Правила формирования перечней",
+      question: t('servicesPages.commonElements.formationRules'),
       answer: (
         <div className="space-y-2">
           <ol className="list-decimal pl-5 space-y-3">

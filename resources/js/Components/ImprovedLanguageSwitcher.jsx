@@ -1,23 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
-import TranslationService from '@/Services/SimpleFastTranslationService';
+import translationService from '@/services/TranslationService';
 
 const ImprovedLanguageSwitcher = () => {
-  const [currentLang, setCurrentLang] = useState('ru');
+  const [currentLang, setCurrentLang] = useState('kz');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const languages = [
+    { code: 'kz', name: 'Қазақша' },
     { code: 'ru', name: 'Русский' },
-    { code: 'en', name: 'English' },
-    { code: 'kz', name: 'Қазақша' }
+    { code: 'en', name: 'English' }
   ];
 
   const currentLanguage = languages.find(lang => lang.code === currentLang);
 
   // Инициализация языка
   useEffect(() => {
-    const savedLang = localStorage.getItem('selectedLanguage') || 'ru';
+    const savedLang = translationService.getLanguage();
     setCurrentLang(savedLang);
+    document.documentElement.setAttribute('lang', savedLang);
   }, []);
 
   // Закрытие выпадающего списка при клике вне
@@ -33,27 +34,27 @@ const ImprovedLanguageSwitcher = () => {
   }, []);
 
   // Быстрое переключение языка
-  const handleLanguageChange = async (langCode) => {
+  const handleLanguageChange = (langCode) => {
     if (langCode === currentLang) return;
 
     setIsDropdownOpen(false);
 
     try {
-      // Используем новый быстрый сервис переводов (только из БД)
-      await TranslationService.translatePage(langCode);
+      // Используем новый простой сервис переводов из JSON
+      const success = translationService.setLanguage(langCode);
 
-      // Сохраняем выбранный язык
-      localStorage.setItem('selectedLanguage', langCode);
-      setCurrentLang(langCode);
-
-      // Обновляем активные кнопки
-      updateActiveLanguageButtons(langCode);
-
-      console.log(`Язык успешно переключен на: ${langCode}`);
+      if (success) {
+        setCurrentLang(langCode);
+        
+        // Перезагружаем страницу для применения нового языка
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      } else {
+        showErrorNotification('Не удалось переключить язык. Попробуйте еще раз.');
+      }
     } catch (error) {
       console.error('Ошибка переключения языка:', error);
-      
-      // Показываем ошибку пользователю
       showErrorNotification('Не удалось переключить язык. Попробуйте еще раз.');
     }
   };
@@ -72,22 +73,6 @@ const ImprovedLanguageSwitcher = () => {
         notification.parentNode.removeChild(notification);
       }
     }, 3000);
-  };
-
-  // Обновить активные кнопки языков
-  const updateActiveLanguageButtons = (langCode) => {
-    // Обновляем все кнопки языков на странице
-    const langButtons = document.querySelectorAll('.lang-btn');
-    langButtons.forEach(button => {
-      const buttonLang = button.getAttribute('data-lang');
-      if (buttonLang === langCode) {
-        button.style.backgroundColor = '#3b82f6';
-        button.style.color = 'white';
-      } else {
-        button.style.backgroundColor = 'white';
-        button.style.color = '#3b82f6';
-      }
-    });
   };
 
   return (

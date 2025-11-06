@@ -5,20 +5,15 @@ import ServiceTimeline from '@/Components/ServiceTimeline';
 import PriceList from '@/Components/PriceList';
 import FilesAccord from '@/Components/FilesAccord';
 import FAQ from '@/Components/FAQ';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
 export default function AdsEvaluation() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
   const timelineItems = [
     { title: "Регистрация заявки", value: "1 рабочий день" },
     { title: "Срок проведения оценки", value: "10 рабочих дней" },
@@ -125,7 +120,7 @@ export default function AdsEvaluation() {
 
   return (
     <>
-              <Head title={tComponent('services.ads_evaluation', 'Оценка рекламных материалов')} meta={[{ name: 'description', content: 'Оценка рекламных материалов для медицинских и фармацевтических услуг.' }]} />
+              <Head title={t('services.ads_evaluation', 'Оценка рекламных материалов')} meta={[{ name: 'description', content: 'Оценка рекламных материалов для медицинских и фармацевтических услуг.' }]} />
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-2/3 px-4 mt-10">

@@ -3,8 +3,10 @@ import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import VideoModal from '@/Components/VideoModal';
+import translationService from '@/services/TranslationService';
 
 export default function Graduates() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');
@@ -23,13 +25,13 @@ export default function Graduates() {
 
   return (
     <>
-      <Head title="Выпускникам" meta={[{ name: 'description', content: 'Информация для выпускников медицинских вузов: документы, материалы и полезные ресурсы.' }]} />
+      <Head title={t('directionsPages.humanResourcesSubpages.graduates.title', 'Выпускники')} />
 <br /><br />
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6">
             <SimpleFileDisplay 
-              folder="Кадровые ресурсы/Папка-Выпускникам" 
+              folder={t('directionsPages.humanResourcesSubpages.graduates.folder')} 
               title="" 
               bgColor="bg-white"
               onVideoClick={openVideoModal}
@@ -52,8 +54,13 @@ export default function Graduates() {
 
 Graduates.layout = page => <LayoutFolderChlank 
   bgColor="bg-white"
-  h1="Выпускникам" 
+  h1={translationService.t('directionsPages.humanResourcesSubpages.graduates.h1')} 
   parentRoute={route('human.resources')} 
-  parentName="Кадровые ресурсы"
+  parentName={translationService.t('directionsPages.humanResourcesSubpages.graduates.parentName')}
   heroBgColor="bg-red-100"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.humanResourcesSubpages.graduates.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.humanResourcesSubpages.graduates.breadcrumbHumanResources'), route: 'human.resources' },
+    { name: translationService.t('directionsPages.humanResourcesSubpages.graduates.h1'), route: null }
+  ]}
 >{page}</LayoutFolderChlank>;

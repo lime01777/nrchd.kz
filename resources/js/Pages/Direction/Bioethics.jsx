@@ -3,54 +3,49 @@ import React from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
 import FolderChlank from '@/Components/FolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
 export default function Bioethics() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
 
 
   return (
     <>
-      <Head title={tComponent('directions.bioethics', 'Центральная комиссия по биоэтике')} meta={[{ name: 'description', content: tComponent('bioethics.description', 'Центральная комиссия по биоэтике: экспертиза, сертификация и надзор в области биоэтики.') }]} />
+      <Head title={t('directionsPages.bioethics.title', 'Центральная комиссия по биоэтике')} />
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>
             <h2 className="text-2xl font-bold text-gray-800 mb-6 w-full">
-              {tComponent('bioethics.title', 'ЦЕНТРАЛЬНАЯ КОМИССИЯ ПО БИОЭТИКЕ ПРИ МИНИСТЕРСТВЕ ЗДРАВООХРАНЕНИЯ РК')}
+              {t('directionsPages.bioethics.mainTitle')}
             </h2>
             
             <p className="tracking-wide leading-relaxed mb-4">
-              Центральная комиссия по биоэтике Министерства здравоохранения Республики Казахстан является независимым экспертным органом, проводящим биоэтическую экспертизу документов, связанных с проведением биомедицинских исследований, на этапе их планирования, в ходе выполнения и после завершения с целью обеспечения безопасности и защиты прав участников биомедицинских исследований.
+              {t('directionsPages.bioethics.intro1')}
             </p>
             
             <p className="tracking-wide leading-relaxed mb-4">
-              Центральная комиссия по биоэтике определяет стратегию и тактику биоэтического развития республики, разработку обоснованной биоэтической политики, проведения научных исследований в области здравоохранения и наук о человеке, координацию деятельности локальных комиссий по биоэтике, проведение их сертификации, участие в разработке документов по вопросам биоэтики.
+              {t('directionsPages.bioethics.intro2')}
             </p>
             
             <p className="tracking-wide leading-relaxed mb-4">
-              Центральная комиссия по биоэтике была создана в 2008 году при Министерства здравоохранения Республики Казахстан, и в 2017 году получила международное признание (full regocnition) Форумом этических комитетов стран юго-Восточной Азии под эгидой ВОЗ FERCAP/SIDCER и постоянное членство в организации.
+              {t('directionsPages.bioethics.intro3')}
             </p>
             
             <p className="tracking-wide leading-relaxed mb-4">
-              <strong>Председатель Центральной комиссии по биоэтике</strong> - Ергалиев Куаныш Асылханович, доктор общественного здравоохранения, ассистент профессор практики Школа медицины АОО «Назарбаев Университет», Председатель Совета ассоциации менеджеров здравоохранения Казахстана.
+              <strong>{t('directionsPages.bioethics.chairman')}</strong> - {t('directionsPages.bioethics.chairmanInfo')}
             </p>
             
             <p className="tracking-wide leading-relaxed mb-4">
-              Приказом Министра здравоохранения Республики Казахстан №961 от 31 декабря 2024 года «О внесении изменения в приказ Министра здравоохранения Республики Казахстан от 20 декабря 2020 года №854/1 «Об утверждении состава Центральной комиссии по биоэтике»» утвержден новый состав Центральной комиссии по биоэтике (<a href={route('bioethics.composition')} className="text-blue-600 hover:text-blue-800 underline">Состав Центральной комиссии по биоэтике</a>).
+              {t('directionsPages.bioethics.orderPrefix')}<a href={route('bioethics.composition')} className="text-blue-600 hover:text-blue-800 underline">{t('directionsPages.bioethics.compositionLink')}</a>).
             </p>
             
                          <p className="tracking-wide leading-relaxed mb-4">
-               <strong>Рабочим органом</strong> Центральной комиссии по биоэтике определен «Национальный научный центр развития здравоохранения имени Салидат Каирбековой» Министерства здравоохранения Республики Казахстан.
+               <strong>{t('directionsPages.bioethics.workingBody')}</strong> {t('directionsPages.bioethics.workingBodyInfo')}
              </p>
              
              <p className="tracking-wide leading-relaxed mb-4">
@@ -60,8 +55,8 @@ export default function Bioethics() {
                  rel="noopener noreferrer"
                  className="text-blue-600 hover:text-blue-800 underline"
                >
-                 Положение о Центральной комиссии по биоэтике
-               </a> (приказ Министра здравоохранения РК от 23 октября 2020 года № ҚР ДСМ-151/2020 «Об утверждении Положения по Центральной комиссии по биоэтике»)
+                 {t('directionsPages.bioethics.regulationLink')}
+               </a> {t('directionsPages.bioethics.regulationInfo')}
              </p>
           </div>
           <div className='flex flex-wrap px-12 justify-center mb-4'>
@@ -74,90 +69,90 @@ export default function Bioethics() {
         <div className="container px-5 mx-auto">
           <div className="flex justify-center">
             <div className="max-w-4xl w-full">
-              <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">График заседаний Центральной комиссии по биоэтике на 2025 год</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">{t('directionsPages.bioethics.meetingScheduleTitle')}</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <h4 className="font-semibold text-gray-800 mb-2 text-center">Январь</h4>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.january')}</h4>
                   <div className="text-center">
                     <div className="text-sm text-gray-600">24, 31</div>
-                    <div className="text-xs text-gray-500">Пятница</div>
+                    <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <h4 className="font-semibold text-gray-800 mb-2 text-center">Февраль</h4>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.february')}</h4>
                   <div className="text-center">
                     <div className="text-sm text-gray-600">7, 21</div>
-                    <div className="text-xs text-gray-500">Пятница</div>
+                    <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <h4 className="font-semibold text-gray-800 mb-2 text-center">Март</h4>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.march')}</h4>
                   <div className="text-center">
                     <div className="text-sm text-gray-600">7, 20</div>
-                    <div className="text-xs text-gray-500">Пятница</div>
+                    <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <h4 className="font-semibold text-gray-800 mb-2 text-center">Апрель</h4>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.april')}</h4>
                   <div className="text-center">
                     <div className="text-sm text-gray-600">11, 25</div>
-                    <div className="text-xs text-gray-500">Пятница</div>
+                    <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <h4 className="font-semibold text-gray-800 mb-2 text-center">Май</h4>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.may')}</h4>
                   <div className="text-center">
                     <div className="text-sm text-gray-600">9, 23</div>
-                    <div className="text-xs text-gray-500">Пятница</div>
+                    <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <h4 className="font-semibold text-gray-800 mb-2 text-center">Июнь</h4>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.june')}</h4>
                   <div className="text-center">
                     <div className="text-sm text-gray-600">6, 20</div>
-                    <div className="text-xs text-gray-500">Пятница</div>
+                    <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <h4 className="font-semibold text-gray-800 mb-2 text-center">Июль</h4>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.july')}</h4>
                   <div className="text-center">
                     <div className="text-sm text-gray-600">4, 18</div>
-                    <div className="text-xs text-gray-500">Пятница</div>
+                    <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <h4 className="font-semibold text-gray-800 mb-2 text-center">Август</h4>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.august')}</h4>
                   <div className="text-center">
                     <div className="text-sm text-gray-600">1, 15, 29</div>
-                    <div className="text-xs text-gray-500">Пятница</div>
+                    <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <h4 className="font-semibold text-gray-800 mb-2 text-center">Сентябрь</h4>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.september')}</h4>
                   <div className="text-center">
                     <div className="text-sm text-gray-600">12, 26</div>
-                    <div className="text-xs text-gray-500">Пятница</div>
+                    <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <h4 className="font-semibold text-gray-800 mb-2 text-center">Октябрь</h4>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.october')}</h4>
                   <div className="text-center">
                     <div className="text-sm text-gray-600">10, 24</div>
-                    <div className="text-xs text-gray-500">Пятница</div>
+                    <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <h4 className="font-semibold text-gray-800 mb-2 text-center">Ноябрь</h4>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.november')}</h4>
                   <div className="text-center">
                     <div className="text-sm text-gray-600">7, 21</div>
-                    <div className="text-xs text-gray-500">Пятница</div>
+                    <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <h4 className="font-semibold text-gray-800 mb-2 text-center">Декабрь</h4>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.december')}</h4>
                   <div className="text-center">
                     <div className="text-sm text-gray-600">5, 19</div>
-                    <div className="text-xs text-gray-500">Пятница</div>
+                    <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
               </div>
@@ -176,48 +171,48 @@ export default function Bioethics() {
               <FolderChlank 
                 color="bg-gray-200"
                 colorsec="bg-gray-300"
-                title={tComponent('bioethics.sop', 'СОП')} 
-                description="Стандартные операционные процедуры биоэтической экспертизы"
+                title={t('directionsPages.bioethics.subfolders.sop.title')} 
+                description={t('directionsPages.bioethics.subfolders.sop.description')}
                 href={route('bioethics.expertise')}
               />
               
               <FolderChlank 
                 color="bg-gray-200"
                 colorsec="bg-gray-300"
-                title={tComponent('bioethics.certification', 'Сертификация')} 
-                description="Сертификация локальных комиссий по биоэтике медицинских организаций"
+                title={t('directionsPages.bioethics.subfolders.certification.title')} 
+                description={t('directionsPages.bioethics.subfolders.certification.description')}
                 href={route('bioethics.certification')}
               />
               
               <FolderChlank 
                 color="bg-gray-200"
                 colorsec="bg-gray-300"
-                title={tComponent('bioethics.local_commissions_list', 'Перечень ЛКБ')} 
-                description="Перечень локальных комиссий по биоэтике"
+                title={t('directionsPages.bioethics.subfolders.localCommissions.title')} 
+                description={t('directionsPages.bioethics.subfolders.localCommissions.description')}
                 href={route('bioethics.local_commissions')}
               />
               
               <FolderChlank 
                 color="bg-gray-200"
                 colorsec="bg-gray-300"
-                title={tComponent('bioethics.biobanks', 'Биобанки')} 
-                description="Надзор за деятельностью биобанков и биоколлекций"
+                title={t('directionsPages.bioethics.subfolders.biobanks.title')} 
+                description={t('directionsPages.bioethics.subfolders.biobanks.description')}
                 href={route('bioethics.biobanks')}
               />
               
               <FolderChlank 
                 color="bg-gray-200"
                 colorsec="bg-gray-300"
-                title={tComponent('bioethics.npa', 'НПА')} 
-                description="Нормативно-правовые акты по биоэтике"
+                title={t('directionsPages.bioethics.subfolders.npa.title')} 
+                description={t('directionsPages.bioethics.subfolders.npa.description')}
                 href={route('bioethics.npa')}
               />
               
               <FolderChlank 
                 color="bg-gray-200"
                 colorsec="bg-gray-300"
-                title={tComponent('bioethics.documents', 'Документы')} 
-                description="Документы по биоэтике"
+                title={t('directionsPages.bioethics.subfolders.documents.title')} 
+                description={t('directionsPages.bioethics.subfolders.documents.description')}
                 href={route('bioethics.documents')}
               />
             
@@ -230,25 +225,25 @@ export default function Bioethics() {
         <div className="container px-5 mx-auto">
           <div className="flex flex-wrap px-12">
             <div className="w-full">
-              <h3 className="text-xl font-semibold text-gray-800 mb-6">Контактная информация</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-6">{t('directionsPages.bioethics.contactInfo')}</h3>
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="font-semibold text-gray-800 mb-3">Адрес</h4>
-                    <p className="text-gray-600">010000, Республика Казахстан, г. Астана, ул. Мангилек Ел, 20</p>
+                    <h4 className="font-semibold text-gray-800 mb-3">{t('directionsPages.bioethics.address')}</h4>
+                    <p className="text-gray-600">{t('directionsPages.bioethics.addressInfo')}</p>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-800 mb-3">Телефон</h4>
-                    <p className="text-gray-600">+7 (7172) 648-951 (внутренний 1000)</p>
+                    <h4 className="font-semibold text-gray-800 mb-3">{t('directionsPages.bioethics.phone')}</h4>
+                    <p className="text-gray-600">{t('directionsPages.bioethics.phoneInfo')}</p>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-800 mb-3">Email</h4>
-                    <p className="text-gray-600">bioethics@nrchd.kz</p>
+                    <h4 className="font-semibold text-gray-800 mb-3">{t('directionsPages.bioethics.email')}</h4>
+                    <p className="text-gray-600">{t('directionsPages.bioethics.emailInfo')}</p>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-800 mb-3">График работы</h4>
-                    <p className="text-gray-600">Пн - Пт, с 9:00 до 18:00</p>
-                    <p className="text-gray-600">Перерыв с 13:00 до 14:00</p>
+                    <h4 className="font-semibold text-gray-800 mb-3">{t('directionsPages.bioethics.workingHours')}</h4>
+                    <p className="text-gray-600">{t('directionsPages.bioethics.workingHoursInfo1')}</p>
+                    <p className="text-gray-600">{t('directionsPages.bioethics.workingHoursInfo2')}</p>
                   </div>
                 </div>
               </div>

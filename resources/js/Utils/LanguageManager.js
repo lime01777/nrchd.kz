@@ -8,11 +8,11 @@
 // import { translatePage } from './new-translator.js';
 
 // Доступные языки
-const AVAILABLE_LANGUAGES = ['ru', 'kz', 'en'];
+const AVAILABLE_LANGUAGES = ['kz', 'ru', 'en'];
 const DEFAULT_LANGUAGE = 'kz';
 
-// Глобальный флаг: полностью отключить любые переводы и сетевые вызовы
-const DISABLE_TRANSLATION = false;
+// Глобальный флаг: полностью отключить любые переводы и сетевые вызовы (используем JSON файлы)
+const DISABLE_TRANSLATION = true;
 
 // Класс для управления языком сайта
 class LanguageManager {

@@ -1,13 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ChartChlank from './ChartChlank';
+import translationService from '@/services/TranslationService';
 
 const Dashboard = ({ chartType = 'default' }) => {
-    // Состояние для модального окна
+    const [currentLang, setCurrentLang] = useState(translationService.getLanguage());
     const [isModalOpen, setIsModalOpen] = useState(false);
-    // Состояние для поиска
     const [searchTerm, setSearchTerm] = useState('');
-    // Выбранный график
     const [selectedChart, setSelectedChart] = useState(chartType);
+    
+    // Функция для получения перевода
+    const t = (key, fallback = '') => {
+        return translationService.t(key, fallback);
+    };
+    
+    // Обновляем язык при изменении
+    useEffect(() => {
+        const handleLanguageChange = () => {
+            setCurrentLang(translationService.getLanguage());
+        };
+        window.addEventListener('languageChanged', handleLanguageChange);
+        return () => window.removeEventListener('languageChanged', handleLanguageChange);
+    }, []);
 
     // Примеры графиков (позже будут заменены на ссылки Power BI)
     const chartOptions = {
@@ -28,7 +41,7 @@ const Dashboard = ({ chartType = 'default' }) => {
                 },
                 title: {
                     display: true,
-                    text: 'Влияние производственных травм на мужскую смертность',
+                    text: t('charts.default.title', 'Влияние производственных травм на мужскую смертность'),
                     font: {
                         size: 16,
                         weight: 'bold',
@@ -113,7 +126,7 @@ const Dashboard = ({ chartType = 'default' }) => {
                 },
                 title: {
                     display: true,
-                    text: 'Статистика производственных травм по отраслям',
+                    text: t('charts.injuries.title', 'Статистика производственных травм по отраслям'),
                     font: {
                         size: 16,
                         weight: 'bold',
@@ -316,12 +329,12 @@ const Dashboard = ({ chartType = 'default' }) => {
 
     // Список всех доступных графиков для поиска
     const availableCharts = [
-        { id: 'default', name: 'Влияние производственных травм на мужскую смертность' },
-        { id: 'injuries', name: 'Статистика производственных травм по отраслям' },
-        { id: 'accreditation', name: 'Количество аккредитованных организаций по регионам' },
-        { id: 'chart3', name: 'Сравнение смертности от сердечно-сосудистых заболеваний' },
-        { id: 'chart4', name: 'Эффективность вакцинации от гриппа' },
-        { id: 'chart5', name: 'Распространенность хронических заболеваний' }
+        { id: 'default', name: t('charts.list.default', 'Влияние производственных травм на мужскую смертность') },
+        { id: 'injuries', name: t('charts.list.injuries', 'Статистика производственных травм по отраслям') },
+        { id: 'accreditation', name: t('charts.list.accreditation', 'Количество аккредитованных организаций по регионам') },
+        { id: 'chart3', name: t('charts.list.cardiovascular', 'Сравнение смертности от сердечно-сосудистых заболеваний') },
+        { id: 'chart4', name: t('charts.list.vaccination', 'Эффективность вакцинации от гриппа') },
+        { id: 'chart5', name: t('charts.list.chronic', 'Распространенность хронических заболеваний') }
     ];
 
     // Фильтрация графиков по поисковому запросу
@@ -365,7 +378,7 @@ const Dashboard = ({ chartType = 'default' }) => {
                     </div>
                     {!chartType && (
                         <div className="text-center mt-3 text-sm text-gray-500">
-                            Нажмите на график для просмотра других статистических данных
+                            {t('charts.clickToView', 'Нажмите на график для просмотра других статистических данных')}
                         </div>
                     )}
                 </div>
@@ -378,7 +391,7 @@ const Dashboard = ({ chartType = 'default' }) => {
                         {/* Заголовок и поиск */}
                         <div className="p-4 border-b">
                             <div className="flex justify-between items-center mb-3">
-                                <h2 className="text-xl font-semibold text-gray-800">Выбор статистических данных</h2>
+                                <h2 className="text-xl font-semibold text-gray-800">{t('charts.modal.title', 'Выбор статистических данных')}</h2>
                                 <button 
                                     onClick={closeModal}
                                     className="text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -391,7 +404,7 @@ const Dashboard = ({ chartType = 'default' }) => {
                             <div className="relative">
                                 <input
                                     type="text"
-                                    placeholder="Поиск графиков..."
+                                    placeholder={t('charts.modal.search', 'Поиск графиков...')}
                                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -423,7 +436,7 @@ const Dashboard = ({ chartType = 'default' }) => {
                                 </ul>
                             ) : (
                                 <div className="text-center py-8 text-gray-500">
-                                    Нет результатов по запросу "{searchTerm}"
+                                    {t('charts.modal.noResults', 'Нет результатов по запросу')} "{searchTerm}"
                                 </div>
                             )}
                         </div>
@@ -434,13 +447,13 @@ const Dashboard = ({ chartType = 'default' }) => {
                                 onClick={closeModal}
                                 className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 mr-2 hover:bg-gray-100 transition"
                             >
-                                Отмена
+                                {t('charts.modal.cancel', 'Отмена')}
                             </button>
                             <button
                                 onClick={closeModal}
                                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
                             >
-                                Применить
+                                {t('charts.modal.apply', 'Применить')}
                             </button>
                         </div>
                     </div>

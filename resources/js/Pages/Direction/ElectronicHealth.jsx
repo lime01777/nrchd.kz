@@ -2,108 +2,103 @@ import { Head, usePage } from '@inertiajs/react';
 import React, { useState } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
 export default function ElectronicHealth() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
 
   const [showFullText, setShowFullText] = useState(false);
   
   return (
     <>
-    <Head title='NNCRZ' meta={[{ name: 'description', content: 'Цифровое здравоохранение: цифровые технологии, информационные системы и развитие цифровой медицины в Казахстане.' }]} />
+    <Head title={t('directionsPages.electronicHealth.title', 'Цифровое здравоохранение')} />
     <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
             <div className='flex flex-wrap px-12 text-justify'>
                 <div className="tracking-wide leading-relaxed">
                     <p className="mb-4">
-                        Департамент стандартов электронного здравоохранения ННЦРЗ (далее - Департамент) создан в первом квартале 2023 года и является структурным подразделением Республиканского государственного предприятия на праве хозяйственного ведения «Национальный научный центр развития здравоохранения имени Салидат Каирбековой» Министерства здравоохранения Республики Казахстан.
+                        {t('directionsPages.electronicHealth.intro')}
                     </p>
                     
                     <p className="mb-4">
-                        <strong>Основными задачами Департамента являются:</strong>
+                        <strong>{t('directionsPages.electronicHealth.mainTasks')}</strong>
                     </p>
                     <ul className='list-disc list-inside px-4 mb-4'>
-                        <li>оценка эффективности внедряемых программ в здравоохранении;</li>
-                        <li>изучение мировых тенденций и проведение обзора международной практики в области здравоохранения;</li>
-                        <li>разработка эффективных моделей по развитию приоритетных направлений здравоохранения;</li>
-                        <li>способствование стратегическому видению и развитию службы общественного здравоохранения;</li>
-                        <li>разработка, адаптация и внедрение признанных стандартов электронного здравоохранения.</li>
+                        <li>{t('directionsPages.electronicHealth.task1')}</li>
+                        <li>{t('directionsPages.electronicHealth.task2')}</li>
+                        <li>{t('directionsPages.electronicHealth.task3')}</li>
+                        <li>{t('directionsPages.electronicHealth.task4')}</li>
+                        <li>{t('directionsPages.electronicHealth.task5')}</li>
                     </ul>
                     
                     <p className="mb-4">
-                        По состоянию на 15.01.2024 г. в составе Департамента 2 управления:
+                        {t('directionsPages.electronicHealth.departments')}
                     </p>
                     <ul className='list-disc list-inside px-4 mb-4'>
-                        <li>Управление совершенствования стандартов и регуляторной базы электронного здравоохранения;</li>
-                        <li>Управление методологического сопровождения цифровизации здравоохранения.</li>
+                        <li>{t('directionsPages.electronicHealth.dept1')}</li>
+                        <li>{t('directionsPages.electronicHealth.dept2')}</li>
                     </ul>
                     
                     {showFullText && (
                         <>
                             <p className="mb-4">
-                                <strong>Основные функции Управления совершенствования стандартов и регуляторной базы электронного здравоохранения:</strong>
+                                <strong>{t('directionsPages.electronicHealth.dept1Functions')}</strong>
                             </p>
                             <ul className='list-disc list-inside px-4 mb-4'>
-                                <li>выработка предложений по совершенствованию стандартов электронного здравоохранения;</li>
-                                <li>пересмотр нормативно-правовых актов ведения медицинской документации, разработка перечня электронных медицинских данных;</li>
-                                <li>выработка предложений по формализации справочников, классификаторов и определений медицинской документации;</li>
-                                <li>подготовка предложений о внесении изменений в действующие нормативно-правовые документы или их отмене при пересмотре международных классификаторов;</li>
-                                <li>изучение мировых тенденций и проведение обзора международной практики в области регуляторной базы электронного здравоохранения;</li>
-                                <li>подготовка аналитических материалов по развитию стандартов и регуляторной базы электронного здравоохранения;</li>
-                                <li>работа со стандартами электронного здравоохранения и выработка рекомендаций по их внедрению в электронном здравоохранении;</li>
-                                <li>работа по гармонизации национальных стандартов электронного здравоохранения с международными стандартами в пределах своей компетенции;</li>
-                                <li>осуществление деятельности технического комитета по стандартизации электронного здравоохранения.</li>
+                                <li>{t('directionsPages.electronicHealth.dept1Task1')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept1Task2')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept1Task3')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept1Task4')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept1Task5')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept1Task6')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept1Task7')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept1Task8')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept1Task9')}</li>
                             </ul>
 
                             <p className="mb-4">
-                                <strong>Основные функции Управления методологического сопровождения цифровизации здравоохранения:</strong>
+                                <strong>{t('directionsPages.electronicHealth.dept2Functions')}</strong>
                             </p>
                             <ul className='list-disc list-inside px-4 mb-4'>
-                                <li>методологическое сопровождение и рассмотрение рекомендаций по внесению изменений в нормативные документы по цифровизации здравоохранения;</li>
-                                <li>разработка методических рекомендаций по внедрению новых проектов;</li>
-                                <li>рассмотрение предложений по созданию концепций, а также концептуальное проектирование будущих информационных проектов в рамках цифровизации здравоохранения;</li>
-                                <li>рассмотрение и предоставление рекомендаций по цифровизации системы здравоохранения;</li>
-                                <li>рассмотрение и предоставление предложений по цифровизации государственных услуг здравоохранения;</li>
-                                <li>рассмотрение нормативных документов МЗ РК по оказанию медицинских услуг в части цифровизации;</li>
-                                <li>подготовка аналитических материалов по цифровизации здравоохранения;</li>
-                                <li>участие в мероприятиях по внедрению, адаптации новых тенденций цифрового здравоохранения;</li>
-                                <li>участие и предоставление методологических рекомендаций по разработке клинических протоколов диагностики и лечения;</li>
-                                <li>участие в международных совещаниях, семинарах и тренингах по цифровизации здравоохранения;</li>
-                                <li>участие в организации работы внедрения и адаптации международного классификатора на Международную статистическую классификацию болезней и проблем, связанных со здоровьем, одиннадцатого пересмотра на территории Республики Казахстан.</li>
+                                <li>{t('directionsPages.electronicHealth.dept2Task1')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept2Task2')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept2Task3')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept2Task4')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept2Task5')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept2Task6')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept2Task7')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept2Task8')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept2Task9')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept2Task10')}</li>
+                                <li>{t('directionsPages.electronicHealth.dept2Task11')}</li>
                             </ul>
 
                             <p className="mb-4">
-                                <strong>План работы по стандартам на 2024 год</strong>
+                                <strong>{t('directionsPages.electronicHealth.workPlan2024')}</strong>
                             </p>
                             <p className="mb-4">
-                                В 2024 году планируется рассмотрение следующих стандартов в сфере здравоохранения:
+                                {t('directionsPages.electronicHealth.workPlan2024Text')}
                             </p>
                             <ul className='list-disc list-inside px-4 mb-4'>
-                                <li>Внесение изменений в национальный стандарт СТ РК 3749-2021 - «Цифровое здравоохранение. Часть 1. Электронный паспорт здоровья»;</li>
-                                <li>Внесение изменений в национальный стандарт СТ РК 3750-2021 - «Цифровое здравоохранение. Часть 2. Электронная медицинская запись»;</li>
-                                <li>Разработка проекта национального стандарта СТ РК «Цифровое здравоохранение. Часть 3. Регулирование сбора клинико-административных данных»;</li>
-                                <li>Пересмотр национального стандарта СТ РК ISO 27932-2017 «Информатизация здоровья. Стандарты обмена данными. Архитектура клинических документов HL7. Выпуск 2».</li>
+                                <li>{t('directionsPages.electronicHealth.standard1')}</li>
+                                <li>{t('directionsPages.electronicHealth.standard2')}</li>
+                                <li>{t('directionsPages.electronicHealth.standard3')}</li>
+                                <li>{t('directionsPages.electronicHealth.standard4')}</li>
                             </ul>
 
                             <p className="mb-4">
-                                <strong>Департаментом в рамках внедрения МКБ-11 на территории Республики Казахстан на 2024 год запланированы следующие работы:</strong>
+                                <strong>{t('directionsPages.electronicHealth.mkb11Work')}</strong>
                             </p>
                             <ul className='list-disc list-inside px-4 mb-4'>
-                                <li>Внесение на Платформу ВОЗ МКБ-11 на государственном языке;</li>
-                                <li>Верификация, актуализация и обсуждение классификатора МКБ-11 с межведомственной рабочей группой, подгруппой по внедрению МКБ-11 на территории Республики Казахстан не менее 15 классов МКБ-11;</li>
-                                <li>Сопоставление перечня операций в соответствии с МКБ-9 (с клинической модификацией) и с не менее 5 классами МКБ-11;</li>
-                                <li>Разработка проекта плана проведения обучающих семинаров по МКБ-11 для медицинских работников, которые применяют в работе международный классификатор болезней;</li>
+                                <li>{t('directionsPages.electronicHealth.mkb11Task1')}</li>
+                                <li>{t('directionsPages.electronicHealth.mkb11Task2')}</li>
+                                <li>{t('directionsPages.electronicHealth.mkb11Task3')}</li>
+                                <li>{t('directionsPages.electronicHealth.mkb11Task4')}</li>
                             </ul>
                         </>
                     )}
@@ -111,10 +106,10 @@ export default function ElectronicHealth() {
             </div>
             <div className="flex justify-center mt-4">
                 <button 
-                    onClick={() => setShowFullTextComponent(!showFullText)} 
+                    onClick={() => setShowFullText(!showFullText)} 
                     className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3 transition-all duration-300 ease-in-out hover:bg-blue-50 transform hover:scale-105"
                 >
-                    {showFullText ? 'Свернуть' : 'Читать далее'}
+                    {showFullText ? t('directionsPages.electronicHealth.hide') : t('directionsPages.electronicHealth.readMore')}
                     <svg 
                         xmlns="http://www.w3.org/2000/svg" 
                         width="24" 
@@ -143,22 +138,22 @@ export default function ElectronicHealth() {
                 <FolderChlank
                     color="bg-fuchsia-200"
                     colorsec="bg-fuchsia-300"
-                    title="Стандарты" 
-                    description="Стандарты электронного здравоохранения"
+                    title={t('directionsPages.electronicHealth.subfolders.standards.title')} 
+                    description={t('directionsPages.electronicHealth.subfolders.standards.description')}
                     href={route('electronic.health.standards')}
                 />
                 <FolderChlank 
                     color="bg-fuchsia-200"
                     colorsec="bg-fuchsia-300"
-                    title="НПА" 
-                    description="Нормативно-правовые акты электронного здравоохранения"
+                    title={t('directionsPages.electronicHealth.subfolders.regulations.title')} 
+                    description={t('directionsPages.electronicHealth.subfolders.regulations.description')}
                     href={route('electronic.health.regulations')}
                 />
                 <FolderChlank 
                     color="bg-fuchsia-200"
                     colorsec="bg-fuchsia-300"
-                    title="МКБ-11" 
-                    description="Международная классификация болезней 11-го пересмотра"
+                    title={t('directionsPages.electronicHealth.subfolders.mkb11.title')} 
+                    description={t('directionsPages.electronicHealth.subfolders.mkb11.description')}
                     href={route('electronic.health.mkb11')}
                 />
             </div>

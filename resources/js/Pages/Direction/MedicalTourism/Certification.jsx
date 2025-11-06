@@ -2,11 +2,14 @@ import { Head } from '@inertiajs/react';
 import React from 'react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
+import translationService from '@/services/TranslationService';
 
 export default function MedicalTourismCertification() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  
   return (
     <>
-      <Head title="Сертификация клиник | Медицинский туризм | NNCRZ" meta={[{ name: 'description', content: 'Сертификация медицинских организаций для приема иностранных пациентов в Казахстане.' }]} />
+      <Head title={t('directionsPages.medicalTourismSubpages.certification.title', 'Сертификация')} />
       <section className="text-gray-600 body-font">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-8'>

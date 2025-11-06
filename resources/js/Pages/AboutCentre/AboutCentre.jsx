@@ -10,9 +10,15 @@ import MainLeadershipCard from '@/Components/MainLeadershipCard';
 import SimpleLeadershipCard from '@/Components/SimpleLeadershipCard';
 import OrganizationalStructure from '@/Components/OrganizationalStructure';
 import { leadershipData, organizationalStructureData } from '@/data/organizationalStructure';
+import translationService from '@/services/TranslationService';
 
 export default function AboutCentre() {
-        // Используем данные из отдельного файла
+    // Функция для получения перевода
+    const t = (key, fallback = '') => {
+        return translationService.t(key, fallback);
+    };
+
+    // Используем данные из отдельного файла
     const leadership = leadershipData;
     const departments = organizationalStructureData;
 
@@ -27,17 +33,11 @@ export default function AboutCentre() {
 
   return (
     <>
-    <Head title="NNCRZ"/>
+    <Head title={t('aboutCentre.pageTitle')}/>
     <section className="text-gray-600 body-font pb-8">
       <div className="container px-5 py-12 mx-auto">
         <div className='flex flex-wrap px-12 text-justify mb-4'>
-          <p className="tracking-wide leading-relaxed">
-          Постановлением Правительства Республики Казахстан от 6 августа 2021 года №532 «О некоторых вопросах Министерства здравоохранения Республики Казахстан» республиканское государственное предприятие на праве хозяйственного ведения «Республиканский центр развития здравоохранения» (РЦРЗ) Министерства здравоохранения Республики Казахстан было переименовано в республиканское государственное предприятие на праве хозяйственного ведения «Национальный научный центр развития здравоохранения имени Салидат Каирбековой» Министерства здравоохранения Республики Казахстан.
-          <br />Если начать с истории становления, то РЦРЗ был создан в 1994 году в Алматы как Научный центр медицинских и экономических проблем здравоохранения. Правопреемник Центра – Институт развития здравоохранения перебазировался в Астану, а в 2011 году путем объединения с Республиканским информационно-аналитическим центром получил название Республиканского центра развития здравоохранения. У истоков важных направлений в деятельности Центра стояла Салидат Зекеновна Каирбекова.
-          <br />Первая женщина-министр здравоохранения Республики Казахстан, государственный и общественный деятель РК, деятель в области здравоохранения, доктор медицинских наук С. Каирбекова посвятила свою жизнь служению людям, проделала колоссальную работу в сфере отечественного здравоохранения.
-          <br />В знак признания особых заслуг в сфере отечественного здравоохранения и в целях увековечения памяти Каирбековой С.З. коллектив РЦРЗ совместно с Советом ветеранов Министерства здравоохранения, а также с представителями медицинской общественности вышел с ходатайством о присвоении Центру имени Салидат Каирбековой. 
-          <br />Всего за время своей работы Центр внес огромный вклад в развитие системы отечественного здравоохранения, участвуя в разработке и сопровождая методологически реализацию государственных программ, дорожных карт, отраслевых проектов и различных нормативно-правовых актов. 
-          <br />Также Центр является рабочим органом Объединенной комиссии по качеству медицинских услуг, рабочим органом Формулярной комиссии, обеспечивая экспертно-аналитическое сопровождение их работы, Национальным координатором по кадровым ресурсам в области здравоохранения.
+          <p className="tracking-wide leading-relaxed" dangerouslySetInnerHTML={{__html: t('aboutCentre.history')}}>
           </p>
         </div>
       </div>
@@ -46,7 +46,7 @@ export default function AboutCentre() {
     <section className="text-gray-600 body-font">
         <div className="container px-5 pb-24 mx-auto">
             <div className='flex md:flex-row flex-wrap'>
-                <FolderChlank h1="Финансовая отчетность" color="bg-fuchsia-100" colorsec="bg-fuchsia-200" />
+                <FolderChlank h1={t('aboutCentre.financialReporting')} color="bg-fuchsia-100" colorsec="bg-fuchsia-200" />
             </div>
         </div>
     </section>
@@ -55,7 +55,7 @@ export default function AboutCentre() {
       <div className="container px-5 pt-8 pb-12 mx-auto">
         <ActualFile 
           folder="О центре/Устав" 
-          title="Устав национального научного центра развития здравоохранения имени Салидат Каирбековой" 
+          title={t('aboutCentre.charter')} 
           bgColor="bg-fuchsia-100"
         />
       </div>
@@ -66,23 +66,23 @@ export default function AboutCentre() {
         <div className="bg-fuchsia-100 p-6 rounded-lg mb-8">
           <FilesAccord 
             folder="О центре/Стратегия развития" 
-            title="Стратегия развития" 
+            title={t('aboutCentre.developmentStrategy')} 
             bgColor="bg-fuchsia-100"
           />
           <FilesAccord 
             folder="О центре/Политика" 
-            title="Антикоррупционная политика" 
+            title={t('aboutCentre.anticorruptionPolicy')} 
             bgColor="bg-fuchsia-100"
             defaultOpen={true}
           />
           <FilesAccord 
             folder="О центре/Закупки" 
-            title="Закупки" 
+            title={t('aboutCentre.procurement')} 
             bgColor="bg-fuchsia-100"
           />
           <FilesAccord 
             folder="О центре/Нормативные документы" 
-            title="Нормативные документы" 
+            title={t('aboutCentre.regulatoryDocuments')} 
             bgColor="bg-fuchsia-100"
             defaultOpen={true}
           />
@@ -94,10 +94,9 @@ export default function AboutCentre() {
     <section className="text-gray-600 body-font bg-gray-50">
       <div className="container px-5 py-16 mx-auto">
         <div className="flex flex-col text-left w-full mb-12">
-          <h1 className="sm:text-3xl text-2xl font-bold title-font text-gray-900 mb-4">Руководство центра</h1>
+          <h1 className="sm:text-3xl text-2xl font-bold title-font text-gray-900 mb-4">{t('aboutCentre.leadership.title')}</h1>
           <p className="text-gray-600 max-w-3xl">
-            Наши руководители обеспечивают стратегическое развитие и эффективное управление центром, 
-            руководствуясь принципами инновационности и качества медицинских услуг.
+            {t('aboutCentre.leadership.description')}
           </p>
         </div>
         {/* Главный руководитель */}

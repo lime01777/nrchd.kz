@@ -2,36 +2,27 @@ import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import Sponsors from '@/Components/Sponsors';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
 export default function Partners() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
 
     return (
         <>
-            <Head title="Партнеры | NNCRZ" />
+            <Head title={t('partners.pageTitle')} />
             <section className="text-gray-600 body-font pb-8">
                 <div className="container px-5 py-12 mx-auto">
                     <div className='flex flex-wrap px-12 text-justify mb-4'>
                         <p className="tracking-wide leading-relaxed">
-                            Национальный научный центр развития здравоохранения им. Салидат Каирбековой активно сотрудничает 
-                            с ведущими медицинскими организациями Казахстана и международными партнерами. Наше сотрудничество 
-                            направлено на обмен опытом, проведение совместных научных исследований, реализацию образовательных 
-                            программ и развитие системы здравоохранения Республики Казахстан.
+                            {t('partners.intro')}
                         </p>
                         <p className="tracking-wide leading-relaxed mt-4">
-                            Мы открыты для новых партнерств и готовы к сотрудничеству с организациями, разделяющими наши 
-                            ценности и стремление к повышению качества медицинской помощи и развитию здравоохранения.
+                            {t('partners.openText')}
                         </p>
                     </div>
                 </div>
@@ -42,24 +33,17 @@ export default function Partners() {
             <section className="text-gray-600 body-font pb-24">
                 <div className="container px-5 mx-auto">
                     <div className='flex flex-wrap px-12 text-justify'>
-                        <h2 className="sm:text-2xl text-xl font-semibold title-font text-gray-900 mb-4 w-full">Направления сотрудничества</h2>
+                        <h2 className="sm:text-2xl text-xl font-semibold title-font text-gray-900 mb-4 w-full">{t('partners.cooperationTitle')}</h2>
                         <ul className="list-disc pl-6 space-y-2 w-full">
-                            <li>Совместные научные исследования в области медицины и здравоохранения</li>
-                            <li>Разработка и внедрение инновационных медицинских технологий</li>
-                            <li>Обмен опытом и лучшими практиками в области организации здравоохранения</li>
-                            <li>Проведение образовательных программ и повышение квалификации медицинских работников</li>
-                            <li>Организация совместных научно-практических конференций, семинаров и форумов</li>
-                            <li>Разработка методических рекомендаций и стандартов в области здравоохранения</li>
-                            <li>Совместные публикации в научных изданиях</li>
+                            {t('partners.cooperationItems', []).map((item, index) => (
+                                <li key={index}>{item}</li>
+                            ))}
                         </ul>
                         
                         <div className="mt-10 w-full">
-                            <h2 className="sm:text-2xl text-xl font-semibold title-font text-gray-900 mb-4">Как стать партнером</h2>
+                            <h2 className="sm:text-2xl text-xl font-semibold title-font text-gray-900 mb-4">{t('partners.becomePartnerTitle')}</h2>
                             <p className="tracking-wide leading-relaxed">
-                                Если вы заинтересованы в сотрудничестве с Национальным научным центром развития здравоохранения 
-                                им. Салидат Каирбековой, пожалуйста, направьте письмо с предложением о сотрудничестве на 
-                                электронную почту <a href="mailto:cooperation@nrchd.kz" className="text-indigo-600 hover:text-indigo-800">cooperation@nrchd.kz</a> или 
-                                свяжитесь с нами по телефону +7 (7172) 70-95-30.
+                                {t('partners.becomePartnerText')}
                             </p>
                         </div>
                     </div>
@@ -69,4 +53,4 @@ export default function Partners() {
     );
 }
 
-Partners.layout = (page) => <LayoutDirection img="partner" h1={t('about.partners', 'Партнеры')}>{page}</LayoutDirection>;
+Partners.layout = (page) => <LayoutDirection img="partner" h1={t('partners.pageTitle')}>{page}</LayoutDirection>;

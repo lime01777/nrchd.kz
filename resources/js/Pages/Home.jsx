@@ -8,10 +8,12 @@ import BannerCatalog from '@/Components/BannerCatalog';
 import Sponsors from '@/Components/Sponsors';
 import Footer from '@/Components/Footer';
 import ChartHead from '@/Components/ChartHead';
+import translationService from '@/services/TranslationService';
 
 export default function Home() {
-    const t = (key, fallback) => {
-        return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    // Используем новый сервис переводов
+    const t = (key, fallback = '') => {
+        return translationService.t(key, fallback);
     };
 
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -52,25 +54,25 @@ export default function Home() {
     const heroSlides = [
         {
             id: 1,
-            title: "Координируем развитие медицинского туризма в Казахстане",
-            subtitle: "Продвигаем высококачественные медицинские услуги для иностранных пациентов",
-            buttonText: "Медицинский туризм",
+            title: t('home.hero.slide1.title'),
+            subtitle: t('home.hero.slide1.subtitle'),
+            buttonText: t('home.hero.slide1.button'),
             buttonLink: route('medical.tourism'),
             image: "/img/HeroImg/medical-tourism.png"
         },
         {
             id: 2,
-            title: "Клинические протоколы",
-            subtitle: "Национальные клинические протоколы и руководства по диагностике и лечению",
-            buttonText: "Просмотр",
+            title: t('home.hero.slide2.title'),
+            subtitle: t('home.hero.slide2.subtitle'),
+            buttonText: t('home.hero.slide2.button'),
             buttonLink: route('clinical.protocols'),
             image: "/img/HeroImg/clinicalprotocols.png"
         },
         {
             id: 3,
-            title: "Национальный доклад здравоохранения",
-            subtitle: "Аналитика и статистика здравоохранения Казахстана",
-            buttonText: "Подробнее",
+            title: t('home.hero.slide3.title'),
+            subtitle: t('home.hero.slide3.subtitle'),
+            buttonText: t('home.hero.slide3.button'),
             buttonLink: route('medical.statistics'),
             image: "/img/HeroImg/home-hero.png"
         }
@@ -81,7 +83,7 @@ export default function Home() {
         return (
             <section className="text-gray-600 body-font py-16 bg-gray-50">
                 <div className="container mx-auto px-5">
-                    <h2 className="text-3xl font-bold mb-12 text-gray-800">{t('statistics', 'Статистика и аналитика')}</h2>
+                    <h2 className="text-3xl font-bold mb-12 text-gray-800">{t('home.statistics.title')}</h2>
                     
                     <div className="flex flex-wrap -mx-4">
                         {/* График травм */}

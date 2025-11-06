@@ -3,40 +3,35 @@ import React from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
 import FolderChlank from '@/Components/FolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
 export default function MedicalScience() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
   return (
     <>
-              <Head title={tComponent('directions.medical_science', 'Медицинская наука')} meta={[{ name: 'description', content: 'Медицинская наука: исследования, разработки и достижения.' }]} />
+              <Head title={t('directionsPages.medicalScience.title', 'Медицинская наука')} />
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-4'>
             <p className="tracking-wide leading-relaxed">
-            Развитие научных исследований – поддержка и координация фундаментальных и прикладных исследований, направленных на решение актуальных проблем здравоохранения.
+            {t('directionsPages.medicalScience.intro1')}
             </p>
             <p className="tracking-wide leading-relaxed">
-            Анализ и оценка научной деятельности – мониторинг результативности исследований, научно-технических и инновационных проектов.
+            {t('directionsPages.medicalScience.intro2')}
             </p>
             <p className="tracking-wide leading-relaxed">
-            Разработка и внедрение инноваций – содействие трансферу технологий и интеграции передовых научных достижений в клиническую практику.
+            {t('directionsPages.medicalScience.intro3')}
             </p>
             <p className="tracking-wide leading-relaxed">
-            Формирование научной политики – разработка стратегий и рекомендаций по совершенствованию медицинской науки и образования.
+            {t('directionsPages.medicalScience.intro4')}
             </p>
             <p className="tracking-wide leading-relaxed">
-            Международное сотрудничество – взаимодействие с ведущими мировыми научными центрами и участие в международных проектах.
+            {t('directionsPages.medicalScience.intro5')}
             </p>
           </div>
           <div className='flex flex-wrap px-12 justify-center mb-4'>
@@ -51,22 +46,22 @@ export default function MedicalScience() {
             <FolderChlank 
               color="bg-gray-200"
               colorsec="bg-gray-300"
-              title="Перечень утвержденных научно-медицинских разработок" 
-              description="Информация о научно-медицинских разработках"
+              title={t('directionsPages.medicalScience.subfolders.research.title')} 
+              description={t('directionsPages.medicalScience.subfolders.research.description')}
               href={route('medical.science.research')}
             />
             <FolderChlank 
               color="bg-gray-200"
               colorsec="bg-gray-300"
-              title="Клинические исследования" 
-              description="Информация о клинических исследованиях"
+              title={t('directionsPages.medicalScience.subfolders.clinical.title')} 
+              description={t('directionsPages.medicalScience.subfolders.clinical.description')}
               href={route('medical.science.clinical')}
             />
             <FolderChlank 
               color="bg-gray-200"
               colorsec="bg-gray-300"
-              title="Ученый совет" 
-              description="Информация об ученом совете"
+              title={t('directionsPages.medicalScience.subfolders.council.title')} 
+              description={t('directionsPages.medicalScience.subfolders.council.description')}
               href={route('medical.science.council')}
             />
           </div>
@@ -78,20 +73,20 @@ export default function MedicalScience() {
         <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
             {/* Первый аккордеон */}
             <FilesAccord 
-                folder="Медицинская наука/Локальная комиссия по биоэтике"
-                title="Локальная комиссия по биоэтике"
+                folder={t('directionsPages.medicalScience.localBioethicsCommissionFolder')}
+                title={t('directionsPages.medicalScience.localBioethicsCommissionTitle')}
                 bgColor="bg-gray-200"
                 defaultOpen={true}
             />
             <FilesAccord 
-                folder="MedicalEducation/nma"
-                title="Научно-медицинская экспертиза "
+                folder={t('directionsPages.medicalScience.medicalExpertiseFolder')}
+                title={t('directionsPages.medicalScience.medicalExpertiseTitle')}
                 bgColor="bg-gray-200"
                 defaultOpen={true}
             />
                         <FilesAccord 
-                folder="Медицинская наука/Рейтинг"
-                title="Результаты рейтинговой оценки научных организаций и медицинских ВУЗов по показателям научной и инновационной деятельности"
+                folder={t('directionsPages.medicalScience.ratingFolder')}
+                title={t('directionsPages.medicalScience.ratingTitle')}
                 bgColor="bg-gray-200"
                 defaultOpen={true}
             />

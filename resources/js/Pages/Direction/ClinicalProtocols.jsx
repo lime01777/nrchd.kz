@@ -3,68 +3,55 @@ import React, { useState } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
 export default function ClinicalProtocols() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
 
   const [showFullText, setShowFullText] = useState(false);
   
   return (
     <>
-    <Head title={tComponent('directions.clinical_protocols', 'Клинические протоколы')} meta={[{ name: 'description', content: 'Клинические протоколы: научно доказанные рекомендации по профилактике, диагностике, лечению и реабилитации при различных заболеваниях и состояниях пациентов.' }]} />
+    <Head title={t('directionsPages.clinicalProtocols.title', 'Клинические протоколы')} />
     <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
             <div className='flex flex-wrap px-12 text-justify mb-4'>
                 <div className="tracking-wide leading-relaxed">
                     <p className="mb-4">
-                        <strong>Клинический протокол</strong> – научно доказанные рекомендации по профилактике, диагностике, лечению, 
-                        медицинской реабилитации и паллиативной медицинской помощи при определенном заболевании или 
-                        состояниях пациентов в соответствии с законодательством Республики Казахстан.
+                        <strong>{t('directionsPages.clinicalProtocols.intro1Title')}</strong> {t('directionsPages.clinicalProtocols.intro1')}
                     </p>
                     <p className="mb-4">
-                        Медицинская помощь, предоставляемая субъектами здравоохранения, регулируется стандартами, правилами 
-                        и клиническими протоколами в соответствии с законодательством о здравоохранении в Казахстане.
+                        {t('directionsPages.clinicalProtocols.intro2')}
                     </p>
                     
                     {showFullText && (
                         <>
                             <p className="mb-4">
-                                Существует четыре вида клинических протоколов, охватывающих диагностику и лечение, 
-                                медицинские вмешательства, медицинскую реабилитацию и паллиативную помощь.
+                                {t('directionsPages.clinicalProtocols.typesInfo')}
                             </p>
                             <p className="mb-4">
-                                Клинические протоколы разрабатываются научными медицинскими центрами с участием высших 
-                                медицинских учебных заведений и неправительственных организаций. Они включают коды 
-                                международной классификации болезней.
+                                {t('directionsPages.clinicalProtocols.developmentInfo')}
                             </p>
                             <p className="mb-4">
-                                Национальный научный центр регулирует экспертную оценку клинических протоколов с учетом 
-                                требований к их разработке, рациональной фармакотерапии и доказательной медицине.
+                                {t('directionsPages.clinicalProtocols.regulationInfo')}
                             </p>
                             <p className="mb-4">
-                                Клинические протоколы пересматриваются каждые 5 лет или при появлении новых методов 
-                                с более высоким уровнем доказательности.
+                                {t('directionsPages.clinicalProtocols.reviewInfo')}
                             </p>
                             
                             <p className="mb-4 font-semibold">
-                                Нормативные документы:
+                                {t('directionsPages.clinicalProtocols.regulatoryDocsTitle')}
                             </p>
                             
                             <ul className="list-disc list-inside mb-4 pl-4 space-y-2">
-                                <li>Об утверждении методики внедрения и оценки эффективности внедрения клинических протоколов в практическое здравоохранение. Приказ Министра здравоохранения Республики Казахстан от 12 ноября 2020 года № ҚР ДСМ - 189/2020.</li>
-                                <li>Алгоритм при внедрении и мониторинге внедрения клинических протоколов в практическое здравоохранение.</li>
-                                <li>Дорожная карта по мониторингу внедрения клинических протоколов в практическом здравоохранении (в медицинских организациях).</li>
+                                <li>{t('directionsPages.clinicalProtocols.regulatoryDoc1')}</li>
+                                <li>{t('directionsPages.clinicalProtocols.regulatoryDoc2')}</li>
+                                <li>{t('directionsPages.clinicalProtocols.regulatoryDoc3')}</li>
                             </ul>
                         </>
                     )}
@@ -75,7 +62,7 @@ export default function ClinicalProtocols() {
                     onClick={() => setShowFullText(!showFullText)} 
                     className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3 transition-all duration-300 ease-in-out hover:bg-blue-50 transform hover:scale-105"
                 >
-                    {showFullText ? 'Свернуть' : 'Читать далее'}
+                    {showFullText ? t('directionsPages.clinicalProtocols.hide') : t('directionsPages.clinicalProtocols.readMore')}
                     <svg 
                         xmlns="http://www.w3.org/2000/svg" 
                         width="24" 
@@ -104,22 +91,22 @@ export default function ClinicalProtocols() {
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
-                    title={tComponent('directions.clinical_protocols', 'Клинические протоколы')} 
-                    description="Каталог клинических протоколов"
+                    title={t('directionsPages.clinicalProtocols.subfolders.catalog.title')} 
+                    description={t('directionsPages.clinicalProtocols.subfolders.catalog.description')}
                     href={route('clinical.protocols.catalog')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
-                    title="Комиссия по клиническим протоколам" 
-                    description="Информация о комиссии"
+                    title={t('directionsPages.clinicalProtocols.subfolders.commission.title')} 
+                    description={t('directionsPages.clinicalProtocols.subfolders.commission.description')}
                     href={route('clinical.protocols.commission')}
                 />
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
-                    title="Мониторинг внедрения" 
-                    description="Мониторинг внедрения клинических протоколов"
+                    title={t('directionsPages.clinicalProtocols.subfolders.monitoring.title')} 
+                    description={t('directionsPages.clinicalProtocols.subfolders.monitoring.description')}
                     href={route('clinical.protocols.monitoring')}
                 />
             </div>

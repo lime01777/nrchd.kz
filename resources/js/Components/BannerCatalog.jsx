@@ -1,8 +1,22 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import translationService from '@/services/TranslationService';
 
 function BannerCatalog() {
-
-
+  const [currentLang, setCurrentLang] = useState(translationService.getLanguage());
+  
+  // Функция для получения перевода
+  const t = (key, fallback = '') => {
+    return translationService.t(key, fallback);
+  };
+  
+  // Обновляем язык при изменении
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      setCurrentLang(translationService.getLanguage());
+    };
+    window.addEventListener('languageChanged', handleLanguageChange);
+    return () => window.removeEventListener('languageChanged', handleLanguageChange);
+  }, []);
 
   return (
     <section className="text-gray-600 body-font">
@@ -13,11 +27,11 @@ function BannerCatalog() {
                     <div className='flex justify-center mb-1'>
                         <img className='w-24 h-24' src="https://img.icons8.com/emoji/96/open-book-emoji.png" alt="open-book-emoji"/>
                     </div>
-                    <h1 className="title-font sm:text-4xl text-3xl md:mb-4 mb-6 font-semibold text-gray-900">Каталог образовательных программ</h1>
+                    <h1 className="title-font sm:text-4xl text-3xl md:mb-4 mb-6 font-semibold text-gray-900">{t('bannerCatalog.title')}</h1>
                     <div className="flex justify-center px-4 md:mb-0 mb-8">
                         <button
                             onClick={() => window.location.href = "http://89.218.81.108/#/catalog/view"}
-                            className="md:w-auto w-full items-center text-white bg-green-900 border-0 py-3 px-6 transition ease-in duration-150 focus:outline-none hover:bg-green-600 hover:shadow-lg rounded-lg text-lg">Перейти в каталог</button>
+                            className="md:w-auto w-full items-center text-white bg-green-900 border-0 py-3 px-6 transition ease-in duration-150 focus:outline-none hover:bg-green-600 hover:shadow-lg rounded-lg text-lg">{t('bannerCatalog.button')}</button>
                     </div>
                 </div>
             </div>

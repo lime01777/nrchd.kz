@@ -8,7 +8,7 @@ export default function TranslationsIndex({ stats, languages, recentTranslations
 
   // Форма для массового перевода
   const { data, setData, post, processing } = useForm({
-    target_language: 'en'
+    target_language: 'kk'  // По умолчанию казахский язык
   });
 
   // Запуск массового перевода
@@ -116,7 +116,7 @@ export default function TranslationsIndex({ stats, languages, recentTranslations
                     disabled={isTranslating}
                   >
                     <option value="en">English</option>
-                    <option value="kz">Қазақша</option>
+                    <option value="kk">Қазақша</option>
                   </select>
                 </div>
 
@@ -151,13 +151,36 @@ export default function TranslationsIndex({ stats, languages, recentTranslations
                     )}
 
                     {translationProgress.stats && (
-                      <div className="mt-3 text-sm text-gray-600">
-                        <div>Всего найдено текстов: {translationProgress.stats.total_found}</div>
-                        <div>Уже переведено: {translationProgress.stats.already_translated}</div>
-                        <div>Новых переводов: {translationProgress.stats.newly_translated}</div>
-                        {translationProgress.stats.errors > 0 && (
-                          <div className="text-red-600">Ошибок: {translationProgress.stats.errors}</div>
-                        )}
+                      <div className="mt-3 text-sm">
+                        <div className="text-gray-700 font-semibold mb-2">📊 Статистика перевода:</div>
+                        <div className="space-y-1">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Всего обработано:</span>
+                            <span className="font-semibold text-blue-600">{translationProgress.stats.total}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Успешно переведено:</span>
+                            <span className="font-semibold text-green-600">{translationProgress.stats.translated}</span>
+                          </div>
+                          {translationProgress.stats.from_db > 0 && (
+                            <div className="flex justify-between ml-4">
+                              <span className="text-gray-500">↳ Из базы данных:</span>
+                              <span className="font-medium text-green-500">{translationProgress.stats.from_db}</span>
+                            </div>
+                          )}
+                          {translationProgress.stats.from_google > 0 && (
+                            <div className="flex justify-between ml-4">
+                              <span className="text-gray-500">↳ Через Google Translate:</span>
+                              <span className="font-medium text-blue-500">{translationProgress.stats.from_google}</span>
+                            </div>
+                          )}
+                          {translationProgress.stats.failed > 0 && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Ошибок:</span>
+                              <span className="font-semibold text-red-600">{translationProgress.stats.failed}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -200,15 +223,44 @@ export default function TranslationsIndex({ stats, languages, recentTranslations
               </div>
 
               {/* Инструкции */}
-              <div className="bg-yellow-50 p-6 rounded-lg">
-                <h2 className="text-lg font-semibold mb-3">Как это работает:</h2>
-                <ul className="list-disc list-inside space-y-2 text-sm text-gray-700">
-                  <li>Система сканирует весь контент сайта (новости, категории, статические тексты)</li>
-                  <li>Проверяет, какие тексты уже переведены</li>
-                  <li>Новые тексты автоматически переводятся через Google Translate</li>
-                  <li>Все переводы сохраняются в базе данных для быстрого доступа</li>
-                  <li>При переключении языка переводы загружаются мгновенно из БД</li>
-                </ul>
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200">
+                <h2 className="text-lg font-semibold mb-3 text-blue-900">🔄 Как работает умная система переводов:</h2>
+                <div className="space-y-3 text-sm text-gray-700">
+                  <div className="flex items-start">
+                    <span className="text-blue-600 mr-2 font-bold">1.</span>
+                    <div>
+                      <strong>Проверка базы данных:</strong> Сначала система ищет перевод для каждого текста в БД.
+                      Если текст уже был переведен ранее, используется существующий перевод.
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="text-blue-600 mr-2 font-bold">2.</span>
+                    <div>
+                      <strong>Автоматический перевод:</strong> Если перевод не найден в БД, текст автоматически 
+                      переводится через Google Translate API с защитой специальных терминов.
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="text-blue-600 mr-2 font-bold">3.</span>
+                    <div>
+                      <strong>Сохранение результатов:</strong> Все новые переводы сохраняются в базе данных, 
+                      чтобы при следующем использовании загружаться мгновенно без повторного обращения к API.
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="text-blue-600 mr-2 font-bold">4.</span>
+                    <div>
+                      <strong>Кеширование:</strong> Переводы кешируются для максимальной производительности 
+                      при переключении языков на сайте.
+                    </div>
+                  </div>
+                  <div className="mt-4 p-3 bg-green-50 rounded border border-green-200">
+                    <p className="text-green-800 text-xs">
+                      💡 <strong>Преимущество:</strong> Система экономит запросы к Google Translate API, 
+                      повторно используя существующие переводы из БД. Это ускоряет работу и снижает затраты.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

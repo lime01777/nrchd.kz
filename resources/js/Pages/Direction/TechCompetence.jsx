@@ -3,20 +3,16 @@ import { Head, usePage, useForm } from '@inertiajs/react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import VideoModal from '@/Components/VideoModal';
 import FilesAccord from '@/Components/FilesAccord';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
 export default function TechCompetence() {
-    const { translations, flash } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
+    const { flash } = usePage().props;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -61,68 +57,68 @@ export default function TechCompetence() {
 
   return (
     <>
-              <Head title={tComponent('directions.tech_competence', 'Отраслевой центр технологических компетенций')} meta={[{ name: 'description', content: 'Отраслевой центр технологических компетенций в сфере здравоохранения: инновации, разработки и технологические решения.' }]} />
+              <Head title={t('directionsPages.techCompetence.title', 'Отраслевой центр технологических компетенций')} />
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Отраслевой центр технологических компетенций</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('directionsPages.techCompetence.mainTitle')}</h2>
             
             <div className="mb-6">
               <p className="text-gray-700 mb-4 leading-relaxed">
-                Отраслевой центр технологических компетенций (ОЦТК) в здравоохранении создан на основании приказа Министра здравоохранения Республики Казахстан №667 от 18.10.2021 года на базе Национального научного центра развития здравоохранения имени Салидат Каирбековой.
+                {t('directionsPages.techCompetence.intro1')}
               </p>
               <p className="text-gray-700 mb-4 leading-relaxed">
-                ОЦТК является ключевым элементом в развитии и внедрении инновационных технологий в систему здравоохранения.
+                {t('directionsPages.techCompetence.intro2')}
               </p>
             </div>
 
             <div className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-700 mb-3">Основные задачи деятельности ОЦТК</h3>
+              <h3 className="text-xl font-semibold text-gray-700 mb-3">{t('directionsPages.techCompetence.tasksTitle')}</h3>
               <div className="bg-blue-100 p-4 rounded-lg mb-4">
                 <ul className="list-none space-y-2">
                   <li className="flex items-start">
                     <span className="text-grey-600 mr-2 mt-1">•</span>
-                    <span>Foresight прогнозирование в сфере науки и технологий, новых профессий и компетенций для системы здравоохранения</span>
+                    <span>{t('directionsPages.techCompetence.task1')}</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-grey-600 mr-2 mt-1">•</span>
-                    <span>Участие в формировании технологических политик (стратегий)</span>
+                    <span>{t('directionsPages.techCompetence.task2')}</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-grey-600 mr-2 mt-1">•</span>
-                    <span>Содействие организациям здравоохранения во внедрении технологий мирового уровня и разработок казахстанских исследователей, в соответствии со спецификой организации</span>
+                    <span>{t('directionsPages.techCompetence.task3')}</span>
                   </li>
                 </ul>
               </div>
             </div>
             
             <div className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-700 mb-3">Основные направления деятельности</h3>
+              <h3 className="text-xl font-semibold text-gray-700 mb-3">{t('directionsPages.techCompetence.directionsTitle')}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div className="bg-blue-100 p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2">Аналитическая работа</h4>
-                  <p className="text-gray-700">Анализ мировых трендов и прогнозирование развития технологий в здравоохранении</p>
+                  <h4 className="font-semibold mb-2">{t('directionsPages.techCompetence.direction1Title')}</h4>
+                  <p className="text-gray-700">{t('directionsPages.techCompetence.direction1Description')}</p>
                 </div>
                 
                 <div className="bg-blue-100 p-4 rounded-lg">
-                  <h4 className="font-semibold mb-2">Развитие компетенций</h4>
-                  <p className="text-gray-700">Формирование и развитие технологических компетенций у специалистов здравоохранения</p>
+                  <h4 className="font-semibold mb-2">{t('directionsPages.techCompetence.direction2Title')}</h4>
+                  <p className="text-gray-700">{t('directionsPages.techCompetence.direction2Description')}</p>
                 </div>
               </div>
               
               <div className="bg-blue-100 p-4 rounded-lg mb-4">
-                <h4 className="font-semibold mb-2">Внедрение технологий</h4>
-                <p className="text-gray-700">Содействие организациям здравоохранения во внедрении современных технологий и инновационных разработок</p>
+                <h4 className="font-semibold mb-2">{t('directionsPages.techCompetence.direction3Title')}</h4>
+                <p className="text-gray-700">{t('directionsPages.techCompetence.direction3Description')}</p>
               </div>
               
               <div className="bg-blue-100 p-4 rounded-lg">
-                <h4 className="font-semibold mb-2">Координация и сотрудничество</h4>
-                <p className="text-gray-700">Координация взаимодействия между организациями здравоохранения, научными центрами и исследовательскими институтами</p>
+                <h4 className="font-semibold mb-2">{t('directionsPages.techCompetence.direction4Title')}</h4>
+                <p className="text-gray-700">{t('directionsPages.techCompetence.direction4Description')}</p>
               </div>
             </div>
 
             <p className="text-gray-700 mb-4 leading-relaxed">
-              ОЦТК ориентирован на содействие технологическому развитию и укреплению компетенций, способствуя прогрессу и инновациям в системе здравоохранения Республики Казахстан.
+              {t('directionsPages.techCompetence.conclusion')}
             </p>
           </div>
         </div>
@@ -131,8 +127,8 @@ export default function TechCompetence() {
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 mx-auto">
           <FilesAccord 
-            folder="Медицинская наука\Папка - Отраслевой центр технологических компетенций\Набор-НПА" 
-            title="Нормативная документация" 
+            folder={t('directionsPages.techCompetence.regulatoryDocsFolder')} 
+            title={t('directionsPages.techCompetence.regulatoryDocsTitle')} 
             bgColor="bg-blue-100"
             onVideoClick={openVideoModal}
           />
@@ -155,17 +151,15 @@ export default function TechCompetence() {
             <div className="flex flex-col md:flex-row items-center">
               {/* Заголовок и описание слева (2/3) */}
               <div className="w-full md:w-3/5 md:pr-16 mb-10 md:mb-0">
-                <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">Отраслевой центр технологических компетенций</h2>
-                <p className="text-gray-600 leading-relaxed mb-6 text-xl">
-
-Мы рассматриваем предложения от стартапов, врачей и научных коллективов и предоставляем поддержку по вопросам оценки технологии, правовой проработки, путей коммерциализации и интеграции в систему здравоохранения.
-Наша задача — сопровождать перспективные решения на ранних этапах развития и содействовать их продвижению в рамках действующих нормативных и стратегических документов МЗ РК.
+                <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">{t('directionsPages.techCompetence.formSectionTitle')}</h2>
+                <p className="text-gray-600 leading-relaxed mb-6 text-xl" style={{ whiteSpace: 'pre-line' }}>
+                  {t('directionsPages.techCompetence.formDescription')}
                 </p>
 
                 
                 {formSubmitted && (
                   <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-md my-4">
-                    Спасибо за вашу заявку! Мы свяжемся с вами в ближайшее время.
+                    {t('directionsPages.techCompetence.formSuccessMessage')}
                   </div>
                 )}
 
@@ -181,7 +175,7 @@ export default function TechCompetence() {
                 <form onSubmit={handleSubmit} className="w-full">
                   {/* Name field */}
                   <div className="mb-8">
-                    <div className="text-base text-gray-700 mb-2 font-medium">Как к вам обращаться <span className="text-red-500">*</span></div>
+                    <div className="text-base text-gray-700 mb-2 font-medium">{t('directionsPages.techCompetence.formNameLabel')} <span className="text-red-500">*</span></div>
                     <input 
                       type="text"
                       name="name"
@@ -195,7 +189,7 @@ export default function TechCompetence() {
                   
                   {/* Phone field */}
                   <div className="mb-8">
-                    <div className="text-base text-gray-700 mb-2 font-medium">Телефон <span className="text-red-500">*</span></div>
+                    <div className="text-base text-gray-700 mb-2 font-medium">{t('directionsPages.techCompetence.formPhoneLabel')} <span className="text-red-500">*</span></div>
                     <input 
                       type="tel"
                       name="phone"
@@ -209,7 +203,7 @@ export default function TechCompetence() {
                   
                   {/* Email field */}
                   <div className="mb-8">
-                    <div className="text-base text-gray-700 mb-2 font-medium">Email <span className="text-red-500">*</span></div>
+                    <div className="text-base text-gray-700 mb-2 font-medium">{t('directionsPages.techCompetence.formEmailLabel')} <span className="text-red-500">*</span></div>
                     <input 
                       type="email"
                       name="email"
@@ -223,7 +217,7 @@ export default function TechCompetence() {
                   
                   {/* Project name field */}
                   <div className="mb-8">
-                    <div className="text-base text-gray-700 mb-2 font-medium">Название проекта</div>
+                    <div className="text-base text-gray-700 mb-2 font-medium">{t('directionsPages.techCompetence.formProjectNameLabel')}</div>
                     <input 
                       type="text"
                       name="project_name"
@@ -235,7 +229,7 @@ export default function TechCompetence() {
                   
                   {/* Message field */}
                   <div className="mb-8">
-                    <div className="text-base text-gray-700 mb-2 font-medium">Ваше сообщение <span className="text-red-500">*</span></div>
+                    <div className="text-base text-gray-700 mb-2 font-medium">{t('directionsPages.techCompetence.formMessageLabel')} <span className="text-red-500">*</span></div>
                     <textarea 
                       name="message"
                       rows="4"
@@ -249,7 +243,7 @@ export default function TechCompetence() {
                   
                   {/* File upload field */}
                   <div className="mb-8">
-                    <div className="text-base text-gray-700 mb-2 font-medium">Прикрепить файл (опционально)</div>
+                    <div className="text-base text-gray-700 mb-2 font-medium">{t('directionsPages.techCompetence.formAttachmentLabel')}</div>
                     <input 
                       type="file"
                       accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
@@ -265,7 +259,7 @@ export default function TechCompetence() {
                     disabled={processing}
                     className="w-full bg-blue-600 text-white font-medium py-3 rounded-md hover:bg-blue-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {processing ? 'Отправка...' : 'Отправить заявку'}
+                    {processing ? t('directionsPages.techCompetence.formSubmitting') : t('directionsPages.techCompetence.formSubmitButton')}
                   </button>
                 </form>
               </div>
@@ -277,4 +271,4 @@ export default function TechCompetence() {
   );
 }
 
-TechCompetence.layout = (page) => <LayoutDirection img="science" h1={t('directions.medical_science', 'Медицинская наука')}>{page}</LayoutDirection>;
+TechCompetence.layout = (page) => <LayoutDirection img="science" h1={t('direction_tech_competence', 'Отраслевой центр технологических компетенций')}>{page}</LayoutDirection>;

@@ -3,8 +3,10 @@ import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import TabDocuments from '@/Components/TabDocuments';
 import PageAccordions from '@/Components/PageAccordions';
+import translationService from '@/services/TranslationService';
 
 export default function Research() {
+    const t = (key, fallback = '') => translationService.t(key, fallback);
     // Пример данных для вкладок документов
     const tabsData = [
         {
@@ -64,53 +66,43 @@ export default function Research() {
 
     return (
         <>
-            <Head title="Стратегические исследования и инициативы" meta={[{ name: 'description', content: 'Стратегические исследования и инициативы в сфере здравоохранения.' }]} />
+            <Head title={t('directionsPages.strategicInitiativesSubpages.research.title', 'Исследования')} />
             
             <section className="text-gray-600 body-font pb-8">
                 <div className="container px-5 py-12 mx-auto">
                     <div className="flex flex-wrap px-12 text-justify mb-8">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-6 w-full">Стратегические исследования и инициативы</h2>
+                        <h2 className="text-2xl font-bold text-gray-800 mb-6 w-full">{t('directionsPages.strategicInitiativesSubpages.research.mainTitle')}</h2>
                         <p className="tracking-wide leading-relaxed mb-4">
-                            Национальный научный центр развития здравоохранения имени Салидат Каирбековой проводит 
-                            стратегические исследования, направленные на совершенствование системы здравоохранения 
-                            Казахстана и достижение ключевых показателей здоровья населения.
+                            {t('directionsPages.strategicInitiativesSubpages.research.intro1')}
                         </p>
                         <p className="tracking-wide leading-relaxed mb-4">
-                            Стратегические исследования и инициативы Центра основаны на анализе текущей ситуации в 
-                            здравоохранении, изучении международного опыта и передовых практик, а также на прогнозировании 
-                            будущих тенденций и вызовов в сфере здравоохранения.
+                            {t('directionsPages.strategicInitiativesSubpages.research.intro2')}
                         </p>
                     </div>
                     
                     <div className="flex flex-wrap px-12 text-justify mb-8">
-                        <h3 className="text-xl font-semibold text-gray-800 mb-4 w-full">Основные направления стратегических исследований:</h3>
+                        <h3 className="text-xl font-semibold text-gray-800 mb-4 w-full">{t('directionsPages.strategicInitiativesSubpages.research.directionsTitle')}</h3>
                         <ul className="list-disc pl-6 space-y-3 text-gray-700 w-full">
                             <li>
-                                <strong>Анализ системы здравоохранения</strong> - комплексная оценка эффективности системы 
-                                здравоохранения, выявление сильных и слабых сторон, разработка рекомендаций по улучшению.
+                                <strong>{t('directionsPages.strategicInitiativesSubpages.research.direction1Title')}</strong> - {t('directionsPages.strategicInitiativesSubpages.research.direction1Text')}
                             </li>
                             <li>
-                                <strong>Эпидемиологические исследования</strong> - изучение распространенности заболеваний, 
-                                факторов риска и детерминант здоровья населения.
+                                <strong>{t('directionsPages.strategicInitiativesSubpages.research.direction2Title')}</strong> - {t('directionsPages.strategicInitiativesSubpages.research.direction2Text')}
                             </li>
                             <li>
-                                <strong>Оценка технологий здравоохранения</strong> - анализ эффективности, безопасности и 
-                                экономической целесообразности медицинских технологий, лекарственных средств и методов лечения.
+                                <strong>{t('directionsPages.strategicInitiativesSubpages.research.direction3Title')}</strong> - {t('directionsPages.strategicInitiativesSubpages.research.direction3Text')}
                             </li>
                             <li>
-                                <strong>Исследования в области организации медицинской помощи</strong> - разработка оптимальных 
-                                моделей оказания медицинской помощи, включая первичную медико-санитарную помощь, 
-                                специализированную и высокотехнологичную помощь.
+                                <strong>{t('directionsPages.strategicInitiativesSubpages.research.direction4Title')}</strong> - {t('directionsPages.strategicInitiativesSubpages.research.direction4Text')}
                             </li>
                             <li>
-                                <strong>Исследования в области кадровой политики</strong> - анализ потребности в медицинских 
-                                кадрах, разработка рекомендаций по подготовке и распределению медицинских работников.
+                                <strong>{t('directionsPages.strategicInitiativesSubpages.research.direction5Title')}</strong> - {t('directionsPages.strategicInitiativesSubpages.research.direction5Text')}
                             </li>
                         </ul>
                     </div>
                     
                     <div className="flex flex-wrap px-12 text-justify mb-8">
-                        <h3 className="text-xl font-semibold text-gray-800 mb-4 w-full">Исследования и материалы</h3>
+                        <h3 className="text-xl font-semibold text-gray-800 mb-4 w-full">{t('directionsPages.strategicInitiativesSubpages.research.materialsTitle')}</h3>
                         
                         {/* Использование компонента TabDocuments с заранее подготовленными данными */}
                         <TabDocuments tabs={tabsData} />
@@ -152,13 +144,18 @@ export default function Research() {
 
 Research.layout = page => (
     <LayoutFolderChlank
-        h1="Стратегические исследования и инициативы"
+        h1={translationService.t('directionsPages.strategicInitiativesSubpages.research.h1')}
         parentRoute={route('strategic.initiatives')} 
-        parentName="Стратегические инициативы и международное сотрудничество"
+        parentName={translationService.t('directionsPages.strategicInitiativesSubpages.research.parentName')}
         heroBgColor="bg-green-100"
         buttonBgColor="bg-green-100"
         buttonHoverBgColor="hover:bg-green-200"
         buttonBorderColor="border-green-200"
+        breadcrumbs={[
+          { name: translationService.t('directionsPages.strategicInitiativesSubpages.research.breadcrumbDirections'), route: 'directions' },
+          { name: translationService.t('directionsPages.strategicInitiativesSubpages.research.breadcrumbStrategic'), route: 'strategic.initiatives' },
+          { name: translationService.t('directionsPages.strategicInitiativesSubpages.research.h1'), route: null }
+        ]}
     >
         {page}
     </LayoutFolderChlank>

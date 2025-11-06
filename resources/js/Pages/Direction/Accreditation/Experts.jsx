@@ -3,24 +3,27 @@ import React from 'react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
 import BannerCatalog from '@/Components/BannerCatalog';
+import translationService from '@/services/TranslationService';
 
 export default function Experts() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  
   return (
     <>
-      <Head title="Эксперты внешней оценки | ННЦРЗ" />
+      <Head title={t('directionsPages.accreditationSubpages.experts.title', 'Эксперты')} />
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
 
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-5">Эксперты ННЦРЗ на 1 квартал 2025 г.</h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-5">{t('directionsPages.accreditationSubpages.experts.mainTitle')}</h2>
             
             <div className="mb-4">
-              <p className="text-gray-700">Всего в реестре экспертов ННЦРЗ зарегистрировано 114 специалистов, прошедших соответствующую подготовку и аттестацию.</p>
+              <p className="text-gray-700">{t('directionsPages.accreditationSubpages.experts.intro')}</p>
             </div>
             
             <div className="overflow-hidden">
               <div className="bg-yellow-100 p-3 rounded-lg mb-4 flex justify-between">
-                <span className="font-medium">Всего экспертов: 114</span>
+                <span className="font-medium">{t('directionsPages.accreditationSubpages.experts.totalExperts')}</span>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2 text-sm">
@@ -493,13 +496,18 @@ export default function Experts() {
 Experts.layout = page => (
   <LayoutFolderChlank 
     bgColor="bg-white" 
-    h1="Эксперты внешней оценки" 
+    h1={translationService.t('directionsPages.accreditationSubpages.experts.h1')} 
     parentRoute={route('medical.accreditation')} 
-    parentName="Аккредитация медицинских организаций"
+    parentName={translationService.t('directionsPages.accreditationSubpages.experts.parentName')}
     heroBgColor="bg-yellow-100"
     buttonBgColor="bg-yellow-100"
     buttonHoverBgColor="hover:bg-yellow-200"
     buttonBorderColor="border-yellow-200"
+    breadcrumbs={[
+      { name: translationService.t('directionsPages.accreditationSubpages.experts.breadcrumbDirections'), route: 'directions' },
+      { name: translationService.t('directionsPages.accreditationSubpages.experts.breadcrumbAccreditation'), route: 'medical.accreditation' },
+      { name: translationService.t('directionsPages.accreditationSubpages.experts.h1'), route: null }
+    ]}
   >
     {page}
   </LayoutFolderChlank>

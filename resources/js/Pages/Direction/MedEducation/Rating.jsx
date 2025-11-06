@@ -4,8 +4,10 @@ import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import FilesAccord from '@/Components/FilesAccord';
 import VideoModal from '@/Components/VideoModal';
+import translationService from '@/services/TranslationService';
 
 export default function Rating() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');
@@ -24,14 +26,14 @@ export default function Rating() {
 
   return (
     <>
-      <Head title="Результаты рейтинговой оценки по образовательной деятельности медицинских ВУЗов, НИИ, НЦ, ВМК и МК" />
+      <Head title={t('directionsPages.medEducationSubpages.rating.title', 'Рейтинг')} />
       <br /><br />
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6 rounded-lg">
             
             <SimpleFileDisplay 
-              folder="MedicalEducation/Rating" 
+              folder={t('directionsPages.medEducationSubpages.rating.folder')} 
               title="" 
               onVideoClick={openVideoModal}
             />
@@ -57,13 +59,13 @@ Rating.layout = page => <LayoutFolderChlank
   heroBgColor="bg-green-100"
   buttonBgColor="bg-green-100"
   buttonHoverBgColor="hover:bg-green-200"
-  h1="Результаты рейтинговой оценки по образовательной деятельности медицинских ВУЗов, НИИ, НЦ, ВМК и МК" 
+  h1={translationService.t('directionsPages.medEducationSubpages.rating.h1')} 
   parentRoute={route('direction.medical.education')} 
-  parentName="Медицинское образование"
+  parentName={translationService.t('directionsPages.medEducationSubpages.rating.parentName')}
   breadcrumbs={[
-    { name: 'Направления', route: 'directions' },
-    { name: 'Медицинское образование', route: 'direction.medical.education' },
-    { name: 'Результаты рейтинговой оценки по образовательной деятельности медицинских ВУЗов, НИИ, НЦ, ВМК и МК', route: null }
+    { name: translationService.t('directionsPages.medEducationSubpages.rating.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.medEducationSubpages.rating.breadcrumbMedicalEducation'), route: 'direction.medical.education' },
+    { name: translationService.t('directionsPages.medEducationSubpages.rating.h1'), route: null }
   ]}
   children={page}
 />

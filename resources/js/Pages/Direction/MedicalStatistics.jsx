@@ -6,25 +6,24 @@ import FolderChlank from '@/Components/FolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import SwitchableChart from '@/Components/SwitchableChart';
 import DocumentCards from '@/Components/DocumentCards';
+import translationService from '@/services/TranslationService';
+
+const t = (key, fallback = '') => {
+    return translationService.t(key, fallback);
+};
 
 export default function MedicalStatistics() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const t = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
     const [showFullText, setShowFullText] = useState(false);
 
     return (
-        <LayoutDirection img="static" h1={t('directions.medical_statistics', 'Медицинская статистика')} useVideo={false}>
-            <Head title="Медицинская статистика | NNCRZ" meta={[{ name: 'description', content: 'Медицинская статистика: данные, отчеты и аналитическая информация о состоянии здравоохранения.' }]} />
+        <LayoutDirection img="static" h1={t('directionsPages.medicalStatistics.title', 'Медицинская статистика')} useVideo={false}>
+            <Head title={t('directionsPages.medicalStatistics.title', 'Медицинская статистика')} />
             
             {/* Блок с текстом и кнопкой "Читать далее" */}
             <div className="container px-5 py-12 mx-auto">
                 <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-100">
                     <p className="tracking-wide text-gray-700 leading-relaxed text-lg mb-4">
-                        Департамент медико-статистического анализа осуществляет сбор, обработку и систематический анализ статистических данных в сфере здравоохранения Республики Казахстан. Его задачи включают изучение динамики показателей здоровья населения, эффективности деятельности медицинских организаций, а также прогнозирование потребностей системы здравоохранения в ресурсах.
+                        {t('directionsPages.medicalStatistics.intro')}
                     </p>
                     
                     <div 
@@ -34,11 +33,11 @@ export default function MedicalStatistics() {
                     >
                         <div className="border-t border-gray-100 pt-4 mb-4">
                             <p className="tracking-wide text-gray-700 leading-relaxed text-lg mb-4">
-                                В рамках своей деятельности Департамент проводит эпидемиологические и демографические исследования, анализирует ключевые индикаторы по приоритетным направлениям здравоохранения, формирует статистические обзоры и обеспечивает методологическое сопровождение по расчету и интерпретации показателей.
+                                {t('directionsPages.medicalStatistics.additionalInfo1')}
                             </p>
                             
                             <p className="tracking-wide text-gray-700 leading-relaxed text-lg">
-                                Вместе с тем, организовывает обучающие мероприятия, направленные на повышение качества статистического учета и аналитики в медицинских организациях.
+                                {t('directionsPages.medicalStatistics.additionalInfo2')}
                             </p>
                         </div>
                     </div>
@@ -50,7 +49,7 @@ export default function MedicalStatistics() {
                         className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px]
                         rounded-xl p-3 transition-all duration-300 ease-in-out hover:bg-gray-100 transform hover:scale-105"
                     >
-                        {showFullText ? t('hide', 'Скрыть') : 'Читать далее'}
+                        {showFullText ? t('directionsPages.medicalStatistics.hide') : t('directionsPages.medicalStatistics.readMore')}
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                             fill="currentColor" className={`ml-1 transition-transform duration-500 ease-in-out ${showFullText ? 'rotate-45' : ''}`}>
                             <rect x="11.5" y="5" width="1" height="14" />
@@ -65,19 +64,22 @@ export default function MedicalStatistics() {
         <div className="container pt-8 pb-24 mx-auto">
             <div className="flex md:flex-row flex-wrap">
                 <FolderChlank 
-                    h1="Отчёты" 
+                    title={t('directionsPages.medicalStatistics.subfolders.reports.title')} 
+                    description={t('directionsPages.medicalStatistics.subfolders.reports.description')}
                     color="bg-purple-200" 
                     colorsec="bg-purple-300" 
                     href={route('medical.statistics.reports')}
                 />
                 <FolderChlank 
-                    h1="Статистические данные" 
+                    title={t('directionsPages.medicalStatistics.subfolders.statData.title')} 
+                    description={t('directionsPages.medicalStatistics.subfolders.statData.description')}
                     color="bg-purple-200" 
                     colorsec="bg-purple-300" 
                     href={route('medical.statistics.statdata')}
                 />
                 <FolderChlank 
-                    h1="Аналитические материалы" 
+                    title={t('directionsPages.medicalStatistics.subfolders.analytics.title')} 
+                    description={t('directionsPages.medicalStatistics.subfolders.analytics.description')}
                     color="bg-purple-200" 
                     colorsec="bg-purple-300" 
                     href={route('medical.statistics.analytics')}
@@ -103,7 +105,7 @@ export default function MedicalStatistics() {
       <section className="text-gray-600 body-font">
         <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
             <DocumentCards 
-                title="Приказы"
+                title={t('directionsPages.medicalStatistics.ordersTitle')}
                 bgColor="bg-purple-100"
                 documents={[
                     {
@@ -127,8 +129,8 @@ export default function MedicalStatistics() {
             
             {/* Второй аккордеон */}
             <FilesAccord 
-                folder="Медицинская статистика/Методические рекомендации"
-                title="Методические рекомендации"
+                folder={t('directionsPages.medicalStatistics.methodologicalRecommendationsFolder')}
+                title={t('directionsPages.medicalStatistics.methodologicalRecommendationsTitle')}
                 bgColor="bg-purple-200"
                 defaultOpen={true}
             />
@@ -139,36 +141,36 @@ export default function MedicalStatistics() {
 <section className="text-gray-600 body-font">
 <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
 <div className="mt-20">
-  <h2 className="text-2xl font-semibold text-gray-900 mb-6">Контактная информация</h2>
+  <h2 className="text-2xl font-semibold text-gray-900 mb-6">{t('directionsPages.medicalStatistics.contactInfoTitle')}</h2>
   
   <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
     {/* Первый блок - Контакты */}
     <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-gray-800 mb-3">Начальник управления статистического учета и отчетности в области здравоохранения</h3>
-      <p className="text-gray-600">Ильясова Жанагул Рахымбековна</p>
-      <p className="text-gray-600">8-7172-648-951, вн: 1110</p>
+      <h3 className="text-lg font-semibold text-gray-800 mb-3">{t('directionsPages.medicalStatistics.contact1Position')}</h3>
+      <p className="text-gray-600">{t('directionsPages.medicalStatistics.contact1Name')}</p>
+      <p className="text-gray-600">{t('directionsPages.medicalStatistics.contact1Phone')}</p>
     </div>
     
     {/* Второй блок - Контакты */}
     <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-gray-800 mb-3">Начальник управления статистического наблюдения в области здравоохранения </h3>
-      <p className="text-gray-600">Ракишева Динара Муктаровна</p>
-      <p className="text-gray-600">8-7172-648-951, вн: 1076</p>
+      <h3 className="text-lg font-semibold text-gray-800 mb-3">{t('directionsPages.medicalStatistics.contact2Position')}</h3>
+      <p className="text-gray-600">{t('directionsPages.medicalStatistics.contact2Name')}</p>
+      <p className="text-gray-600">{t('directionsPages.medicalStatistics.contact2Phone')}</p>
     </div>
 
     
     {/* Третий блок - Контакты */}
     <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-gray-800 mb-3">Директор департамента медицинской статистики</h3>
-      <p className="text-gray-600">Карашутова Жадыра Нургалиевна</p>
-      <p className="text-gray-600">8-7172-648-951, вн: 1134</p>
+      <h3 className="text-lg font-semibold text-gray-800 mb-3">{t('directionsPages.medicalStatistics.contact3Position')}</h3>
+      <p className="text-gray-600">{t('directionsPages.medicalStatistics.contact3Name')}</p>
+      <p className="text-gray-600">{t('directionsPages.medicalStatistics.contact3Phone')}</p>
     </div>
 
     {/* Четвертый блок - Контакты */}
     <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-gray-800 mb-3">Эксперт в Бюро кодирования</h3>
-      <p className="text-gray-600">Жаниязова Гульнур Ахметбековна</p>
-      <p className="text-gray-600">8-7172-648-951, вн: 1073</p>
+      <h3 className="text-lg font-semibold text-gray-800 mb-3">{t('directionsPages.medicalStatistics.contact4Position')}</h3>
+      <p className="text-gray-600">{t('directionsPages.medicalStatistics.contact4Name')}</p>
+      <p className="text-gray-600">{t('directionsPages.medicalStatistics.contact4Phone')}</p>
     </div>
   </div>
 </div>

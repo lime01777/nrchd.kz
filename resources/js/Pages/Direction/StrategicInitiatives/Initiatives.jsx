@@ -3,23 +3,25 @@ import React from 'react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import TabDocuments from '@/Components/TabDocuments';
 import SliderImportantFile from '@/Components/SliderImportantFile';
+import translationService from '@/services/TranslationService';
 
 export default function Initiatives() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  
   return (
     <>
-      <Head title="Инициативы | NNCRZ" meta={[{ name: 'description', content: 'Ключевые инициативы Национального научного центра развития здравоохранения.' }]} />
+      <Head title={t('directionsPages.strategicInitiativesSubpages.initiatives.title', 'Инициативы')} />
       <section className="text-gray-600 body-font">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-8'>
             <p className="tracking-wide leading-relaxed">
-              Национальный научный центр развития здравоохранения имени Салидат Каирбековой реализует ряд стратегических инициатив, 
-              направленных на совершенствование системы здравоохранения Казахстана и достижение ключевых показателей здоровья населения.
+              {t('directionsPages.strategicInitiativesSubpages.initiatives.intro')}
             </p>
           </div>
           
           <div className="flex flex-col md:flex-row flex-wrap mb-8">
             <div className="lg:w-1/2 md:w-full px-8 py-6">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Основные стратегические направления:</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">{t('directionsPages.strategicInitiativesSubpages.initiatives.directionsTitle')}</h3>
               <ul className="list-disc pl-6 space-y-3 text-gray-700">
                 <li>Развитие человеческого капитала в сфере здравоохранения</li>
                 <li>Совершенствование системы медицинского образования</li>
@@ -31,7 +33,7 @@ export default function Initiatives() {
             </div>
             
             <div className="lg:w-1/2 md:w-full px-8 py-6">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Текущие проекты:</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">{t('directionsPages.strategicInitiativesSubpages.initiatives.projectsTitle')}</h3>
               <div className="bg-blue-50 p-4 rounded-lg mb-4">
                 <h4 className="text-lg font-semibold text-blue-800 mb-2">Дорожная карта развития здравоохранения</h4>
                 <p className="text-gray-700">
@@ -79,11 +81,16 @@ export default function Initiatives() {
 }
 
 Initiatives.layout = page => <LayoutFolderChlank 
-  h1="Инициативы" 
+  h1={translationService.t('directionsPages.strategicInitiativesSubpages.initiatives.h1')} 
   parentRoute={route('strategic.initiatives')}
-  parentName="Стратегические инициативы и международное сотрудничество" 
+  parentName={translationService.t('directionsPages.strategicInitiativesSubpages.initiatives.parentName')} 
   heroBgColor="bg-green-100"
   buttonBgColor="bg-green-100"
   buttonHoverBgColor="hover:bg-green-200"
   buttonBorderColor="border-green-200"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.strategicInitiativesSubpages.initiatives.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.strategicInitiativesSubpages.initiatives.breadcrumbStrategic'), route: 'strategic.initiatives' },
+    { name: translationService.t('directionsPages.strategicInitiativesSubpages.initiatives.h1'), route: null }
+  ]}
   >{page}</LayoutFolderChlank>;

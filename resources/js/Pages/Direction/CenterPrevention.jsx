@@ -3,31 +3,26 @@ import React from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import TabsFileDisplay from '@/Components/TabsFileDisplay';
 import YouthHealthCentersMap from '@/Components/YouthHealthCentersMap';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
 export default function CenterPrevention() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
 
   return (
     <>
-      <Head title={tComponent('directions.center_prevention', 'Центр профилактики и укрепления здоровья')} meta={[{ name: 'description', content: 'Центр профилактики и укрепления здоровья ННЦРЗ – разработка и внедрение программ, направленных на раннее выявление заболеваний и формирование здорового образа жизни населения.' }]} />
+      <Head title={t('directionsPages.centerPrevention.title', 'Центр профилактики и укрепления здоровья')} />
 
       {/* Hero и краткое описание */}
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className="flex flex-wrap px-12 text-justify">
             <p className="tracking-wide leading-relaxed mb-4">
-              Центр профилактики и укрепления здоровья ННЦРЗ разрабатывает и внедряет программы, направленные на&nbsp;раннее выявление заболеваний и формирование здоровых привычек населения.
+              {t('directionsPages.centerPrevention.intro')}
             </p>
           </div>
         </div>
@@ -39,53 +34,53 @@ export default function CenterPrevention() {
           <div className="grid md:grid-cols-3 gap-8">
             {/* Колонка 1 */}
             <div>
-              <h2 className="bg-blue-50 text-center font-semibold py-3 rounded-t-lg">Профилактические программы</h2>
+              <h2 className="bg-blue-50 text-center font-semibold py-3 rounded-t-lg">{t('directionsPages.centerPrevention.column1Title')}</h2>
               <div className="flex justify-center mt-4 mb-4">
                 <div className="w-28 h-28 rounded-full border-4 border-blue-200 overflow-hidden flex items-center justify-center bg-white">
-                  <img src="/img/CenterPrevention/col1.png" alt="Профилактические программы" className="object-cover w-full h-full" />
+                  <img src="/img/CenterPrevention/col1.png" alt={t('directionsPages.centerPrevention.column1Title')} className="object-cover w-full h-full" />
                 </div>
               </div>
               <ul className="list-disc list-inside mt-4 space-y-2">
-                <li>Профилактические медицинские осмотры</li>
-                <li>Скрининг целевых групп населения</li>
-                <li>Профилактика НИЗ</li>
+                <li>{t('directionsPages.centerPrevention.column1Item1')}</li>
+                <li>{t('directionsPages.centerPrevention.column1Item2')}</li>
+                <li>{t('directionsPages.centerPrevention.column1Item3')}</li>
               </ul>
             </div>
 
             {/* Колонка 2 */}
             <div>
-              <h2 className="bg-blue-50 text-center font-semibold py-3 rounded-t-lg">Формирование здорового образа жизни</h2>
+              <h2 className="bg-blue-50 text-center font-semibold py-3 rounded-t-lg">{t('directionsPages.centerPrevention.column2Title')}</h2>
               <div className="flex justify-center mt-4 mb-4">
                 <div className="w-28 h-28 rounded-full border-4 border-blue-200 overflow-hidden flex items-center justify-center bg-white">
-                  <img src="/img/CenterPrevention/col2.png" alt="Формирование здорового образа жизни" className="object-cover w-full h-full" />
+                  <img src="/img/CenterPrevention/col2.png" alt={t('directionsPages.centerPrevention.column2Title')} className="object-cover w-full h-full" />
                 </div>
               </div>
               <ul className="list-disc list-inside mt-4 space-y-2">
-                <li>Национальные программы по ЗОЖ</li>
-                <li>Молодежные центры здоровья</li>
-                <li>Культура здорового и рационального питания</li>
-                <li>Меры по сокращению табакокурения и алкоголя</li>
-                <li className="pt-2 font-semibold">Проекты:</li>
-                <li className="ml-4 text-blue-600 underline"><a href="#">«Здоровые города и регионы»</a></li>
-                <li className="ml-4 text-blue-600 underline"><a href="#">«Саламатты мектеп/Школы, способствующие укреплению здоровья»</a></li>
-                <li className="ml-4 text-blue-600 underline"><a href="#">«Здоровье университеты»</a></li>
-                <li className="ml-4 text-blue-600 underline"><a href="#">«Здоровье рабочие места»</a></li>
+                <li>{t('directionsPages.centerPrevention.column2Item1')}</li>
+                <li>{t('directionsPages.centerPrevention.column2Item2')}</li>
+                <li>{t('directionsPages.centerPrevention.column2Item3')}</li>
+                <li>{t('directionsPages.centerPrevention.column2Item4')}</li>
+                <li className="pt-2 font-semibold">{t('directionsPages.centerPrevention.column2ProjectsTitle')}</li>
+                <li className="ml-4 text-blue-600 underline"><a href="#">{t('directionsPages.centerPrevention.column2Project1')}</a></li>
+                <li className="ml-4 text-blue-600 underline"><a href="#">{t('directionsPages.centerPrevention.column2Project2')}</a></li>
+                <li className="ml-4 text-blue-600 underline"><a href="#">{t('directionsPages.centerPrevention.column2Project3')}</a></li>
+                <li className="ml-4 text-blue-600 underline"><a href="#">{t('directionsPages.centerPrevention.column2Project4')}</a></li>
               </ul>
             </div>
 
             {/* Колонка 3 */}
             <div>
-              <h2 className="bg-blue-50 text-center font-semibold py-3 rounded-t-lg">Коммуникации и просвещение</h2>
+              <h2 className="bg-blue-50 text-center font-semibold py-3 rounded-t-lg">{t('directionsPages.centerPrevention.column3Title')}</h2>
               <div className="flex justify-center mt-4 mb-4">
                 <div className="w-28 h-28 rounded-full border-4 border-blue-200 overflow-hidden flex items-center justify-center bg-white">
-                  <img src="/img/CenterPrevention/col3.png" alt="Коммуникации и просвещение" className="object-cover w-full h-full" />
+                  <img src="/img/CenterPrevention/col3.png" alt={t('directionsPages.centerPrevention.column3Title')} className="object-cover w-full h-full" />
                 </div>
               </div>
               <ul className="list-disc list-inside mt-4 space-y-2">
-                <li>Мероприятия</li>
-                <li>Видеоролики</li>
-                <li>Информационно-разъяснительная работа</li>
-                <li>Инфографика, публикации, подкасты</li>
+                <li>{t('directionsPages.centerPrevention.column3Item1')}</li>
+                <li>{t('directionsPages.centerPrevention.column3Item2')}</li>
+                <li>{t('directionsPages.centerPrevention.column3Item3')}</li>
+                <li>{t('directionsPages.centerPrevention.column3Item4')}</li>
               </ul>
             </div>
           </div>
@@ -97,9 +92,9 @@ export default function CenterPrevention() {
         <div className="container px-5 pb-16 mx-auto">
           <TabsFileDisplay
             tabs={[
-              { label: 'Законодательство', folder: 'ЗОЖ/Законадательство' },
-              { label: 'Подкасты', folder: 'ЗОЖ/Подкасты' },
-              { label: 'Инструменты', folder: 'ЗОЖ/Инструменты' },
+              { label: t('directionsPages.centerPrevention.tab1Label'), folder: t('directionsPages.centerPrevention.tab1Folder') },
+              { label: t('directionsPages.centerPrevention.tab2Label'), folder: t('directionsPages.centerPrevention.tab2Folder') },
+              { label: t('directionsPages.centerPrevention.tab3Label'), folder: t('directionsPages.centerPrevention.tab3Folder') },
             ]}
             defaultIndex={0}
           />
@@ -110,9 +105,9 @@ export default function CenterPrevention() {
       <section className="text-gray-600 body-font py-12 bg-gray-50">
         <div className="container px-5 mx-auto">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Молодежные центры здоровья</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">{t('directionsPages.centerPrevention.youthCentersTitle')}</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Интерактивная карта молодежных центров здоровья по всей Республике Казахстан
+              {t('directionsPages.centerPrevention.youthCentersDescription')}
             </p>
           </div>
           <YouthHealthCentersMap />

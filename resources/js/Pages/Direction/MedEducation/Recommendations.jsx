@@ -4,8 +4,10 @@ import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import FilesAccord from '@/Components/FilesAccord';
 import VideoModal from '@/Components/VideoModal';
+import translationService from '@/services/TranslationService';
 
 export default function Recommendations() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');
@@ -24,14 +26,14 @@ export default function Recommendations() {
 
   return (
     <>
-      <Head title="Перечень организаций дополнительного образования по медицинским специальностям" />
+      <Head title={t('directionsPages.medEducationSubpages.recommendations.title', 'Рекомендации')} />
       <br /><br />
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6 rounded-lg">
             
             <SimpleFileDisplay 
-              folder="MedicalEducation/Recommend" 
+              folder={t('directionsPages.medEducationSubpages.recommendations.folder')} 
               title="" 
               onVideoClick={openVideoModal}
             />
@@ -57,13 +59,13 @@ Recommendations.layout = page => <LayoutFolderChlank
   heroBgColor="bg-green-100"
   buttonBgColor="bg-green-100"
   buttonHoverBgColor="hover:bg-green-200"
-  h1="Перечень организаций дополнительного образования по медицинским специальностям" 
+  h1={translationService.t('directionsPages.medEducationSubpages.recommendations.h1')} 
   parentRoute={route('direction.medical.education')} 
-  parentName="Медицинское образование"
+  parentName={translationService.t('directionsPages.medEducationSubpages.recommendations.parentName')}
   breadcrumbs={[
-    { name: 'Направления', route: 'directions' },
-    { name: 'Медицинское образование', route: 'direction.medical.education' },
-    { name: 'Перечень организаций дополнительного образования по медицинским специальностям', route: null }
+    { name: translationService.t('directionsPages.medEducationSubpages.recommendations.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.medEducationSubpages.recommendations.breadcrumbMedicalEducation'), route: 'direction.medical.education' },
+    { name: translationService.t('directionsPages.medEducationSubpages.recommendations.h1'), route: null }
   ]}
   children={page}
 />

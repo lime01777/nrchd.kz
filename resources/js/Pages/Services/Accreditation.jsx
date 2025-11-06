@@ -7,6 +7,7 @@ import ServiceTimeline from '@/Components/ServiceTimeline';
 import ActualFile from '@/Components/ActualFile';
 import FilesAccord from '@/Components/FilesAccord';
 import FAQ from '@/Components/FAQ';
+import translationService from '@/services/TranslationService';
 
 // Компонент формы аккредитации для отображения в шапке (уменьшенная версия)
 const AccreditationForm = () => {
@@ -26,20 +27,18 @@ const AccreditationForm = () => {
 };
 
 export default function Accreditation() {
-    const { translations } = usePage().props;
-    
     // Функция для получения перевода
     const t = (key, fallback = '') => {
-        return translations?.[key] || fallback;
+        return translationService.t(key, fallback);
     };
   const timelineItems = [
-    { title: "Регистрация заявки", value: "1 рабочий день" },
-    { title: "Срок оказания услуги", value: "27 рабочих дней" },
+    { title: t('servicesPages.accreditation.applicationRegistration'), value: `1 ${t('servicesPages.commonElements.workingDay')}` },
+    { title: t('servicesPages.accreditation.serviceDelivery'), value: `27 ${t('servicesPages.commonElements.workingDays')}` },
   ];
 
   const faqItems = [
     {
-      question: "Как получить услугу?",
+      question: t('servicesPages.commonElements.howToGetService'),
       answer: (
         <div>
           <h3 className="font-semibold mb-2">Порядок подачи заявления на проведение аккредитации</h3>
@@ -53,7 +52,7 @@ export default function Accreditation() {
       )
     },
     {
-      question: "Нормативно-правовые акты",
+      question: t('servicesPages.commonElements.regulatoryActs'),
       answer: (
         <div>
           <ul className="space-y-3">
@@ -75,7 +74,7 @@ export default function Accreditation() {
 
   return (
     <>
-              <Head title={t('services.accreditation', 'Аккредитация медицинских организаций и организаций здравоохранения')} meta={[{ name: 'description', content: 'Аккредитация медицинских организаций и организаций здравоохранения в Казахстане.' }]} />
+              <Head title={t('servicesPages.accreditation.title')} />
 
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">

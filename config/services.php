@@ -41,11 +41,13 @@ return [
     | Translation Services
     |--------------------------------------------------------------------------
     |
-    | Google Translate API отключен. Используется только база данных.
+    | Google Translate API для автоматического перевода текстов.
+    | Получить ключ можно в Google Cloud Console: https://console.cloud.google.com
+    | Включите "Cloud Translation API" и создайте API ключ.
     |
     */
     'google' => [
-        'translate_api_key' => '', // Google Translate отключен
+        'translate_api_key' => env('GOOGLE_TRANSLATE_API_KEY', ''),
     ],
 
     /*

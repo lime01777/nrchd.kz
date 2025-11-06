@@ -3,16 +3,19 @@ import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
+import translationService from '@/services/TranslationService';
 
 export default function BioethicsDocuments() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  
   return (
     <>
-      <Head title='Документы по биоэтике' />
+      <Head title={t('directionsPages.bioethicsSubpages.documents.title', 'Документы по биоэтике')} />
 
       <section className="text-gray-600 body-font">
         <div className="container px-5 mx-auto">
           <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-2xl font-bold text-gray-800 mb-8">Документы по биоэтике</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-8">{t('directionsPages.bioethicsSubpages.documents.mainTitle')}</h2>
             
             {/* Порядок подачи заявки */}
             <div className="mb-8">
@@ -20,7 +23,7 @@ export default function BioethicsDocuments() {
                 <svg className="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Порядок подачи заявки на проведение биоэтической экспертизы
+                {t('directionsPages.bioethicsSubpages.documents.orderTitle')}
               </h3>
               
               <div className="bg-blue-50 border-l-4 border-blue-400 p-6 rounded-r-lg">
@@ -51,16 +54,16 @@ export default function BioethicsDocuments() {
                 <svg className="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
-                Пакет документов для биоэтической экспертизы
+                {t('directionsPages.bioethicsSubpages.documents.packagesTitle')}
               </h3>
 
               {/* Интервенционное исследование */}
               <div className="mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 mb-4 bg-green-100 p-3 rounded-lg border-l-4 border-green-500">
-                  Интервенционное клиническое исследование
+                  {t('directionsPages.bioethicsSubpages.documents.interventionalTitle')}
                 </h4>
                 <p className="text-gray-700 mb-4">
-                  Для получения одобрения клинического исследования заявитель подает в Секретариат ЦКБ следующие документы в бумажном и электронном вариантах:
+                  {t('directionsPages.bioethicsSubpages.documents.interventionalIntro')}
                 </p>
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <ul className="space-y-2 text-gray-700">
@@ -155,10 +158,10 @@ export default function BioethicsDocuments() {
               {/* Неинтервенционное исследование */}
               <div className="mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 mb-4 bg-purple-100 p-3 rounded-lg border-l-4 border-purple-500">
-                  Неинтервенционное исследование
+                  {t('directionsPages.bioethicsSubpages.documents.nonInterventionalTitle')}
                 </h4>
                 <p className="text-gray-700 mb-4">
-                  Для проведения неинтервенционного клинического исследования заявитель подает в Секретариат Комиссии следующие документы в бумажном и электронном вариантах:
+                  {t('directionsPages.bioethicsSubpages.documents.nonInterventionalIntro')}
                 </p>
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <ul className="space-y-2 text-gray-700">
@@ -226,8 +229,8 @@ export default function BioethicsDocuments() {
             <div className="space-y-6">
               {/* Документы по биоэтике */}
               <SimpleFileDisplay
-                title="Документы по биоэтике"
-                folder='Bioethics/Documents'
+                title={t('directionsPages.bioethicsSubpages.documents.documentsTitle')}
+                folder={t('directionsPages.bioethicsSubpages.documents.folder')}
                 bgColor="bg-white"
               />
               
@@ -242,10 +245,15 @@ export default function BioethicsDocuments() {
 
 BioethicsDocuments.layout = page => <LayoutFolderChlank 
   bgColor="bg-white"
-  h1="Документы по биоэтике" 
+  h1={translationService.t('directionsPages.bioethicsSubpages.documents.h1')} 
   parentRoute="/bioethics" 
-  parentName="Центральная комиссия по биоэтике"
+  parentName={translationService.t('directionsPages.bioethicsSubpages.documents.parentName')}
   heroBgColor="bg-blue-100"
   buttonBgColor="bg-blue-100"
   buttonHoverBgColor="hover:bg-blue-200"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.bioethicsSubpages.documents.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.bioethicsSubpages.documents.breadcrumbBioethics'), route: 'bioethics' },
+    { name: translationService.t('directionsPages.bioethicsSubpages.documents.h1'), route: null }
+  ]}
 >{page}</LayoutFolderChlank>;

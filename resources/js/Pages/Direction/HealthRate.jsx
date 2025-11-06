@@ -6,89 +6,78 @@ import FileAccordTitle from '@/Components/FileAccordTitle';
 import FileAccordChlank from '@/Components/FileAccordChlank';
 import FilesAccord from '@/Components/FilesAccord';
 import PageAccordions from "@/Components/PageAccordions";
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
 export default function HealthRate() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
 
   const [showFullText, setShowFullText] = useState(false);
   
   return (
     <>
-    <Head title={tComponent('services.health_tech_assessment', 'Оценка технологий здравоохранения')} meta={[{ name: 'description', content: 'Оценка здоровья населения: методики, показатели и результаты мониторинга состояния здоровья.' }]} />
+    <Head title={t('directionsPages.healthRate.title', 'Оценка технологий здравоохранения')} />
     <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
             <div className='flex flex-wrap px-12 text-justify mb-4'>
                 <div className="tracking-wide leading-relaxed">
                     <p className="mb-4">
-                        <strong>Оценка медицинских технологий</strong>
+                        <strong>{t('directionsPages.healthRate.intro1')}</strong>
                     </p>
                     <p className="mb-4">
-                        РГП на ПХВ «Республиканский центр развития здравоохранения» МЗ РК сообщает, что объявляет прием заявок для проведения оценки технологий здравоохранения в 2021 году по приоритетным темам для системы здравоохранения Республики Казахстан до 11 января 2021 года.
+                        {t('directionsPages.healthRate.intro2')}
                     </p>
                     <p className="mb-4">
-                        Заявки заполняются согласно приложения 3 к приказу Министра здравоохранения Республики Казахстан от 30 ноября 2020 года № ҚР ДСМ-215/2020 «Об утверждении Правил проведения оценки технологий здравоохранения и их применения».
+                        {t('directionsPages.healthRate.intro3')}
                     </p>
                     <p className="mb-4">
-                        Заявки с сопроводительным письмом должны быть направлены по адресу:
-                        г. Нур-Султан, ул. А.Иманова 13, Бизнес центр «Нурсаулет», Республиканский центр развития здравоохранения, с пометкой «для отдела оценки технологий здравоохранения» и на электронный адрес office@rcrz.kz.
+                        {t('directionsPages.healthRate.intro4')}
                     </p>
                     
                     {showFullText && (
                         <>
                             <p className="mb-4">
-                                Республиканский центр развития здравоохранения объявляет открытым прием заявок на проведение оценки медицинских технологий в 2020 году. 
-                                Заявки могут быть направлены заявителем до 15 июня 2020 года.
+                                {t('directionsPages.healthRate.additionalInfo1')}
                             </p>
                             <p className="mb-4">
-                                РГП на ПХВ «Республиканский центр развития здравоохранения» МЗ РК (далее - РЦРЗ) сообщает, что в связи с вступлением в силу Указа Президента Республики Казахстан от 15 марта 2020 года «О введении чрезвычайного положения в Республике Казахстан» и решения Государственной комиссии по обеспечению режима ЧП при Президенте РК «О введении режима карантина в городах Нур-Султан и Алматы» продлевается срок приема заявок для проведения оценки технологий здравоохранения в 2020 году по приоритетным темам для системы здравоохранения Республики Казахстан до 15 июня 2020 года.
+                                {t('directionsPages.healthRate.additionalInfo2')}
                             </p>
                             <p className="mb-4">
-                                Вместе с тем, РЦРЗ уведомляет, что особый приоритет будет отдаваться технологиям для диагностики и лечения коронавирусной инфекции. Заявки заполняются согласно приложения 2 к приказу исполняющего обязанности Министра здравоохранения Республики Казахстан № ҚР ДСМ-85 от 22 мая 2019 года «Об утверждении правил проведения оценки технологий здравоохранения».
+                                {t('directionsPages.healthRate.additionalInfo3')}
                             </p>
                             <p className="mb-4">
-                                Заявки с сопроводительным письмом должны быть направлены по адресу: Республика Казахстан, г. Нур-Султан, ул. А.Иманова 13, Бизнес центр «Нурсаулет», Республиканский центр развития здравоохранения, с пометкой «для отдела оценки технологий здравоохранения» и на электронный адрес office@rcrz.kz.
+                                {t('directionsPages.healthRate.additionalInfo4')}
                             </p>
                             
                             <ul className="list-disc list-inside px-4 mb-4">
-                                <li>Чек-лист: пункты, которые необходимо включить в отчет об экономические оценке технологии здравоохранения</li>
-                                <li>Шаблон договора на ОМТ</li>
-                                <li>Список приоритизации для проведения ОТЗ на 2023 год</li>
-                                <li>Итоги приоритизации для проведения оценки медицинских технологий в 2020 году</li>
-                                <li>Технологии, не подлежащие приоритизации оценки технологий здравоохранения (ОТЗ) в 2020 году</li>
+                                <li>{t('directionsPages.healthRate.bulletItem1')}</li>
+                                <li>{t('directionsPages.healthRate.bulletItem2')}</li>
+                                <li>{t('directionsPages.healthRate.bulletItem3')}</li>
+                                <li>{t('directionsPages.healthRate.bulletItem4')}</li>
+                                <li>{t('directionsPages.healthRate.bulletItem5')}</li>
                             </ul>
                             <p className="mb-4">
-                                Оценка медицинских технологий (ОМТ) – это мультидисциплинарный исследовательский процесс, включающий в себя сбор и обобщение информации о технологии здравоохранения.
-                                Информация может охватывать целый ряд областей, включая клиническую эффективность и безопасность, экономическую эффективность и влияние на бюджет, организационные и социальные аспекты, а также этические и правовые вопросы.
-                                Сбор и представление информации осуществляется на систематической, беспристрастной и прозрачной основе.
+                                {t('directionsPages.healthRate.htaDescription')}
                             </p>
                             <p className="mb-4">
-                                Бюджет здравоохранения Республики Казахстан ограничен. Инвестиции в новую технологию иногда означают сокращение или прекращение финансирования другой услуги. В этих условиях важно чтобы процесс выбора был основан на точных и надежных доказательствах, предоставление которых и является основной целью ОМТ.
-                                РЦРЗ разрабатывает национальные руководящие принципы проведения ОМТ с целью обеспечения проведения своевременных, надежных, последовательных и соответствующих потребностям лиц, принимающих решения в сфере здравоохранения и ключевых заинтересованных сторон.
+                                {t('directionsPages.healthRate.htaLimitations')}
                             </p>
                             <p className="mb-4">
-                                <strong>Нормативная база и ресурсы:</strong>
+                                <strong>{t('directionsPages.healthRate.regulatoryTitle')}</strong>
                             </p>
                             <ul className="list-disc list-inside px-4 mb-4">
-                                <li>Правила проведения ОТЗ, утвержденные Приказом Генерального директора РЦРЗ от 30.10.2020 года</li>
-                                <li>База данных экспертов по оценке медицинских технологий</li>
+                                <li>{t('directionsPages.healthRate.regulatoryItem1')}</li>
+                                <li>{t('directionsPages.healthRate.regulatoryItem2')}</li>
                             </ul>
                             <p className="mb-4">
-                                <strong>СОТРУДНИЧЕСТВО ПО ВОПРОСАМ ОМТ</strong>
+                                <strong>{t('directionsPages.healthRate.partnership')}</strong>
                             </p>
                             <p className="mb-4">
-                                Стратегическое партнерство и сотрудничество с ведущими международными сетями
-                                ОМТ позволяет нам продолжать оптимизировать нашу работу
+                                {t('directionsPages.healthRate.partnershipInfo')}
                             </p>
                         </>
                     )}
@@ -96,10 +85,10 @@ export default function HealthRate() {
             </div>
             <div className="flex justify-center mt-4">
                 <button 
-                    onClick={() => setShowFullTextComponent(!showFullText)} 
+                    onClick={() => setShowFullText(!showFullText)} 
                     className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px] rounded-xl p-3 transition-all duration-300 ease-in-out hover:bg-blue-50 transform hover:scale-105"
                 >
-                    {showFullText ? 'Свернуть' : 'Читать далее'}
+                    {showFullText ? t('directionsPages.healthRate.hide') : t('directionsPages.healthRate.readMore')}
                     <svg 
                         xmlns="http://www.w3.org/2000/svg" 
                         width="24" 
@@ -128,8 +117,8 @@ export default function HealthRate() {
                 <FolderChlank 
                     color="bg-gray-200"
                     colorsec="bg-gray-300"
-                    title="ОТЗ отчеты" 
-                    description="Отчеты по оценке технологий здравоохранения"
+                    title={t('directionsPages.healthRate.subfolders.otzReports.title')} 
+                    description={t('directionsPages.healthRate.subfolders.otzReports.description')}
                     href={route('health.rate.otz.reports')}
                 />
             </div>
@@ -139,4 +128,4 @@ export default function HealthRate() {
   );
 }
 
-HealthRate.layout = (page) => <LayoutDirection img="healthrate" h1={t('services.health_tech_assessment', 'Оценка технологий здравоохранения')}>{page}</LayoutDirection>;
+HealthRate.layout = (page) => <LayoutDirection img="healthrate" h1={t('directions.health_rate', 'Оценка технологий здравоохранения')} folder={t('directions.medical_rating', 'Рейтинг медицинских организаций')}>{page}</LayoutDirection>;

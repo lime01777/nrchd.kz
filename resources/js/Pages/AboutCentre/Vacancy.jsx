@@ -4,20 +4,15 @@ import LayoutDirection from '@/Layouts/LayoutDirection';
 import FileAccordTitle from '@/Components/FileAccordTitle';
 import FileAccordChlank from '@/Components/FileAccordChlank';
 import JobsChlank from '@/Components/JobsChlank';
+import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return window.__INERTIA_PROPS__?.translations?.[key] || fallback;
+    return translationService.t(key, fallback);
 };
 
 
 export default function Vacancy() {
-    const { translations } = usePage().props;
-    
-    // Функция для получения перевода
-    const tComponent = (key, fallback = '') => {
-        return translations?.[key] || fallback;
-    };
 
     const someDocuments = [
     {title: "Моделирование новой формулы дефицита", filetype: "XLS", img: 3},

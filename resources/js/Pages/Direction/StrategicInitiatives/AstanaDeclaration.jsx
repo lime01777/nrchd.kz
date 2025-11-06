@@ -2,30 +2,29 @@ import React from 'react';
 import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import PageAccordions from '@/Components/PageAccordions';
+import translationService from '@/services/TranslationService';
 
 export default function AstanaDeclaration() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  
   return (
     <>
-      <Head title="Декларация Астаны - Стратегические инициативы" meta={[{ name: 'description', content: 'Декларация Астаны: ключевой международный документ по развитию здравоохранения.' }]} />
+      <Head title={t('directionsPages.strategicInitiativesSubpages.astanaDeclaration.title', 'Астанинская декларация')} />
       
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className="flex flex-wrap px-12 text-justify mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 w-full">Декларация Астаны по первичной медико-санитарной помощи</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 w-full">{t('directionsPages.strategicInitiativesSubpages.astanaDeclaration.mainTitle')}</h2>
             <p className="tracking-wide leading-relaxed mb-4">
-              Декларация Астаны была принята на Глобальной конференции по первичной медико-санитарной помощи, 
-              которая состоялась 25-26 октября 2018 года в Астане (ныне Нур-Султан), Казахстан. Конференция 
-              была организована Всемирной организацией здравоохранения, ЮНИСЕФ и Правительством Казахстана.
+              {t('directionsPages.strategicInitiativesSubpages.astanaDeclaration.intro1')}
             </p>
             <p className="tracking-wide leading-relaxed mb-4">
-              Декларация подтверждает приверженность стран мира укреплению первичной медико-санитарной помощи 
-              как основы устойчивой системы здравоохранения для достижения всеобщего охвата услугами здравоохранения 
-              и связанных со здоровьем Целей устойчивого развития.
+              {t('directionsPages.strategicInitiativesSubpages.astanaDeclaration.intro2')}
             </p>
           </div>
           
           <div className="flex flex-wrap px-12 text-justify mb-8">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4 w-full">Ключевые положения Декларации Астаны:</h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 w-full">{t('directionsPages.strategicInitiativesSubpages.astanaDeclaration.keyProvisionsTitle')}</h3>
             <ul className="list-disc pl-6 space-y-3 text-gray-700 w-full">
               <li>
                 <strong>Всеобщий охват услугами здравоохранения</strong> - обеспечение доступа к качественным 
@@ -51,15 +50,12 @@ export default function AstanaDeclaration() {
           </div>
           
           <div className="flex flex-wrap px-12 text-justify mb-8">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4 w-full">Реализация Декларации Астаны в Казахстане:</h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 w-full">{t('directionsPages.strategicInitiativesSubpages.astanaDeclaration.implementationTitle')}</h3>
             <p className="tracking-wide leading-relaxed mb-4">
-              Национальный научный центр развития здравоохранения имени Салидат Каирбековой активно участвует 
-              в реализации положений Декларации Астаны в Казахстане. Центр разрабатывает методические рекомендации, 
-              проводит исследования и мониторинг, оказывает экспертную поддержку в развитии первичной 
-              медико-санитарной помощи в стране.
+              {t('directionsPages.strategicInitiativesSubpages.astanaDeclaration.implementation1')}
             </p>
             <p className="tracking-wide leading-relaxed mb-4">
-              Основные направления работы Центра в рамках реализации Декларации Астаны включают:
+              {t('directionsPages.strategicInitiativesSubpages.astanaDeclaration.implementation2')}
             </p>
             <ul className="list-disc pl-6 space-y-2 text-gray-700 w-full">
               <li>Разработку и внедрение стандартов качества ПМСП</li>
@@ -131,11 +127,16 @@ export default function AstanaDeclaration() {
 }
 
 AstanaDeclaration.layout = page => <LayoutFolderChlank 
-  h1="Декларация Астаны по первичной медико-санитарной помощи" 
+  h1={translationService.t('directionsPages.strategicInitiativesSubpages.astanaDeclaration.h1')} 
   parentRoute={route('strategic.initiatives')} 
-  parentName="Стратегические инициативы и международное сотрудничество"
+  parentName={translationService.t('directionsPages.strategicInitiativesSubpages.astanaDeclaration.parentName')}
   heroBgColor="bg-green-100"
   buttonBgColor="bg-green-100"
   buttonHoverBgColor="hover:bg-green-200"
   buttonBorderColor="border-green-200"
+  breadcrumbs={[
+    { name: translationService.t('directionsPages.strategicInitiativesSubpages.astanaDeclaration.breadcrumbDirections'), route: 'directions' },
+    { name: translationService.t('directionsPages.strategicInitiativesSubpages.astanaDeclaration.breadcrumbStrategic'), route: 'strategic.initiatives' },
+    { name: translationService.t('directionsPages.strategicInitiativesSubpages.astanaDeclaration.h1'), route: null }
+  ]}
 >{page}</LayoutFolderChlank>;

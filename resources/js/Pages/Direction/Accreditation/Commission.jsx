@@ -1,35 +1,37 @@
 import { Head } from '@inertiajs/react';
 import React from 'react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
+import translationService from '@/services/TranslationService';
 
 
 export default function Commission() {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  
   return (
     <>
-      <Head title="Аккредитационная комиссия" />
+      <Head title={t('directionsPages.accreditationSubpages.commission.title', 'Комиссия')} />
       <section className="text-gray-600 body-font pb-24">
         <div className="container px-5 mx-auto">
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Аккредитационная комиссия</h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-4">{t('directionsPages.accreditationSubpages.commission.mainTitle')}</h2>
             
             <p className="text-gray-700 mb-4">
-              Аккредитационная комиссия – коллегиальный орган по оценке соответствия организаций здравоохранения стандартам аккредитации. 
-              Аккредитационная комиссия осуществляет свою деятельность на основании Приказа Министра здравоохранения Республики Казахстан от 21 декабря 2020 года № ҚР ДСМ-305/2020 «Об утверждении правил аккредитации в области здравоохранения».
+              {t('directionsPages.accreditationSubpages.commission.intro1')}
             </p>
             
             <p className="text-gray-700 mb-4">
-              Состав аккредитационной комиссии утверждается аккредитующим органом. В состав аккредитационной комиссии входят представители государственных органов и организаций, неправительственных общественных объединений и ассоциаций, специалисты в области науки и образования, прошедшие обучение по вопросам аккредитации в области здравоохранения.
+              {t('directionsPages.accreditationSubpages.commission.intro2')}
             </p>
 
             <p className="text-gray-700 mb-4">
-              Деятельность аккредитационной комиссии Национального научного центра развития здравоохранения направлена на обеспечение качества медицинских услуг путем объективной оценки медицинских организаций. Комиссия действует на принципах независимости, беспристрастности и профессионализма, используя современные стандарты и методологии, признанные на международном уровне.
+              {t('directionsPages.accreditationSubpages.commission.intro3')}
             </p>
 
             <p className="text-gray-700 mb-6">
-              В задачи комиссии входит проведение экспертизы соответствия медицинских организаций стандартам аккредитации, формирование рекомендаций по улучшению качества медицинских услуг, а также развитие культуры безопасности пациентов в организациях здравоохранения Республики Казахстан.
+              {t('directionsPages.accreditationSubpages.commission.intro4')}
             </p>
             
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Состав аккредитационной комиссии ННЦРЗ</h3>
+            <h3 className="text-lg font-bold text-gray-800 mb-4">{t('directionsPages.accreditationSubpages.commission.compositionTitle')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
             <div className="flex flex-col items-center">
                 <div className="w-40 h-48 mb-3 rounded-lg overflow-hidden bg-gray-100 shadow-md">
@@ -81,9 +83,14 @@ Commission.layout = page => (
     heroBgColor="bg-yellow-100"
     buttonBgColor="bg-yellow-100"
     buttonHoverBgColor="hover:bg-yellow-200"
-    h1="Аккредитационная комиссия" 
+    h1={translationService.t('directionsPages.accreditationSubpages.commission.h1')} 
     parentRoute={route('medical.accreditation')} 
-    parentName="Аккредитация"
+    parentName={translationService.t('directionsPages.accreditationSubpages.commission.parentName')}
+    breadcrumbs={[
+      { name: translationService.t('directionsPages.accreditationSubpages.commission.breadcrumbDirections'), route: 'directions' },
+      { name: translationService.t('directionsPages.accreditationSubpages.commission.breadcrumbAccreditation'), route: 'medical.accreditation' },
+      { name: translationService.t('directionsPages.accreditationSubpages.commission.h1'), route: null }
+    ]}
   >
     {page}
   </LayoutFolderChlank>
