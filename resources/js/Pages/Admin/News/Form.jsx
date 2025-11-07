@@ -36,6 +36,7 @@ export default function Form({ news = null, media: initialMediaProp = [] }) {
         seo_description: news?.seo_description || '',
         status: news?.status || 'draft',
         published_at: news?.published_at || '',
+        media: initialMedia,
     });
 
     const [coverFile, setCoverFile] = useState(null);
@@ -47,6 +48,7 @@ export default function Form({ news = null, media: initialMediaProp = [] }) {
             StarterKit.configure({
                 bulletList: true,
                 orderedList: true,
+                link: false,
             }),
             Image.configure({ inline: false, allowBase64: true }),
             LinkExtension.configure({ openOnClick: false })
@@ -64,8 +66,15 @@ export default function Form({ news = null, media: initialMediaProp = [] }) {
     }, [editor, isEditing, news?.body]);
 
     useEffect(() => {
+        if (!isEditing) {
+            editor?.commands?.setContent(data.body || '');
+        }
+    }, [editor]);
+
+    useEffect(() => {
         setMedia(initialMedia);
-    }, [news?.id]);
+        setData('media', initialMedia);
+    }, [initialMedia, news?.id, setData]);
 
     const generateSlug = () => {
         const slug = data.title
@@ -92,13 +101,19 @@ export default function Form({ news = null, media: initialMediaProp = [] }) {
                 ...item,
                 position: item.position ?? prev.length + index,
             }));
-            return [...prev, ...mapped];
+            const updated = [...prev, ...mapped];
+            setData('media', updated);
+            return updated;
         });
-    }, []);
+    }, [setData]);
 
     const handleMediaRemoved = useCallback(async (mediaId) => {
         const target = media.find((item) => item.id === mediaId);
-        setMedia((prev) => prev.filter((item) => item.id !== mediaId));
+        setMedia((prev) => {
+            const updated = prev.filter((item) => item.id !== mediaId);
+            setData('media', updated);
+            return updated;
+        });
 
         if (!csrfToken || !target?.path) {
             return;
@@ -116,7 +131,7 @@ export default function Form({ news = null, media: initialMediaProp = [] }) {
         } catch (error) {
             console.error('Ошибка удаления медиа файла', error);
         }
-    }, [media, csrfToken]);
+    }, [media, csrfToken, setData]);
 
     const submitForm = useCallback((event = null, statusOverride = null) => {
         if (event) {
@@ -124,24 +139,18 @@ export default function Form({ news = null, media: initialMediaProp = [] }) {
         }
 
         const finalStatus = statusOverride ?? data.status;
-        if (statusOverride) {
-            setData('status', statusOverride);
-        }
+        setData('status', finalStatus);
 
-        const payload = new FormData();
-        payload.append('title', data.title);
-        payload.append('slug', data.slug || '');
-        payload.append('excerpt', data.excerpt || '');
-        payload.append('body', editor ? editor.getHTML() : data.body);
-        payload.append('cover_image_alt', data.cover_image_alt || '');
-        payload.append('seo_title', data.seo_title || '');
-        payload.append('seo_description', data.seo_description || '');
-        payload.append('status', finalStatus);
-        payload.append('published_at', data.published_at || '');
-        payload.append('media', JSON.stringify(media || []));
+        const payload = {
+            ...data,
+            status: finalStatus,
+            media,
+            cover: coverFile ?? data.cover,
+            body: editor ? editor.getHTML() : data.body,
+        };
 
-        if (coverFile) {
-            payload.append('cover', coverFile);
+        if (!coverFile) {
+            delete payload.cover;
         }
 
         const onFinish = () => {
@@ -153,12 +162,12 @@ export default function Form({ news = null, media: initialMediaProp = [] }) {
                 reset();
                 setCoverFile(null);
                 setMedia([]);
+                setData('media', []);
                 editor?.commands?.clearContent(true);
             }
         };
 
         if (isEditing) {
-            payload.append('_method', 'PUT');
             router.post(route('admin.news.update', news.id), payload, {
                 forceFormData: true,
                 onFinish,
@@ -171,7 +180,7 @@ export default function Form({ news = null, media: initialMediaProp = [] }) {
                 onSuccess,
             });
         }
-    }, [data, media, coverFile, isEditing, news?.id, editor, reset, router]);
+    }, [data, media, coverFile, isEditing, news?.id, editor, reset, setData]);
 
     const handlePublishNow = useCallback(() => {
         setIsPublishing(true);
