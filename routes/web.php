@@ -447,9 +447,9 @@ Route::get('/medical-tourism/contacts', function () {
 
 // Маршруты для Центральной комиссии по биоэтике перенесены в localized.php
 
-// Маршруты для новостей
-Route::get('/news', [App\Http\Controllers\NewsController::class, 'index'])->name('news');
-Route::get('/news/{slug}', [App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
+// Публичные маршруты для новостей
+Route::get('/news', [App\Http\Controllers\NewsPublicController::class, 'index'])->name('news.index');
+Route::get('/news/{news:slug}', [App\Http\Controllers\NewsPublicController::class, 'show'])->name('news.show');
 
 // Маршруты для клиник
 Route::get('/clinics', [App\Http\Controllers\ClinicController::class, 'index'])->name('clinics');
@@ -488,24 +488,37 @@ Route::prefix('api')->group(function () {
     // Получение последних новостей
     Route::get('/latest-news', function (Request $request) {
         try {
-            $limit = $request->get('limit', 10);
-            
-            $latestNews = App\Models\News::where('status', 'Опубликовано')
-                ->orderBy('publish_date', 'desc')
+            $limit = (int) $request->get('limit', 10);
+            $limit = $limit > 0 && $limit <= 50 ? $limit : 10;
+
+            $mediaService = app(App\Services\MediaService::class);
+
+            $latestNews = App\Models\News::query()
+                ->whereIn('status', ['published', 'Опубликовано'])
+                ->orderByDesc('published_at')
                 ->limit($limit)
-                ->get();
-            
-            // Обрабатываем медиа для каждой новости
-            $latestNews->each(function ($news) {
-                if ($news->images) {
-                    // Нормализуем медиа если нужно
-                    $images = is_string($news->images) ? json_decode($news->images, true) : $news->images;
-                    $news->images = $images ?: [];
-                }
-            });
-            
+                ->get()
+                ->map(function (App\Models\News $news) use ($mediaService) {
+                    $media = $mediaService->normalizeMediaForFrontend($news->images ?? []);
+                    $imagePaths = collect($media)
+                        ->where('type', 'image')
+                        ->pluck('url')
+                        ->values()
+                        ->all();
+
+                    return [
+                        'id' => $news->id,
+                        'title' => $news->title,
+                        'slug' => $news->slug,
+                        'excerpt' => $news->excerpt,
+                        'image' => $news->cover_thumb_url ?? $news->cover_url,
+                        'images' => $imagePaths,
+                        'publish_date' => optional($news->published_at ?? $news->publish_date)->toDateTimeString(),
+                    ];
+                });
+
             return response()->json($latestNews);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('Ошибка в API latest-news', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -516,16 +529,17 @@ Route::prefix('api')->group(function () {
 });
 
 // Маршруты для админ-панели
-Route::prefix('admin')->middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
-    // Управление новостями
-    Route::get('/news', [App\Http\Controllers\Admin\NewsController::class, 'index'])->name('admin.news');
-    Route::get('/news/create', [App\Http\Controllers\Admin\NewsController::class, 'create'])->name('admin.news.create');
-    Route::post('/news', [App\Http\Controllers\Admin\NewsController::class, 'store'])->name('admin.news.store');
-    Route::get('/news/{id}/edit', [App\Http\Controllers\Admin\NewsController::class, 'edit'])->name('admin.news.edit');
-    Route::put('/news/{id}', [App\Http\Controllers\Admin\NewsController::class, 'update'])->name('admin.news.update');
-    Route::delete('/news/{id}', [App\Http\Controllers\Admin\NewsController::class, 'destroy'])->name('admin.news.destroy');
-    Route::post('/admin/news/bulk', [\App\Http\Controllers\Admin\NewsController::class, 'bulk'])->name('admin.news.bulk');
+Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    
+    // Управление новостями (с политикой доступа)
+    Route::get('/news', [App\Http\Controllers\Admin\NewsController::class, 'index'])->name('news.index');
+    Route::get('/news/create', [App\Http\Controllers\Admin\NewsController::class, 'create'])->name('news.create');
+    Route::post('/news', [App\Http\Controllers\Admin\NewsController::class, 'store'])->name('news.store');
+    Route::get('/news/{news}/edit', [App\Http\Controllers\Admin\NewsController::class, 'edit'])->name('news.edit');
+    Route::put('/news/{news}', [App\Http\Controllers\Admin\NewsController::class, 'update'])->name('news.update');
+    Route::delete('/news/{news}', [App\Http\Controllers\Admin\NewsController::class, 'destroy'])->name('news.destroy');
+    Route::patch('/news/{news}/toggle-status', [App\Http\Controllers\Admin\NewsController::class, 'toggleStatus'])->name('news.toggle');
     
     // Управление медиа новостей
     Route::post('/news/upload-media', [App\Http\Controllers\Admin\NewsController::class, 'uploadMediaFiles'])->name('admin.news.upload-media');
@@ -533,6 +547,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::patch('/news/{newsId}/media/order', [App\Http\Controllers\Admin\NewsController::class, 'updateMediaOrder'])->name('admin.news.media.order');
     Route::delete('/news/{newsId}/media/{mediaId}', [App\Http\Controllers\Admin\NewsController::class, 'deleteMedia'])->name('admin.news.media.delete');
     Route::patch('/news/{newsId}/cover/{mediaId}', [App\Http\Controllers\Admin\NewsController::class, 'setCover'])->name('admin.news.cover.set');
+    Route::delete('/news/media/temp', [App\Http\Controllers\Admin\NewsController::class, 'deleteTemporaryMedia'])->name('admin.news.media.temp-delete');
 
     // Управление заявками ОТЗ
     Route::resource('otz-applications', App\Http\Controllers\Admin\OtzApplicationController::class, [

@@ -107,9 +107,14 @@ class MediaService
     public function deleteMedia(string $path): bool
     {
         try {
-            // Убираем /storage/ из пути для получения реального пути
-            $realPath = str_replace('/storage/', '', $path);
-            
+            $realPath = $path;
+
+            if (str_contains($realPath, 'storage/')) {
+                $realPath = substr($realPath, strpos($realPath, 'storage/') + strlen('storage/'));
+            }
+
+            $realPath = ltrim($realPath, '/');
+
             if (Storage::disk('public')->exists($realPath)) {
                 Storage::disk('public')->delete($realPath);
                 
@@ -251,28 +256,55 @@ class MediaService
      */
     public function normalizeMediaForFrontend(array $mediaItems): array
     {
-        return array_map(function ($item) {
+        $normalized = array_map(function ($item, $index) {
             if (is_string($item)) {
-                // Старый формат - строка пути
-                $extension = strtolower(pathinfo($item, PATHINFO_EXTENSION));
-                $videoExtensions = self::ALLOWED_VIDEO_TYPES;
-                $type = in_array($extension, $videoExtensions) ? 'video' : 'image';
-                
+                $type = $this->detectTypeByPath($item);
+
                 return [
                     'id' => Str::uuid()->toString(),
                     'path' => $item,
+                    'url' => $this->getMediaUrl($item),
                     'type' => $type,
                     'name' => basename($item),
                     'size' => 0,
                     'mime_type' => $type === 'video' ? 'video/mp4' : 'image/jpeg',
                     'uploaded_at' => now()->toISOString(),
                     'is_cover' => false,
-                    'position' => 0
+                    'position' => $index,
                 ];
             }
-            
-            // Новый формат - уже объект
-            return $item;
-        }, $mediaItems);
+
+            if (is_array($item)) {
+                $path = $item['path'] ?? '';
+
+                $item['id'] = $item['id'] ?? Str::uuid()->toString();
+                $item['path'] = $path;
+                $item['url'] = $this->getMediaUrl($path);
+                $item['type'] = $item['type'] ?? $this->detectTypeByPath($path);
+                $item['name'] = $item['name'] ?? basename($path);
+                $item['size'] = $item['size'] ?? 0;
+                $item['mime_type'] = $item['mime_type'] ?? ($item['type'] === 'video' ? 'video/mp4' : 'image/jpeg');
+                $item['uploaded_at'] = $item['uploaded_at'] ?? now()->toISOString();
+                $item['is_cover'] = (bool) ($item['is_cover'] ?? false);
+                $item['position'] = $item['position'] ?? $index;
+
+                return $item;
+            }
+
+            return [];
+        }, $mediaItems, array_keys($mediaItems));
+
+        return array_values(array_filter($normalized, fn ($item) => !empty($item)));
+    }
+
+    public function detectTypeByPath(string $path): string
+    {
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+        if (in_array($extension, self::ALLOWED_VIDEO_TYPES)) {
+            return 'video';
+        }
+
+        return 'image';
     }
 }

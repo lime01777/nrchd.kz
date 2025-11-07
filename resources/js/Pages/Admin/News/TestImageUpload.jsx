@@ -89,7 +89,7 @@ export default function TestImageUpload() {
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900">Тест загрузки изображений</h2>
             <Link
-              href={route('admin.news')}
+              href={route('admin.news.index')}
               className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500"
             >
               Назад к новостям

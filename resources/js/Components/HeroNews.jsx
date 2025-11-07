@@ -1,14 +1,26 @@
 import React from 'react';
 
-export default function HeroNews({ img, h1 }) {
-  return (
-    <div className="relative bg-white">
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-white text- mix-blend-multiply opacity-60"></div>
-      </div>
-      <div className="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-extrabold tracking-tight text-black sm:text-5xl lg:text-6xl">{h1}</h1>
-      </div>
-    </div>
-  );
+/**
+ * Хиро-блок для страницы новостей.
+ * Отрисовывает фон с изображением (при наличии) и крупный заголовок/подзаголовок.
+ */
+export default function HeroNews({ img = null, h1, subtitle = null }) {
+    return (
+        <section className="relative isolate overflow-hidden bg-gradient-to-b from-white via-white to-gray-50">
+            {/* Фоновое изображение при наличии */}
+            {img && (
+                <div
+                    className="absolute inset-0 -z-10 bg-cover bg-center opacity-40"
+                    style={{ backgroundImage: `url(${img})` }}
+                />
+            )}
+
+            {/* Лёгкий белый оверлей для читабельности текста */}
+            <div className="absolute inset-0 -z-10 bg-white/60" />
+
+            <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-24 text-left sm:px-6 sm:py-28 lg:px-8">
+                <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl lg:text-6xl">{h1}</h1>
+            </div>
+        </section>
+    );
 }

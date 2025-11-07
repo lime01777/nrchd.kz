@@ -23,7 +23,7 @@ export default function IndexModern({ news, filters }) {
   // Обработка поиска
   const handleSearch = (e) => {
     e.preventDefault();
-    router.get(route('admin.news'), {
+    router.get(route('admin.news.index'), {
       search: searchTerm,
       status: statusFilter,
       category: categoryFilter
@@ -38,7 +38,7 @@ export default function IndexModern({ news, filters }) {
     setSearchTerm('');
     setStatusFilter('');
     setCategoryFilter('');
-    router.get(route('admin.news'), {}, {
+    router.get(route('admin.news.index'), {}, {
       preserveState: true,
       replace: true
     });

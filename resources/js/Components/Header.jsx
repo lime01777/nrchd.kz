@@ -253,7 +253,7 @@ export default function Header() {
 
 
                 {/* Пункт меню Новости */}
-                <Link href={route('news')} className="mr-8 hover:text-gray-900 flex items-center cursor-pointer">
+                <Link href={route('news.index')} className="mr-8 hover:text-gray-900 flex items-center cursor-pointer">
                     {t('header.news')}
                 </Link>
 
@@ -437,7 +437,7 @@ export default function Header() {
                         <button 
                             onClick={() => {
                                 setMenuOpen(false);
-                                window.location.href = route('news');
+                                window.location.href = route('news.index');
                             }}
                             className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
                             <span>{t('header.news')}</span>

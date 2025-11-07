@@ -136,7 +136,7 @@ export default function Dashboard({ stats, recentNews, recentActivities }) {
           <div className="px-4 py-5 border-b border-gray-200 sm:px-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg leading-6 font-medium text-gray-900">Последние новости</h3>
-              <Link href={route('admin.news')} className="text-sm font-medium text-blue-600 hover:text-blue-500">
+              <Link href={route('admin.news.index')} className="text-sm font-medium text-blue-600 hover:text-blue-500">
                 Все новости
               </Link>
             </div>

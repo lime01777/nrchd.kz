@@ -2,6 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import axios from 'axios';
+import translationService from '@/services/TranslationService';
+
+// Глобальная функция для получения перевода
+const t = (key, fallback = '') => {
+    return translationService.t(key, fallback);
+};
 
 // Создаем кастомный маркер с использованием DivIcon
 const customIcon = L.divIcon({
@@ -727,7 +733,25 @@ const youthHealthCenters = [
 ];
 
 export default function YouthHealthCentersMap({ useApi = false }) {
-  const [activeRegion, setActiveRegion] = useState('Все');
+  // Состояния для переводов
+  const [allRegionsText, setAllRegionsText] = useState('Все');
+  const [mapTitle, setMapTitle] = useState('');
+  const [loadingData, setLoadingData] = useState('');
+  const [selectRegion, setSelectRegion] = useState('');
+  const [centersInPoint, setCentersInPoint] = useState('');
+  const [centersListTitle, setCentersListTitle] = useState('');
+  const [inRegion, setInRegion] = useState('');
+  const [shownFrom, setShownFrom] = useState('');
+  const [of, setOf] = useState('');
+  const [tableName, setTableName] = useState('');
+  const [tableOrganization, setTableOrganization] = useState('');
+  const [tableAddress, setTableAddress] = useState('');
+  const [tableRegion, setTableRegion] = useState('');
+  const [showAll, setShowAll] = useState('');
+  const [hide, setHide] = useState('');
+  const [loadError, setLoadError] = useState('');
+
+  const [activeRegion, setActiveRegion] = useState('');
   const [allCenters, setAllCenters] = useState(youthHealthCenters);
   const [filteredCenters, setFilteredCenters] = useState(youthHealthCenters);
   const [showAllCenters, setShowAllCenters] = useState(false);
@@ -735,8 +759,49 @@ export default function YouthHealthCentersMap({ useApi = false }) {
   const mapRef = useRef(null);
   const mapContainerRef = useRef(null);
   
+  // Обновление переводов при смене языка
+  useEffect(() => {
+    const updateTranslations = () => {
+      setAllRegionsText(t('directionsPages.centerPrevention.youthCentersMap.allRegions', 'Все'));
+      setMapTitle(t('directionsPages.centerPrevention.youthCentersMap.mapTitle', 'Молодежные центры здоровья (МЦЗ) в Казахстане'));
+      setLoadingData(t('directionsPages.centerPrevention.youthCentersMap.loadingData', 'Загрузка данных...'));
+      setSelectRegion(t('directionsPages.centerPrevention.youthCentersMap.selectRegion', 'Выберите регион:'));
+      setCentersInPoint(t('directionsPages.centerPrevention.youthCentersMap.centersInPoint', 'Центров в этой точке:'));
+      setCentersListTitle(t('directionsPages.centerPrevention.youthCentersMap.centersListTitle', 'Список молодежных центров здоровья'));
+      setInRegion(t('directionsPages.centerPrevention.youthCentersMap.inRegion', 'в регионе'));
+      setShownFrom(t('directionsPages.centerPrevention.youthCentersMap.shownFrom', 'показано'));
+      setOf(t('directionsPages.centerPrevention.youthCentersMap.of', 'из'));
+      setTableName(t('directionsPages.centerPrevention.youthCentersMap.tableName', 'Название'));
+      setTableOrganization(t('directionsPages.centerPrevention.youthCentersMap.tableOrganization', 'Организация'));
+      setTableAddress(t('directionsPages.centerPrevention.youthCentersMap.tableAddress', 'Адрес'));
+      setTableRegion(t('directionsPages.centerPrevention.youthCentersMap.tableRegion', 'Регион'));
+      setShowAll(t('directionsPages.centerPrevention.youthCentersMap.showAll', 'Показать все'));
+      setHide(t('directionsPages.centerPrevention.youthCentersMap.hide', 'Скрыть'));
+      setLoadError(t('directionsPages.centerPrevention.youthCentersMap.loadError', 'Ошибка загрузки данных МЦЗ:'));
+      // Устанавливаем активный регион при первой загрузке
+      if (!activeRegion) {
+        setActiveRegion(t('directionsPages.centerPrevention.youthCentersMap.allRegions', 'Все'));
+      }
+    };
+
+    updateTranslations();
+    window.addEventListener('languageChanged', updateTranslations);
+
+    return () => {
+      window.removeEventListener('languageChanged', updateTranslations);
+    };
+  }, []);
+
+  // Обновление активного региона при смене языка
+  useEffect(() => {
+    if (activeRegion === allRegionsText || !activeRegion) {
+      // Если выбран "Все", обновляем значение
+      setActiveRegion(allRegionsText);
+    }
+  }, [allRegionsText]);
+
   // "Все" всегда на первом месте, остальные регионы отсортированы
-  const regions = ['Все', ...[...new Set(allCenters.map(center => center.region))].sort()];
+  const regions = [allRegionsText, ...[...new Set(allCenters.map(center => center.region))].sort()];
 
   // Загрузка данных из API (если useApi = true)
   useEffect(() => {
@@ -749,22 +814,23 @@ export default function YouthHealthCentersMap({ useApi = false }) {
           setLoading(false);
         })
         .catch(error => {
-          console.error('Ошибка загрузки данных МЦЗ:', error);
+          const errorText = loadError || t('directionsPages.centerPrevention.youthCentersMap.loadError', 'Ошибка загрузки данных МЦЗ:');
+          console.error(errorText, error);
           setLoading(false);
         });
     }
-  }, [useApi]);
+  }, [useApi, loadError]);
 
   // Фильтрация центров по выбранному региону
   useEffect(() => {
-    if (activeRegion === 'Все') {
+    if (activeRegion === allRegionsText || activeRegion === 'Все') {
       setFilteredCenters(allCenters);
     } else {
       setFilteredCenters(allCenters.filter(center => center.region === activeRegion));
     }
     // Сбрасываем состояние "показать все" при изменении региона
     setShowAllCenters(false);
-  }, [activeRegion, allCenters]);
+  }, [activeRegion, allCenters, allRegionsText]);
 
   // Инициализация карты при монтировании компонента
   useEffect(() => {
@@ -817,7 +883,7 @@ export default function YouthHealthCentersMap({ useApi = false }) {
       let popupContent = '<div style="max-height: 400px; overflow-y: auto;">';
       
       if (centers.length > 1) {
-        popupContent += `<p class="font-semibold text-blue-700 mb-3">Центров в этой точке: ${centers.length}</p>`;
+        popupContent += `<p class="font-semibold text-blue-700 mb-3">${centersInPoint} ${centers.length}</p>`;
       }
       
       centers.forEach((center, index) => {
@@ -841,27 +907,27 @@ export default function YouthHealthCentersMap({ useApi = false }) {
     
     // Центрируем карту на выбранном регионе
     if (filteredCenters.length > 0) {
-      if (activeRegion !== 'Все') {
+      if (activeRegion !== allRegionsText && activeRegion !== 'Все') {
         map.setView(filteredCenters[0].position, 10);
       } else {
         map.setView([48.019573, 66.923684], 5);
       }
     }
-  }, [filteredCenters, activeRegion]);
+  }, [filteredCenters, activeRegion, allRegionsText, centersInPoint]);
 
   return (
     <div className="youth-health-centers-map">
       <div className="bg-blue-50 p-4 mb-4 rounded-lg">
-        <h2 className="text-xl font-semibold mb-4">Молодежные центры здоровья (МЦЗ) в Казахстане</h2>
+        <h2 className="text-xl font-semibold mb-4">{mapTitle}</h2>
         
         {loading && (
           <div className="mb-4 p-3 bg-blue-100 text-blue-700 rounded-md">
-            Загрузка данных...
+            {loadingData}
           </div>
         )}
         
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Выберите регион:</label>
+          <label className="block text-gray-700 mb-2">{selectRegion}</label>
           <select 
             value={activeRegion}
             onChange={(e) => setActiveRegion(e.target.value)}
@@ -885,20 +951,20 @@ export default function YouthHealthCentersMap({ useApi = false }) {
       {/* Таблица с информацией о центрах */}
       <div className="mt-8 overflow-x-auto">
         <h3 className="text-lg font-semibold mb-3">
-          Список молодежных центров здоровья {activeRegion !== 'Все' ? `в регионе "${activeRegion}"` : ''}
-          {activeRegion === 'Все' && !showAllCenters && ` (показано ${Math.min(15, filteredCenters.length)} из ${filteredCenters.length})`}
+          {centersListTitle} {activeRegion !== allRegionsText && activeRegion !== 'Все' ? `${inRegion} "${activeRegion}"` : ''}
+          {(activeRegion === allRegionsText || activeRegion === 'Все') && !showAllCenters && ` (${shownFrom} ${Math.min(15, filteredCenters.length)} ${of} ${filteredCenters.length})`}
         </h3>
         <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
           <thead className="bg-gray-100">
             <tr>
-              <th className="py-2 px-4 border-b text-left">Название</th>
-              <th className="py-2 px-4 border-b text-left">Организация</th>
-              <th className="py-2 px-4 border-b text-left">Адрес</th>
-              <th className="py-2 px-4 border-b text-left">Регион</th>
+              <th className="py-2 px-4 border-b text-left">{tableName}</th>
+              <th className="py-2 px-4 border-b text-left">{tableOrganization}</th>
+              <th className="py-2 px-4 border-b text-left">{tableAddress}</th>
+              <th className="py-2 px-4 border-b text-left">{tableRegion}</th>
             </tr>
           </thead>
           <tbody>
-            {(activeRegion === 'Все' && !showAllCenters 
+            {((activeRegion === allRegionsText || activeRegion === 'Все') && !showAllCenters 
               ? filteredCenters.slice(0, 15) 
               : filteredCenters
             ).map(center => (
@@ -913,13 +979,13 @@ export default function YouthHealthCentersMap({ useApi = false }) {
         </table>
         
         {/* Кнопка "Показать все" */}
-        {activeRegion === 'Все' && filteredCenters.length > 15 && (
+        {(activeRegion === allRegionsText || activeRegion === 'Все') && filteredCenters.length > 15 && (
           <div className="mt-4 text-center">
             <button
               onClick={() => setShowAllCenters(!showAllCenters)}
               className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md"
             >
-              {showAllCenters ? 'Скрыть' : `Показать все (${filteredCenters.length})`}
+              {showAllCenters ? hide : `${showAll} (${filteredCenters.length})`}
             </button>
           </div>
         )}

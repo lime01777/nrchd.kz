@@ -74,13 +74,6 @@ export default function NewsSliderWithMain({
       .map(img => transformImagePath(img))
       .filter(url => url && url.trim() !== ''); // Дополнительная фильтрация пустых URL
     
-    console.log('NewsSliderWithMain - обработка изображений:', {
-      images,
-      validImages,
-      imagesLength: images.length,
-      validLength: validImages.length
-    });
-    
     return validImages;
   }, [images, transformImagePath]);
 

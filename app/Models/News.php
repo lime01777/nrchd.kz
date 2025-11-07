@@ -4,32 +4,69 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Модель новостей
+ * 
+ * @property int $id
+ * @property string $title
+ * @property string $slug
+ * @property string|null $excerpt
+ * @property string $body
+ * @property string|null $cover_image_path
+ * @property string|null $cover_image_thumb_path
+ * @property string|null $cover_image_alt
+ * @property string|null $seo_title
+ * @property string|null $seo_description
+ * @property string $status
+ * @property \Carbon\Carbon|null $published_at
+ * @property int|null $created_by
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property-read string $cover_url
+ * @property-read string $cover_thumb_url
+ * @property-read \App\Models\User|null $creator
+ */
 class News extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
-     * The table associated with the model.
+     * Таблица, связанная с моделью
      *
      * @var string
      */
     protected $table = 'news';
 
     /**
-     * The attributes that are mass assignable.
+     * Поля, доступные для массового присвоения
      *
      * @var array<int, string>
      */
     protected $fillable = [
         'title',
         'slug',
+        'excerpt',
+        'body',
+        'cover_image_path',
+        'cover_image_thumb_path',
+        'cover_image_alt',
+        'seo_title',
+        'seo_description',
+        'status',
+        'published_at',
+        'created_by',
+        // Старые поля для обратной совместимости
         'content',
         'category',
         'tags',
-        'status',
         'publish_date',
         'image',
         'views',
@@ -38,50 +75,174 @@ class News extends Model
     ];
 
     /**
-     * The attributes that should be cast.
+     * Атрибуты, которые должны быть приведены к типам
      *
      * @var array<string, string>
      */
     protected $casts = [
-        'publish_date' => 'datetime',
+        'published_at' => 'datetime',
+        'publish_date' => 'datetime', // Для обратной совместимости
         'views' => 'integer',
         'category' => 'array',
         'tags' => 'array',
-        // 'images' => 'array', // Убираем cast, так как используем кастомный аксессор
     ];
 
     /**
-     * Получить отформатированную дату публикации
+     * Boot метод модели
+     * Автогенерация slug из title при создании/обновлении
+     */
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function ($news) {
+            if (empty($news->slug) && !empty($news->title)) {
+                $news->slug = static::generateUniqueSlug($news->title);
+            }
+            if (empty($news->created_by) && auth()->check()) {
+                $news->created_by = auth()->id();
+            }
+        });
+
+        static::updating(function ($news) {
+            // Обновляем slug только если изменился title и slug не был изменен вручную
+            if ($news->isDirty('title') && !$news->isDirty('slug')) {
+                $news->slug = static::generateUniqueSlug($news->title, $news->id);
+            }
+        });
+    }
+
+    /**
+     * Генерирует уникальный slug из заголовка
+     *
+     * @param string $title
+     * @param int|null $excludeId ID записи, которую исключаем при проверке уникальности
+     * @return string
+     */
+    public static function generateUniqueSlug(string $title, ?int $excludeId = null): string
+    {
+        $slug = Str::slug($title);
+        $originalSlug = $slug;
+        $counter = 1;
+
+        while (static::where('slug', $slug)
+            ->when($excludeId, fn($q) => $q->where('id', '!=', $excludeId))
+            ->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
+    }
+
+    /**
+     * Связь с пользователем-создателем
+     *
+     * @return BelongsTo
+     */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Аксессор: URL обложки (оригинал)
+     * Поддерживает как новое поле cover_image_path, так и старые поля для обратной совместимости
+     *
+     * @return string
+     */
+    public function getCoverUrlAttribute(): string
+    {
+        // Новый формат
+        if ($this->cover_image_path) {
+            return asset('storage/' . $this->cover_image_path);
+        }
+        
+        // Старый формат для обратной совместимости
+        if ($this->main_image) {
+            return asset('storage/' . $this->main_image);
+        }
+        
+        if ($this->image) {
+            return asset('storage/' . $this->image);
+        }
+        
+        // Фолбэк на placeholder
+        return asset('/img/news/placeholder.jpg');
+    }
+
+    /**
+     * Аксессор: URL миниатюры обложки
+     *
+     * @return string
+     */
+    public function getCoverThumbUrlAttribute(): string
+    {
+        if ($this->cover_image_thumb_path) {
+            return asset('storage/' . $this->cover_image_thumb_path);
+        }
+        
+        // Если есть оригинал, но нет миниатюры, используем оригинал
+        if ($this->cover_image_path) {
+            return asset('storage/' . $this->cover_image_path);
+        }
+        
+        // Фолбэк на placeholder
+        return asset('/img/news/placeholder.jpg');
+    }
+
+    /**
+     * Скоуп: только опубликованные новости
+     *
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->where('status', 'published')
+            ->when(config('app.env') !== 'local', fn($q) => $q->whereNotNull('published_at'))
+            ->orderByDesc('published_at');
+    }
+
+    /**
+     * Скоуп: поиск по термину
+     *
+     * @param Builder $query
+     * @param string $term
+     * @return Builder
+     */
+    public function scopeSearch(Builder $query, string $term): Builder
+    {
+        return $query->where(function ($q) use ($term) {
+            $q->where('title', 'like', "%{$term}%")
+                ->orWhere('excerpt', 'like', "%{$term}%")
+                ->orWhere('body', 'like', "%{$term}%");
+        });
+    }
+
+    /**
+     * Получить отформатированную дату публикации (для обратной совместимости)
      *
      * @return string|null
      */
-    public function getFormattedPublishDateAttribute()
+    public function getFormattedPublishDateAttribute(): ?string
     {
-        if (!$this->publish_date) {
+        $date = $this->published_at ?? $this->publish_date;
+        
+        if (!$date) {
             return null;
         }
         
-        // Проверяем, является ли это Carbon объектом
-        if ($this->publish_date instanceof Carbon) {
-            return $this->publish_date->format('Y-m-d');
+        if ($date instanceof Carbon) {
+            return $date->format('Y-m-d');
         }
         
-        // Если это строка или другой тип, преобразуем в Carbon
         try {
-            return Carbon::parse($this->publish_date)->format('Y-m-d');
-        } catch (\Carbon\Exceptions\InvalidFormatException $e) {
-            // Логируем ошибку для отладки
+            return Carbon::parse($date)->format('Y-m-d');
+        } catch (\Exception $e) {
             Log::warning('Не удалось распарсить дату публикации', [
                 'news_id' => $this->id ?? 'unknown',
-                'publish_date' => $this->publish_date,
-                'error' => $e->getMessage()
-            ]);
-            return null;
-        } catch (\Exception $e) {
-            // Логируем любые другие ошибки
-            Log::error('Ошибка при форматировании даты публикации', [
-                'news_id' => $this->id ?? 'unknown',
-                'publish_date' => $this->publish_date,
+                'date' => $date,
                 'error' => $e->getMessage()
             ]);
             return null;
@@ -89,22 +250,22 @@ class News extends Model
     }
 
     /**
-     * Получить все медиафайлы новости
+     * Получить все медиафайлы новости (для обратной совместимости)
      *
      * @return array
      */
-    public function getMediaAttribute()
+    public function getMediaAttribute(): array
     {
         return $this->images ?? [];
     }
 
     /**
-     * Получить медиафайлы по типу
+     * Получить медиафайлы по типу (для обратной совместимости)
      *
      * @param string $type 'image' или 'video'
      * @return array
      */
-    public function getMediaByType($type)
+    public function getMediaByType(string $type): array
     {
         $media = $this->getMediaAttribute();
         if (empty($media)) {
@@ -113,13 +274,11 @@ class News extends Model
 
         return array_filter($media, function ($item) use ($type) {
             if (is_string($item)) {
-                // Старый формат - определяем тип по расширению
                 $extension = strtolower(pathinfo($item, PATHINFO_EXTENSION));
                 $videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'ogg'];
                 $itemType = in_array($extension, $videoExtensions) ? 'video' : 'image';
                 return $itemType === $type;
             } elseif (is_array($item) && isset($item['type'])) {
-                // Новый формат - используем поле type
                 return $item['type'] === $type;
             }
             return false;
@@ -127,62 +286,62 @@ class News extends Model
     }
 
     /**
-     * Получить только изображения
+     * Получить только изображения (для обратной совместимости)
      *
      * @return array
      */
-    public function getImagesOnlyAttribute()
+    public function getImagesOnlyAttribute(): array
     {
         return $this->getMediaByType('image');
     }
 
     /**
-     * Получить только видео
+     * Получить только видео (для обратной совместимости)
      *
      * @return array
      */
-    public function getVideosOnlyAttribute()
+    public function getVideosOnlyAttribute(): array
     {
         return $this->getMediaByType('video');
     }
 
     /**
-     * Проверить, есть ли медиафайлы
+     * Проверить, есть ли медиафайлы (для обратной совместимости)
      *
      * @return bool
      */
-    public function hasMedia()
+    public function hasMedia(): bool
     {
         $media = $this->getMediaAttribute();
         return !empty($media);
     }
 
     /**
-     * Проверить, есть ли изображения
+     * Проверить, есть ли изображения (для обратной совместимости)
      *
      * @return bool
      */
-    public function hasImages()
+    public function hasImages(): bool
     {
         return !empty($this->getImagesOnlyAttribute());
     }
 
     /**
-     * Проверить, есть ли видео
+     * Проверить, есть ли видео (для обратной совместимости)
      *
      * @return bool
      */
-    public function hasVideos()
+    public function hasVideos(): bool
     {
         return !empty($this->getVideosOnlyAttribute());
     }
 
     /**
-     * Получить первое изображение
+     * Получить первое изображение (для обратной совместимости)
      *
      * @return string|null
      */
-    public function getFirstImageAttribute()
+    public function getFirstImageAttribute(): ?string
     {
         $images = $this->getImagesOnlyAttribute();
         if (empty($images)) {
@@ -194,11 +353,11 @@ class News extends Model
     }
 
     /**
-     * Получить первое видео
+     * Получить первое видео (для обратной совместимости)
      *
      * @return string|null
      */
-    public function getFirstVideoAttribute()
+    public function getFirstVideoAttribute(): ?string
     {
         $videos = $this->getVideosOnlyAttribute();
         if (empty($videos)) {
@@ -210,19 +369,17 @@ class News extends Model
     }
 
     /**
-     * Мутатор для поля images - нормализует структуру медиа
+     * Мутатор для поля images - нормализует структуру медиа (для обратной совместимости)
      *
      * @param mixed $value
      * @return void
      */
-    public function setImagesAttribute($value)
+    public function setImagesAttribute($value): void
     {
         if (is_array($value)) {
-            // Нормализуем структуру медиа
             $normalizedMedia = [];
             foreach ($value as $item) {
                 if (is_string($item)) {
-                    // Старый формат - строка пути
                     $extension = strtolower(pathinfo($item, PATHINFO_EXTENSION));
                     $videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'ogg'];
                     $type = in_array($extension, $videoExtensions) ? 'video' : 'image';
@@ -234,7 +391,6 @@ class News extends Model
                         'source' => 'existing'
                     ];
                 } elseif (is_array($item)) {
-                    // Новый формат - уже объект
                     $normalizedMedia[] = $item;
                 }
             }
@@ -245,18 +401,17 @@ class News extends Model
     }
 
     /**
-     * Аксессор для поля images - возвращает нормализованные данные
+     * Аксессор для поля images - возвращает нормализованные данные (для обратной совместимости)
      *
      * @param mixed $value
      * @return array
      */
-    public function getImagesAttribute($value)
+    public function getImagesAttribute($value): array
     {
         if (empty($value)) {
             return [];
         }
 
-        // Если это JSON строка, декодируем
         if (is_string($value)) {
             $decoded = json_decode($value, true);
             if (json_last_error() === JSON_ERROR_NONE) {
@@ -264,7 +419,6 @@ class News extends Model
             }
         }
 
-        // Если это уже массив, возвращаем как есть
         if (is_array($value)) {
             return $value;
         }

@@ -86,46 +86,47 @@ export default function ModernMediaUploader({
         <div className="mt-4">
           <h4 className="text-sm font-medium text-gray-700 mb-3">Загруженные файлы:</h4>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-            {existingMedia.map((media, index) => (
-              <div key={media.id || `media-${index}`} className="relative group">
-                <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                  {media.type === 'video' ? (
-                    <video
-                      src={media.path}
-                      className="w-full h-full object-cover"
-                      muted
-                    />
-                  ) : (
-                    <img
-                      src={media.path}
-                      alt={media.name}
-                      className="w-full h-full object-cover"
-                    />
-                  )}
-                </div>
-                
-                {/* Индикатор загрузки */}
-                {media.isUploading && (
-                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="text-white text-sm">Загрузка...</div>
+            {existingMedia.map((media, index) => {
+              const mediaUrl = media.url || media.path;
+              return (
+                <div key={media.id || `media-${index}`} className="relative group">
+                  <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                    {media.type === 'video' ? (
+                      <video
+                        src={mediaUrl}
+                        className="w-full h-full object-cover"
+                        muted
+                        controls
+                      />
+                    ) : (
+                      <img
+                        src={mediaUrl}
+                        alt={media.name}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
                   </div>
-                )}
-                
-                {/* Кнопка удаления */}
-                <button
-                  type="button"
-                  onClick={() => handleRemove(media.id)}
-                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  ×
-                </button>
-                
-                {/* Название файла */}
-                <div className="mt-1 text-xs text-gray-600 truncate">
-                  {media.name}
+                  {/* Индикатор загрузки */}
+                  {media.isUploading && (
+                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                      <div className="text-white text-sm">Загрузка...</div>
+                    </div>
+                  )}
+                  {/* Кнопка удаления */}
+                  <button
+                    type="button"
+                    onClick={() => handleRemove(media.id)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    ×
+                  </button>
+                  {/* Название файла */}
+                  <div className="mt-1 text-xs text-gray-600 truncate">
+                    {media.name}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

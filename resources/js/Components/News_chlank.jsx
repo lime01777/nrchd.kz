@@ -6,16 +6,21 @@ import translationService from '@/services/TranslationService';
 
 function News_chlank({ date, description, slug, image, images = [] }) {
   const t = (key, fallback = '') => translationService.t(key, fallback);
-  // Определяем изображения для отображения
-  const displayImages = images && images.length > 0 ? images : (image ? [image] : []);
-  
-  // Фильтруем только изображения для карточек (видео показываем только на странице новости)
-  const imageOnlyImages = displayImages.filter(img => {
-    if (typeof img === 'string') {
-      return !isValidVideoUrl(img);
-    }
-    return true; // Если это объект, считаем изображением
-  });
+  const rawImages = images && images.length > 0 ? images : (image ? [image] : []);
+  const normalizedImages = rawImages
+    .map((img) => {
+      if (!img) return null;
+      if (typeof img === 'string') {
+        return img;
+      }
+      if (typeof img === 'object') {
+        return img.url || img.path || null;
+      }
+      return null;
+    })
+    .filter(Boolean);
+
+  const imageOnlyImages = normalizedImages.filter((src) => !isValidVideoUrl(src));
   
   return (
     <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 h-full">

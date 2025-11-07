@@ -1023,7 +1023,25 @@
       "tab3Label": "Инструменты",
       "tab3Folder": "ЗОЖ/Инструменты",
       "youthCentersTitle": "Молодежные центры здоровья",
-      "youthCentersDescription": "Интерактивная карта молодежных центров здоровья по всей Республике Казахстан"
+      "youthCentersDescription": "Интерактивная карта молодежных центров здоровья по всей Республике Казахстан",
+      "youthCentersMap": {
+        "allRegions": "Все",
+        "mapTitle": "Молодежные центры здоровья (МЦЗ) в Казахстане",
+        "loadingData": "Загрузка данных...",
+        "selectRegion": "Выберите регион:",
+        "centersInPoint": "Центров в этой точке:",
+        "centersListTitle": "Список молодежных центров здоровья",
+        "inRegion": "в регионе",
+        "shownFrom": "показано",
+        "of": "из",
+        "tableName": "Название",
+        "tableOrganization": "Организация",
+        "tableAddress": "Адрес",
+        "tableRegion": "Регион",
+        "showAll": "Показать все",
+        "hide": "Скрыть",
+        "loadError": "Ошибка загрузки данных МЦЗ:"
+      }
     },
     "medicalTourism": {
       "title": "Медицинский туризм",

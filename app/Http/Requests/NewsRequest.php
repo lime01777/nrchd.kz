@@ -3,190 +3,124 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Services\MediaService;
 
+/**
+ * FormRequest для валидации данных новостей
+ */
 class NewsRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Определяет, авторизован ли пользователь для выполнения запроса
+     *
+     * @return bool
      */
     public function authorize(): bool
     {
-        return true; // В реальном проекте здесь должна быть проверка прав
+        return true; // Проверка прав доступа выполняется через политику в контроллере
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * Правила валидации
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         $rules = [
             'title' => 'required|string|max:255',
-            'content' => 'required|string|min:10',
-            'category' => 'required|array|min:1',
-            'category.*' => 'string|max:100',
-            'tags' => 'nullable|array',
-            'tags.*' => 'string|max:50',
-            'status' => 'required|string|in:draft,scheduled,published,archived',
-            'publish_date' => 'nullable|date',
-            'media' => 'nullable|array|max:20',
-            'media.*' => 'nullable|array',
-            'media.*.id' => 'nullable|string',
-            'media.*.path' => 'nullable|string',
-            'media.*.type' => 'nullable|string|in:image,video',
-            'media.*.name' => 'nullable|string',
-            'media.*.size' => 'nullable|integer',
-            'media.*.is_cover' => 'nullable|boolean',
-            'media.*.position' => 'nullable|integer',
-            'images' => 'nullable|array|max:20',
-            'images.*' => 'nullable|array',
-            'images.*.id' => 'nullable|string',
-            'images.*.path' => 'nullable|string',
-            'images.*.type' => 'nullable|string|in:image,video',
-            'images.*.name' => 'nullable|string',
-            'images.*.size' => 'nullable|integer',
-            'images.*.is_cover' => 'nullable|boolean',
-            'images.*.position' => 'nullable|integer',
-            'media_files' => 'nullable|array|max:10',
-            'media_files.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,mp4,avi,mov,wmv,flv,webm,ogg|max:' . MediaService::MAX_FILE_SIZE,
+            'slug' => 'nullable|string|max:255|unique:news,slug,' . $this->route('news')?->id,
+            'excerpt' => 'nullable|string|max:1000',
+            'body' => 'required|string|min:10',
+            'cover' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120|dimensions:min_width=800,min_height=400',
+            'cover_image_alt' => 'nullable|string|max:255',
+            'seo_title' => 'nullable|string|max:255',
+            'seo_description' => 'nullable|string|max:255',
+            'status' => 'required|in:draft,published',
+            'published_at' => 'nullable|date',
+            'media' => 'nullable',
         ];
 
-        // Для обновления новости делаем некоторые поля необязательными
+        // Для обновления некоторые поля необязательны
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $rules['title'] = 'sometimes|required|string|max:255';
-            $rules['content'] = 'sometimes|required|string|min:10';
-            $rules['category'] = 'sometimes|required|array|min:1';
+            $rules['body'] = 'sometimes|required|string|min:10';
+            $rules['cover'] = 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120|dimensions:min_width=800,min_height=400';
         }
 
         return $rules;
     }
 
     /**
-     * Get custom messages for validator errors.
+     * Сообщения об ошибках валидации на русском языке
+     *
+     * @return array<string, string>
      */
     public function messages(): array
     {
         return [
-            'title.required' => 'Заголовок новости обязателен',
-            'title.max' => 'Заголовок не должен превышать 255 символов',
-            'content.required' => 'Содержимое новости обязательно',
-            'content.min' => 'Содержимое должно содержать минимум 10 символов',
-            'category.required' => 'Необходимо выбрать хотя бы одну категорию',
-            'category.array' => 'Категории должны быть массивом',
-            'category.min' => 'Необходимо выбрать хотя бы одну категорию',
-            'category.*.string' => 'Каждая категория должна быть строкой',
-            'category.*.max' => 'Название категории не должно превышать 100 символов',
-            'tags.array' => 'Теги должны быть массивом',
-            'tags.*.string' => 'Каждый тег должен быть строкой',
-            'tags.*.max' => 'Тег не должен превышать 50 символов',
-            'status.required' => 'Статус новости обязателен',
-            'status.in' => 'Недопустимый статус новости',
-            'publish_date.date' => 'Дата публикации должна быть корректной датой',
-            'media.array' => 'Медиа должны быть массивом',
-            'media.max' => 'Максимум 20 медиа файлов',
-            'media.*.type.in' => 'Тип медиа должен быть image или video',
-            'media_files.array' => 'Файлы должны быть массивом',
-            'media_files.max' => 'Максимум 10 файлов за раз',
-            'media_files.*.file' => 'Загружаемый элемент должен быть файлом',
-            'media_files.*.mimes' => 'Неподдерживаемый тип файла. Разрешены: jpeg, png, jpg, gif, webp, mp4, avi, mov, wmv, flv, webm, ogg',
-            'media_files.*.max' => 'Файл слишком большой. Максимальный размер: ' . MediaService::MAX_FILE_SIZE . 'KB',
+            'title.required' => 'Заголовок новости обязателен для заполнения.',
+            'title.max' => 'Заголовок не должен превышать 255 символов.',
+            'slug.unique' => 'Такой URL-адрес уже используется. Пожалуйста, выберите другой.',
+            'slug.max' => 'URL-адрес не должен превышать 255 символов.',
+            'excerpt.max' => 'Краткое описание не должно превышать 1000 символов.',
+            'body.required' => 'Содержимое новости обязательно для заполнения.',
+            'body.min' => 'Содержимое должно содержать минимум 10 символов.',
+            'cover.image' => 'Обложка должна быть изображением.',
+            'cover.mimes' => 'Обложка должна быть в формате: jpg, jpeg, png или webp.',
+            'cover.max' => 'Размер обложки не должен превышать 5 МБ.',
+            'cover.dimensions' => 'Минимальный размер обложки: 800×400 пикселей.',
+            'cover_image_alt.max' => 'Альтернативный текст не должен превышать 255 символов.',
+            'seo_title.max' => 'SEO заголовок не должен превышать 255 символов.',
+            'seo_description.max' => 'SEO описание не должно превышать 255 символов.',
+            'status.required' => 'Статус новости обязателен для заполнения.',
+            'status.in' => 'Недопустимый статус новости. Допустимые значения: draft, published.',
+            'published_at.date' => 'Дата публикации должна быть корректной датой.',
         ];
     }
 
     /**
-     * Get custom attributes for validator errors.
+     * Названия атрибутов для сообщений об ошибках
+     *
+     * @return array<string, string>
      */
     public function attributes(): array
     {
         return [
             'title' => 'заголовок',
-            'content' => 'содержимое',
-            'category' => 'категории',
-            'tags' => 'теги',
+            'slug' => 'URL-адрес',
+            'excerpt' => 'краткое описание',
+            'body' => 'содержимое',
+            'cover' => 'обложка',
+            'cover_image_alt' => 'альтернативный текст обложки',
+            'seo_title' => 'SEO заголовок',
+            'seo_description' => 'SEO описание',
             'status' => 'статус',
-            'publish_date' => 'дата публикации',
-            'media' => 'медиа файлы',
-            'media_files' => 'новые файлы',
+            'published_at' => 'дата публикации',
         ];
     }
 
     /**
-     * Configure the validator instance.
+     * Дополнительная валидация после основных правил
+     *
+     * @param \Illuminate\Contracts\Validation\Validator $validator
+     * @return void
      */
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
-            // Дополнительная валидация для запланированных новостей
-            if ($this->input('status') === 'scheduled' && !$this->input('publish_date')) {
-                $validator->errors()->add('publish_date', 'Для запланированных новостей необходимо указать дату публикации');
+            // Для опубликованных новостей рекомендуется указать дату публикации
+            if ($this->input('status') === 'published' && !$this->input('published_at')) {
+                // Автоматически устанавливаем текущую дату, если не указана
+                $this->merge(['published_at' => now()]);
             }
 
-            // Для запланированных новостей дата должна быть в будущем
-            if ($this->input('status') === 'scheduled' && $this->input('publish_date')) {
-                $publishDate = \Carbon\Carbon::parse($this->input('publish_date'));
-                if ($publishDate->isPast()) {
-                    $validator->errors()->add('publish_date', 'Для запланированных новостей дата публикации должна быть в будущем');
+            // Если статус "опубликовано", дата публикации не должна быть в будущем (если указана)
+            if ($this->input('status') === 'published' && $this->input('published_at')) {
+                $publishedAt = \Carbon\Carbon::parse($this->input('published_at'));
+                if ($publishedAt->isFuture()) {
+                    $validator->errors()->add('published_at', 'Дата публикации не может быть в будущем для опубликованных новостей.');
                 }
             }
-
-            // Проверяем, что есть хотя бы одно медиа или контент достаточно длинный
-            $mediaCount = count($this->input('media', []));
-            $mediaFilesCount = count($this->input('media_files', []));
-            $contentLength = strlen(strip_tags($this->input('content', '')));
-
-            if ($mediaCount === 0 && $mediaFilesCount === 0 && $contentLength < 100) {
-                $validator->errors()->add('content', 'Новость должна содержать либо медиа файлы, либо достаточно длинный текст (минимум 100 символов)');
-            }
-
-            // Проверяем уникальность тегов
-            $tags = $this->input('tags', []);
-            if (count($tags) !== count(array_unique($tags))) {
-                $validator->errors()->add('tags', 'Теги не должны повторяться');
-            }
-
-            // Проверяем уникальность категорий
-            $categories = $this->input('category', []);
-            if (count($categories) !== count(array_unique($categories))) {
-                $validator->errors()->add('category', 'Категории не должны повторяться');
-            }
         });
-    }
-
-    /**
-     * Prepare the data for validation.
-     */
-    protected function prepareForValidation(): void
-    {
-        // Нормализуем данные перед валидацией
-        $this->merge([
-            'tags' => $this->normalizeTags($this->input('tags', [])),
-            'category' => $this->normalizeCategories($this->input('category', [])),
-        ]);
-    }
-
-    /**
-     * Нормализовать теги
-     */
-    private function normalizeTags(array $tags): array
-    {
-        return array_filter(array_map(function ($tag) {
-            if (is_string($tag)) {
-                return trim($tag);
-            }
-            return null;
-        }, $tags));
-    }
-
-    /**
-     * Нормализовать категории
-     */
-    private function normalizeCategories(array $categories): array
-    {
-        return array_filter(array_map(function ($category) {
-            if (is_string($category)) {
-                return trim($category);
-            }
-            return null;
-        }, $categories));
     }
 }

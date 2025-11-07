@@ -1,335 +1,272 @@
 import React, { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, router } from '@inertiajs/react';
-import StatusBadge from '@/Components/Admin/News/StatusBadge';
-import { 
-  MagnifyingGlassIcon, 
-  FunnelIcon, 
-  PlusIcon,
-  PencilIcon,
-  TrashIcon,
-  EyeIcon,
-  CalendarIcon,
-  TagIcon,
-  PhotoIcon
-} from '@heroicons/react/24/outline';
 
-export default function NewsIndex({ news, filters }) {
-  const [searchTerm, setSearchTerm] = useState(filters?.search || '');
-  const [statusFilter, setStatusFilter] = useState(filters?.status || '');
-  const [categoryFilter, setCategoryFilter] = useState(filters?.category || '');
-  const [showFilters, setShowFilters] = useState(false);
+/**
+ * Страница списка новостей в админке
+ */
+export default function Index({ news, filters }) {
+    const [searchTerm, setSearchTerm] = useState(filters?.search || '');
+    const [statusFilter, setStatusFilter] = useState(filters?.status || '');
 
-  // Обработка поиска
-  const handleSearch = (e) => {
-    e.preventDefault();
-    router.get(route('admin.news'), {
-      search: searchTerm,
-      status: statusFilter,
-      category: categoryFilter
-    }, {
-      preserveState: true,
-      replace: true
-    });
-  };
+    /**
+     * Применение фильтров
+     */
+    const applyFilters = () => {
+        router.get(route('admin.news.index'), {
+            search: searchTerm,
+            status: statusFilter,
+            published_from: filters?.published_from,
+            published_to: filters?.published_to,
+        }, {
+            preserveState: true,
+            replace: true,
+        });
+    };
 
-  // Сброс фильтров
-  const resetFilters = () => {
-    setSearchTerm('');
-    setStatusFilter('');
-    setCategoryFilter('');
-    router.get(route('admin.news'), {}, {
-      preserveState: true,
-      replace: true
-    });
-  };
+    /**
+     * Сброс фильтров
+     */
+    const resetFilters = () => {
+        setSearchTerm('');
+        setStatusFilter('');
+        router.get(route('admin.news.index'), {}, {
+            preserveState: true,
+            replace: true,
+        });
+    };
 
-  // Удаление новости
-  const handleDelete = (id) => {
-    if (confirm('Вы уверены, что хотите удалить эту новость?')) {
-      router.delete(route('admin.news.destroy', id));
-    }
-  };
+    /**
+     * Удаление новости
+     */
+    const handleDelete = (newsItem) => {
+        if (confirm(`Вы уверены, что хотите удалить новость "${newsItem.title}"?`)) {
+            router.delete(route('admin.news.destroy', newsItem.id), {
+                preserveScroll: true,
+            });
+        }
+    };
 
-  // Форматирование даты
-  const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('ru-RU', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
+    /**
+     * Переключение статуса
+     */
+    const handleToggleStatus = (newsItem) => {
+        router.patch(route('admin.news.toggle', newsItem.id), {}, {
+            preserveScroll: true,
+        });
+    };
 
-  // Получение уникальных категорий
-  const getUniqueCategories = () => {
-    const categories = new Set();
-    news.data.forEach(item => {
-      if (Array.isArray(item.category)) {
-        item.category.forEach(cat => categories.add(cat));
-      } else if (item.category) {
-        categories.add(item.category);
-      }
-    });
-    return Array.from(categories).sort();
-  };
-
-  // Подсчет медиа файлов
-  const getMediaCount = (item) => {
-    if (Array.isArray(item.images)) {
-      return item.images.length;
-    }
-    return 0;
-  };
-
-  return (
-    <AdminLayout>
-      <div className="py-12">
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          {/* Заголовок */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Новости</h1>
-                <p className="mt-1 text-sm text-gray-600">
-                  Управление новостями и публикациями
-                </p>
-              </div>
-              <Link
-                href={route('admin.news.create')}
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                <PlusIcon className="w-4 h-4 mr-2" />
-                Создать новость
-              </Link>
-            </div>
-          </div>
-
-          {/* Фильтры и поиск */}
-          <div className="bg-white shadow rounded-lg p-6 mb-6">
-            <form onSubmit={handleSearch} className="space-y-4">
-              {/* Основная строка поиска */}
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      placeholder="Поиск по заголовку или содержимому..."
-                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  <FunnelIcon className="w-4 h-4 mr-2" />
-                  Фильтры
-                </button>
-                <button
-                  type="submit"
-                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  Найти
-                </button>
-              </div>
-
-              {/* Дополнительные фильтры */}
-              {showFilters && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-200">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Статус
-                    </label>
-                    <select
-                      value={statusFilter}
-                      onChange={(e) => setStatusFilter(e.target.value)}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    >
-                      <option value="">Все статусы</option>
-                      <option value="Черновик">Черновик</option>
-                      <option value="Опубликовано">Опубликовано</option>
-                      <option value="Запланировано">Запланировано</option>
-                      <option value="Архив">Архив</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Категория
-                    </label>
-                    <select
-                      value={categoryFilter}
-                      onChange={(e) => setCategoryFilter(e.target.value)}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    >
-                      <option value="">Все категории</option>
-                      {getUniqueCategories().map(category => (
-                        <option key={category} value={category}>{category}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex items-end">
-                    <button
-                      type="button"
-                      onClick={resetFilters}
-                      className="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                    >
-                      Сбросить
-                    </button>
-                  </div>
-                </div>
-              )}
-            </form>
-          </div>
-
-
-          {/* Список новостей */}
-          <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            {news.data.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="mx-auto h-12 w-12 text-gray-400">
-                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <h3 className="mt-2 text-sm font-medium text-gray-900">Новости не найдены</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  {filters?.search || filters?.status || filters?.category 
-                    ? 'Попробуйте изменить фильтры.' 
-                    : 'Начните с создания первой новости.'
-                  }
-                </p>
-                {!filters?.search && !filters?.status && !filters?.category && (
-                  <div className="mt-6">
-                    <Link
-                      href={route('admin.news.create')}
-                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                    >
-                      <PlusIcon className="w-4 h-4 mr-2" />
-                      Создать новость
-                    </Link>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <ul className="divide-y divide-gray-200">
-                {news.data.map((item) => (
-                  <li key={item.id} className="hover:bg-gray-50 transition-colors">
-                    <div className="px-6 py-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1 min-w-0">
-                          {/* Заголовок и статус */}
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-lg font-medium text-gray-900 truncate">
-                              {item.title}
-                            </h3>
-                            <div className="flex items-center space-x-2 ml-4">
-                              <StatusBadge status={item.status} />
-                            </div>
-                          </div>
-
-                          {/* Содержимое */}
-                          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                            {item.content ? item.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...' : 'Нет содержимого'}
-                          </p>
-
-                          {/* Метаинформация */}
-                          <div className="flex items-center space-x-6 text-sm text-gray-500">
-                            <div className="flex items-center">
-                              <CalendarIcon className="w-4 h-4 mr-1" />
-                              <span>{formatDate(item.created_at)}</span>
-                            </div>
-                            
-                            {item.publish_date && (
-                              <div className="flex items-center">
-                                <CalendarIcon className="w-4 h-4 mr-1" />
-                                <span>Публикация: {formatDate(item.publish_date)}</span>
-                              </div>
-                            )}
-
-                            {getMediaCount(item) > 0 && (
-                              <div className="flex items-center">
-                                <PhotoIcon className="w-4 h-4 mr-1" />
-                                <span>{getMediaCount(item)} медиа</span>
-                              </div>
-                            )}
-
-                            {Array.isArray(item.category) && item.category.length > 0 && (
-                              <div className="flex items-center">
-                                <TagIcon className="w-4 h-4 mr-1" />
-                                <span>{item.category.join(', ')}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Действия */}
-                        <div className="ml-4 flex items-center space-x-2">
-                          <Link
-                            href={`/news/${item.slug}`}
-                            target="_blank"
-                            className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                            title="Просмотреть"
-                          >
-                            <EyeIcon className="w-4 h-4" />
-                          </Link>
-                          <Link
-                            href={route('admin.news.edit', item.id)}
-                            className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                            title="Редактировать"
-                          >
-                            <PencilIcon className="w-4 h-4" />
-                          </Link>
-                          <button
-                            onClick={() => handleDelete(item.id)}
-                            className="inline-flex items-center px-3 py-1 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50"
-                            title="Удалить"
-                          >
-                            <TrashIcon className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
+    return (
+        <AdminLayout>
+            <div className="py-12">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    {/* Заголовок */}
+                    <div className="flex justify-between items-center mb-6">
+                        <h1 className="text-3xl font-bold text-gray-900">Новости</h1>
+                        <Link
+                            href={route('admin.news.create')}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                            Создать новость
+                        </Link>
                     </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
 
-          {/* Пагинация */}
-          {news.data.length > 0 && news.last_page > 1 && (
-            <div className="mt-6 flex items-center justify-between">
-              <div className="text-sm text-gray-700">
-                Показано {news.from} - {news.to} из {news.total} результатов
-              </div>
-              <div className="flex space-x-2">
-                {news.prev_page_url && (
-                  <Link
-                    href={news.prev_page_url}
-                    className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    Назад
-                  </Link>
-                )}
-                {news.next_page_url && (
-                  <Link
-                    href={news.next_page_url}
-                    className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    Вперед
-                  </Link>
-                )}
-              </div>
+                    {/* Фильтры */}
+                    <div className="bg-white shadow rounded-lg p-6 mb-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {/* Поиск */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Поиск
+                                </label>
+                                <input
+                                    type="text"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && applyFilters()}
+                                    placeholder="Поиск по заголовку..."
+                                    className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                />
+                            </div>
+
+                            {/* Фильтр по статусу */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Статус
+                                </label>
+                                <select
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                    className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                >
+                                    <option value="">Все</option>
+                                    <option value="draft">Черновик</option>
+                                    <option value="published">Опубликовано</option>
+                                </select>
+                            </div>
+
+                            {/* Кнопки */}
+                            <div className="flex items-end gap-2">
+                                <button
+                                    onClick={applyFilters}
+                                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                                >
+                                    Применить
+                                </button>
+                                <button
+                                    onClick={resetFilters}
+                                    className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+                                >
+                                    Сбросить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Таблица новостей */}
+                    <div className="bg-white shadow rounded-lg overflow-hidden">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Миниатюра
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Заголовок
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Статус
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Дата публикации
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Создано
+                                    </th>
+                                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Действия
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {news.data.map((item) => (
+                                    <tr key={item.id} className="hover:bg-gray-50">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            {item.cover_thumb_url ? (
+                                                <img
+                                                    src={item.cover_thumb_url}
+                                                    alt={item.cover_image_alt || item.title}
+                                                    className="w-16 h-16 object-cover rounded"
+                                                />
+                                            ) : (
+                                                <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
+                                                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                    </svg>
+                                                </div>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="text-sm font-medium text-gray-900">{item.title}</div>
+                                            <div className="text-sm text-gray-500">{item.slug}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span
+                                                className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                                                    item.status === 'published'
+                                                        ? 'bg-green-100 text-green-800'
+                                                        : 'bg-gray-100 text-gray-800'
+                                                }`}
+                                            >
+                                                {item.status === 'published' ? 'Опубликовано' : 'Черновик'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {item.published_at_formatted || '-'}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {item.created_at_formatted}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <div className="flex justify-end gap-2">
+                                                <Link
+                                                    href={route('admin.news.edit', item.id)}
+                                                    className="text-blue-600 hover:text-blue-900"
+                                                >
+                                                    Редактировать
+                                                </Link>
+                                                <button
+                                                    onClick={() => handleToggleStatus(item)}
+                                                    className="text-yellow-600 hover:text-yellow-900"
+                                                >
+                                                    {item.status === 'published' ? 'В черновик' : 'Опубликовать'}
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(item)}
+                                                    className="text-red-600 hover:text-red-900"
+                                                >
+                                                    Удалить
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+
+                        {/* Пагинация */}
+                        {news.links && news.links.length > 3 && (
+                            <div className="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex-1 flex justify-between sm:hidden">
+                                        {news.links[0].url && (
+                                            <Link
+                                                href={news.links[0].url}
+                                                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                                            >
+                                                Предыдущая
+                                            </Link>
+                                        )}
+                                        {news.links[news.links.length - 1].url && (
+                                            <Link
+                                                href={news.links[news.links.length - 1].url}
+                                                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                                            >
+                                                Следующая
+                                            </Link>
+                                        )}
+                                    </div>
+                                    <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                        <div>
+                                            <p className="text-sm text-gray-700">
+                                                Показано <span className="font-medium">{news.from}</span> до{' '}
+                                                <span className="font-medium">{news.to}</span> из{' '}
+                                                <span className="font-medium">{news.total}</span> результатов
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                                {news.links.map((link, index) => (
+                                                    <Link
+                                                        key={index}
+                                                        href={link.url || '#'}
+                                                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                                                            link.active
+                                                                ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                                                                : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                                                        } ${!link.url ? 'cursor-not-allowed opacity-50' : ''}`}
+                                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                                    />
+                                                ))}
+                                            </nav>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
-          )}
-        </div>
-      </div>
-    </AdminLayout>
-  );
+        </AdminLayout>
+    );
 }
