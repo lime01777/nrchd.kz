@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm, router } from '@inertiajs/react';
 import ImageUpload from '@/Components/ImageUpload';
@@ -17,11 +17,17 @@ import LinkExtension from '@tiptap/extension-link';
  */
 export default function Form({ news = null, media: initialMediaProp = [], section = null, type = 'news' }) {
     const isEditing = Boolean(news);
-    const initialMedia = Array.isArray(news?.media)
-        ? news.media
-        : Array.isArray(initialMediaProp)
-            ? initialMediaProp
-            : [];
+    const initialMedia = useMemo(() => {
+        if (Array.isArray(news?.media)) {
+            return news.media;
+        }
+
+        if (Array.isArray(initialMediaProp)) {
+            return initialMediaProp;
+        }
+
+        return [];
+    }, [news?.media, initialMediaProp]);
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
     const currentType = type || section?.type || news?.type || 'news';
@@ -74,9 +80,15 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
     }, [editor]);
 
     useEffect(() => {
+        if (!isEditing && !news?.id) {
+            // Для режима создания достаточно стартового состояния
+            return;
+        }
+
         setMedia(initialMedia);
         setData('media', initialMedia);
-    }, [initialMedia, news?.id, setData]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isEditing, news?.id, initialMedia]);
 
     const generateSlug = () => {
         const slug = data.title
@@ -171,7 +183,13 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
         };
 
         if (isEditing) {
-            router.post(route('admin.news.update', { news: news.id, type: currentType }), payload, {
+            // При редактировании отправляем запрос с переопределением HTTP-метода на PUT
+            const updatePayload = {
+                ...payload,
+                _method: 'PUT',
+            };
+
+            router.post(route('admin.news.update', { news: news.id, type: currentType }), updatePayload, {
                 forceFormData: true,
                 onFinish,
                 onSuccess,

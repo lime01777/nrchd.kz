@@ -79,6 +79,7 @@ class NewsController extends Controller
                 'published_at_formatted' => $item->published_at?->format('d.m.Y'),
                 'created_at' => $item->created_at->format('Y-m-d H:i:s'),
                 'created_at_formatted' => $item->created_at->format('d.m.Y'),
+                'views' => $item->views ?? 0,
                 'creator' => $item->creator ? [
                     'id' => $item->creator->id,
                     'name' => $item->creator->name,
@@ -130,6 +131,8 @@ class NewsController extends Controller
             $news->slug = $validated['slug'] ?? News::generateUniqueSlug($validated['title']);
             $news->excerpt = $validated['excerpt'] ?? null;
             $news->body = $validated['body'];
+            // Для обратной совместимости со старым полем content
+            $news->content = $validated['body'];
             $news->cover_image_alt = $validated['cover_image_alt'] ?? null;
             $news->seo_title = $validated['seo_title'] ?? null;
             $news->seo_description = $validated['seo_description'] ?? null;
@@ -230,6 +233,8 @@ class NewsController extends Controller
             }
             $news->excerpt = $validated['excerpt'] ?? null;
             $news->body = $validated['body'];
+            // Синхронизируем устаревшее поле content
+            $news->content = $news->body;
             $news->cover_image_alt = $validated['cover_image_alt'] ?? null;
             $news->seo_title = $validated['seo_title'] ?? null;
             $news->seo_description = $validated['seo_description'] ?? null;

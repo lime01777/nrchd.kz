@@ -25,7 +25,13 @@ class NewsPublicController extends Controller
      */
     public function index(Request $request): Response
     {
-        return $this->renderListing($request, News::TYPE_NEWS);
+        $type = $request->input('type', News::TYPE_NEWS);
+
+        if (!in_array($type, News::TYPES, true)) {
+            $type = News::TYPE_NEWS;
+        }
+
+        return $this->renderListing($request, $type);
     }
 
     /**
@@ -112,9 +118,14 @@ class NewsPublicController extends Controller
                 'seo_description' => $seoDescription,
                 'published_at' => $news->published_at?->format('Y-m-d H:i:s'),
                 'published_at_formatted' => $news->published_at?->format('d.m.Y'),
+                'published_at_full' => $news->published_at ? $news->published_at->format('d.m.Y H:i') : null,
                 'media' => $media,
                 'gallery_images' => $galleryImages,
                 'gallery_videos' => $galleryVideos,
+                'social_instagram' => $news->social_instagram ?? null,
+                'social_facebook' => $news->social_facebook ?? null,
+                'social_youtube' => $news->social_youtube ?? null,
+                'social_telegram' => $news->social_telegram ?? null,
             ],
             'relatedNews' => $relatedNews,
             'seo' => [
@@ -141,6 +152,15 @@ class NewsPublicController extends Controller
             $query->search($request->input('search'));
         }
 
+        $tagFilter = $request->input('tag');
+        if (!empty($tagFilter)) {
+            $query->where(function ($q) use ($tagFilter) {
+                $q->whereJsonContains('tags', $tagFilter)
+                    ->orWhere('tags', 'like', '%"' . $tagFilter . '"%')
+                    ->orWhere('tags', 'like', '%' . $tagFilter . '%');
+            });
+        }
+
         $news = $query->paginate(12)->withQueryString();
 
         $news->getCollection()->transform(function ($item) {
@@ -165,14 +185,17 @@ class NewsPublicController extends Controller
                 'media' => $media,
                 'images' => $imagePaths,
                 'type' => $item->type,
+                'tags' => is_array($item->tags) ? array_values(array_filter($item->tags)) : [],
             ];
         });
 
         $isMedia = $type === News::TYPE_MEDIA;
+        $availableTags = $this->collectAvailableTags($type);
 
         return Inertia::render('News/Index', [
             'news' => $news,
-            'filters' => array_merge($request->only(['search']), ['type' => $type]),
+            'filters' => array_merge($request->only(['search', 'tag']), ['type' => $type]),
+            'availableTags' => $availableTags,
             'section' => [
                 'type' => $type,
                 'title' => $isMedia ? 'СМИ о нас' : 'Новости',
@@ -184,5 +207,41 @@ class NewsPublicController extends Controller
                     : 'Будьте в курсе событий и свежих проектов центра.',
             ],
         ]);
+    }
+
+    /**
+     * Возвращает список тегов для заданного типа публикаций.
+     */
+    private function collectAvailableTags(string $type): array
+    {
+        $tags = News::published()
+            ->ofType($type)
+            ->pluck('tags')
+            ->flatMap(function ($item) {
+                if (empty($item)) {
+                    return [];
+                }
+
+                if (is_array($item)) {
+                    return $item;
+                }
+
+                if (is_string($item)) {
+                    $decoded = json_decode($item, true);
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                        return $decoded;
+                    }
+
+                    return array_map('trim', array_filter(explode(',', $item)));
+                }
+
+                return [];
+            })
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+
+        return $tags->all();
     }
 }

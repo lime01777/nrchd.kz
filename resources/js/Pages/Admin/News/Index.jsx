@@ -132,148 +132,137 @@ export default function Index({ news, filters, section }) {
                         </div>
                     </div>
 
-                    {/* Таблица новостей */}
-                    <div className="bg-white shadow rounded-lg overflow-hidden">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Миниатюра
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Заголовок
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Статус
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Дата публикации
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Создано
-                                    </th>
-                                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Действия
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {news.data.map((item) => (
-                                    <tr key={item.id} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            {item.cover_thumb_url ? (
-                                                <img
-                                                    src={item.cover_thumb_url}
-                                                    alt={item.cover_image_alt || item.title}
-                                                    className="w-16 h-16 object-cover rounded"
-                                                />
-                                            ) : (
-                                                <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
-                                                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                    </svg>
-                                                </div>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="text-sm font-medium text-gray-900">{item.title}</div>
-                                            <div className="text-sm text-gray-500">{item.slug}</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                                                    item.status === 'published'
-                                                        ? 'bg-green-100 text-green-800'
-                                                        : 'bg-gray-100 text-gray-800'
-                                                }`}
-                                            >
-                                                {item.status === 'published' ? 'Опубликовано' : 'Черновик'}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {item.published_at_formatted || '-'}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {item.created_at_formatted}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <div className="flex justify-end gap-2">
-                                                <Link
-                                                    href={route('admin.news.edit', { news: item.id, type: currentType })}
-                                                    className="text-blue-600 hover:text-blue-900"
-                                                >
-                                                    Редактировать
-                                                </Link>
-                                                <button
-                                                    onClick={() => handleToggleStatus(item)}
-                                                    className="text-yellow-600 hover:text-yellow-900"
-                                                >
-                                                    {item.status === 'published' ? 'В черновик' : 'Опубликовать'}
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(item)}
-                                                    className="text-red-600 hover:text-red-900"
-                                                >
-                                                    Удалить
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                    {/* Сетка карточек новостей с отображением просмотров */}
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                        {news.data.map((item) => (
+                            <article
+                                key={item.id}
+                                className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                            >
+                                <div className="relative h-44 w-full overflow-hidden bg-gray-100">
+                                    {item.cover_thumb_url ? (
+                                        <img
+                                            src={item.cover_thumb_url}
+                                            alt={item.cover_image_alt || item.title}
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="flex h-full w-full items-center justify-center text-gray-300">
+                                            <svg className="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                    )}
+                                    <span
+                                        className={`absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
+                                            item.status === 'published'
+                                                ? 'bg-green-100 text-green-800'
+                                                : 'bg-gray-100 text-gray-700'
+                                        }`}
+                                    >
+                                        {item.status === 'published' ? 'Опубликовано' : 'Черновик'}
+                                    </span>
+                                </div>
 
-                        {/* Пагинация */}
-                        {news.links && news.links.length > 3 && (
-                            <div className="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex-1 flex justify-between sm:hidden">
-                                        {news.links[0].url && (
-                                            <Link
-                                                href={news.links[0].url}
-                                                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                                            >
-                                                Предыдущая
-                                            </Link>
-                                        )}
-                                        {news.links[news.links.length - 1].url && (
-                                            <Link
-                                                href={news.links[news.links.length - 1].url}
-                                                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                                            >
-                                                Следующая
-                                            </Link>
-                                        )}
+                                <div className="flex flex-1 flex-col gap-4 p-5">
+                                    <div className="flex flex-col gap-2">
+                                        <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">{item.title}</h3>
+                                        <span className="text-xs font-medium uppercase tracking-wide text-gray-400">{item.slug}</span>
                                     </div>
-                                    <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                                        <div>
-                                            <p className="text-sm text-gray-700">
-                                                Показано <span className="font-medium">{news.from}</span> до{' '}
-                                                <span className="font-medium">{news.to}</span> из{' '}
-                                                <span className="font-medium">{news.total}</span> результатов
-                                            </p>
+
+                                    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                                        <div className="flex items-center gap-1">
+                                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5A2 2 0 003 7v12a2 2 0 002 2z" />
+                                            </svg>
+                                            {item.published_at_formatted || '—'}
                                         </div>
-                                        <div>
-                                            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                                                {news.links.map((link, index) => (
-                                                    <Link
-                                                        key={index}
-                                                        href={link.url || '#'}
-                                                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                                                            link.active
-                                                                ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                                                                : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                                                        } ${!link.url ? 'cursor-not-allowed opacity-50' : ''}`}
-                                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                                    />
-                                                ))}
-                                            </nav>
+                                        <div className="flex items-center gap-1 text-gray-600">
+                                            <svg className="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                            <span className="font-semibold text-gray-800">{item.views ?? 0}</span>
                                         </div>
+                                    </div>
+
+                                    <div className="mt-auto flex flex-wrap gap-2">
+                                        <Link
+                                            href={route('admin.news.edit', { news: item.id, type: currentType })}
+                                            className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-100"
+                                        >
+                                            Редактировать
+                                        </Link>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleToggleStatus(item)}
+                                            className="inline-flex items-center rounded-lg bg-yellow-50 px-3 py-2 text-sm font-semibold text-yellow-700 transition hover:bg-yellow-100"
+                                        >
+                                            {item.status === 'published' ? 'В черновик' : 'Опубликовать'}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleDelete(item)}
+                                            className="inline-flex items-center rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100"
+                                        >
+                                            Удалить
+                                        </button>
+                                    </div>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+
+                    {/* Пагинация */}
+                    {news.links && news.links.length > 3 && (
+                        <div className="mt-8 rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm sm:px-6">
+                            <div className="flex items-center justify-between">
+                                <div className="flex-1 flex justify-between sm:hidden">
+                                    {news.links[0].url && (
+                                        <Link
+                                            href={news.links[0].url}
+                                            className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                                        >
+                                            Предыдущая
+                                        </Link>
+                                    )}
+                                    {news.links[news.links.length - 1].url && (
+                                        <Link
+                                            href={news.links[news.links.length - 1].url}
+                                            className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                                        >
+                                            Следующая
+                                        </Link>
+                                    )}
+                                </div>
+                                <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                    <div>
+                                        <p className="text-sm text-gray-700">
+                                            Показано <span className="font-medium">{news.from}</span> до{' '}
+                                            <span className="font-medium">{news.to}</span> из{' '}
+                                            <span className="font-medium">{news.total}</span> результатов
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                            {news.links.map((link, index) => (
+                                                <Link
+                                                    key={index}
+                                                    href={link.url || '#'}
+                                                    className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                                                        link.active
+                                                            ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                                                            : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                                                    } ${!link.url ? 'cursor-not-allowed opacity-50' : ''}`}
+                                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                                />
+                                            ))}
+                                        </nav>
                                     </div>
                                 </div>
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </AdminLayout>

@@ -18,6 +18,7 @@ export default function NewsSliderWithMain({
   const [loadedImages, setLoadedImages] = useState(new Set());
   const [errorImages, setErrorImages] = useState(new Set());
   const [isLoading, setIsLoading] = useState(true);
+  const sliderEventName = 'news-slider:go-to';
   
   // Функция для преобразования путей к изображениям
   const transformImagePath = useCallback((imagePath) => {
@@ -137,6 +138,21 @@ export default function NewsSliderWithMain({
 
     return () => clearInterval(timer);
   }, [processedImages.length, autoPlay, interval, loadedImages]);
+
+  useEffect(() => {
+    const handleGoTo = (event) => {
+      const index = Number(event.detail);
+      if (!Number.isNaN(index) && index >= 0 && index < processedImages.length) {
+        setCurrentIndex(index);
+      }
+    };
+
+    window.addEventListener(sliderEventName, handleGoTo);
+
+    return () => {
+      window.removeEventListener(sliderEventName, handleGoTo);
+    };
+  }, [processedImages.length]);
 
   // Если нет изображений, возвращаем заглушку
   if (!Array.isArray(processedImages) || processedImages.length === 0) {

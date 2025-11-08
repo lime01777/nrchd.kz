@@ -1,7 +1,7 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
-import LayoutNews from '@/Layouts/LayoutNews';
 import NewsSliderWithMain from '@/Components/NewsSliderWithMain';
+import LayoutNews from '@/Layouts/LayoutNews';
 
 /**
  * Публичная страница детального просмотра новости
@@ -18,19 +18,55 @@ export default function Show({ news, relatedNews, seo }) {
         .map((item) => item.url || item.path))
         .filter(Boolean);
 
+    const publishedAt = news.published_at_full || news.published_at_formatted || '';
     const metaItems = [
-        news.published_at_formatted && {
-            label: 'Дата публикации',
-            value: news.published_at_formatted,
-        },
-        news.seo_description && {
-            label: 'Кратко',
-            value: news.seo_description,
+        publishedAt && {
+            label: 'Дата и время публикации',
+            value: publishedAt,
         },
     ].filter(Boolean);
 
+    const socialLinks = [
+        { name: 'Instagram', url: news.social_instagram, icon: 'M7 10c1.657 0 3-1.343 3-3S8.657 4 7 4 4 5.343 4 7s1.343 3 3 3z' },
+        { name: 'Facebook', url: news.social_facebook, icon: 'M18 2h-3a4 4 0 00-4 4v3H8v4h3v8h4v-8h3l1-4h-4V6a1 1 0 011-1h3z' },
+        { name: 'YouTube', url: news.social_youtube, icon: 'M10 15l5.19-3L10 9v6zm10-7.5s-.1-1.43-.58-2.06c-.56-.78-1.19-.78-1.48-.82C16.42 4.35 12 4.35 12 4.35h-.02s-4.42 0-5.92.27c-.29.04-.92.04-1.48.82-.48.63-.58 2.06-.58 2.06S4 9.07 4 10.63v1.75c0 1.56.02 3.13.02 3.13s.1 1.43.58 2.06c.56.78 1.29.75 1.62.83 1.18.12 5.78.26 5.78.26s4.42 0 5.92-.27c.29-.04.92-.04 1.48-.82.48-.63.58-2.06.58-2.06s.02-1.56.02-3.13V10.63c0-1.56-.02-3.13-.02-3.13z' },
+        { name: 'Telegram', url: news.social_telegram, icon: 'M21 3L3 10.53l5.18 1.66L9 21l4.06-4.06L17.82 21 21 3z' },
+    ].filter((link) => !!link.url);
+
+    const renderHero = () => (
+        <div className="bg-gradient-to-b from-white via-blue-50/30 to-blue-100/20 pb-10 pt-8 sm:pt-10 lg:pt-12">
+            <Head>
+                <title>{seo?.title || news.title}</title>
+                <meta name="description" content={seo?.description || news.excerpt || ''} />
+                <meta property="og:title" content={seo?.title || news.title} />
+                <meta property="og:description" content={seo?.description || news.excerpt || ''} />
+                <meta property="og:image" content={seo?.image || news.cover_url} />
+                <meta property="og:type" content="article" />
+            </Head>
+            <div className="container mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+                <div className="mt-8 grid gap-8 lg:grid-cols-[2fr,1fr] lg:items-start">
+                    <div>
+                        <span className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">
+                            {isMediaSection ? 'СМИ О НАС' : 'НОВОСТИ'}
+                        </span>
+                        <h1 className="mt-4 text-3xl font-bold leading-tight text-gray-900 sm:text-4xl lg:text-5xl">
+                            {news.title}
+                        </h1>
+                        {publishedAt && (
+                            <div className="mt-6 inline-flex items-center rounded-full bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-blue-700 shadow">
+                                Опубликовано: <span className="ml-2 text-sm normal-case text-gray-700">{publishedAt}</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
-        <LayoutNews h1={news.title} subtitle={news.excerpt} img={news.cover_url}>
+        <LayoutNews
+            renderCustomHero={renderHero}
+        >
             <Head>
                 <title>{seo?.title || news.title}</title>
                 <meta name="description" content={seo?.description || news.excerpt || ''} />
@@ -54,29 +90,6 @@ export default function Show({ news, relatedNews, seo }) {
                 </Link>
             </div>
 
-            {/* Краткая информация о публикации */}
-            {metaItems.length > 0 && (
-                <aside className="mb-10 grid gap-4 rounded-2xl border border-gray-100 bg-gray-50 p-6 shadow-sm md:grid-cols-2">
-                    {metaItems.map(({ label, value }) => (
-                        <div key={label} className="flex flex-col gap-1">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-blue-600">{label}</span>
-                            <span className="text-base text-gray-800">{value}</span>
-                        </div>
-                    ))}
-                </aside>
-            )}
-
-            {/* Обложка */}
-            {news.cover_url && (
-                <figure className="mb-12 overflow-hidden rounded-3xl bg-gray-100 shadow-lg">
-                    <img
-                        src={news.cover_url}
-                        srcSet={`${news.cover_thumb_url} 800w, ${news.cover_url} 1600w`}
-                        alt={news.cover_image_alt || news.title}
-                        className="h-auto w-full object-cover"
-                    />
-                </figure>
-            )}
 
             {/* Галерея изображений */}
             {galleryImages.length > 0 && (
@@ -89,18 +102,24 @@ export default function Show({ news, relatedNews, seo }) {
                         showCounter
                         showDots
                     />
-                    {galleryImages.length > 1 && (
-                        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                            {galleryImages.map((image, index) => (
-                                <div
-                                    key={`${image}-${index}`}
-                                    className="overflow-hidden rounded-lg border border-transparent"
-                                >
-                                    <img src={image} alt={`Миниатюра ${index + 1}`} className="h-24 w-full object-cover" />
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                        {galleryImages.length > 1 && (
+                            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                                {galleryImages.map((image, index) => (
+                                    <button
+                                        key={`${image}-${index}`}
+                                        type="button"
+                                        onClick={() => window.dispatchEvent(new CustomEvent('news-slider:go-to', { detail: index }))}
+                                        className="group overflow-hidden rounded-lg border border-transparent shadow transition hover:border-blue-200 hover:shadow-md"
+                                    >
+                                        <img
+                                            src={image}
+                                            alt={`Миниатюра ${index + 1}`}
+                                            className="h-24 w-full object-cover transition duration-300 group-hover:scale-105"
+                                        />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                 </section>
             )}
 

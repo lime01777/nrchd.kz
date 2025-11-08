@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage, router } from '@inertiajs/react';
 import LayoutNews from '@/Layouts/LayoutNews';
 import NewsImageSlider from '@/Components/NewsImageSlider';
 import { isValidVideoUrl } from '@/Utils/mediaUtils';
@@ -22,7 +22,7 @@ const t = (key, fallback = '') => {
  * Восстанавливаем карточки и поведение из прошлой версии (осень 2025)
  */
 export default function Index({ section: sectionProp }) {
-    const { news, filters = {}, section: sectionFromPage } = usePage().props;
+    const { news, filters = {}, section: sectionFromPage, availableTags = [] } = usePage().props;
     const section = sectionProp || sectionFromPage || {
         type: 'news',
         title: 'Новости',
@@ -33,8 +33,9 @@ export default function Index({ section: sectionProp }) {
     const isMediaSection = currentType === 'media';
 
     // Управляем состоянием фильтров (пока только поиск по ключевому слову)
-    const { data, setData, get, processing } = useForm({
+    const { data, setData, processing } = useForm({
         search: filters.search ?? '',
+        tag: filters.tag ?? '',
     });
 
     /**
@@ -95,27 +96,39 @@ export default function Index({ section: sectionProp }) {
         });
     }, [news]);
 
-    /**
-     * Отправка фильтров. Используем именованный роут news.index (актуальный публичный маршрут).
-     */
-    const handleSearchSubmit = (event) => {
-        event.preventDefault();
-        const listRoute = currentType === 'media' ? 'news.media' : 'news.index';
+    const fetchData = (overrides = {}) => {
+        const payload = {
+            ...data,
+            type: currentType,
+            ...overrides,
+        };
 
-        get(route(listRoute), {
+        router.get(route('news.index'), payload, {
             preserveScroll: true,
             preserveState: true,
         });
     };
 
     /**
-     * Сбрасываем поиск и обновляем список
+     * Отправка фильтров.
+     */
+    const handleSearchSubmit = (event) => {
+        event.preventDefault();
+        fetchData();
+    };
+
+    /**
+     * Сбрасываем поиск и обновляем список.
      */
     const handleReset = () => {
         setData('search', '');
-        const listRoute = currentType === 'media' ? 'news.media' : 'news.index';
+        setData('tag', '');
 
-        get(route(listRoute), {
+        router.get(route('news.index'), {
+            search: '',
+            tag: '',
+            type: currentType,
+        }, {
             preserveScroll: true,
             preserveState: true,
             onFinish: () => window?.scrollTo?.({ top: 0, behavior: 'smooth' }),
@@ -123,9 +136,31 @@ export default function Index({ section: sectionProp }) {
     };
 
     const totalCount = news?.meta?.total ?? news?.total ?? preparedNews.length;
+    const selectedTag = data.tag || '';
 
-    return (
-        <LayoutNews h1={section.title || t('news.title', 'Новости')} img="news">
+    const handleTagSelect = (tag) => {
+        const nextTag = selectedTag === tag ? '' : tag;
+
+        setData('tag', nextTag);
+        fetchData({ tag: nextTag });
+    };
+
+    const handleTypeChange = (nextType) => {
+        if (nextType === currentType) {
+            return;
+        }
+
+        router.get(route('news.index'), {
+            ...data,
+            type: nextType,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    };
+
+    const renderHero = () => (
+        <div className="bg-gradient-to-b from-white via-blue-50/30 to-blue-100/20 py-16 sm:py-20 lg:py-24">
             <Head
                 title={section.title || t('news.meta.title', 'Новости')}
                 meta={[
@@ -140,101 +175,140 @@ export default function Index({ section: sectionProp }) {
                     },
                 ]}
             />
+            <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+                <div className="overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-blue-100 p-10 shadow-lg">
+                    <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="max-w-3xl">
+                            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">
+                                {isMediaSection ? 'СМИ О НАС' : 'НОВОСТИ'}
+                            </p>
+                            <h1 className="mt-4 text-4xl font-extrabold leading-tight text-gray-900 lg:text-5xl">
+                                {section.subtitle || (isMediaSection ? 'Публикации в ведущих СМИ' : 'Актуальные события ННЦРЗ')}
+                            </h1>
+                            <p className="mt-5 text-lg leading-relaxed text-gray-600">
+                                {section.description ||
+                                    (isMediaSection
+                                        ? 'Читайте статьи и интервью о деятельности центра из авторитетных источников.'
+                                        : 'Следите за обновлениями и важными новостями Национального научного центра развития здравоохранения.')}
+                            </p>
 
-            {/* Хиро-блок с навигацией между разделами */}
-            <div className="mb-10 overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-blue-100 p-8 shadow-sm">
-                <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                    <div className="max-w-2xl">
-                        <p className="text-sm uppercase tracking-[0.2em] text-blue-600">
-                            {isMediaSection ? 'СМИ О НАС' : 'НОВОСТИ'}
-                        </p>
-                        <h2 className="mt-3 text-4xl font-extrabold text-gray-900">
-                            {section.subtitle || (isMediaSection ? 'Публикации в ведущих СМИ' : 'Актуальные события ННЦРЗ')}
-                        </h2>
-                        <p className="mt-4 text-base text-gray-600">
-                            {section.description ||
-                                (isMediaSection
-                                    ? 'Читайте статьи и интервью о деятельности центра из авторитетных источников.'
-                                    : 'Следите за обновлениями и важными новостями Национального научного центра развития здравоохранения.')}
-                        </p>
-                        <div className="mt-6 inline-flex items-center rounded-full bg-white/70 px-4 py-2 text-sm font-medium text-blue-700 shadow">
-                            Всего публикаций: <span className="ml-2 text-base font-semibold">{totalCount}</span>
+                            <form
+                                className="mt-8 w-full rounded-2xl border border-white/80 bg-white/70 p-6 shadow-inner backdrop-blur"
+                                onSubmit={handleSearchSubmit}
+                            >
+                                <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:gap-6">
+                                    <div className="flex-1 min-w-0">
+                                    <label className="block text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                                        {isMediaSection
+                                            ? 'Поиск по источнику или заголовку'
+                                            : t('news.filters.search.label', 'Поиск по ключевому слову')}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={data.search}
+                                        onChange={(event) => setData('search', event.target.value)}
+                                        placeholder={
+                                            isMediaSection
+                                                ? 'Например: Forbes, Kazinform, интервью'
+                                                : t('news.filters.search.placeholder', 'Например: медицина будущего')
+                                        }
+                                            className="mt-2 w-full rounded-xl border border-blue-100 px-4 py-3 text-base shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                                    />
+                                    </div>
+                                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                                        <button
+                                            type="submit"
+                                            disabled={processing}
+                                            className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                                        >
+                                            {processing
+                                                ? t('news.filters.search.processing', 'Поиск...')
+                                                : t('news.filters.search.cta', 'Найти')}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handleReset}
+                                            className="inline-flex items-center justify-center rounded-xl border border-blue-100 bg-white px-5 py-3 text-sm font-semibold text-blue-600 transition hover:border-blue-200 hover:bg-blue-50"
+                                        >
+                                            {t('news.filters.search.reset', 'Сбросить')}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            {availableTags.length > 0 && (
+                                <div className="mt-8">
+                                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                                        {isMediaSection ? 'Упоминания' : 'Теги новостей'}
+                                    </p>
+                                    <div className="mt-3 flex flex-wrap gap-2">
+                                        {availableTags.map((tag) => {
+                                            const isActive = selectedTag === tag;
+                                            return (
+                                                <button
+                                                    key={tag}
+                                                    type="button"
+                                                    onClick={() => handleTagSelect(tag)}
+                                                    className={`inline-flex items-center rounded-full border px-4 py-2 text-sm font-medium transition ${
+                                                        isActive
+                                                            ? 'border-blue-600 bg-blue-600 text-white shadow'
+                                                            : 'border-transparent bg-white/70 text-gray-700 hover:border-blue-200 hover:text-blue-600'
+                                                    }`}
+                                                >
+                                                    #{tag}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                    </div>
 
-                    {/* Кнопки переключения разделов */}
-                    <div className="flex flex-col gap-3 md:items-end">
-                        <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                            Разделы
-                        </span>
-                        <div className="flex flex-wrap gap-2">
-                            <Link
-                                href={route('news.index')}
-                                className={`inline-flex items-center rounded-xl border px-5 py-2 text-sm font-semibold transition ${
-                                    currentType === 'news'
-                                        ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200'
-                                        : 'border-transparent bg-white text-gray-600 hover:border-blue-100 hover:text-blue-600'
-                                }`}
-                            >
-                                Новости
-                            </Link>
-                            <Link
-                                href={route('news.media')}
-                                className={`inline-flex items-center rounded-xl border px-5 py-2 text-sm font-semibold transition ${
-                                    currentType === 'media'
-                                        ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200'
-                                        : 'border-transparent bg-white text-gray-600 hover:border-blue-100 hover:text-blue-600'
-                                }`}
-                            >
-                                СМИ о нас
-                            </Link>
+                        {/* Кнопки переключения разделов */}
+                        <div className="flex flex-col gap-3 md:items-end">
+                            <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                Разделы
+                            </span>
+                            <div className="relative flex w-full max-w-xs items-center rounded-full border border-blue-100 bg-white/90 p-1 shadow-inner backdrop-blur">
+                                <span
+                                    className={`pointer-events-none absolute inset-y-0 left-0 w-1/2 rounded-full bg-blue-600 shadow transition-transform duration-300 ease-out ${
+                                        currentType === 'media' ? 'translate-x-full' : ''
+                                    }`}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => handleTypeChange('news')}
+                                    className={`relative z-10 flex-1 rounded-full px-4 py-2 text-sm font-semibold transition ${
+                                        currentType === 'news'
+                                            ? 'text-white'
+                                            : 'text-gray-600 hover:text-blue-600'
+                                    }`}
+                                >
+                                    Новости
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => handleTypeChange('media')}
+                                    className={`relative z-10 flex-1 rounded-full px-4 py-2 text-sm font-semibold transition ${
+                                        currentType === 'media'
+                                            ? 'text-white'
+                                            : 'text-gray-600 hover:text-blue-600'
+                                    }`}
+                                >
+                                    СМИ о нас
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    );
 
-            {/* Поиск по разделу */}
-            <form
-                className="mb-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
-                onSubmit={handleSearchSubmit}
-            >
-                <label className="block text-sm font-medium text-gray-700">
-                    {isMediaSection
-                        ? 'Поиск по названию источника или заголовку'
-                        : t('news.filters.search.label', 'Поиск по ключевому слову')}
-                </label>
-                <div className="mt-3 flex flex-col gap-3 sm:flex-row">
-                    <input
-                        type="text"
-                        value={data.search}
-                        onChange={(event) => setData('search', event.target.value)}
-                        placeholder={
-                            isMediaSection
-                                ? 'Например: Forbes, КазИнформ, интервью'
-                                : t('news.filters.search.placeholder', 'Например: медицина будущего')
-                        }
-                        className="w-full rounded-xl border border-gray-200 px-4 py-3 text-base shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
-                    />
-                    <div className="flex flex-row gap-2 sm:flex-shrink-0">
-                        <button
-                            type="submit"
-                            disabled={processing}
-                            className="flex h-12 flex-1 items-center justify-center rounded-xl bg-blue-600 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-                        >
-                            {processing
-                                ? t('news.filters.search.processing', 'Поиск...')
-                                : t('news.filters.search.cta', 'Найти')}
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleReset}
-                            className="flex h-12 flex-1 items-center justify-center rounded-xl border border-gray-200 px-6 text-sm font-semibold text-gray-600 transition hover:border-gray-300 hover:bg-gray-50"
-                        >
-                            {t('news.filters.search.reset', 'Сбросить')}
-                        </button>
-                    </div>
-                </div>
-            </form>
+    return (
+        <LayoutNews
+            renderCustomHero={renderHero}
+        >
 
             {/* Сетка новостей */}
             {preparedNews.length === 0 ? (
