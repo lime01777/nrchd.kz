@@ -21,8 +21,16 @@ const t = (key, fallback = '') => {
  * Публичная страница списка новостей
  * Восстанавливаем карточки и поведение из прошлой версии (осень 2025)
  */
-export default function Index() {
-    const { news, filters = {} } = usePage().props;
+export default function Index({ section: sectionProp }) {
+    const { news, filters = {}, section: sectionFromPage } = usePage().props;
+    const section = sectionProp || sectionFromPage || {
+        type: 'news',
+        title: 'Новости',
+        subtitle: '',
+        description: '',
+    };
+    const currentType = section.type || 'news';
+    const isMediaSection = currentType === 'media';
 
     // Управляем состоянием фильтров (пока только поиск по ключевому слову)
     const { data, setData, get, processing } = useForm({
@@ -92,7 +100,9 @@ export default function Index() {
      */
     const handleSearchSubmit = (event) => {
         event.preventDefault();
-        get(route('news.index'), {
+        const listRoute = currentType === 'media' ? 'news.media' : 'news.index';
+
+        get(route(listRoute), {
             preserveScroll: true,
             preserveState: true,
         });
@@ -103,7 +113,9 @@ export default function Index() {
      */
     const handleReset = () => {
         setData('search', '');
-        get(route('news.index'), {
+        const listRoute = currentType === 'media' ? 'news.media' : 'news.index';
+
+        get(route(listRoute), {
             preserveScroll: true,
             preserveState: true,
             onFinish: () => window?.scrollTo?.({ top: 0, behavior: 'smooth' }),
@@ -113,49 +125,94 @@ export default function Index() {
     const totalCount = news?.meta?.total ?? news?.total ?? preparedNews.length;
 
     return (
-        <LayoutNews h1={t('news.title', 'Новости')} img="news">
+        <LayoutNews h1={section.title || t('news.title', 'Новости')} img="news">
             <Head
-                title={t('news.meta.title', 'Новости')}
+                title={section.title || t('news.meta.title', 'Новости')}
                 meta={[
                     {
                         name: 'description',
-                        content: t(
-                            'news.meta.description',
-                            'Последние новости Национального научного центра развития здравоохранения.'
-                        ),
+                        content:
+                            section.description ||
+                            t(
+                                'news.meta.description',
+                                'Последние новости Национального научного центра развития здравоохранения.'
+                            ),
                     },
                 ]}
             />
 
-            {/* Заголовок и статистика */}
-            <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <p className="text-sm uppercase tracking-wide text-blue-600">
-                        {t('news.total.label', 'Всего публикаций')}
-                    </p>
-                    <h2 className="text-3xl font-semibold text-gray-900">
-                        {totalCount}
-                    </h2>
-                </div>
-                <div className="rounded-2xl bg-blue-50 px-6 py-4 text-sm text-blue-700">
-                    {t('news.total.hint', 'Следите за обновлениями — мы публикуем свежие новости каждую неделю.')}
+            {/* Хиро-блок с навигацией между разделами */}
+            <div className="mb-10 overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-blue-100 p-8 shadow-sm">
+                <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                    <div className="max-w-2xl">
+                        <p className="text-sm uppercase tracking-[0.2em] text-blue-600">
+                            {isMediaSection ? 'СМИ О НАС' : 'НОВОСТИ'}
+                        </p>
+                        <h2 className="mt-3 text-4xl font-extrabold text-gray-900">
+                            {section.subtitle || (isMediaSection ? 'Публикации в ведущих СМИ' : 'Актуальные события ННЦРЗ')}
+                        </h2>
+                        <p className="mt-4 text-base text-gray-600">
+                            {section.description ||
+                                (isMediaSection
+                                    ? 'Читайте статьи и интервью о деятельности центра из авторитетных источников.'
+                                    : 'Следите за обновлениями и важными новостями Национального научного центра развития здравоохранения.')}
+                        </p>
+                        <div className="mt-6 inline-flex items-center rounded-full bg-white/70 px-4 py-2 text-sm font-medium text-blue-700 shadow">
+                            Всего публикаций: <span className="ml-2 text-base font-semibold">{totalCount}</span>
+                        </div>
+                    </div>
+
+                    {/* Кнопки переключения разделов */}
+                    <div className="flex flex-col gap-3 md:items-end">
+                        <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                            Разделы
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                            <Link
+                                href={route('news.index')}
+                                className={`inline-flex items-center rounded-xl border px-5 py-2 text-sm font-semibold transition ${
+                                    currentType === 'news'
+                                        ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200'
+                                        : 'border-transparent bg-white text-gray-600 hover:border-blue-100 hover:text-blue-600'
+                                }`}
+                            >
+                                Новости
+                            </Link>
+                            <Link
+                                href={route('news.media')}
+                                className={`inline-flex items-center rounded-xl border px-5 py-2 text-sm font-semibold transition ${
+                                    currentType === 'media'
+                                        ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200'
+                                        : 'border-transparent bg-white text-gray-600 hover:border-blue-100 hover:text-blue-600'
+                                }`}
+                            >
+                                СМИ о нас
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {/* Поиск по новостям */}
+            {/* Поиск по разделу */}
             <form
                 className="mb-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
                 onSubmit={handleSearchSubmit}
             >
                 <label className="block text-sm font-medium text-gray-700">
-                    {t('news.filters.search.label', 'Поиск по ключевому слову')}
+                    {isMediaSection
+                        ? 'Поиск по названию источника или заголовку'
+                        : t('news.filters.search.label', 'Поиск по ключевому слову')}
                 </label>
                 <div className="mt-3 flex flex-col gap-3 sm:flex-row">
                     <input
                         type="text"
                         value={data.search}
                         onChange={(event) => setData('search', event.target.value)}
-                        placeholder={t('news.filters.search.placeholder', 'Например: медицина будущего')}
+                        placeholder={
+                            isMediaSection
+                                ? 'Например: Forbes, КазИнформ, интервью'
+                                : t('news.filters.search.placeholder', 'Например: медицина будущего')
+                        }
                         className="w-full rounded-xl border border-gray-200 px-4 py-3 text-base shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
                     />
                     <div className="flex flex-row gap-2 sm:flex-shrink-0">
@@ -164,7 +221,9 @@ export default function Index() {
                             disabled={processing}
                             className="flex h-12 flex-1 items-center justify-center rounded-xl bg-blue-600 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                            {processing ? t('news.filters.search.processing', 'Поиск...') : t('news.filters.search.cta', 'Найти')}
+                            {processing
+                                ? t('news.filters.search.processing', 'Поиск...')
+                                : t('news.filters.search.cta', 'Найти')}
                         </button>
                         <button
                             type="button"
@@ -184,10 +243,12 @@ export default function Index() {
                         {t('news.empty.title', 'Новости не найдены')}
                     </h3>
                     <p className="mt-2 text-gray-600">
-                        {t(
-                            'news.empty.description',
-                            'Попробуйте изменить поисковый запрос или зайдите позже — мы уже готовим новые публикации.'
-                        )}
+                        {isMediaSection
+                            ? 'Мы пока не добавили материалы СМИ. Проверьте позже или предложите публикацию.'
+                            : t(
+                                'news.empty.description',
+                                'Попробуйте изменить поисковый запрос или зайдите позже — мы уже готовим новые публикации.'
+                            )}
                     </p>
                 </div>
             ) : (

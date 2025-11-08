@@ -36,6 +36,7 @@ class NewsRequest extends FormRequest
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string|max:255',
             'status' => 'required|in:draft,published',
+            'type' => 'nullable|string|in:news,media',
             'published_at' => 'nullable|date',
             'media' => 'nullable',
         ];
@@ -75,6 +76,7 @@ class NewsRequest extends FormRequest
             'status.required' => 'Статус новости обязателен для заполнения.',
             'status.in' => 'Недопустимый статус новости. Допустимые значения: draft, published.',
             'published_at.date' => 'Дата публикации должна быть корректной датой.',
+            'type.in' => 'Недопустимый тип публикации.',
         ];
     }
 
@@ -96,6 +98,7 @@ class NewsRequest extends FormRequest
             'seo_description' => 'SEO описание',
             'status' => 'статус',
             'published_at' => 'дата публикации',
+            'type' => 'тип публикации',
         ];
     }
 

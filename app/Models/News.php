@@ -36,6 +36,17 @@ use Illuminate\Support\Facades\Log;
  */
 class News extends Model
 {
+    /** Тип публикации: обычные новости. */
+    public const TYPE_NEWS = 'news';
+
+    /** Тип публикации: материалы СМИ о нас. */
+    public const TYPE_MEDIA = 'media';
+
+    /** Доступные типы публикаций. */
+    public const TYPES = [
+        self::TYPE_NEWS,
+        self::TYPE_MEDIA,
+    ];
     use HasFactory, SoftDeletes;
 
     /**
@@ -61,6 +72,7 @@ class News extends Model
         'seo_title',
         'seo_description',
         'status',
+        'type',
         'published_at',
         'created_by',
         // Старые поля для обратной совместимости
@@ -84,6 +96,7 @@ class News extends Model
         'publish_date' => 'datetime', // Для обратной совместимости
         'views' => 'integer',
         'category' => 'array',
+        'type' => 'string',
         'tags' => 'array',
     ];
 
@@ -102,12 +115,19 @@ class News extends Model
             if (empty($news->created_by) && auth()->check()) {
                 $news->created_by = auth()->id();
             }
+            // Гарантируем корректный тип публикации.
+            if (empty($news->type) || !in_array($news->type, self::TYPES, true)) {
+                $news->type = self::TYPE_NEWS;
+            }
         });
 
         static::updating(function ($news) {
             // Обновляем slug только если изменился title и slug не был изменен вручную
             if ($news->isDirty('title') && !$news->isDirty('slug')) {
                 $news->slug = static::generateUniqueSlug($news->title, $news->id);
+            }
+            if ($news->isDirty('type') && !in_array($news->type, self::TYPES, true)) {
+                $news->type = self::TYPE_NEWS;
             }
         });
     }
@@ -202,6 +222,18 @@ class News extends Model
         return $query->where('status', 'published')
             ->when(config('app.env') !== 'local', fn($q) => $q->whereNotNull('published_at'))
             ->orderByDesc('published_at');
+    }
+
+    /**
+     * Скоуп: фильтрация по типу публикации.
+     */
+    public function scopeOfType(Builder $query, string $type): Builder
+    {
+        if (!in_array($type, self::TYPES, true)) {
+            $type = self::TYPE_NEWS;
+        }
+
+        return $query->where('type', $type);
     }
 
     /**

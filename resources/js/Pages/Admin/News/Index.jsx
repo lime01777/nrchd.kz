@@ -5,19 +5,21 @@ import { Link, router } from '@inertiajs/react';
 /**
  * Страница списка новостей в админке
  */
-export default function Index({ news, filters }) {
+export default function Index({ news, filters, section }) {
     const [searchTerm, setSearchTerm] = useState(filters?.search || '');
     const [statusFilter, setStatusFilter] = useState(filters?.status || '');
+    const currentType = section?.type || 'news';
 
     /**
      * Применение фильтров
      */
     const applyFilters = () => {
-        router.get(route('admin.news.index'), {
+        router.get(route('admin.news.index', { type: currentType }), {
             search: searchTerm,
             status: statusFilter,
             published_from: filters?.published_from,
             published_to: filters?.published_to,
+            type: currentType,
         }, {
             preserveState: true,
             replace: true,
@@ -30,7 +32,9 @@ export default function Index({ news, filters }) {
     const resetFilters = () => {
         setSearchTerm('');
         setStatusFilter('');
-        router.get(route('admin.news.index'), {}, {
+        router.get(route('admin.news.index', { type: currentType }), {
+            type: currentType,
+        }, {
             preserveState: true,
             replace: true,
         });
@@ -41,7 +45,7 @@ export default function Index({ news, filters }) {
      */
     const handleDelete = (newsItem) => {
         if (confirm(`Вы уверены, что хотите удалить новость "${newsItem.title}"?`)) {
-            router.delete(route('admin.news.destroy', newsItem.id), {
+            router.delete(route('admin.news.destroy', { news: newsItem.id, type: currentType }), {
                 preserveScroll: true,
             });
         }
@@ -51,23 +55,28 @@ export default function Index({ news, filters }) {
      * Переключение статуса
      */
     const handleToggleStatus = (newsItem) => {
-        router.patch(route('admin.news.toggle', newsItem.id), {}, {
+        router.patch(route('admin.news.toggle', { news: newsItem.id, type: currentType }), {}, {
             preserveScroll: true,
         });
     };
 
     return (
-        <AdminLayout>
+        <AdminLayout title={section?.title}>
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Заголовок */}
                     <div className="flex justify-between items-center mb-6">
-                        <h1 className="text-3xl font-bold text-gray-900">Новости</h1>
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-900">{section?.title || 'Новости'}</h1>
+                            {section?.subtitle && (
+                                <p className="mt-1 text-sm text-gray-500">{section.subtitle}</p>
+                            )}
+                        </div>
                         <Link
-                            href={route('admin.news.create')}
+                            href={route('admin.news.create', { type: currentType })}
                             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                         >
-                            Создать новость
+                            {section?.createLabel || 'Создать новость'}
                         </Link>
                     </div>
 
@@ -190,7 +199,7 @@ export default function Index({ news, filters }) {
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div className="flex justify-end gap-2">
                                                 <Link
-                                                    href={route('admin.news.edit', item.id)}
+                                                    href={route('admin.news.edit', { news: item.id, type: currentType })}
                                                     className="text-blue-600 hover:text-blue-900"
                                                 >
                                                     Редактировать

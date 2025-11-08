@@ -3,10 +3,20 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
 
 export default function AdminLayout({ children, title }) {
-  const { auth } = usePage().props;
+  const page = usePage();
+  const { auth } = page.props;
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const isCurrent = (...patterns) => patterns.some((pattern) => route().current(pattern));
+
+  const currentUrl = page.url || '';
+  const queryString = currentUrl.includes('?') ? currentUrl.split('?')[1] : '';
+  const searchParams = new URLSearchParams(queryString);
+  const pageSectionType = searchParams.get('type')
+    || page.props?.filters?.type
+    || page.props?.section?.type
+    || 'news';
+  const isNewsRoute = route().current('admin.news.*');
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -44,13 +54,30 @@ export default function AdminLayout({ children, title }) {
             Главная
           </Link>
           <Link 
-            href={route('admin.news.index')} 
-            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.news.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
+            href={route('admin.news.index', { type: 'news' })} 
+            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${
+              isNewsRoute && pageSectionType === 'news'
+                ? 'text-white bg-blue-500'
+                : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'
+            }`}
           >
             <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
             </svg>
             Новости
+          </Link>
+          <Link
+            href={route('admin.news.index', { type: 'media' })}
+            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${
+              isNewsRoute && pageSectionType === 'media'
+                ? 'text-white bg-blue-500'
+                : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'
+            }`}
+          >
+            <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
+            СМИ о нас
           </Link>
           <Link 
             href={route('admin.admin.documents')} 

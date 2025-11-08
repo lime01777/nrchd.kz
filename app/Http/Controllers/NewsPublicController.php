@@ -25,44 +25,15 @@ class NewsPublicController extends Controller
      */
     public function index(Request $request): Response
     {
-        $query = News::published();
+        return $this->renderListing($request, News::TYPE_NEWS);
+    }
 
-        // Поиск
-        if ($request->filled('search')) {
-            $query->search($request->input('search'));
-        }
-
-        // Пагинация: 12 новостей на страницу
-        $news = $query->paginate(12);
-
-        // Преобразуем данные для фронтенда
-        $news->getCollection()->transform(function ($item) {
-            $media = $this->mediaService->normalizeMediaForFrontend($item->images ?? []);
-            $imagePaths = collect($media)
-                ->where('type', 'image')
-                ->pluck('url')
-                ->values()
-                ->all();
-
-            return [
-                'id' => $item->id,
-                'title' => $item->title,
-                'slug' => $item->slug,
-                'excerpt' => $item->excerpt,
-                'cover_url' => $item->cover_url,
-                'cover_thumb_url' => $item->cover_thumb_url,
-                'cover_image_alt' => $item->cover_image_alt,
-                'published_at' => $item->published_at?->format('Y-m-d H:i:s'),
-                'published_at_formatted' => $item->published_at?->format('d.m.Y'),
-                'media' => $media,
-                'images' => $imagePaths,
-            ];
-        });
-
-        return Inertia::render('News/Index', [
-            'news' => $news,
-            'filters' => $request->only(['search']),
-        ]);
+    /**
+     * Отображение списка материалов «СМИ о нас».
+     */
+    public function media(Request $request): Response
+    {
+        return $this->renderListing($request, News::TYPE_MEDIA);
     }
 
     /**
@@ -80,6 +51,7 @@ class NewsPublicController extends Controller
 
         // Получаем 3 последние опубликованные новости (кроме текущей)
         $relatedNews = News::published()
+            ->ofType($news->type ?? News::TYPE_NEWS)
             ->where('id', '!=', $news->id)
             ->orderByDesc('published_at')
             ->limit(3)
@@ -97,6 +69,7 @@ class NewsPublicController extends Controller
                     'title' => $item->title,
                     'slug' => $item->slug,
                     'excerpt' => $item->excerpt,
+                    'type' => $item->type,
                     'cover_url' => $item->cover_url,
                     'cover_thumb_url' => $item->cover_thumb_url,
                     'cover_image_alt' => $item->cover_image_alt,
@@ -130,6 +103,7 @@ class NewsPublicController extends Controller
                 'title' => $news->title,
                 'slug' => $news->slug,
                 'excerpt' => $news->excerpt,
+                'type' => $news->type,
                 'body' => $news->body,
                 'cover_url' => $news->cover_url,
                 'cover_thumb_url' => $news->cover_thumb_url,
@@ -154,6 +128,61 @@ class NewsPublicController extends Controller
             'og_title' => $seoTitle,
             'og_description' => $seoDescription,
             'og_image' => $coverImageUrl,
+        ]);
+    }
+    /**
+     * Общий рендерер списков новостей.
+     */
+    private function renderListing(Request $request, string $type): Response
+    {
+        $query = News::published()->ofType($type);
+
+        if ($request->filled('search')) {
+            $query->search($request->input('search'));
+        }
+
+        $news = $query->paginate(12)->withQueryString();
+
+        $news->getCollection()->transform(function ($item) {
+            $media = $this->mediaService->normalizeMediaForFrontend($item->images ?? []);
+            $imagePaths = collect($media)
+                ->where('type', 'image')
+                ->pluck('url')
+                ->values()
+                ->all();
+
+            return [
+                'id' => $item->id,
+                'title' => $item->title,
+                'slug' => $item->slug,
+                'excerpt' => $item->excerpt,
+                'body' => $item->body,
+                'cover_url' => $item->cover_url,
+                'cover_thumb_url' => $item->cover_thumb_url,
+                'cover_image_alt' => $item->cover_image_alt,
+                'published_at' => $item->published_at?->format('Y-m-d H:i:s'),
+                'published_at_formatted' => $item->published_at?->format('d.m.Y'),
+                'media' => $media,
+                'images' => $imagePaths,
+                'type' => $item->type,
+            ];
+        });
+
+        $isMedia = $type === News::TYPE_MEDIA;
+
+        return Inertia::render('News/Index', [
+            'news' => $news,
+            'filters' => array_merge($request->only(['search']), ['type' => $type]),
+            'section' => [
+                'type' => $type,
+                'title' => $isMedia ? 'СМИ о нас' : 'Новости',
+                'subtitle' => $isMedia
+                    ? 'Мы собрали публикации и упоминания ННЦРЗ в ведущих СМИ.'
+                    : 'Последние материалы и анонсы Национального научного центра развития здравоохранения.',
+                'description' => $isMedia
+                    ? 'Читайте, что пишут о нас в прессе и профессиональных изданиях.'
+                    : 'Будьте в курсе событий и свежих проектов центра.',
+            ],
         ]);
     }
 }

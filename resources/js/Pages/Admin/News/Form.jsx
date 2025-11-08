@@ -15,7 +15,7 @@ import LinkExtension from '@tiptap/extension-link';
 /**
  * Форма создания/редактирования новости с поддержкой галереи.
  */
-export default function Form({ news = null, media: initialMediaProp = [] }) {
+export default function Form({ news = null, media: initialMediaProp = [], section = null, type = 'news' }) {
     const isEditing = Boolean(news);
     const initialMedia = Array.isArray(news?.media)
         ? news.media
@@ -24,6 +24,7 @@ export default function Form({ news = null, media: initialMediaProp = [] }) {
             : [];
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+    const currentType = type || section?.type || news?.type || 'news';
 
     const { data, setData, processing, errors, reset } = useForm({
         title: news?.title || '',
@@ -37,6 +38,7 @@ export default function Form({ news = null, media: initialMediaProp = [] }) {
         status: news?.status || 'draft',
         published_at: news?.published_at || '',
         media: initialMedia,
+        type: currentType,
     });
 
     const [coverFile, setCoverFile] = useState(null);
@@ -147,6 +149,7 @@ export default function Form({ news = null, media: initialMediaProp = [] }) {
             media,
             cover: coverFile ?? data.cover,
             body: editor ? editor.getHTML() : data.body,
+            type: currentType,
         };
 
         if (!coverFile) {
@@ -168,13 +171,13 @@ export default function Form({ news = null, media: initialMediaProp = [] }) {
         };
 
         if (isEditing) {
-            router.post(route('admin.news.update', news.id), payload, {
+            router.post(route('admin.news.update', { news: news.id, type: currentType }), payload, {
                 forceFormData: true,
                 onFinish,
                 onSuccess,
             });
         } else {
-            router.post(route('admin.news.store'), payload, {
+            router.post(route('admin.news.store', { type: currentType }), payload, {
                 forceFormData: true,
                 onFinish,
                 onSuccess,
@@ -188,19 +191,24 @@ export default function Form({ news = null, media: initialMediaProp = [] }) {
     }, [submitForm]);
 
     return (
-        <AdminLayout>
+        <AdminLayout title={section?.title}>
             <div className="py-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="mb-6">
                         <h1 className="text-3xl font-bold text-gray-900">
-                            {isEditing ? 'Редактировать новость' : 'Создать новость'}
+                            {isEditing
+                                ? (section?.editLabel || 'Редактировать новость')
+                                : (section?.createLabel || 'Создать новость')}
                         </h1>
+                        {section?.subtitle && (
+                            <p className="mt-1 text-sm text-gray-500">{section.subtitle}</p>
+                        )}
                         <Link
-                            href={route('admin.news.index')}
+                            href={route('admin.news.index', { type: currentType })}
                             className="mt-2 inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
                         >
                             <span className="mr-2">←</span>
-                            Вернуться к списку
+                            {section?.returnLabel || 'Вернуться к списку'}
                         </Link>
                     </div>
 
@@ -398,7 +406,7 @@ export default function Form({ news = null, media: initialMediaProp = [] }) {
 
                         <div className="flex flex-wrap justify-end gap-4">
                             <Link
-                                href={route('admin.news.index')}
+                                href={route('admin.news.index', { type: currentType })}
                                 className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
                             >
                                 Отмена
@@ -408,7 +416,11 @@ export default function Form({ news = null, media: initialMediaProp = [] }) {
                                 disabled={processing || isPublishing}
                                 className="px-4 py-2"
                             >
-                                {processing ? 'Сохранение...' : isEditing ? 'Сохранить изменения' : 'Создать новость'}
+                                {processing
+                                    ? 'Сохранение...'
+                                    : isEditing
+                                        ? 'Сохранить изменения'
+                                        : (section?.createLabel || 'Создать запись')}
                             </PrimaryButton>
                             {!isEditing && (
                                 <PrimaryButton

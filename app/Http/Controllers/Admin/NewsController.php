@@ -39,7 +39,8 @@ class NewsController extends Controller
      */
     public function index(Request $request): Response
     {
-        $query = News::query();
+        $type = $this->resolveType($request->input('type'));
+        $query = News::query()->ofType($type);
 
         // Фильтр по статусу
         if ($request->filled('status')) {
@@ -87,7 +88,11 @@ class NewsController extends Controller
 
         return Inertia::render('Admin/News/Index', [
             'news' => $news,
-            'filters' => $request->only(['status', 'search', 'published_from', 'published_to']),
+            'filters' => array_merge(
+                $request->only(['status', 'search', 'published_from', 'published_to']),
+                ['type' => $type]
+            ),
+            'section' => $this->sectionMeta($type),
         ]);
     }
 
@@ -98,9 +103,13 @@ class NewsController extends Controller
      */
     public function create(): Response
     {
+        $type = $this->resolveType(request()->input('type'));
+
         return Inertia::render('Admin/News/Form', [
             'news' => null,
             'media' => [],
+            'section' => $this->sectionMeta($type),
+            'type' => $type,
         ]);
     }
 
@@ -124,11 +133,14 @@ class NewsController extends Controller
             $news->cover_image_alt = $validated['cover_image_alt'] ?? null;
             $news->seo_title = $validated['seo_title'] ?? null;
             $news->seo_description = $validated['seo_description'] ?? null;
+            $type = $this->resolveType($request->input('type'));
+
             $news->status = $validated['status'];
             $news->published_at = $validated['status'] === 'published' 
                 ? ($validated['published_at'] ?? now())
                 : null;
             $news->created_by = auth()->id();
+            $news->type = $type;
 
             $mediaItems = $this->parseMediaInput($request->input('media'));
             if (!empty($mediaItems)) {
@@ -149,7 +161,7 @@ class NewsController extends Controller
             ]);
 
             return redirect()
-                ->route('admin.news.index')
+                ->route('admin.news.index', ['type' => $type])
                 ->with('success', 'Новость успешно создана');
 
         } catch (\Exception $e) {
@@ -172,6 +184,8 @@ class NewsController extends Controller
      */
     public function edit(News $news): Response
     {
+        $meta = $this->sectionMeta($news->type ?? News::TYPE_NEWS);
+
         return Inertia::render('Admin/News/Form', [
             'news' => [
                 'id' => $news->id,
@@ -189,6 +203,8 @@ class NewsController extends Controller
                 'media' => $this->mediaService->normalizeMediaForFrontend($news->images ?? []),
             ],
             'media' => $this->mediaService->normalizeMediaForFrontend($news->images ?? []),
+            'section' => $meta,
+            'type' => $news->type ?? News::TYPE_NEWS,
         ]);
     }
 
@@ -218,6 +234,8 @@ class NewsController extends Controller
             $news->seo_title = $validated['seo_title'] ?? null;
             $news->seo_description = $validated['seo_description'] ?? null;
             $news->status = $validated['status'];
+            $newsType = $this->resolveType($request->input('type', $news->type));
+            $news->type = $newsType;
             
             // Обновляем дату публикации
             if ($validated['status'] === 'published') {
@@ -249,7 +267,7 @@ class NewsController extends Controller
             ]);
 
             return redirect()
-                ->route('admin.news.index')
+                ->route('admin.news.index', ['type' => $newsType])
                 ->with('success', 'Новость успешно обновлена');
 
         } catch (\Exception $e) {
@@ -284,8 +302,10 @@ class NewsController extends Controller
                 'title' => $news->title,
             ]);
 
+            $type = $news->type ?? News::TYPE_NEWS;
+
             return redirect()
-                ->route('admin.news.index')
+                ->route('admin.news.index', ['type' => $type])
                 ->with('success', 'Новость успешно удалена');
 
         } catch (\Exception $e) {
@@ -606,5 +626,33 @@ class NewsController extends Controller
 
             return $item;
         }, $media, array_keys($media))));
+    }
+    /**
+     * Возвращает тип публикации с учетом допустимых значений.
+     */
+    private function resolveType(?string $type): string
+    {
+        return in_array($type, News::TYPES, true)
+            ? $type
+            : News::TYPE_NEWS;
+    }
+
+    /**
+     * Возвращает метаданные для текущего раздела (новости или СМИ о нас).
+     */
+    private function sectionMeta(string $type): array
+    {
+        $isMedia = $type === News::TYPE_MEDIA;
+
+        return [
+            'type' => $type,
+            'title' => $isMedia ? 'СМИ о нас' : 'Новости',
+            'createLabel' => $isMedia ? 'Добавить материал из СМИ' : 'Создать новость',
+            'editLabel' => $isMedia ? 'Редактировать материал из СМИ' : 'Редактировать новость',
+            'returnLabel' => $isMedia ? 'Вернуться к списку материалов' : 'Вернуться к списку',
+            'subtitle' => $isMedia
+                ? 'Управляйте публикациями СМИ, в которых упоминается ННЦРЗ.'
+                : 'Управляйте новостями и анонсами центра.',
+        ];
     }
 }

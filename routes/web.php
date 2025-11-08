@@ -449,6 +449,7 @@ Route::get('/medical-tourism/contacts', function () {
 
 // Публичные маршруты для новостей
 Route::get('/news', [App\Http\Controllers\NewsPublicController::class, 'index'])->name('news.index');
+Route::get('/news/media', [App\Http\Controllers\NewsPublicController::class, 'media'])->name('news.media');
 Route::get('/news/{news:slug}', [App\Http\Controllers\NewsPublicController::class, 'show'])->name('news.show');
 
 // Маршруты для клиник

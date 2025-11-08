@@ -8,6 +8,7 @@ import NewsSliderWithMain from '@/Components/NewsSliderWithMain';
  */
 export default function Show({ news, relatedNews, seo }) {
     const mediaItems = news.media || [];
+    const isMediaSection = news.type === 'media';
     const galleryImages = (news.gallery_images || mediaItems
         .filter((item) => item.type === 'image')
         .map((item) => item.url || item.path))
@@ -130,10 +131,12 @@ export default function Show({ news, relatedNews, seo }) {
                 dangerouslySetInnerHTML={{ __html: news.body }}
             />
 
-            {/* Блок "Ещё новости" */}
+            {/* Блок рекомендаций */}
             {relatedNews && relatedNews.length > 0 && (
                 <section className="mt-16 rounded-2xl bg-gray-50 p-8">
-                    <h2 className="mb-6 text-2xl font-bold text-gray-900">Ещё новости</h2>
+                    <h2 className="mb-6 text-2xl font-bold text-gray-900">
+                        {isMediaSection ? 'Другие материалы СМИ' : 'Ещё новости'}
+                    </h2>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                         {relatedNews.map((item) => {
                             const mediaImages = Array.isArray(item.images)
