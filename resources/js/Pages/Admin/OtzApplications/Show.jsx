@@ -77,13 +77,13 @@ export default function Show({ application, stages }) {
                 </div>
                 <div className="flex space-x-2">
                   <Link
-                    href={route('admin.otz-applications.edit', application.id)}
+                    href={route('admin.admin.otz-applications.edit', application.id)}
                     className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-md transition-colors"
                   >
                     Редактировать
                   </Link>
                   <Link
-                    href={route('admin.otz-applications.index')}
+                    href={route('admin.admin.otz-applications.index')}
                     className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition-colors"
                   >
                     Назад к списку

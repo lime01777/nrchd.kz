@@ -108,7 +108,7 @@ class OtzApplicationController extends Controller
 
         OtzApplication::create($validated);
 
-        return redirect()->route('admin.otz-applications.index')
+        return redirect()->route('admin.admin.otz-applications.index')
                          ->with('success', 'Заявка ОТЗ успешно создана');
     }
 
@@ -181,7 +181,7 @@ class OtzApplicationController extends Controller
 
         $otzApplication->update($validated);
 
-        return redirect()->route('admin.otz-applications.index')
+        return redirect()->route('admin.admin.otz-applications.index')
                          ->with('success', 'Заявка ОТЗ успешно обновлена');
     }
 
@@ -192,7 +192,7 @@ class OtzApplicationController extends Controller
     {
         $otzApplication->delete();
 
-        return redirect()->route('admin.otz-applications.index')
+        return redirect()->route('admin.admin.otz-applications.index')
                          ->with('success', 'Заявка ОТЗ успешно удалена');
     }
 

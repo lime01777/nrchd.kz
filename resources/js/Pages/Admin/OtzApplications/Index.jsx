@@ -9,7 +9,7 @@ export default function Index({ applications, filters, categories, stages }) {
   const [selectedStatus, setSelectedStatus] = useState(filters.status || '');
 
   const handleFilter = () => {
-    router.get(route('admin.otz-applications.index'), {
+    router.get(route('admin.admin.otz-applications.index'), {
       search: searchTerm,
       category: selectedCategory,
       stage: selectedStage,
@@ -25,7 +25,7 @@ export default function Index({ applications, filters, categories, stages }) {
     setSelectedCategory('');
     setSelectedStage('');
     setSelectedStatus('');
-    router.get(route('admin.otz-applications.index'), {}, {
+    router.get(route('admin.admin.otz-applications.index'), {}, {
       preserveState: true,
       replace: true,
     });
@@ -61,7 +61,7 @@ export default function Index({ applications, filters, categories, stages }) {
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-semibold text-gray-900">Управление заявками ОТЗ</h2>
                 <Link
-                  href={route('admin.otz-applications.create')}
+                  href={route('admin.admin.otz-applications.create')}
                   className="bg-fuchsia-500 hover:bg-fuchsia-600 text-white px-4 py-2 rounded-md transition-colors"
                 >
                   Создать заявку
@@ -199,13 +199,13 @@ export default function Index({ applications, filters, categories, stages }) {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex space-x-2">
                             <Link
-                              href={route('admin.otz-applications.show', application.id)}
+                              href={route('admin.admin.otz-applications.show', application.id)}
                               className="text-blue-600 hover:text-blue-900"
                             >
                               Просмотр
                             </Link>
                             <Link
-                              href={route('admin.otz-applications.edit', application.id)}
+                              href={route('admin.admin.otz-applications.edit', application.id)}
                               className="text-indigo-600 hover:text-indigo-900"
                             >
                               Редактировать
@@ -213,7 +213,7 @@ export default function Index({ applications, filters, categories, stages }) {
                             <button
                               onClick={() => {
                                 if (confirm('Вы уверены, что хотите удалить эту заявку?')) {
-                                  router.delete(route('admin.otz-applications.destroy', application.id));
+                                  router.delete(route('admin.admin.otz-applications.destroy', application.id));
                                 }
                               }}
                               className="text-red-600 hover:text-red-900"

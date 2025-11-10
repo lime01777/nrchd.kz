@@ -3,51 +3,56 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
+    private const ROLE_LABELS = [
+        'admin' => 'Администратор',
+        'document_manager' => 'Менеджер документов',
+        'user' => 'Пользователь',
+    ];
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        // Здесь будет логика получения списка пользователей
-        // Пока возвращаем тестовые данные
-        $users = [
-            [
-                'id' => 1,
-                'name' => 'Администратор',
-                'email' => 'admin@nrchd.kz',
-                'role' => 'Администратор',
-                'status' => 'Активен',
-                'created_at' => '2024-01-01'
-            ],
-            [
-                'id' => 2,
-                'name' => 'Модератор',
-                'email' => 'moderator@nrchd.kz',
-                'role' => 'Модератор',
-                'status' => 'Активен',
-                'created_at' => '2024-02-01'
-            ],
-            [
-                'id' => 3,
-                'name' => 'Редактор',
-                'email' => 'editor@nrchd.kz',
-                'role' => 'Редактор',
-                'status' => 'Неактивен',
-                'created_at' => '2024-03-01'
-            ],
-        ];
+        $search = trim((string) $request->input('search', ''));
+
+        $users = User::query()
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('name')
+            ->paginate(15)
+            ->withQueryString()
+            ->through(function (User $user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'role_label' => self::ROLE_LABELS[$user->role] ?? $user->role,
+                    'has_admin_access' => in_array($user->role, ['admin', 'document_manager'], true),
+                    'created_at' => $user->created_at?->format('d.m.Y H:i'),
+                ];
+            });
 
         return Inertia::render('Admin/Users/Index', [
             'users' => $users,
-            'filters' => $request->only(['search', 'role', 'status']),
+            'filters' => [
+                'search' => $search,
+            ],
+            'availableRoles' => self::ROLE_LABELS,
         ]);
     }
 
@@ -56,7 +61,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/Users/Edit');
+        return Inertia::render('Admin/Users/Edit', [
+            'availableRoles' => self::ROLE_LABELS,
+        ]);
     }
 
     /**
@@ -64,26 +71,21 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        // Валидация данных
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|string',
-            'status' => 'required|string',
+            'role' => ['required', Rule::in(array_keys(self::ROLE_LABELS))],
         ]);
 
-        // Здесь будет логика создания пользователя
-        // Пример:
-        // User::create([
-        //     'name' => $request->name,
-        //     'email' => $request->email,
-        //     'password' => Hash::make($request->password),
-        //     'role' => $request->role,
-        //     'status' => $request->status,
-        // ]);
+        User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role' => $validated['role'],
+        ]);
 
-        return redirect()->route('admin.users')->with('success', 'Пользователь успешно создан');
+        return redirect()->route('admin.admin.users')->with('success', 'Пользователь успешно создан');
     }
 
     /**
@@ -91,18 +93,16 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        // Здесь будет логика получения пользователя по ID
-        // Пока возвращаем тестовые данные
-        $user = [
-            'id' => $id,
-            'name' => 'Тестовый пользователь',
-            'email' => 'test@nrchd.kz',
-            'role' => 'Редактор',
-            'status' => 'Активен'
-        ];
+        $user = User::findOrFail($id);
 
         return Inertia::render('Admin/Users/Edit', [
-            'user' => $user,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ],
+            'availableRoles' => self::ROLE_LABELS,
         ]);
     }
 
@@ -111,36 +111,31 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Валидация данных
+        $user = User::findOrFail($id);
+
         $rules = [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-            'role' => 'required|string',
-            'status' => 'required|string',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'role' => ['required', Rule::in(array_keys(self::ROLE_LABELS))],
         ];
 
-        // Если пароль не пустой, добавляем правила валидации для пароля
         if ($request->filled('password')) {
-            $rules['password'] = ['required', 'confirmed', Rules\Password::defaults()];
+            $rules['password'] = ['nullable', 'confirmed', Rules\Password::defaults()];
         }
 
         $validated = $request->validate($rules);
 
-        // Здесь будет логика обновления пользователя
-        // Пример:
-        // $user = User::findOrFail($id);
-        // $user->name = $request->name;
-        // $user->email = $request->email;
-        // $user->role = $request->role;
-        // $user->status = $request->status;
-        // 
-        // if ($request->filled('password')) {
-        //     $user->password = Hash::make($request->password);
-        // }
-        // 
-        // $user->save();
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->role = $validated['role'];
 
-        return redirect()->route('admin.users')->with('success', 'Пользователь успешно обновлен');
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        $user->save();
+
+        return redirect()->route('admin.admin.users')->with('success', 'Пользователь успешно обновлен');
     }
 
     /**
@@ -148,10 +143,37 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        // Здесь будет логика удаления пользователя
-        // Пример:
-        // User::destroy($id);
+        $user = User::findOrFail($id);
 
-        return redirect()->route('admin.users')->with('success', 'Пользователь успешно удален');
+        if (auth()->id() === $user->id) {
+            return redirect()->back()->with('error', 'Нельзя удалить собственную учетную запись.');
+        }
+
+        $user->delete();
+
+        return redirect()->route('admin.admin.users')->with('success', 'Пользователь успешно удален');
+    }
+
+    /**
+     * Update only role for specified user.
+     */
+    public function updateRole(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'role' => ['required', Rule::in(array_keys(self::ROLE_LABELS))],
+        ]);
+
+        if ($request->user()->id === $user->id && $validated['role'] !== 'admin') {
+            return redirect()->back()->with('error', 'Нельзя снять администраторский доступ у самого себя.');
+        }
+
+        $user->role = $validated['role'];
+        $user->save();
+
+        $message = $validated['role'] === 'admin'
+            ? 'Пользователь получил доступ к админке.'
+            : 'Роль пользователя успешно обновлена.';
+
+        return redirect()->back()->with('success', $message);
     }
 }

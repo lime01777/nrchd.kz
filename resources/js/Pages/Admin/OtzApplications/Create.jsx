@@ -18,7 +18,7 @@ export default function Create({ categories, stages }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    post(route('admin.otz-applications.store'));
+    post(route('admin.admin.otz-applications.store'));
   };
 
   return (
@@ -33,7 +33,7 @@ export default function Create({ categories, stages }) {
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-semibold text-gray-900">Создание заявки ОТЗ</h2>
                 <Link
-                  href={route('admin.otz-applications.index')}
+                  href={route('admin.admin.otz-applications.index')}
                   className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition-colors"
                 >
                   Назад к списку
@@ -246,7 +246,7 @@ export default function Create({ categories, stages }) {
                 {/* Кнопки */}
                 <div className="flex justify-end space-x-4">
                   <Link
-                    href={route('admin.otz-applications.index')}
+                    href={route('admin.admin.otz-applications.index')}
                     className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
                   >
                     Отмена

@@ -571,6 +571,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
     Route::post('/users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store');
     Route::get('/users/{id}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('admin.users.edit');
     Route::put('/users/{id}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.users.update');
+    Route::patch('/users/{user}/role', [App\Http\Controllers\Admin\UserController::class, 'updateRole'])->name('admin.users.update-role');
     Route::delete('/users/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy');
 
     // Настройки
@@ -599,11 +600,6 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
     Route::post('translations/{translation}/retranslate', [TranslationManagementController::class, 'retranslate'])->name('admin.translations.retranslate');
     Route::post('translations/retranslate-scope', [TranslationManagementController::class, 'retranslateScope'])->name('admin.translations.retranslate-scope');
     Route::post('translations/clear-cache', [TranslationManagementController::class, 'clearCache'])->name('admin.translations.clear-cache');
-
-    // Маршруты для управления аккордеонами документов
-    Route::resource('document-accordions', App\Http\Controllers\Admin\DocumentAccordionController::class, [
-        'names' => 'admin.document-accordions'
-    ]);
 
     // Управление документами (для менеджеров документов)
     Route::middleware(['document.manager'])->group(function () {

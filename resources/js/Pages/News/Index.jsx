@@ -55,31 +55,75 @@ export default function Index({ section: sectionProp }) {
         };
 
         return news.data.map((item) => {
-            const rawImages = Array.isArray(item.images) ? item.images : [];
+            const mediaItems = Array.isArray(item.media) ? item.media : [];
 
-            // Приводим к простому массиву путей, пропуская видео
-            const galleryImages = rawImages
-                .map((mediaItem) => {
-                    if (!mediaItem) {
-                        return null;
+            const imageAccumulator = new Set(
+                (Array.isArray(item.images) ? item.images : []).filter(Boolean)
+            );
+
+            mediaItems
+                .filter((mediaItem) => mediaItem?.type === 'image')
+                .forEach((mediaItem) => {
+                    const url = mediaItem.url || mediaItem.path;
+                    if (url) {
+                        imageAccumulator.add(url);
                     }
+                });
 
-                    if (typeof mediaItem === 'string') {
-                        return mediaItem;
+            const galleryImages = Array.from(imageAccumulator);
+
+            const videoAccumulator = [];
+            const seenVideoIds = new Set();
+
+            const appendVideo = (video) => {
+                if (!video) {
+                    return;
+                }
+
+                if (typeof video === 'string') {
+                    const normalizedSrc = video;
+                    const id = `${normalizedSrc}-${videoAccumulator.length}`;
+                    if (seenVideoIds.has(id)) {
+                        return;
                     }
+                    seenVideoIds.add(id);
+                    videoAccumulator.push({
+                        id,
+                        type: 'video',
+                        src: normalizedSrc,
+                        url: normalizedSrc,
+                        path: normalizedSrc,
+                        is_external: normalizedSrc.startsWith('http'),
+                        is_embed: false,
+                    });
+                    return;
+                }
 
-                    if (typeof mediaItem === 'object') {
-                        return mediaItem.url || mediaItem.path || null;
-                    }
+                const id = video.id || `${video.url || video.path}-${videoAccumulator.length}`;
+                if (seenVideoIds.has(id)) {
+                    return;
+                }
+                seenVideoIds.add(id);
+                videoAccumulator.push({
+                    ...video,
+                    src: video.embed_url || video.url || video.path || null,
+                });
+            };
 
-                    return null;
-                })
-                .filter((url) => !!url && !isValidVideoUrl(url));
+            if (Array.isArray(item.videos)) {
+                item.videos.forEach(appendVideo);
+            }
 
-            // Удаляем дубликаты, сохраняя порядок
-            const uniqueImages = Array.from(new Set(galleryImages));
+            mediaItems
+                .filter((mediaItem) => mediaItem?.type === 'video')
+                .forEach(appendVideo);
 
-            // Краткий обзор: используем excerpt или формируем из тела новости
+            const galleryVideos = videoAccumulator
+                .map((video) => video.src)
+                .filter(Boolean);
+
+            const filteredImages = galleryImages.filter((url) => !isValidVideoUrl(url));
+
             const excerptSource = item.excerpt && item.excerpt.trim().length > 0
                 ? item.excerpt
                 : stripHtml(item.body || '').slice(0, 220);
@@ -90,7 +134,9 @@ export default function Index({ section: sectionProp }) {
 
             return {
                 ...item,
-                galleryImages: uniqueImages,
+                galleryImages: filteredImages,
+                galleryVideos,
+                videoItems: videoAccumulator,
                 preparedExcerpt: formattedExcerpt,
             };
         });
@@ -335,15 +381,55 @@ export default function Index({ section: sectionProp }) {
                             <Link href={route('news.show', item.slug)} className="block">
                                 {/* Превью изображений */}
                                 <div className="relative h-56 overflow-hidden bg-gray-100">
-                                    <NewsImageSlider
-                                        images={item.galleryImages}
-                                        className="h-56"
-                                        height="224px"
-                                        showDots={item.galleryImages.length > 1}
-                                        showCounter={false}
-                                        autoPlay={item.galleryImages.length > 1}
-                                        interval={4000}
-                                    />
+                                    {item.videoItems && item.videoItems.length > 0 ? (
+                                        (() => {
+                                            const firstVideo = item.videoItems[0];
+                                            const videoSrc = firstVideo.embed_url || firstVideo.src || firstVideo.url || firstVideo.path;
+                                            if (firstVideo.is_external && firstVideo.is_embed && videoSrc) {
+                                                return (
+                                                    <iframe
+                                                        src={videoSrc}
+                                                        title={item.title}
+                                                        className="h-full w-full"
+                                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                        allowFullScreen
+                                                    />
+                                                );
+                                            }
+                                            return (
+                                                <video
+                                                    src={videoSrc}
+                                                    poster={firstVideo.thumbnail || undefined}
+                                                    controls
+                                                    className="h-full w-full object-cover"
+                                                >
+                                                    Ваш браузер не поддерживает воспроизведение видео.
+                                                </video>
+                                            );
+                                        })()
+                                    ) : item.galleryImages.length > 1 ? (
+                                        <NewsImageSlider
+                                            images={item.galleryImages}
+                                            className="h-56"
+                                            height="224px"
+                                            showDots
+                                            showCounter={false}
+                                            autoPlay
+                                            interval={4000}
+                                        />
+                                    ) : item.galleryImages.length === 1 ? (
+                                        <img
+                                            src={item.galleryImages[0]}
+                                            alt={item.title}
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="flex h-full w-full items-center justify-center text-gray-300">
+                                            <svg className="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                    )}
 
                                     {/* Дата публикации */}
                                     <div className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gray-700 shadow-sm">

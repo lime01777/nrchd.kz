@@ -18,7 +18,7 @@ export default function Edit({ application, categories, stages }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    put(route('admin.otz-applications.update', application.id));
+    put(route('admin.admin.otz-applications.update', application.id));
   };
 
   return (
@@ -36,7 +36,7 @@ export default function Edit({ application, categories, stages }) {
                   <p className="text-gray-600 mt-1">ID: {application.application_id}</p>
                 </div>
                 <Link
-                  href={route('admin.otz-applications.index')}
+                  href={route('admin.admin.otz-applications.index')}
                   className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition-colors"
                 >
                   Назад к списку
@@ -249,7 +249,7 @@ export default function Edit({ application, categories, stages }) {
                 {/* Кнопки */}
                 <div className="flex justify-end space-x-4">
                   <Link
-                    href={route('admin.otz-applications.index')}
+                    href={route('admin.admin.otz-applications.index')}
                     className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
                   >
                     Отмена

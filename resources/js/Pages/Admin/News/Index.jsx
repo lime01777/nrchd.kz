@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, router } from '@inertiajs/react';
+import NewsImageSlider from '@/Components/NewsImageSlider';
 
 /**
  * Страница списка новостей в админке
@@ -134,13 +135,59 @@ export default function Index({ news, filters, section }) {
 
                     {/* Сетка карточек новостей с отображением просмотров */}
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-                        {news.data.map((item) => (
+                        {news.data.map((item) => {
+                            const mediaItems = Array.isArray(item.media) ? item.media : [];
+                            const imageSources = mediaItems
+                                .filter((mediaItem) => mediaItem?.type === 'image')
+                                .map((mediaItem) => mediaItem.url || mediaItem.path)
+                                .filter(Boolean);
+                            const videoItems = mediaItems.filter((mediaItem) => mediaItem?.type === 'video');
+                            const firstVideo = videoItems.length > 0 ? videoItems[0] : null;
+                            const hasImages = imageSources.length > 0;
+
+                            return (
                             <article
                                 key={item.id}
                                 className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
                             >
                                 <div className="relative h-44 w-full overflow-hidden bg-gray-100">
-                                    {item.cover_thumb_url ? (
+                                    {firstVideo ? (
+                                        firstVideo.is_external && firstVideo.is_embed && (firstVideo.embed_url || firstVideo.url || firstVideo.path) ? (
+                                            <iframe
+                                                src={firstVideo.embed_url || firstVideo.url || firstVideo.path}
+                                                title={item.title}
+                                                className="h-full w-full"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                allowFullScreen
+                                            />
+                                        ) : (
+                                            <video
+                                                src={firstVideo.url || firstVideo.path}
+                                                poster={firstVideo.thumbnail || undefined}
+                                                controls
+                                                muted
+                                                className="h-full w-full object-cover"
+                                            >
+                                                Ваш браузер не поддерживает воспроизведение видео.
+                                            </video>
+                                        )
+                                    ) : hasImages ? (
+                                        imageSources.length > 1 ? (
+                                            <NewsImageSlider
+                                                images={imageSources}
+                                                className="h-44"
+                                                height="176px"
+                                                showDots={false}
+                                                showCounter
+                                            />
+                                        ) : (
+                                            <img
+                                                src={imageSources[0]}
+                                                alt={item.title}
+                                                className="h-full w-full object-cover"
+                                            />
+                                        )
+                                    ) : item.cover_thumb_url ? (
                                         <img
                                             src={item.cover_thumb_url}
                                             alt={item.cover_image_alt || item.title}
@@ -210,7 +257,8 @@ export default function Index({ news, filters, section }) {
                                     </div>
                                 </div>
                             </article>
-                        ))}
+                            );
+                        })}
                     </div>
 
                     {/* Пагинация */}

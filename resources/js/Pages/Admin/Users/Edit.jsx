@@ -1,25 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
 
-export default function UserEdit({ user = null }) {
+export default function UserEdit({ user = null, availableRoles = {} }) {
   const isEditing = !!user;
-  
+
   const { data, setData, post, put, processing, errors } = useForm({
     name: user?.name || '',
     email: user?.email || '',
-    role: user?.role || 'Пользователь',
+    role: user?.role || 'user',
     password: '',
     password_confirmation: '',
-    status: user?.status || 'Активен',
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isEditing) {
-      put(route('admin.users.update', user.id));
+      put(route('admin.admin.users.update', user.id));
     } else {
-      post(route('admin.users.store'));
+      post(route('admin.admin.users.store'));
     }
   };
 
@@ -30,7 +29,9 @@ export default function UserEdit({ user = null }) {
           {isEditing ? 'Редактирование пользователя' : 'Добавление пользователя'}
         </h2>
         <Link
-          href={route('admin.users')}
+          href={route('admin.admin.users')}
+        <Link
+          href={route('admin.admin.users')}
           className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           <svg className="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -100,37 +101,15 @@ export default function UserEdit({ user = null }) {
                     className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
                     required
                   >
-                    <option value="Администратор">Администратор</option>
-                    <option value="Модератор">Модератор</option>
-                    <option value="Редактор">Редактор</option>
-                    <option value="Пользователь">Пользователь</option>
+                    {Object.entries(availableRoles).map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 {errors.role && (
                   <p className="mt-2 text-sm text-red-600">{errors.role}</p>
-                )}
-              </div>
-
-              {/* Статус */}
-              <div className="sm:col-span-3">
-                <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-                  Статус
-                </label>
-                <div className="mt-1">
-                  <select
-                    id="status"
-                    name="status"
-                    value={data.status}
-                    onChange={(e) => setData('status', e.target.value)}
-                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    required
-                  >
-                    <option value="Активен">Активен</option>
-                    <option value="Неактивен">Неактивен</option>
-                  </select>
-                </div>
-                {errors.status && (
-                  <p className="mt-2 text-sm text-red-600">{errors.status}</p>
                 )}
               </div>
 

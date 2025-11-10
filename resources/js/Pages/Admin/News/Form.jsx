@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm, router } from '@inertiajs/react';
-import ImageUpload from '@/Components/ImageUpload';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
@@ -37,8 +36,6 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
         slug: news?.slug || '',
         excerpt: news?.excerpt || '',
         body: news?.body || '',
-        cover: null,
-        cover_image_alt: news?.cover_image_alt || '',
         seo_title: news?.seo_title || '',
         seo_description: news?.seo_description || '',
         status: news?.status || 'draft',
@@ -47,7 +44,6 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
         type: currentType,
     });
 
-    const [coverFile, setCoverFile] = useState(null);
     const [media, setMedia] = useState(initialMedia);
     const [isPublishing, setIsPublishing] = useState(false);
 
@@ -100,11 +96,6 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
         setData('slug', slug);
     };
 
-    const handleCoverChange = (file) => {
-        setCoverFile(file);
-        setData('cover', file);
-    };
-
     const handleMediaUploaded = useCallback((uploaded) => {
         if (!uploaded || uploaded.length === 0) {
             return;
@@ -129,7 +120,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
             return updated;
         });
 
-        if (!csrfToken || !target?.path) {
+        if (!csrfToken || !target?.path || target?.is_external || target?.source === 'external') {
             return;
         }
 
@@ -159,14 +150,10 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
             ...data,
             status: finalStatus,
             media,
-            cover: coverFile ?? data.cover,
             body: editor ? editor.getHTML() : data.body,
             type: currentType,
         };
-
-        if (!coverFile) {
-            delete payload.cover;
-        }
+        delete payload.cover;
 
         const onFinish = () => {
             setIsPublishing(false);
@@ -175,7 +162,6 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
         const onSuccess = () => {
             if (!isEditing) {
                 reset();
-                setCoverFile(null);
                 setMedia([]);
                 setData('media', []);
                 editor?.commands?.clearContent(true);
@@ -183,13 +169,10 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
         };
 
         if (isEditing) {
-            // При редактировании отправляем запрос с переопределением HTTP-метода на PUT
-            const updatePayload = {
+            router.post(route('admin.news.update', { news: news.id, type: currentType }), {
                 ...payload,
                 _method: 'PUT',
-            };
-
-            router.post(route('admin.news.update', { news: news.id, type: currentType }), updatePayload, {
+            }, {
                 forceFormData: true,
                 onFinish,
                 onSuccess,
@@ -201,7 +184,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                 onSuccess,
             });
         }
-    }, [data, media, coverFile, isEditing, news?.id, editor, reset, setData]);
+    }, [data, media, isEditing, news?.id, editor, reset, setData, currentType]);
 
     const handlePublishNow = useCallback(() => {
         setIsPublishing(true);
@@ -321,56 +304,30 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                             </div>
 
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                <div className="space-y-6">
-                                    <ImageUpload
-                                        name="cover"
-                                        label="Обложка"
-                                        currentImageUrl={news?.cover_url}
-                                        currentImageAlt={news?.cover_image_alt}
-                                        onImageChange={handleCoverChange}
-                                        errors={errors}
+                                <div>
+                                    <InputLabel htmlFor="seo_title" value="SEO заголовок" />
+                                    <TextInput
+                                        id="seo_title"
+                                        type="text"
+                                        value={data.seo_title}
+                                        onChange={(e) => setData('seo_title', e.target.value)}
+                                        className="mt-1 block w-full"
+                                        placeholder="Если не указано — используется основной заголовок"
                                     />
-
-                                    <div>
-                                        <InputLabel htmlFor="cover_image_alt" value="Альтернативный текст обложки (для SEO)" />
-                                        <TextInput
-                                            id="cover_image_alt"
-                                            type="text"
-                                            value={data.cover_image_alt}
-                                            onChange={(e) => setData('cover_image_alt', e.target.value)}
-                                            className="mt-1 block w-full"
-                                            placeholder="Описание изображения для поисковых систем"
-                                        />
-                                        <InputError message={errors.cover_image_alt} className="mt-2" />
-                                    </div>
+                                    <InputError message={errors.seo_title} className="mt-2" />
                                 </div>
 
-                                <div className="space-y-6">
-                                    <div>
-                                        <InputLabel htmlFor="seo_title" value="SEO заголовок" />
-                                        <TextInput
-                                            id="seo_title"
-                                            type="text"
-                                            value={data.seo_title}
-                                            onChange={(e) => setData('seo_title', e.target.value)}
-                                            className="mt-1 block w-full"
-                                            placeholder="Если не указано — используется основной заголовок"
-                                        />
-                                        <InputError message={errors.seo_title} className="mt-2" />
-                                    </div>
-
-                                    <div>
-                                        <InputLabel htmlFor="seo_description" value="SEO описание" />
-                                        <textarea
-                                            id="seo_description"
-                                            value={data.seo_description}
-                                            onChange={(e) => setData('seo_description', e.target.value)}
-                                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                            rows={2}
-                                            placeholder="Если не указано — используется краткое описание"
-                                        />
-                                        <InputError message={errors.seo_description} className="mt-2" />
-                                    </div>
+                                <div>
+                                    <InputLabel htmlFor="seo_description" value="SEO описание" />
+                                    <textarea
+                                        id="seo_description"
+                                        value={data.seo_description}
+                                        onChange={(e) => setData('seo_description', e.target.value)}
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                        rows={2}
+                                        placeholder="Если не указано — используется краткое описание"
+                                    />
+                                    <InputError message={errors.seo_description} className="mt-2" />
                                 </div>
                             </div>
 

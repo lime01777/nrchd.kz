@@ -68,6 +68,11 @@ class NewsController extends Controller
 
         // Преобразуем данные для фронтенда
         $news->getCollection()->transform(function ($item) {
+            $media = $this->mediaService->normalizeMediaForFrontend($item->images ?? []);
+            $primaryMedia = collect($media)
+                ->sortBy(fn ($mediaItem) => $mediaItem['position'] ?? PHP_INT_MAX)
+                ->first();
+
             return [
                 'id' => $item->id,
                 'title' => $item->title,
@@ -80,6 +85,8 @@ class NewsController extends Controller
                 'created_at' => $item->created_at->format('Y-m-d H:i:s'),
                 'created_at_formatted' => $item->created_at->format('d.m.Y'),
                 'views' => $item->views ?? 0,
+                'media' => $media,
+                'primary_media' => $primaryMedia,
                 'creator' => $item->creator ? [
                     'id' => $item->creator->id,
                     'name' => $item->creator->name,

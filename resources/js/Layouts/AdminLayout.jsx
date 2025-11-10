@@ -89,15 +89,6 @@ export default function AdminLayout({ children, title }) {
             Документы
           </Link>
           <Link 
-            href={route('admin.admin.document-accordions.index')} 
-            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.admin.document-accordions.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
-          >
-            <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-            </svg>
-            Аккордеоны документов
-          </Link>
-          <Link 
             href={route('admin.admin.otz-applications.index')} 
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.admin.otz-applications.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
           >
@@ -105,15 +96,6 @@ export default function AdminLayout({ children, title }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             Заявки ОТЗ
-          </Link>
-          <Link 
-            href={route('admin.admin.users')} 
-            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.admin.users', 'admin.admin.users.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
-          >
-            <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-            Пользователи
           </Link>
           <Link 
             href={route('admin.admin.translations')} 

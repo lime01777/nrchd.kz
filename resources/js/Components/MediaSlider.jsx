@@ -6,41 +6,92 @@ import SafeVideo from './SafeVideo';
  * Слайдер для изображений и видео
  * Поддерживает мультиязычность
  */
+const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'ogg', 'm4v'];
+
+const generateId = () => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `media-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
+const detectTypeByPath = (path = '') => {
+  if (!path || typeof path !== 'string') {
+    return 'image';
+  }
+  const lower = path.toLowerCase();
+  const extension = lower.split('.').pop();
+  if (videoExtensions.includes(extension)) {
+    return 'video';
+  }
+  if (lower.includes('youtube.com') || lower.includes('youtu.be') || lower.includes('instagram.com') || lower.includes('aitube')) {
+    return 'video';
+  }
+  return 'image';
+};
+
 export default function MediaSlider({ media = [], className = '', autoPlay = true, interval = 5000 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(autoPlay);
 
   // Фильтруем и нормализуем медиа
-  const normalizedMedia = media.map(item => {
-    if (typeof item === 'string') {
-      // Определяем тип по расширению
-      const extension = item.split('.').pop()?.toLowerCase();
-      const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'ogg'];
-      return {
-        path: item,
-        type: videoExtensions.includes(extension) ? 'video' : 'image',
-        name: item.split('/').pop()
-      };
-    } else if (item && typeof item === 'object') {
-      return {
-        path: item.path || item,
-        type: item.type || 'image',
-        name: item.name || (window.translations?.media_file || 'Медиа файл')
-      };
-    }
-    return null;
-  }).filter(Boolean);
+  const normalizedMedia = media
+    .map((item, index) => {
+      if (!item) {
+        return null;
+      }
 
-  // Автопрокрутка
+      if (typeof item === 'string') {
+        const type = detectTypeByPath(item);
+        return {
+          id: generateId(),
+          type,
+          path: item,
+          url: item,
+          embed_url: null,
+          is_external: item.startsWith('http'),
+          is_embed: false,
+          name: item.split('/').pop() || `Медиа ${index + 1}`,
+        };
+      }
+
+      if (typeof item === 'object') {
+        const rawPath = item.embed_url || item.path || item.url || item.src || '';
+        const type = item.type || detectTypeByPath(rawPath);
+
+        return {
+          id: item.id || generateId(),
+          type,
+          path: rawPath,
+          url: item.url || item.path || rawPath,
+          embed_url: item.embed_url || null,
+          is_external: Boolean(item.is_external ?? (typeof rawPath === 'string' && rawPath.startsWith('http'))),
+          is_embed: Boolean(item.is_embed || (item.embed_url && item.embed_url === rawPath)),
+          thumbnail: item.thumbnail || null,
+          name: item.name || item.title || `Медиа ${index + 1}`,
+        };
+      }
+
+      return null;
+    })
+    .filter(Boolean);
+
+  const mediaContainsVideo = normalizedMedia.some((item) => item?.type === 'video');
+  const computedAutoPlay = autoPlay && !mediaContainsVideo;
+  const [isPlaying, setIsPlaying] = useState(computedAutoPlay);
+
   useEffect(() => {
-    if (!autoPlay || !isPlaying || normalizedMedia.length <= 1) return;
+    setIsPlaying(computedAutoPlay);
+  }, [computedAutoPlay]);
+
+  useEffect(() => {
+    if (!computedAutoPlay || !isPlaying || normalizedMedia.length <= 1) return;
 
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % normalizedMedia.length);
     }, interval);
 
     return () => clearInterval(timer);
-  }, [autoPlay, isPlaying, interval, normalizedMedia.length]);
+  }, [computedAutoPlay, isPlaying, interval, normalizedMedia.length]);
 
   // Обработчики навигации
   const goToPrevious = () => {
@@ -59,7 +110,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
 
   // Обработчик клика по слайдеру для паузы/воспроизведения
   const handleSliderClick = () => {
-    if (autoPlay) {
+    if (computedAutoPlay) {
       setIsPlaying(!isPlaying);
     }
   };
@@ -87,25 +138,36 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
         onClick={handleSliderClick}
       >
         {currentMedia.type === 'video' ? (
-          <SafeVideo
-            key={currentMedia.path}
-            src={currentMedia.path}
-            className="w-full h-full object-contain"
-            controls
-            autoPlay={isPlaying}
-            muted
-            loop
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-            fallbackContent={
-              <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                <div className="text-center">
-                  <div className="text-4xl mb-2">🎥</div>
-                  <div className="text-xs text-gray-600">Видео недоступно</div>
+          currentMedia.is_embed && (currentMedia.embed_url || currentMedia.path) ? (
+            <iframe
+              key={currentMedia.id}
+              src={currentMedia.embed_url || currentMedia.path}
+              title={currentMedia.name || 'Видео'}
+              className="w-full h-full object-contain"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          ) : (
+            <SafeVideo
+              key={currentMedia.path}
+              src={currentMedia.path}
+              className="w-full h-full object-contain"
+              controls
+              autoPlay={false}
+              muted
+              loop
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              fallbackContent={
+                <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                  <div className="text-center">
+                    <div className="text-4xl mb-2">🎥</div>
+                    <div className="text-xs text-gray-600">Видео недоступно</div>
+                  </div>
                 </div>
-              </div>
-            }
-          />
+              }
+            />
+          )
         ) : (
           <SafeImage
             src={currentMedia.path}
@@ -128,7 +190,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
         </div>
 
         {/* Индикатор автовоспроизведения */}
-        {autoPlay && (
+        {computedAutoPlay && (
           <div className="absolute top-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
             {isPlaying ? '⏸️ ' + (window.translations?.pause || 'Пауза') : '▶️ ' + (window.translations?.play || 'Воспроизвести')}
           </div>

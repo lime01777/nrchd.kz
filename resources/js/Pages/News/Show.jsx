@@ -1,22 +1,146 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
-import NewsSliderWithMain from '@/Components/NewsSliderWithMain';
+import MediaSlider from '@/Components/MediaSlider';
 import LayoutNews from '@/Layouts/LayoutNews';
 
 /**
  * Публичная страница детального просмотра новости
  */
 export default function Show({ news, relatedNews, seo }) {
-    const mediaItems = news.media || [];
+    const mediaItems = Array.isArray(news.media) ? news.media : [];
     const isMediaSection = news.type === 'media';
-    const galleryImages = (news.gallery_images || mediaItems
+
+    const imageAccumulator = new Set(
+        (Array.isArray(news.gallery_images) ? news.gallery_images : []).filter(Boolean)
+    );
+
+    mediaItems
         .filter((item) => item.type === 'image')
-        .map((item) => item.url || item.path))
-        .filter(Boolean);
-    const galleryVideos = (news.gallery_videos || mediaItems
+        .forEach((item) => {
+            const url = item.url || item.path;
+            if (url) {
+                imageAccumulator.add(url);
+            }
+        });
+
+    const galleryImages = Array.from(imageAccumulator);
+
+    const videoItems = [];
+    const seenVideoIds = new Set();
+
+    const appendVideo = (video) => {
+        if (!video) {
+            return;
+        }
+
+        if (typeof video === 'string') {
+            const src = video;
+            const id = `${src}-${videoItems.length}`;
+            if (seenVideoIds.has(id)) {
+                return;
+            }
+            seenVideoIds.add(id);
+            videoItems.push({
+                id,
+                type: 'video',
+                src,
+                url: src,
+                path: src,
+                is_external: src.startsWith('http'),
+                is_embed: false,
+            });
+            return;
+        }
+
+        const id = video.id || `${video.url || video.path}-${videoItems.length}`;
+        if (seenVideoIds.has(id)) {
+            return;
+        }
+
+        seenVideoIds.add(id);
+        const src = video.embed_url || video.url || video.path || null;
+        videoItems.push({
+            ...video,
+            id,
+            type: 'video',
+            src,
+            url: video.url || video.path || src,
+            embed_url: video.embed_url || null,
+            is_external: Boolean(video.is_external),
+            is_embed: Boolean(video.is_embed || video.embed_url),
+            name: video.name || video.title || `Видео ${videoItems.length + 1}`,
+        });
+    };
+
+    if (Array.isArray(news.gallery_videos)) {
+        news.gallery_videos.forEach(appendVideo);
+    }
+
+    if (Array.isArray(news.videos)) {
+        news.videos.forEach(appendVideo);
+    }
+
+    mediaItems
         .filter((item) => item.type === 'video')
-        .map((item) => item.url || item.path))
+        .forEach(appendVideo);
+
+    const combinedMedia = mediaItems
+        .map((item, index) => {
+            if (!item) {
+                return null;
+            }
+
+            if (typeof item === 'string') {
+                const isVideo = item.toLowerCase().match(/\.(mp4|avi|mov|wmv|flv|webm|ogg|m4v)(\?|$)/);
+                return {
+                    id: `legacy-${index}`,
+                    type: isVideo ? 'video' : 'image',
+                    path: item,
+                    url: item,
+                    embed_url: null,
+                    is_external: item.startsWith('http'),
+                    is_embed: false,
+                    name: isVideo ? `Видео ${index + 1}` : `Фото ${index + 1}`,
+                };
+            }
+
+            const type = item.type || 'image';
+            const path = item.embed_url || item.url || item.path || item.src || null;
+            if (!path) {
+                return null;
+            }
+
+            return {
+                id: item.id || `media-${index}`,
+                type,
+                path,
+                url: item.url || item.path || path,
+                embed_url: item.embed_url || null,
+                is_external: Boolean(item.is_external ?? path.startsWith('http')),
+                is_embed: Boolean(item.is_embed || item.embed_url),
+                thumbnail: item.thumbnail || null,
+                name: item.name || item.title || (type === 'video' ? `Видео ${index + 1}` : `Фото ${index + 1}`),
+            };
+        })
         .filter(Boolean);
+
+    const sliderMedia = combinedMedia.length > 0
+        ? combinedMedia
+        : [
+            ...galleryImages.map((url, index) => ({
+                id: `image-${index}`,
+                type: 'image',
+                path: url,
+                url: url,
+                embed_url: null,
+                is_external: url.startsWith('http'),
+                is_embed: false,
+                name: `Фото ${index + 1}`,
+            })),
+            ...videoItems,
+        ];
+
+    const shouldAutoPlay = sliderMedia.every((item) => item.type === 'image');
 
     const publishedAt = news.published_at_full || news.published_at_formatted || '';
     const metaItems = [
@@ -91,56 +215,16 @@ export default function Show({ news, relatedNews, seo }) {
             </div>
 
 
-            {/* Галерея изображений */}
-            {galleryImages.length > 0 && (
+            {/* Общая галерея медиа */}
+            {sliderMedia.length > 0 && (
                 <section className="mb-12">
-                    <h2 className="mb-4 text-2xl font-semibold text-gray-900">Фотогалерея</h2>
-                    <NewsSliderWithMain
-                        images={galleryImages}
-                        className="h-96"
-                        height="384px"
-                        showCounter
-                        showDots
+                    <h2 className="mb-4 text-2xl font-semibold text-gray-900">Медиа</h2>
+                    <MediaSlider
+                        media={sliderMedia}
+                        className="mb-4"
+                        autoPlay={shouldAutoPlay}
+                        interval={4000}
                     />
-                        {galleryImages.length > 1 && (
-                            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                                {galleryImages.map((image, index) => (
-                                    <button
-                                        key={`${image}-${index}`}
-                                        type="button"
-                                        onClick={() => window.dispatchEvent(new CustomEvent('news-slider:go-to', { detail: index }))}
-                                        className="group overflow-hidden rounded-lg border border-transparent shadow transition hover:border-blue-200 hover:shadow-md"
-                                    >
-                                        <img
-                                            src={image}
-                                            alt={`Миниатюра ${index + 1}`}
-                                            className="h-24 w-full object-cover transition duration-300 group-hover:scale-105"
-                                        />
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                </section>
-            )}
-
-            {/* Видео */}
-            {galleryVideos.length > 0 && (
-                <section className="mb-12">
-                    <h2 className="mb-4 text-2xl font-semibold text-gray-900">Видео</h2>
-                    <div className="grid gap-6 md:grid-cols-2">
-                        {galleryVideos.map((video, index) => (
-                            <div key={`${video}-${index}`} className="overflow-hidden rounded-2xl bg-black">
-                                <video
-                                    src={video}
-                                    controls
-                                    preload="metadata"
-                                    className="h-full w-full object-cover"
-                                >
-                                    Ваш браузер не поддерживает воспроизведение видео.
-                                </video>
-                            </div>
-                        ))}
-                    </div>
                 </section>
             )}
 

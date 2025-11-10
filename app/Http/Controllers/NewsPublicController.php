@@ -97,9 +97,19 @@ class NewsPublicController extends Controller
             ->pluck('url')
             ->values()
             ->all();
-        $galleryVideos = collect($media)
+        $videoCollection = collect($media)
             ->where('type', 'video')
-            ->pluck('url')
+            ->values();
+        $videoItems = $videoCollection
+            ->map(function ($video) {
+                return $video;
+            })
+            ->all();
+        $galleryVideos = $videoCollection
+            ->map(function ($video) {
+                return $video['embed_url'] ?? $video['url'] ?? $video['path'] ?? null;
+            })
+            ->filter()
             ->values()
             ->all();
 
@@ -122,6 +132,7 @@ class NewsPublicController extends Controller
                 'media' => $media,
                 'gallery_images' => $galleryImages,
                 'gallery_videos' => $galleryVideos,
+                'videos' => $videoItems,
                 'social_instagram' => $news->social_instagram ?? null,
                 'social_facebook' => $news->social_facebook ?? null,
                 'social_youtube' => $news->social_youtube ?? null,
@@ -170,6 +181,21 @@ class NewsPublicController extends Controller
                 ->pluck('url')
                 ->values()
                 ->all();
+            $videoCollection = collect($media)
+                ->where('type', 'video')
+                ->values();
+            $videoItems = $videoCollection
+                ->map(function ($video) {
+                    return $video;
+                })
+                ->all();
+            $videoUrls = $videoCollection
+                ->map(function ($video) {
+                    return $video['embed_url'] ?? $video['url'] ?? $video['path'] ?? null;
+                })
+                ->filter()
+                ->values()
+                ->all();
 
             return [
                 'id' => $item->id,
@@ -184,6 +210,8 @@ class NewsPublicController extends Controller
                 'published_at_formatted' => $item->published_at?->format('d.m.Y'),
                 'media' => $media,
                 'images' => $imagePaths,
+                'videos' => $videoItems,
+                'gallery_videos' => $videoUrls,
                 'type' => $item->type,
                 'tags' => is_array($item->tags) ? array_values(array_filter($item->tags)) : [],
             ];
