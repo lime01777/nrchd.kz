@@ -37,9 +37,9 @@ class NewsController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function index(Request $request): Response
+    public function index(Request $request, ?string $section = null): Response
     {
-        $type = $this->resolveType($request->input('type'));
+        $type = $this->resolveType($section ?? $request->route('type') ?? $request->input('type'));
         $query = News::query()->ofType($type);
 
         // Фильтр по статусу
@@ -109,9 +109,9 @@ class NewsController extends Controller
      * 
      * @return Response
      */
-    public function create(): Response
+    public function create(?string $section = null): Response
     {
-        $type = $this->resolveType(request()->input('type'));
+        $type = $this->resolveType($section ?? request()->route('type') ?? request()->input('type'));
 
         return Inertia::render('Admin/News/Form', [
             'news' => null,
@@ -127,7 +127,7 @@ class NewsController extends Controller
      * @param NewsRequest $request
      * @return RedirectResponse
      */
-    public function store(NewsRequest $request): RedirectResponse
+    public function store(NewsRequest $request, ?string $section = null): RedirectResponse
     {
         try {
             $validated = $request->validated();
@@ -143,7 +143,7 @@ class NewsController extends Controller
             $news->cover_image_alt = $validated['cover_image_alt'] ?? null;
             $news->seo_title = $validated['seo_title'] ?? null;
             $news->seo_description = $validated['seo_description'] ?? null;
-            $type = $this->resolveType($request->input('type'));
+            $type = $this->resolveType($section ?? $request->route('type') ?? $request->input('type'));
 
             $news->status = $validated['status'];
             $news->published_at = $validated['status'] === 'published' 
@@ -171,7 +171,7 @@ class NewsController extends Controller
             ]);
 
             return redirect()
-                ->route('admin.news.index', ['type' => $type])
+                ->route('admin.news.index', $this->newsRouteParams($type))
                 ->with('success', 'Новость успешно создана');
 
         } catch (\Exception $e) {
@@ -279,7 +279,7 @@ class NewsController extends Controller
             ]);
 
             return redirect()
-                ->route('admin.news.index', ['type' => $newsType])
+                ->route('admin.news.index', $this->newsRouteParams($newsType))
                 ->with('success', 'Новость успешно обновлена');
 
         } catch (\Exception $e) {
@@ -317,7 +317,7 @@ class NewsController extends Controller
             $type = $news->type ?? News::TYPE_NEWS;
 
             return redirect()
-                ->route('admin.news.index', ['type' => $type])
+                ->route('admin.news.index', $this->newsRouteParams($type))
                 ->with('success', 'Новость успешно удалена');
 
         } catch (\Exception $e) {
@@ -642,6 +642,11 @@ class NewsController extends Controller
     /**
      * Возвращает тип публикации с учетом допустимых значений.
      */
+    private function newsRouteParams(string $type): array
+    {
+        return $type === News::TYPE_NEWS ? [] : ['type' => $type];
+    }
+
     private function resolveType(?string $type): string
     {
         return in_array($type, News::TYPES, true)

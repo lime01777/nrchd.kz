@@ -30,6 +30,9 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
     const currentType = type || section?.type || news?.type || 'news';
+    const indexRoute = currentType === 'news'
+        ? route('admin.news.index')
+        : route('admin.news.index', currentType);
 
     const { data, setData, processing, errors, reset } = useForm({
         title: news?.title || '',
@@ -169,7 +172,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
         };
 
         if (isEditing) {
-            router.post(route('admin.news.update', { news: news.id, type: currentType }), {
+            router.post(route('admin.news.update', { news: news.id }), {
                 ...payload,
                 _method: 'PUT',
             }, {
@@ -178,7 +181,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                 onSuccess,
             });
         } else {
-            router.post(route('admin.news.store', { type: currentType }), payload, {
+            router.post(route('admin.news.store'), payload, {
                 forceFormData: true,
                 onFinish,
                 onSuccess,
@@ -205,7 +208,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                             <p className="mt-1 text-sm text-gray-500">{section.subtitle}</p>
                         )}
                         <Link
-                            href={route('admin.news.index', { type: currentType })}
+                            href={indexRoute}
                             className="mt-2 inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
                         >
                             <span className="mr-2">←</span>
@@ -381,7 +384,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
 
                         <div className="flex flex-wrap justify-end gap-4">
                             <Link
-                                href={route('admin.news.index', { type: currentType })}
+                                href={indexRoute}
                                 className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
                             >
                                 Отмена

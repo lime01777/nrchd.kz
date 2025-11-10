@@ -9,13 +9,8 @@ export default function AdminLayout({ children, title }) {
 
   const isCurrent = (...patterns) => patterns.some((pattern) => route().current(pattern));
 
-  const currentUrl = page.url || '';
-  const queryString = currentUrl.includes('?') ? currentUrl.split('?')[1] : '';
-  const searchParams = new URLSearchParams(queryString);
-  const pageSectionType = searchParams.get('type')
-    || page.props?.filters?.type
-    || page.props?.section?.type
-    || 'news';
+  const sectionType = page.props?.section?.type;
+  const pageSectionType = sectionType || 'news';
   const isNewsRoute = route().current('admin.news.*');
 
   const toggleSidebar = () => {
@@ -54,9 +49,9 @@ export default function AdminLayout({ children, title }) {
             Главная
           </Link>
           <Link 
-            href={route('admin.news.index', { type: 'news' })} 
+            href={route('admin.news.index')}
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${
-              isNewsRoute && pageSectionType === 'news'
+              isNewsRoute && pageSectionType !== 'media'
                 ? 'text-white bg-blue-500'
                 : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'
             }`}
@@ -66,8 +61,8 @@ export default function AdminLayout({ children, title }) {
             </svg>
             Новости
           </Link>
-          <Link
-            href={route('admin.news.index', { type: 'media' })}
+          <Link 
+            href={route('admin.news.index', 'media')}
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${
               isNewsRoute && pageSectionType === 'media'
                 ? 'text-white bg-blue-500'

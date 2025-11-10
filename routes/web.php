@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Middleware\LanguageMiddleware;
+use App\Models\News;
 
 // Подключаем локализованные маршруты
 require __DIR__.'/localized.php';
@@ -534,8 +535,12 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     
     // Управление новостями (с политикой доступа)
-    Route::get('/news', [App\Http\Controllers\Admin\NewsController::class, 'index'])->name('news.index');
-    Route::get('/news/create', [App\Http\Controllers\Admin\NewsController::class, 'create'])->name('news.create');
+    Route::get('/news/{type?}', [App\Http\Controllers\Admin\NewsController::class, 'index'])
+        ->where('type', implode('|', News::TYPES))
+        ->name('news.index');
+    Route::get('/news/{type?}/create', [App\Http\Controllers\Admin\NewsController::class, 'create'])
+        ->where('type', implode('|', News::TYPES))
+        ->name('news.create');
     Route::post('/news', [App\Http\Controllers\Admin\NewsController::class, 'store'])->name('news.store');
     Route::get('/news/{news}/edit', [App\Http\Controllers\Admin\NewsController::class, 'edit'])->name('news.edit');
     Route::put('/news/{news}', [App\Http\Controllers\Admin\NewsController::class, 'update'])->name('news.update');

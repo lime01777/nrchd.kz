@@ -10,17 +10,22 @@ export default function Index({ news, filters, section }) {
     const [searchTerm, setSearchTerm] = useState(filters?.search || '');
     const [statusFilter, setStatusFilter] = useState(filters?.status || '');
     const currentType = section?.type || 'news';
+    const indexRoute = currentType === 'news'
+        ? route('admin.news.index')
+        : route('admin.news.index', currentType);
+    const createRoute = currentType === 'news'
+        ? route('admin.news.create')
+        : route('admin.news.create', currentType);
 
     /**
      * Применение фильтров
      */
     const applyFilters = () => {
-        router.get(route('admin.news.index', { type: currentType }), {
+        router.get(indexRoute, {
             search: searchTerm,
             status: statusFilter,
             published_from: filters?.published_from,
             published_to: filters?.published_to,
-            type: currentType,
         }, {
             preserveState: true,
             replace: true,
@@ -33,9 +38,7 @@ export default function Index({ news, filters, section }) {
     const resetFilters = () => {
         setSearchTerm('');
         setStatusFilter('');
-        router.get(route('admin.news.index', { type: currentType }), {
-            type: currentType,
-        }, {
+        router.get(indexRoute, {}, {
             preserveState: true,
             replace: true,
         });
@@ -46,7 +49,7 @@ export default function Index({ news, filters, section }) {
      */
     const handleDelete = (newsItem) => {
         if (confirm(`Вы уверены, что хотите удалить новость "${newsItem.title}"?`)) {
-            router.delete(route('admin.news.destroy', { news: newsItem.id, type: currentType }), {
+            router.delete(route('admin.news.destroy', { news: newsItem.id }), {
                 preserveScroll: true,
             });
         }
@@ -56,7 +59,7 @@ export default function Index({ news, filters, section }) {
      * Переключение статуса
      */
     const handleToggleStatus = (newsItem) => {
-        router.patch(route('admin.news.toggle', { news: newsItem.id, type: currentType }), {}, {
+        router.patch(route('admin.news.toggle', { news: newsItem.id }), {}, {
             preserveScroll: true,
         });
     };
@@ -74,7 +77,7 @@ export default function Index({ news, filters, section }) {
                             )}
                         </div>
                         <Link
-                            href={route('admin.news.create', { type: currentType })}
+                            href={createRoute}
                             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                         >
                             {section?.createLabel || 'Создать новость'}
@@ -235,7 +238,7 @@ export default function Index({ news, filters, section }) {
 
                                     <div className="mt-auto flex flex-wrap gap-2">
                                         <Link
-                                            href={route('admin.news.edit', { news: item.id, type: currentType })}
+                                            href={route('admin.news.edit', { news: item.id })}
                                             className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-100"
                                         >
                                             Редактировать
