@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * FormRequest для валидации данных новостей
@@ -42,11 +43,21 @@ class NewsRequest extends FormRequest
             'section' => 'nullable|string|in:news,media',
         ];
 
+        $allowedCategories = config('news.categories', []);
+        $categoryRules = ['nullable', 'array', 'max:5'];
+        $categoryItemRules = ['string', 'max:100'];
+        if (!empty($allowedCategories)) {
+            $categoryItemRules[] = Rule::in($allowedCategories);
+        }
+        $rules['category'] = $categoryRules;
+        $rules['category.*'] = $categoryItemRules;
+
         // Для обновления некоторые поля необязательны
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
             $rules['title'] = 'sometimes|required|string|max:255';
             $rules['body'] = 'sometimes|required|string|min:10';
             $rules['cover'] = 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120|dimensions:min_width=800,min_height=400';
+            $rules['category'] = array_merge(['sometimes'], $categoryRules);
         }
 
         return $rules;
@@ -79,6 +90,10 @@ class NewsRequest extends FormRequest
             'published_at.date' => 'Дата публикации должна быть корректной датой.',
             'type.in' => 'Недопустимый тип публикации.',
             'section.in' => 'Недопустимый раздел для новости.',
+            'category.array' => 'Категории должны быть переданы в виде списка.',
+            'category.max' => 'Нельзя выбрать больше 5 категорий.',
+            'category.*.max' => 'Название категории не должно превышать 100 символов.',
+            'category.*.in' => 'Выбрана недопустимая категория.',
         ];
     }
 
@@ -102,6 +117,7 @@ class NewsRequest extends FormRequest
             'published_at' => 'дата публикации',
             'type' => 'тип публикации',
             'section' => 'раздел',
+            'category' => 'категории',
         ];
     }
 

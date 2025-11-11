@@ -6,6 +6,7 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import PrimaryButton from '@/Components/PrimaryButton';
 import ModernMediaUploader from '@/Components/Admin/News/ModernMediaUploader';
+import CategorySelector from '@/Components/Admin/News/CategorySelector';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
@@ -14,7 +15,7 @@ import LinkExtension from '@tiptap/extension-link';
 /**
  * Форма создания/редактирования новости с поддержкой галереи.
  */
-export default function Form({ news = null, media: initialMediaProp = [], section = 'news', sectionMeta = null, type = 'news' }) {
+export default function Form({ news = null, media: initialMediaProp = [], section = 'news', sectionMeta = null, type = 'news', availableCategories = [] }) {
     const isEditing = Boolean(news);
     const meta = sectionMeta || {};
     const currentSection = section || type || news?.type || 'news';
@@ -29,6 +30,14 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
 
         return [];
     }, [news?.media, initialMediaProp]);
+
+    const initialCategories = useMemo(() => {
+        if (Array.isArray(news?.category)) {
+            return news.category;
+        }
+
+        return [];
+    }, [news?.category]);
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
     const currentType = currentSection;
@@ -48,6 +57,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
         media: initialMedia,
         type: currentType,
         section: currentType,
+        category: initialCategories,
     });
 
     const [media, setMedia] = useState(initialMedia);
@@ -89,8 +99,9 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
 
         setMedia(initialMedia);
         setData('media', initialMedia);
+        setData('category', initialCategories);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isEditing, news?.id, initialMedia]);
+    }, [isEditing, news?.id, initialMedia, initialCategories]);
 
     const generateSlug = () => {
         const slug = data.title
@@ -171,6 +182,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                 reset();
                 setMedia([]);
                 setData('media', []);
+                setData('category', []);
                 editor?.commands?.clearContent(true);
             }
         };
@@ -366,6 +378,23 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                                 </div>
                             </div>
                         </div>
+
+                    <div className="bg-white shadow rounded-lg p-6">
+                        <h2 className="text-lg font-medium text-gray-900 mb-4">Категории</h2>
+                        {availableCategories.length === 0 ? (
+                            <p className="text-sm text-gray-500">
+                                Список категорий пуст. Обратитесь к администратору для настройки.
+                            </p>
+                        ) : (
+                            <CategorySelector
+                                selectedCategories={data.category}
+                                onCategoriesChange={(categories) => setData('category', categories)}
+                                availableCategories={availableCategories}
+                                maxCategories={5}
+                            />
+                        )}
+                        <InputError message={errors.category} className="mt-2" />
+                    </div>
 
                         <div className="bg-white shadow rounded-lg p-6">
                             <div className="flex items-center justify-between mb-4">

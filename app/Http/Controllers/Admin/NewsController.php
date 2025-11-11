@@ -85,6 +85,7 @@ class NewsController extends Controller
                 'created_at' => $item->created_at->format('Y-m-d H:i:s'),
                 'created_at_formatted' => $item->created_at->format('d.m.Y'),
                 'views' => $item->views ?? 0,
+                'category' => $this->formatCategoryForFrontend($item->category ?? []),
                 'media' => $media,
                 'primary_media' => $primaryMedia,
                 'creator' => $item->creator ? [
@@ -102,6 +103,7 @@ class NewsController extends Controller
             ),
             'section' => $type,
             'sectionMeta' => $this->sectionMeta($type),
+            'availableCategories' => $this->availableCategories(),
         ]);
     }
 
@@ -130,6 +132,7 @@ class NewsController extends Controller
             'section' => $normalizedSection,
             'sectionMeta' => $this->sectionMeta($normalizedSection),
             'type' => $normalizedSection,
+            'availableCategories' => $this->availableCategories(),
         ]);
     }
 
@@ -163,6 +166,8 @@ class NewsController extends Controller
                 : null;
             $news->created_by = auth()->id();
             $news->type = $type;
+            $categories = $this->normalizeCategories($request->input('category'));
+            $news->category = ! empty($categories) ? $categories : null;
 
             $mediaItems = $this->parseMediaInput($request->input('media'));
             if (!empty($mediaItems)) {
@@ -223,11 +228,13 @@ class NewsController extends Controller
                 'status' => $news->status,
                 'published_at' => $news->published_at?->format('Y-m-d\TH:i'),
                 'media' => $this->mediaService->normalizeMediaForFrontend($news->images ?? []),
+                'category' => $this->formatCategoryForFrontend($news->category ?? []),
             ],
             'media' => $this->mediaService->normalizeMediaForFrontend($news->images ?? []),
             'section' => $news->type ?? News::TYPE_NEWS,
             'sectionMeta' => $meta,
             'type' => $news->type ?? News::TYPE_NEWS,
+            'availableCategories' => $this->availableCategories(),
         ]);
     }
 
@@ -261,6 +268,8 @@ class NewsController extends Controller
             $news->status = $validated['status'];
             $newsType = $this->resolveType($request->input('type', $news->type));
             $news->type = $newsType;
+            $categories = $this->normalizeCategories($request->input('category'));
+            $news->category = ! empty($categories) ? $categories : null;
             
             // Обновляем дату публикации
             if ($validated['status'] === 'published') {
@@ -692,5 +701,63 @@ class NewsController extends Controller
                 ? 'Управляйте публикациями СМИ, в которых упоминается ННЦРЗ.'
                 : 'Управляйте новостями и анонсами центра.',
         ];
+    }
+
+    /**
+     * Возвращает список доступных категорий новостей.
+     */
+    private function availableCategories(): array
+    {
+        return array_values(config('news.categories', []));
+    }
+
+    /**
+     * Нормализует список категорий: отфильтровывает по белому списку, убирает дубли и ограничивает количество.
+     */
+    private function normalizeCategories(mixed $categories): array
+    {
+        if (is_null($categories)) {
+            return [];
+        }
+
+        if (! is_array($categories)) {
+            $categories = [$categories];
+        }
+
+        $allowed = $this->availableCategories();
+
+        $normalized = array_map(function ($category) {
+            return is_string($category) ? trim($category) : null;
+        }, $categories);
+
+        $normalized = array_filter($normalized, function ($category) use ($allowed) {
+            return $category !== null
+                && $category !== ''
+                && (empty($allowed) || in_array($category, $allowed, true));
+        });
+
+        $normalized = array_values(array_unique($normalized));
+
+        if (count($normalized) > 5) {
+            $normalized = array_slice($normalized, 0, 5);
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Приводит категории к массиву для фронтенда, учитывая возможные старые форматы хранения.
+     */
+    private function formatCategoryForFrontend(mixed $category): array
+    {
+        if (is_array($category)) {
+            return array_values($category);
+        }
+
+        if (is_string($category) && $category !== '') {
+            return [$category];
+        }
+
+        return [];
     }
 }
