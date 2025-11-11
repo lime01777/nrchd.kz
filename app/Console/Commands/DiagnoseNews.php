@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Http\Requests\NewsRequest;
 use App\Models\News;
+use App\Models\User;
 use App\Policies\NewsPolicy;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
@@ -139,7 +140,21 @@ class DiagnoseNews extends Command
             return [
                 $ok,
                 $ok ? 'NewsPolicy зарегистрирована для News' : 'NewsPolicy не зарегистрирована в Gate',
-                'Добавьте Gate::policy(News::class, NewsPolicy::class) в AppServiceProvider',
+                'Добавьте сопоставление News::class => NewsPolicy::class в App\\Providers\\AuthServiceProvider',
+            ];
+        });
+
+        $results[] = $this->check('user_has_role', function () {
+            if (!Schema::hasTable('users') || !Schema::hasColumn('users', 'role')) {
+                return [false, 'В таблице users отсутствует колонка role', 'Выполните миграцию add_role_to_users'];
+            }
+
+            $exists = User::query()->whereIn('role', ['admin', 'editor'])->exists();
+
+            return [
+                $exists,
+                $exists ? 'В системе есть пользователь с ролью admin или editor' : 'Не найден пользователь с ролью admin/editor',
+                'Запустите сидер AdminRoleSeeder или вручную назначьте роль пользователю',
             ];
         });
 
@@ -170,6 +185,63 @@ class DiagnoseNews extends Command
                 $ok,
                 $ok ? 'Все необходимые маршруты зарегистрированы' : 'Отсутствуют маршруты: ' . implode(', ', $missing),
                 'Добавьте недостающие маршруты в routes/web.php',
+            ];
+        });
+
+        $results[] = $this->check('create_route_uses_section', function () {
+            $router = app('router');
+            $route = $router->getRoutes()->getByName('admin.news.create');
+
+            if (! $route) {
+                return [false, 'Маршрут admin.news.create не найден', 'Проверьте регистрацию маршрутов админки'];
+            }
+
+            $uri = $route->uri();
+            $ok = Str::contains($uri, 'news/create/{section?}');
+
+            return [
+                $ok,
+                $ok ? "Маршрут admin.news.create использует сегмент пути: {$uri}" : "Маршрут admin.news.create должен содержать news/create/{section?}, текущее значение: {$uri}",
+                'Обновите routes/web.php, чтобы использовать news/create/{section?} вместо query-параметров',
+            ];
+        });
+
+        $results[] = $this->check('admin_links_without_type_query', function () {
+            $searchRoots = [
+                resource_path('js'),
+                resource_path('views'),
+            ];
+
+            $violations = [];
+            $patterns = [
+                "/route\\(['\"]admin\\.news\\.create['\"],\\s*\\{/u",
+                "/route\\(['\"]admin\\.news\\.create['\"],\\s*\\[[^\\]]*['\"]type['\"]/u",
+                "/admin\\/news\\/create\\?type=/u",
+            ];
+
+            foreach ($searchRoots as $root) {
+                if (! File::isDirectory($root)) {
+                    continue;
+                }
+
+                foreach (File::allFiles($root) as $file) {
+                    $contents = File::get($file->getPathname());
+
+                    foreach ($patterns as $pattern) {
+                        if (preg_match($pattern, $contents)) {
+                            $violations[] = str_replace(base_path() . DIRECTORY_SEPARATOR, '', $file->getPathname());
+                            break;
+                        }
+                    }
+                }
+            }
+
+            $ok = empty($violations);
+
+            return [
+                $ok,
+                $ok ? 'Все ссылки на admin.news.create используют сегменты пути' : 'Обнаружены ссылки с query-параметром type: ' . implode(', ', $violations),
+                'Обновите вызовы route(\'admin.news.create\', ...) чтобы передавать сегмент пути вместо query-параметров',
             ];
         });
 

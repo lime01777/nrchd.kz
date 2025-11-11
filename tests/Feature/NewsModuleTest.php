@@ -124,15 +124,15 @@ class NewsModuleTest extends TestCase
         $user = User::factory()->create(['role' => 'user']);
 
         // Admin может создать
-        $response = $this->actingAs($admin)->get(route('admin.news.create'));
+        $response = $this->actingAs($admin)->get(route('admin.news.create', 'news'));
         $response->assertStatus(200);
 
         // Editor может создать
-        $response = $this->actingAs($editor)->get(route('admin.news.create'));
+        $response = $this->actingAs($editor)->get(route('admin.news.create', 'news'));
         $response->assertStatus(200);
 
         // Обычный пользователь не может
-        $response = $this->actingAs($user)->get(route('admin.news.create'));
+        $response = $this->actingAs($user)->get(route('admin.news.create', 'news'));
         $response->assertStatus(403);
     }
 

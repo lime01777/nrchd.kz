@@ -39,6 +39,7 @@ class NewsRequest extends FormRequest
             'type' => 'nullable|string|in:news,media',
             'published_at' => 'nullable|date',
             'media' => 'nullable',
+            'section' => 'nullable|string|in:news,media',
         ];
 
         // Для обновления некоторые поля необязательны
@@ -77,6 +78,7 @@ class NewsRequest extends FormRequest
             'status.in' => 'Недопустимый статус новости. Допустимые значения: draft, published.',
             'published_at.date' => 'Дата публикации должна быть корректной датой.',
             'type.in' => 'Недопустимый тип публикации.',
+            'section.in' => 'Недопустимый раздел для новости.',
         ];
     }
 
@@ -99,6 +101,7 @@ class NewsRequest extends FormRequest
             'status' => 'статус',
             'published_at' => 'дата публикации',
             'type' => 'тип публикации',
+            'section' => 'раздел',
         ];
     }
 

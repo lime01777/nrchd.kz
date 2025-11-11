@@ -56,6 +56,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Проверяет, является ли пользователь редактором новостей.
+     */
+    public function isEditor(): bool
+    {
+        return $this->role === 'editor';
+    }
+
+    /**
      * Проверяет, является ли пользователь менеджером документов
      */
     public function isDocumentManager(): bool
@@ -68,6 +76,6 @@ class User extends Authenticatable
      */
     public function hasAdminAccess(): bool
     {
-        return $this->isAdmin() || $this->isDocumentManager();
+        return $this->isAdmin() || $this->isEditor() || $this->isDocumentManager();
     }
 }

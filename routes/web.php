@@ -538,10 +538,13 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
     Route::get('/news/{type?}', [App\Http\Controllers\Admin\NewsController::class, 'index'])
         ->where('type', implode('|', News::TYPES))
         ->name('news.index');
-    Route::get('/news/{type?}/create', [App\Http\Controllers\Admin\NewsController::class, 'create'])
-        ->where('type', implode('|', News::TYPES))
+    Route::get('news/create/{section?}', [App\Http\Controllers\Admin\NewsController::class, 'create'])
+        ->whereIn('section', ['news', 'media'])
+        ->can('create', News::class)
         ->name('news.create');
-    Route::post('/news', [App\Http\Controllers\Admin\NewsController::class, 'store'])->name('news.store');
+    Route::post('/news', [App\Http\Controllers\Admin\NewsController::class, 'store'])
+        ->can('create', News::class)
+        ->name('news.store');
     Route::get('/news/{news}/edit', [App\Http\Controllers\Admin\NewsController::class, 'edit'])->name('news.edit');
     Route::put('/news/{news}', [App\Http\Controllers\Admin\NewsController::class, 'update'])->name('news.update');
     Route::delete('/news/{news}', [App\Http\Controllers\Admin\NewsController::class, 'destroy'])->name('news.destroy');

@@ -143,7 +143,7 @@ export default function NewsIndexNew({ news, filters }) {
                 </p>
               </div>
               <Link
-                href={route('admin.news.create')}
+                href={route('admin.news.create', 'news')}
                 className="inline-flex items-center px-6 py-3 bg-white text-blue-600 rounded-lg shadow-lg text-sm font-bold hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition transform hover:scale-105"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,8 +256,8 @@ export default function NewsIndexNew({ news, filters }) {
                 <h3 className="mt-2 text-sm font-medium text-gray-900">Новостей нет</h3>
                 <p className="mt-1 text-sm text-gray-500">Создайте первую новость</p>
                 <div className="mt-6">
-                  <Link
-                    href={route('admin.news.create')}
+                    <Link
+                      href={route('admin.news.create', 'news')}
                     className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

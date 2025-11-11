@@ -100,7 +100,8 @@ class NewsController extends Controller
                 $request->only(['status', 'search', 'published_from', 'published_to']),
                 ['type' => $type]
             ),
-            'section' => $this->sectionMeta($type),
+            'section' => $type,
+            'sectionMeta' => $this->sectionMeta($type),
         ]);
     }
 
@@ -109,15 +110,26 @@ class NewsController extends Controller
      * 
      * @return Response
      */
-    public function create(?string $section = null): Response
+    public function create(?string $section = 'news'): Response
     {
-        $type = $this->resolveType($section ?? request()->route('type') ?? request()->input('type'));
+        // Жёсткая нормализация секции для обхода фильтров WAF.
+        $normalizedSection = $this->resolveSection($section);
+
+        // Логируем обращение к форме админки (временная диагностика WAF).
+        Log::info('admin.news.create', [
+            'uid' => auth()->id(),
+            'role' => auth()->user()?->role,
+            'section' => $normalizedSection,
+        ]);
+
+        $this->authorize('create', News::class);
 
         return Inertia::render('Admin/News/Form', [
             'news' => null,
             'media' => [],
-            'section' => $this->sectionMeta($type),
-            'type' => $type,
+            'section' => $normalizedSection,
+            'sectionMeta' => $this->sectionMeta($normalizedSection),
+            'type' => $normalizedSection,
         ]);
     }
 
@@ -127,7 +139,7 @@ class NewsController extends Controller
      * @param NewsRequest $request
      * @return RedirectResponse
      */
-    public function store(NewsRequest $request, ?string $section = null): RedirectResponse
+    public function store(NewsRequest $request): RedirectResponse
     {
         try {
             $validated = $request->validated();
@@ -143,7 +155,7 @@ class NewsController extends Controller
             $news->cover_image_alt = $validated['cover_image_alt'] ?? null;
             $news->seo_title = $validated['seo_title'] ?? null;
             $news->seo_description = $validated['seo_description'] ?? null;
-            $type = $this->resolveType($section ?? $request->route('type') ?? $request->input('type'));
+            $type = $this->resolveSection($request->input('section', $validated['type'] ?? null));
 
             $news->status = $validated['status'];
             $news->published_at = $validated['status'] === 'published' 
@@ -213,7 +225,8 @@ class NewsController extends Controller
                 'media' => $this->mediaService->normalizeMediaForFrontend($news->images ?? []),
             ],
             'media' => $this->mediaService->normalizeMediaForFrontend($news->images ?? []),
-            'section' => $meta,
+            'section' => $news->type ?? News::TYPE_NEWS,
+            'sectionMeta' => $meta,
             'type' => $news->type ?? News::TYPE_NEWS,
         ]);
     }
@@ -649,8 +662,16 @@ class NewsController extends Controller
 
     private function resolveType(?string $type): string
     {
-        return in_array($type, News::TYPES, true)
-            ? $type
+        return $this->resolveSection($type);
+    }
+
+    /**
+     * Нормализует значение секции (новости или СМИ) с учётом допустимых значений.
+     */
+    private function resolveSection(?string $section): string
+    {
+        return in_array($section, [News::TYPE_NEWS, News::TYPE_MEDIA], true)
+            ? $section
             : News::TYPE_NEWS;
     }
 

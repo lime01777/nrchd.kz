@@ -98,7 +98,7 @@ export default function IndexModern({ news, filters }) {
                 </p>
               </div>
               <Link
-                href={route('admin.news.create')}
+                href={route('admin.news.create', 'news')}
                 className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 <PlusIcon className="w-4 h-4 mr-2" />
@@ -207,7 +207,7 @@ export default function IndexModern({ news, filters }) {
                 {!filters?.search && !filters?.status && !filters?.category && (
                   <div className="mt-6">
                     <Link
-                      href={route('admin.news.create')}
+                      href={route('admin.news.create', 'news')}
                       className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
                     >
                       <PlusIcon className="w-4 h-4 mr-2" />

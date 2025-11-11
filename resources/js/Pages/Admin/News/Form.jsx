@@ -14,8 +14,10 @@ import LinkExtension from '@tiptap/extension-link';
 /**
  * Форма создания/редактирования новости с поддержкой галереи.
  */
-export default function Form({ news = null, media: initialMediaProp = [], section = null, type = 'news' }) {
+export default function Form({ news = null, media: initialMediaProp = [], section = 'news', sectionMeta = null, type = 'news' }) {
     const isEditing = Boolean(news);
+    const meta = sectionMeta || {};
+    const currentSection = section || type || news?.type || 'news';
     const initialMedia = useMemo(() => {
         if (Array.isArray(news?.media)) {
             return news.media;
@@ -29,7 +31,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
     }, [news?.media, initialMediaProp]);
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
-    const currentType = type || section?.type || news?.type || 'news';
+    const currentType = currentSection;
     const indexRoute = currentType === 'news'
         ? route('admin.news.index')
         : route('admin.news.index', currentType);
@@ -45,6 +47,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
         published_at: news?.published_at || '',
         media: initialMedia,
         type: currentType,
+        section: currentType,
     });
 
     const [media, setMedia] = useState(initialMedia);
@@ -155,6 +158,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
             media,
             body: editor ? editor.getHTML() : data.body,
             type: currentType,
+            section: currentType,
         };
         delete payload.cover;
 
@@ -195,24 +199,24 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
     }, [submitForm]);
 
     return (
-        <AdminLayout title={section?.title}>
+        <AdminLayout title={meta?.title}>
             <div className="py-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="mb-6">
                         <h1 className="text-3xl font-bold text-gray-900">
                             {isEditing
-                                ? (section?.editLabel || 'Редактировать новость')
-                                : (section?.createLabel || 'Создать новость')}
+                                ? (meta?.editLabel || 'Редактировать новость')
+                                : (meta?.createLabel || 'Создать новость')}
                         </h1>
-                        {section?.subtitle && (
-                            <p className="mt-1 text-sm text-gray-500">{section.subtitle}</p>
+                        {meta?.subtitle && (
+                            <p className="mt-1 text-sm text-gray-500">{meta.subtitle}</p>
                         )}
                         <Link
                             href={indexRoute}
                             className="mt-2 inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
                         >
                             <span className="mr-2">←</span>
-                            {section?.returnLabel || 'Вернуться к списку'}
+                            {meta?.returnLabel || 'Вернуться к списку'}
                         </Link>
                     </div>
 
@@ -398,7 +402,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                                     ? 'Сохранение...'
                                     : isEditing
                                         ? 'Сохранить изменения'
-                                        : (section?.createLabel || 'Создать запись')}
+                                        : (meta?.createLabel || 'Создать запись')}
                             </PrimaryButton>
                             {!isEditing && (
                                 <PrimaryButton

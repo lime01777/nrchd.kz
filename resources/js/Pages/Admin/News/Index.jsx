@@ -6,16 +6,15 @@ import NewsImageSlider from '@/Components/NewsImageSlider';
 /**
  * Страница списка новостей в админке
  */
-export default function Index({ news, filters, section }) {
+export default function Index({ news, filters, section = 'news', sectionMeta = null }) {
     const [searchTerm, setSearchTerm] = useState(filters?.search || '');
     const [statusFilter, setStatusFilter] = useState(filters?.status || '');
-    const currentType = section?.type || 'news';
-    const indexRoute = currentType === 'news'
+    const currentSection = section || 'news';
+    const meta = sectionMeta || {};
+    const indexRoute = currentSection === 'news'
         ? route('admin.news.index')
-        : route('admin.news.index', currentType);
-    const createRoute = currentType === 'news'
-        ? route('admin.news.create')
-        : route('admin.news.create', currentType);
+        : route('admin.news.index', currentSection);
+    const createRoute = route('admin.news.create', currentSection);
 
     /**
      * Применение фильтров
@@ -65,22 +64,22 @@ export default function Index({ news, filters, section }) {
     };
 
     return (
-        <AdminLayout title={section?.title}>
+        <AdminLayout title={meta?.title}>
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Заголовок */}
                     <div className="flex justify-between items-center mb-6">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900">{section?.title || 'Новости'}</h1>
-                            {section?.subtitle && (
-                                <p className="mt-1 text-sm text-gray-500">{section.subtitle}</p>
+                            <h1 className="text-3xl font-bold text-gray-900">{meta?.title || 'Новости'}</h1>
+                            {meta?.subtitle && (
+                                <p className="mt-1 text-sm text-gray-500">{meta.subtitle}</p>
                             )}
                         </div>
                         <Link
                             href={createRoute}
                             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                         >
-                            {section?.createLabel || 'Создать новость'}
+                            {meta?.createLabel || 'Создать новость'}
                         </Link>
                     </div>
 

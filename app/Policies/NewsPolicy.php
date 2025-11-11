@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\News;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 /**
  * Политика доступа для модели News
@@ -49,7 +48,7 @@ class NewsPolicy
      */
     public function create(User $user): bool
     {
-        return in_array($user->role, ['admin', 'editor']);
+        return in_array($user->role, ['admin', 'editor'], true);
     }
 
     /**
@@ -62,7 +61,7 @@ class NewsPolicy
      */
     public function update(User $user, News $news): bool
     {
-        return in_array($user->role, ['admin', 'editor']);
+        return in_array($user->role, ['admin', 'editor'], true);
     }
 
     /**
@@ -75,7 +74,7 @@ class NewsPolicy
      */
     public function delete(User $user, News $news): bool
     {
-        return in_array($user->role, ['admin', 'editor']);
+        return $user->role === 'admin';
     }
 
     /**
@@ -88,7 +87,7 @@ class NewsPolicy
      */
     public function restore(User $user, News $news): bool
     {
-        return in_array($user->role, ['admin', 'editor']);
+        return $user->role === 'admin';
     }
 
     /**
@@ -101,6 +100,6 @@ class NewsPolicy
      */
     public function forceDelete(User $user, News $news): bool
     {
-        return in_array($user->role, ['admin', 'editor']);
+        return $user->role === 'admin';
     }
 }

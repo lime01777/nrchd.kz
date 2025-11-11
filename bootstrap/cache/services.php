@@ -39,6 +39,7 @@
     35 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
     36 => 'Barryvdh\\TranslationManager\\ManagerServiceProvider',
     37 => 'App\\Providers\\AppServiceProvider',
+    38 => 'App\\Providers\\AuthServiceProvider',
   ),
   'eager' => 
   array (
@@ -64,6 +65,7 @@
     19 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
     20 => 'Barryvdh\\TranslationManager\\ManagerServiceProvider',
     21 => 'App\\Providers\\AppServiceProvider',
+    22 => 'App\\Providers\\AuthServiceProvider',
   ),
   'deferred' => 
   array (
