@@ -201,6 +201,10 @@ Route::get('/health-accounts', function () {
     return Inertia::render('Direction/HealthAccounts');
 })->name('health.accounts');
 
+Route::get('/health-accounts/documents', function () {
+    return Inertia::render('Direction/HealthAccounts/Documents');
+})->name('health.accounts.documents');
+
 Route::get('/health-rate', function () {
     return Inertia::render('Direction/HealthRate');
 })->name('health.rate');

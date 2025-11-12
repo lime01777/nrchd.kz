@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SafeImage from './SafeImage';
 import SafeVideo from './SafeVideo';
+import MediaLightbox from './MediaLightbox';
 
 /**
  * Слайдер для изображений и видео
@@ -32,6 +33,8 @@ const detectTypeByPath = (path = '') => {
 
 export default function MediaSlider({ media = [], className = '', autoPlay = true, interval = 5000 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  // Состояние открытия полноэкранного просмотра
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   // Фильтруем и нормализуем медиа
   const normalizedMedia = media
@@ -110,9 +113,13 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
 
   // Обработчик клика по слайдеру для паузы/воспроизведения
   const handleSliderClick = () => {
-    if (computedAutoPlay) {
-      setIsPlaying(!isPlaying);
-    }
+    setIsPlaying(false);
+    setIsLightboxOpen(true);
+  };
+
+  const handleLightboxClose = () => {
+    setIsLightboxOpen(false);
+    setIsPlaying(computedAutoPlay);
   };
 
   if (normalizedMedia.length === 0) {
@@ -131,118 +138,119 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
   const currentMedia = normalizedMedia[currentIndex];
 
   return (
-    <div className={`relative overflow-hidden rounded-lg ${className}`}>
-      {/* Основной контент */}
-      <div 
-        className="relative w-full h-64 md:h-80 lg:h-96 bg-black cursor-pointer"
-        onClick={handleSliderClick}
-      >
-        {currentMedia.type === 'video' ? (
-          currentMedia.is_embed && (currentMedia.embed_url || currentMedia.path) ? (
-            <iframe
-              key={currentMedia.id}
-              src={currentMedia.embed_url || currentMedia.path}
-              title={currentMedia.name || 'Видео'}
-              className="w-full h-full object-contain"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
-          ) : (
-            <SafeVideo
-              key={currentMedia.path}
-              src={currentMedia.path}
-              className="w-full h-full object-contain"
-              controls
-              autoPlay={false}
-              muted
-              loop
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
-              fallbackContent={
-                <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                  <div className="text-center">
-                    <div className="text-4xl mb-2">🎥</div>
-                    <div className="text-xs text-gray-600">Видео недоступно</div>
+    <>
+      <div className={`relative overflow-hidden rounded-lg ${className}`}>
+        {/* Основной контент */}
+        <div 
+          className="relative w-full h-64 md:h-80 lg:h-96 bg-black cursor-pointer"
+          onClick={handleSliderClick}
+        >
+          {currentMedia.type === 'video' ? (
+            currentMedia.is_embed && (currentMedia.embed_url || currentMedia.path) ? (
+              <iframe
+                key={currentMedia.id}
+                src={currentMedia.embed_url || currentMedia.path}
+                title={currentMedia.name || 'Видео'}
+                className="w-full h-full object-contain"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            ) : (
+              <SafeVideo
+                key={currentMedia.path}
+                src={currentMedia.path}
+                className="w-full h-full object-contain"
+                controls
+                autoPlay={false}
+                muted
+                loop
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                fallbackContent={
+                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                    <div className="text-center">
+                      <div className="text-4xl mb-2">🎥</div>
+                      <div className="text-xs text-gray-600">Видео недоступно</div>
+                    </div>
                   </div>
-                </div>
-              }
+                }
+              />
+            )
+          ) : (
+            <SafeImage
+              src={currentMedia.path}
+              alt={currentMedia.name}
+              className="w-full h-full object-cover"
+              fallbackSrc="/img/placeholder.jpg"
             />
-          )
-        ) : (
-          <SafeImage
-            src={currentMedia.path}
-            alt={currentMedia.name}
-            className="w-full h-full object-cover"
-            fallbackSrc="/img/placeholder.jpg"
-          />
+          )}
+          
+          {/* Fallback для изображений */}
+          <div className="hidden w-full h-full items-center justify-center text-gray-400 bg-gray-100">
+            <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+          </div>
+
+          {/* Индикатор типа медиа */}
+          <div className="absolute top-2 left-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+            {currentMedia.type === 'video' ? '🎥 ' + (window.translations?.video || 'Видео') : '🖼️ ' + (window.translations?.image || 'Изображение')}
+          </div>
+
+          {/* Индикатор автовоспроизведения */}
+          {computedAutoPlay && (
+            <div className="absolute top-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+              {isPlaying ? '⏸️ ' + (window.translations?.pause || 'Пауза') : '▶️ ' + (window.translations?.play || 'Воспроизвести')}
+            </div>
+          )}
+        </div>
+
+        {/* Навигационные кнопки */}
+        {normalizedMedia.length > 1 && (
+          <>
+            {/* Кнопка "Назад" */}
+            <button
+              onClick={goToPrevious}
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
+              aria-label={window.translations?.previous_slide || "Предыдущий слайд"}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+            </button>
+
+            {/* Кнопка "Вперед" */}
+            <button
+              onClick={goToNext}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
+              aria-label={window.translations?.next_slide || "Следующий слайд"}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </>
         )}
-        
-        {/* Fallback для изображений */}
-        <div className="hidden w-full h-full items-center justify-center text-gray-400 bg-gray-100">
-          <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-          </svg>
-        </div>
 
-        {/* Индикатор типа медиа */}
-        <div className="absolute top-2 left-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-          {currentMedia.type === 'video' ? '🎥 ' + (window.translations?.video || 'Видео') : '🖼️ ' + (window.translations?.image || 'Изображение')}
-        </div>
-
-        {/* Индикатор автовоспроизведения */}
-        {computedAutoPlay && (
-          <div className="absolute top-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-            {isPlaying ? '⏸️ ' + (window.translations?.pause || 'Пауза') : '▶️ ' + (window.translations?.play || 'Воспроизвести')}
+        {/* Индикаторы слайдов */}
+        {normalizedMedia.length > 1 && (
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+            {normalizedMedia.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  index === currentIndex 
+                    ? 'bg-white' 
+                    : 'bg-white bg-opacity-50 hover:bg-opacity-75'
+                }`}
+                aria-label={window.translations?.go_to_slide ? `${window.translations.go_to_slide} ${index + 1}` : `Перейти к слайду ${index + 1}`}
+              />
+            ))}
           </div>
         )}
-      </div>
 
-      {/* Навигационные кнопки */}
-      {normalizedMedia.length > 1 && (
-        <>
-          {/* Кнопка "Назад" */}
-          <button
-            onClick={goToPrevious}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
-            aria-label={window.translations?.previous_slide || "Предыдущий слайд"}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
-            </svg>
-          </button>
-
-          {/* Кнопка "Вперед" */}
-          <button
-            onClick={goToNext}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
-            aria-label={window.translations?.next_slide || "Следующий слайд"}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </button>
-        </>
-      )}
-
-      {/* Индикаторы слайдов */}
-      {normalizedMedia.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-          {normalizedMedia.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentIndex 
-                  ? 'bg-white' 
-                  : 'bg-white bg-opacity-50 hover:bg-opacity-75'
-              }`}
-              aria-label={window.translations?.go_to_slide ? `${window.translations.go_to_slide} ${index + 1}` : `Перейти к слайду ${index + 1}`}
-            />
-          ))}
-        </div>
-      )}
-
-              {/* Счетчик слайдов */}
+        {/* Счетчик слайдов */}
         {normalizedMedia.length > 1 && (
           <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
             {currentIndex + 1} / {normalizedMedia.length}
@@ -251,6 +259,16 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
             )}
           </div>
         )}
-    </div>
+      </div>
+
+      {/* Полноэкранный просмотр медиа */}
+      {isLightboxOpen && (
+        <MediaLightbox
+          media={normalizedMedia}
+          initialIndex={currentIndex}
+          onClose={handleLightboxClose}
+        />
+      )}
+    </>
   );
 }

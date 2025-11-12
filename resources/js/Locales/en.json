@@ -884,10 +884,32 @@
       "actualInfoFolder": "National Accounts/Current Files",
       "reportsTitle": "National Health Accounts Reports",
       "reportsFolder": "National Accounts/Reports",
+      "description": {
+        "paragraph1": "National Health Accounts is a system of regular, comprehensive and consistent monitoring of financial flows within the country's healthcare system that is used to assess how healthcare resources are distributed so they can be shared fairly and efficiently between disease prevention and treatment measures.",
+        "paragraph2Intro": "National Health Accounts are compiled annually according to international methodology using the following data sources:",
+        "paragraph2List1": "statistical bulletins issued by the authorized body in the field of national statistics;",
+        "paragraph2List2": "data from the central authorized body responsible for budget execution;",
+        "paragraph2List3": "data from local authorized bodies responsible for budget execution broken down by medical organizations;",
+        "paragraph2List4": "statistical information published on the official websites of the National Bank of the Republic of Kazakhstan, the World Health Organization and the Organisation for Economic Co-operation and Development.",
+        "paragraph2Conclusion": "Based on these data the authorized body prepares an analytical report describing expenditures by medical services and providers and provides information about their sources of financing.",
+        "paragraph3": "The procedure for compiling and using National Health Accounts data is determined by the authorized body.",
+        "paragraph4": "NHA tables are consolidated reporting forms grouped by financing scheme revenues, sources of healthcare expenditure, key healthcare service providers, healthcare functions (types of medical services) and by diseases."
+      },
       "subfolders": {
         "documents": {
           "title": "National Health Accounts Documents",
           "description": "Main documents and reports"
+        }
+      },
+      "subpages": {
+        "documents": {
+          "title": "National Health Accounts Documents",
+          "h1": "National Health Accounts Documents",
+          "folder": "National Accounts/Documents",
+          "backButton": "Back to National Health Accounts",
+          "parentName": "National Health Accounts",
+          "breadcrumbDirections": "Directions",
+          "breadcrumbHealthAccounts": "National Health Accounts"
         }
       }
     },
