@@ -6,6 +6,7 @@ import FilesAccord from '@/Components/FilesAccord';
 import translationService from '@/services/TranslationService';
 import HealthAccountsDashboard from './HealthAccounts/HealthAccountsDashboard';
 import HealthAccountsTabs from './HealthAccounts/HealthAccountsTabs';
+import HealthAccountsRegions from './HealthAccounts/HealthAccountsRegions';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
@@ -110,6 +111,13 @@ export default function HealthAccounts() {
       <div className="container px-5 mx-auto">
         {/* Табличные данные с вкладками */}
         <HealthAccountsTabs t={t} />
+      </div>
+    </section>
+
+    <section className="text-gray-600 body-font pb-8">
+      <div className="container px-5 mx-auto">
+        {/* Региональный аналитический дашборд */}
+        <HealthAccountsRegions t={t} />
       </div>
     </section>
 

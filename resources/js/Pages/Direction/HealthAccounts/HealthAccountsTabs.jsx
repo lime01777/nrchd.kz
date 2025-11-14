@@ -918,7 +918,7 @@ const HealthAccountsTabs = ({ t }) => {
             id: 'privateSummary',
             label: t(
                 'directionsPages.healthAccounts.tabs.privateSummary.title',
-                'Частн.расходы РК (ДМС, карманные) 2010-2022'
+                'Частные расходы РК (ДМС, карманные, предприятия) 2010-2022'
             ),
             render: () => (
                 <div className="space-y-6">
