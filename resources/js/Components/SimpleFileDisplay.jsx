@@ -265,8 +265,8 @@ function SimpleFileDisplay({
             if (useClinicalProtocols) {
               return Promise.resolve({
                 id: file.id || file.url,
-                size: file.size || '1.2 MB', // Используем размер из JSON или значение по умолчанию
-                date: formatDate(file.date || file.created_at || '')
+                size: file.size ? formatFileSize(file.size) : (file.filesize || '—'),
+                date: formatDate(file.modified || file.date || file.created_at || '')
               });
             }
             
@@ -337,19 +337,8 @@ function SimpleFileDisplay({
   }, [folder, title, limit, searchTerm, medicine, mkb, category, year, fileType, useClinicalProtocols]);
 
   // Определение иконки по типу файла
-  const getFileTypeIcon = (fileName) => {
-    console.log("Getting icon for file:", fileName);
-    
-    if (!fileName) return "1"; // По умолчанию doc формат (1.png)
-    
-    // Убеждаемся, что fileName строка
-    if (typeof fileName !== 'string') {
-      return "1";
-    }
-    
-    // Извлекаем расширение файла
-    const extension = fileName.split('.').pop().toLowerCase();
-    console.log("File extension:", extension);
+  const getFileTypeIcon = (file) => {
+    const extension = getFileExtension(file);
     
     switch (extension) {
       case 'pdf':
@@ -380,15 +369,9 @@ function SimpleFileDisplay({
   };
   
   // Получение короткого названия типа файла
-  const getFileTypeShort = (fileName) => {
-    if (!fileName) return '';
-    
-    // Убеждаемся, что fileName строка
-    if (typeof fileName !== 'string') {
-      return '';
-    }
-    
-    const extension = fileName.split('.').pop().toLowerCase();
+  const getFileTypeShort = (file) => {
+    const extension = getFileExtension(file);
+    if (!extension) return '';
     
     switch (extension) {
       case 'pdf':
@@ -418,15 +401,11 @@ function SimpleFileDisplay({
   };
   
   // Определяем тип файла для отображения в модальном окне
-  const getFileType = (fileName) => {
-    if (!fileName) return null;
+  const getFileType = (file) => {
+    if (!file) return null;
     
-    // Убеждаемся, что fileName строка
-    if (typeof fileName !== 'string') {
-      return null;
-    }
-    
-    const extension = fileName.split('.').pop().toLowerCase();
+    const extension = getFileExtension(file);
+    if (!extension) return null;
     
     if (['pdf'].includes(extension)) {
       return 'pdf';
@@ -447,6 +426,44 @@ function SimpleFileDisplay({
     return null;
   };
   
+  const extractFileName = (file) => {
+    if (file?.name && typeof file.name === 'string' && file.name.includes('.')) {
+      return file.name;
+    }
+
+    if (file?.url && typeof file.url === 'string') {
+      try {
+        const cleanUrl = file.url.split('?')[0];
+        const segments = cleanUrl.split('/');
+        const lastSegment = segments[segments.length - 1];
+        if (lastSegment.includes('.')) {
+          return lastSegment;
+        }
+      } catch (error) {
+        console.warn('Не удалось извлечь имя файла из URL', error);
+      }
+    }
+
+    return file?.name || '';
+  };
+
+  const getFileExtension = (file) => {
+    if (file?.filetype && typeof file.filetype === 'string') {
+      return file.filetype.replace('.', '').toLowerCase();
+    }
+
+    if (file?.extension && typeof file.extension === 'string') {
+      return file.extension.replace('.', '').toLowerCase();
+    }
+
+    const fileName = extractFileName(file);
+    if (fileName) {
+      return fileName.split('.').pop().toLowerCase();
+    }
+
+    return '';
+  };
+
   // Получаем абсолютный URL для файла
   const getAbsoluteFileUrl = (url) => {
     if (!url || url === "#") return "";
@@ -493,7 +510,7 @@ function SimpleFileDisplay({
     setShowModal(true);
     document.body.style.overflow = 'hidden';
     
-    const fileName = file.name || '';
+    const fileName = extractFileName(file);
     console.log("File name for determining type:", fileName);
     
     const fileType = getFileType(fileName);
@@ -600,6 +617,8 @@ function SimpleFileDisplay({
     );
   }
 
+  const activeFileType = activeFile ? getFileType(activeFile) : null;
+
   if (error) {
     return (
       <div className="py-8 text-center text-red-500">
@@ -627,12 +646,16 @@ function SimpleFileDisplay({
         <div className={`grid ${singleColumn ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} gap-4`}>
           {filteredFiles.map((file, index) => {
             // Подготовка полей файла, учитывая разные форматы данных
-            const fileName = file.name || '';
+            const fileName = extractFileName(file);
             const fileDescription = file.description || file.name || 'Файл';
             const fileId = file.id || file.url;
-            const fileInfo = fileInfos[fileId] || { size: '0 Bytes', date: '' };
-            const fileType = getFileTypeShort(fileName);
-            const iconType = getFileTypeIcon(fileName);
+            const fallbackSize = file.filesize
+              ? (typeof file.filesize === 'string' ? file.filesize : formatFileSize(file.filesize))
+              : (file.size ? formatFileSize(file.size) : '—');
+            const fallbackDate = formatDate(file.modified || file.date || file.created_at || '');
+            const fileInfo = fileInfos[fileId] || { size: fallbackSize, date: fallbackDate };
+            const fileType = getFileTypeShort(file);
+            const iconType = getFileTypeIcon(file);
             
             console.log("Rendering file:", fileName, "Icon type:", iconType);
             
@@ -672,12 +695,13 @@ function SimpleFileDisplay({
                         </a>
                       )}
                     </div>
-                    <div className="flex flex-col text-sm">
-                      <div className="flex flex-row items-center">
+                    <div className="flex flex-col text-xs text-gray-600 text-right leading-tight">
+                      <div className="flex items-center justify-end gap-1">
                         <img src={`/img/FileType/${iconType}.png`} alt="" className="w-4 h-4" />
-                        <p className="ml-1 uppercase text-xs text-gray-600">{fileType}, {fileInfo.size}</p>
+                        <span className="uppercase">{fileType}</span>
                       </div>
-                      <p className="text-gray-400 text-xs text-right">{fileInfo.date}</p>
+                      <span>{fileInfo.size}</span>
+                      {fileInfo.date && <span className="text-gray-400">{fileInfo.date}</span>}
                     </div>
                   </div>
                 </div>
@@ -727,7 +751,7 @@ function SimpleFileDisplay({
                     Скачать файл
                   </a>
                 </div>
-              ) : getFileType(activeFile.name) === 'image' ? (
+              ) : activeFileType === 'image' ? (
                 <div className="flex items-center justify-center h-[70vh]">
                   <img 
                     src={activeFile.url} 
@@ -735,7 +759,7 @@ function SimpleFileDisplay({
                     className="max-w-full max-h-[70vh] object-contain"
                   />
                 </div>
-              ) : getFileType(activeFile.name) === 'pdf' ? (
+              ) : activeFileType === 'pdf' ? (
                 <div className="flex flex-col items-center justify-center h-[70vh]">
                   <div className="w-full h-full">
                     <object 
@@ -747,7 +771,7 @@ function SimpleFileDisplay({
                     </object>
                   </div>
                 </div>
-              ) : getFileType(activeFile.name) === 'video' ? (
+              ) : activeFileType === 'video' ? (
                 <div className="flex flex-col items-center justify-center h-[70vh]">
                   <div className="w-full h-full">
                     <video 
@@ -758,7 +782,7 @@ function SimpleFileDisplay({
                     ></video>
                   </div>
                 </div>
-              ) : ['word', 'excel', 'powerpoint'].includes(getFileType(activeFile.name)) && viewerUrl ? (
+              ) : ['word', 'excel', 'powerpoint'].includes(activeFileType) && viewerUrl ? (
                 <div className="flex flex-col items-center justify-center h-[70vh]">
                   <div className="w-full h-full">
                     <iframe 
@@ -769,7 +793,7 @@ function SimpleFileDisplay({
                     ></iframe>
                   </div>
                 </div>
-              ) : ['word', 'excel', 'powerpoint'].includes(getFileType(activeFile.name)) ? (
+              ) : ['word', 'excel', 'powerpoint'].includes(activeFileType) ? (
                 <div className="flex flex-col items-center justify-center h-[70vh]">
                   <div className="text-blue-500 mb-4">
                     <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
