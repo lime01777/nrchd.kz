@@ -2,13 +2,9 @@ import { Head } from '@inertiajs/react';
 import React from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
-import ImportantDoc from '@/Components/ImportantDoc';
-import FileAccordTitle from '@/Components/FileAccordTitle';
-import FileAccordChlank from '@/Components/FileAccordChlank';
 import FilesAccord from '@/Components/FilesAccord';
-import ActualFile from '@/Components/ActualFile';
-import FAQ from '@/Components/FAQ';
 import translationService from '@/services/TranslationService';
+import HealthAccountsDashboard from './HealthAccounts/HealthAccountsDashboard';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
@@ -104,14 +100,11 @@ export default function HealthAccounts() {
     
     <section className="text-gray-600 body-font pb-8">
       <div className="container px-5 mx-auto">
-        <ActualFile 
-          folder={t('directionsPages.healthAccounts.actualInfoFolder')} 
-          title={t('directionsPages.healthAccounts.actualInfoTitle')} 
-          bgColor="bg-purple-100"
-        />
+        {/* Дашборд с ключевыми финансовыми показателями */}
+        <HealthAccountsDashboard t={t} />
       </div>
     </section>
-    
+
     <section className="text-gray-600 body-font pb-8">
       <div className="container px-5 mx-auto">
         <div className="bg-purple-50 p-6 rounded-lg mb-8">
