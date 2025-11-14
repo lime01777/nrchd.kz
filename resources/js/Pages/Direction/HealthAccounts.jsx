@@ -5,6 +5,7 @@ import FolderChlank from '@/Components/FolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
 import translationService from '@/services/TranslationService';
 import HealthAccountsDashboard from './HealthAccounts/HealthAccountsDashboard';
+import HealthAccountsTabs from './HealthAccounts/HealthAccountsTabs';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
@@ -107,13 +108,8 @@ export default function HealthAccounts() {
 
     <section className="text-gray-600 body-font pb-8">
       <div className="container px-5 mx-auto">
-        <div className="bg-purple-50 p-6 rounded-lg mb-8">
-          <FilesAccord 
-            folder={t('directionsPages.healthAccounts.reportsFolder')} 
-            title={t('directionsPages.healthAccounts.reportsTitle')} 
-            bgColor="bg-purple-50"
-          />
-        </div>
+        {/* Табличные данные с вкладками */}
+        <HealthAccountsTabs t={t} />
       </div>
     </section>
 

@@ -78,31 +78,39 @@ const HealthAccountsDashboard = ({ t }) => {
                 },
                 tooltip: {
                     callbacks: {
+                        title: (context) => context[0].label,
                         label: (context) => {
                             const rawValue = context.raw;
                             const total = context.dataset.data.reduce((acc, item) => acc + item, 0);
                             const percentage = (rawValue / total) * 100;
-                            return `${formatNumber(rawValue)} тенге (${formatNumber(percentage, {
-                                minimumFractionDigits: 1,
-                                maximumFractionDigits: 1,
-                            })}%)`;
+                            return `${formatNumber(rawValue)} тенге · ${percentage.toFixed(1)}%`;
                         },
                     },
-                    backgroundColor: 'rgba(17, 24, 39, 0.85)',
-                    padding: 10,
-                    cornerRadius: 6,
+                    backgroundColor: 'rgba(17, 24, 39, 0.92)',
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleColor: '#f8fafc',
+                    bodyColor: '#f8fafc',
                     titleFont: {
                         size: 14,
-                        weight: '600',
+                        weight: '700',
+                        family: "'Inter', sans-serif",
                     },
                     bodyFont: {
                         size: 13,
+                        weight: '500',
+                        family: "'Inter', sans-serif",
                     },
+                    displayColors: false,
                 },
             },
-            cutout: '55%',
+            cutout: '62%',
+            layout: {
+                padding: 12,
+            },
+            hoverOffset: 16,
         }),
-        []
+        [formatNumber]
     );
 
     // Массив карточек с процентами для более компактного рендера
@@ -142,33 +150,9 @@ const HealthAccountsDashboard = ({ t }) => {
                     </p>
 
                     <div className="mt-6 flex flex-col items-center">
-                        <div className="h-48 w-full max-w-xs">
+                        <div className="h-56 w-full max-w-sm">
                             {/* Диаграмма показывающая структуру общих расходов */}
                             <Pie data={totalVsCapitalChart} options={chartOptions} />
-                        </div>
-                        <div className="mt-6 w-full max-w-md space-y-4">
-                            <div className="flex items-start gap-3 rounded-xl bg-white/60 p-4">
-                                <span className="mt-1 inline-block h-3 w-3 flex-shrink-0 rounded-full bg-orange-500" />
-                                <div>
-                                    <p className="text-sm font-medium text-rose-700">
-                                        {t('directionsPages.healthAccounts.dashboard.overall.current', 'Текущие расходы')}
-                                    </p>
-                                    <p className="text-lg font-semibold text-rose-900">
-                                        {formatNumber(totals.current)} тенге
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-3 rounded-xl bg-white/60 p-4">
-                                <span className="mt-1 inline-block h-3 w-3 flex-shrink-0 rounded-full bg-purple-500" />
-                                <div>
-                                    <p className="text-sm font-medium text-rose-700">
-                                        {t('directionsPages.healthAccounts.dashboard.overall.capital', 'Капитальные расходы')}
-                                    </p>
-                                    <p className="text-lg font-semibold text-rose-900">
-                                        {formatNumber(totals.capital)} тенге
-                                    </p>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -183,33 +167,9 @@ const HealthAccountsDashboard = ({ t }) => {
                     </p>
 
                     <div className="mt-6 flex flex-col items-center">
-                        <div className="h-48 w-full max-w-xs">
+                        <div className="h-56 w-full max-w-sm">
                             {/* Диаграмма показывающая доли текущих расходов между секторами */}
                             <Doughnut data={currentSplitChart} options={chartOptions} />
-                        </div>
-                        <div className="mt-6 w-full max-w-md space-y-4">
-                            <div className="flex items-start gap-3 rounded-xl bg-white/60 p-4">
-                                <span className="mt-1 inline-block h-3 w-3 flex-shrink-0 rounded-full bg-blue-600" />
-                                <div>
-                                    <p className="text-sm font-medium text-sky-700">
-                                        {t('directionsPages.healthAccounts.dashboard.current.stateShare', 'Государственные расходы')}
-                                    </p>
-                                    <p className="text-lg font-semibold text-sky-900">
-                                        {formatNumber(totals.stateCurrent)} тенге
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-3 rounded-xl bg-white/60 p-4">
-                                <span className="mt-1 inline-block h-3 w-3 flex-shrink-0 rounded-full bg-blue-900" />
-                                <div>
-                                    <p className="text-sm font-medium text-sky-700">
-                                        {t('directionsPages.healthAccounts.dashboard.current.privateShare', 'Частные расходы')}
-                                    </p>
-                                    <p className="text-lg font-semibold text-sky-900">
-                                        {formatNumber(totals.privateCurrent)} тенге
-                                    </p>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
