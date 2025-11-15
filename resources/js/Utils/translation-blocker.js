@@ -7,13 +7,13 @@
 // Тексты, которые используются в информационных блоках
 const blockTexts = [
   'Перевод страницы',
-  'Инициализация',
-  'CSRF токен',
-  'Тестирование API',
-  'Поиск текстовых элементов',
-  'Найдено',
-  'текстовых элементов для перевода',
-  'Прогресс:',
+  'Инициализация сервиса перевода',
+  'Инициализация перевода',
+  'CSRF токен (перевод)',
+  'Тестирование API перевода',
+  'Поиск текстовых элементов для перевода',
+  'Найдено текстовых элементов для перевода',
+  'Прогресс перевода',
   'Перевод элемента'
 ];
 
@@ -43,8 +43,8 @@ function createBlockerStyle() {
 
 // Функция для проверки, содержит ли элемент текст из списка блокировки
 function containsBlockedText(element) {
-  const text = element.textContent || '';
-  return blockTexts.some(blockText => text.includes(blockText));
+  const text = (element.textContent || '').toLowerCase();
+  return blockTexts.some(blockText => text.includes(blockText.toLowerCase()));
 }
 
 // Скрыть все существующие блоки

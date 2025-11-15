@@ -628,6 +628,7 @@ Route::prefix('admin/storage')->middleware(['auth'])->group(function () {
     Route::get('list', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'list']);
     Route::delete('delete', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'delete']);
     Route::post('upload', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'upload']);
+    Route::post('metadata', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'updateMetadata']);
 });
 
 // API для библиотеки изображений

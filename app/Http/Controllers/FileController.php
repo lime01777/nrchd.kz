@@ -4,10 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Document;
 use App\Models\Accordion;
+use App\Models\ClinicalMedicineCategory;
+use App\Models\ClinicalProtocolMetadata;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\QueryException;
 
 class FileController extends Controller
 {
@@ -56,10 +62,17 @@ class FileController extends Controller
                 ], 404);
             }
             
-            // Получаем все файлы и подпапки рекурсивно
             $files = [];
             $this->getFilesRecursively($fullPath, $files, $category);
-            
+
+            $absoluteToRelativePath = [];
+            foreach ($files as $file) {
+                $absoluteToRelativePath[$file->getPathname()] = $this->getRelativeStoragePath($file->getPathname());
+            }
+
+            $metadataCollection = $this->getMetadataCollection(array_values($absoluteToRelativePath));
+            $categoriesMap = $this->getMedicineCategoriesMap($metadataCollection);
+
             $documents = [];
             
             foreach ($files as $file) {
@@ -74,46 +87,50 @@ class FileController extends Controller
                     continue;
                 }
                 
-                // Фильтрация по поисковому запросу
-                if ($searchTerm && stripos(pathinfo($fileName, PATHINFO_FILENAME), $searchTerm) === false) {
+                if ($searchTerm && !$this->containsCaseInsensitive(pathinfo($fileName, PATHINFO_FILENAME), $searchTerm)) {
                     continue;
                 }
-                
-                // Фильтрация по разделу медицины
+
+                $relativeStoragePath = $absoluteToRelativePath[$file->getPathname()] ?? $this->getRelativeStoragePath($file->getPathname());
+            $metadata = $this->findMetadataByPath($metadataCollection, $relativeStoragePath);
+                $metadataMedicine = $metadata
+                    ? array_values(array_filter(array_map(fn ($id) => $categoriesMap[$id] ?? null, $metadata->medicine_category_ids ?? [])))
+                    : [];
+                $metadataMkb = $metadata->mkb_codes ?? [];
+
                 if ($medicine) {
-                    // Проверяем наличие раздела медицины в имени файла или в пути
-                    $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
-                    $filePath = $file->getPathname();
-                    
-                    // Проверяем имя файла и путь на совпадение с разделом медицины
-                    if (stripos($fileContent, $medicine) === false && stripos($filePath, $medicine) === false) {
-                        continue;
+                    $matchesMetadata = $this->arrayContainsInsensitive($metadataMedicine, $medicine);
+                    if (!$matchesMetadata) {
+                        $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
+                        $filePath = $file->getPathname();
+                        if (
+                            !$this->containsCaseInsensitive($fileContent, $medicine) &&
+                            !$this->containsCaseInsensitive($filePath, $medicine)
+                        ) {
+                            continue;
+                        }
                     }
                 }
                 
-                // Фильтрация по категории МКБ
                 if ($mkb) {
-                    // Проверяем наличие кода МКБ в имени файла или в пути
-                    $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
-                    $filePath = $file->getPathname();
-                    
-                    // Проверяем имя файла и путь на совпадение с кодом МКБ
-                    if (stripos($fileContent, $mkb) === false && stripos($filePath, $mkb) === false) {
-                        continue;
+                    $matchesMetadata = $this->arrayContainsInsensitive($metadataMkb, $mkb);
+                    if (!$matchesMetadata) {
+                        $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
+                        $filePath = $file->getPathname();
+                        
+                        if (
+                            !$this->containsCaseInsensitive($fileContent, $mkb) &&
+                            !$this->containsCaseInsensitive($filePath, $mkb)
+                        ) {
+                            continue;
+                        }
                     }
                 }
                 
-                // Относительный путь к файлу для URL
-                $relativePath = str_replace(public_path() . DIRECTORY_SEPARATOR, '', $file->getPathname());
-                $relativePath = str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
-                
-                // Определяем тип иконки на основе расширения файла
                 $imgType = $this->getImageTypeForExtension($fileExtension);
                 
-                // Получаем категорию из пути файла
                 $fileCategory = $this->getCategoryFromPath($file->getPathname(), $fullPath);
                 
-                // Определяем раздел медицины на основе имени файла и пути
                 $medicineSectionName = '';
                 $medicineSections = [
                     'cardiology' => 'Кардиология',
@@ -148,15 +165,59 @@ class FileController extends Controller
                     }
                 }
                 
+                $mkbCategory = '';
+                $mkbPatterns = [
+                    'A\d+' => 'A00-B99',
+                    'B\d+' => 'A00-B99',
+                    'C\d+' => 'C00-D48',
+                    'D[0-4]\d' => 'C00-D48',
+                    'D[5-8]\d' => 'D50-D89',
+                    'E\d+' => 'E00-E90',
+                    'F\d+' => 'F00-F99',
+                    'G\d+' => 'G00-G99',
+                    'H[0-5]\d' => 'H00-H59',
+                    'H[6-9]\d' => 'H60-H95',
+                    'I\d+' => 'I00-I99',
+                    'J\d+' => 'J00-J99',
+                    'K\d+' => 'K00-K93',
+                    'L\d+' => 'L00-L99',
+                    'M\d+' => 'M00-M99',
+                    'N\d+' => 'N00-N99',
+                    'O\d+' => 'O00-O99',
+                    'P\d+' => 'P00-P96',
+                    'Q\d+' => 'Q00-Q99',
+                    'R\d+' => 'R00-R99',
+                    'S\d+' => 'S00-T98',
+                    'T\d+' => 'S00-T98',
+                    'V\d+' => 'V01-Y98',
+                    'W\d+' => 'V01-Y98',
+                    'X\d+' => 'V01-Y98',
+                    'Y\d+' => 'V01-Y98',
+                    'Z\d+' => 'Z00-Z99'
+                ];
+
+                foreach ($mkbPatterns as $pattern => $categoryCode) {
+                    if (preg_match('/' . $pattern . '/', $fileNameLower) || preg_match('/' . $pattern . '/', $filePathLower)) {
+                        $mkbCategory = $categoryCode;
+                        break;
+                    }
+                }
+
+                $primaryMedicine = $metadataMedicine[0] ?? $medicineSectionName;
+                $primaryMkb = $metadataMkb[0] ?? '';
+
                 $documents[] = [
                     'name' => pathinfo($fileName, PATHINFO_FILENAME),
-                    'url' => '/' . $relativePath,
+                    'url' => asset('storage/' . $relativeStoragePath),
                     'size' => $fileSize,
                     'extension' => $fileExtension,
                     'imgType' => $imgType,
                     'category' => $fileCategory,
                     'year' => $fileYear,
-                    'medicine' => $medicineSectionName,
+                    'medicine' => $primaryMedicine,
+                    'medicine_categories' => $metadataMedicine,
+                    'mkb' => $primaryMkb ?: $mkbCategory,
+                    'mkb_codes' => $metadataMkb,
                     'modified' => date('Y-m-d H:i:s', $lastModified),
                     'type' => $this->getDocumentTypeFromPath($folderPath)
                 ];
@@ -178,6 +239,21 @@ class FileController extends Controller
         return response()->json([
             'error' => 'Не указан путь к папке'
         ], 400);
+    }
+
+    public function getClinicalProtocolFilters()
+    {
+        $medicineCategories = $this->fetchMedicineCategories();
+        if (empty($medicineCategories)) {
+            $medicineCategories = $this->getDefaultMedicineCategories();
+        }
+        
+        $mkbCategories = config('clinical_protocols.mkb_categories', []);
+        
+        return response()->json([
+            'medicine_categories' => $medicineCategories,
+            'mkb_categories' => $mkbCategories,
+        ]);
     }
 
     public function getFiles(Request $request)
@@ -269,7 +345,7 @@ class FileController extends Controller
                 }
                 
                 // Фильтрация по поисковому запросу
-                if ($searchTerm && stripos(pathinfo($fileName, PATHINFO_FILENAME), $searchTerm) === false) {
+                if ($searchTerm && !$this->containsCaseInsensitive(pathinfo($fileName, PATHINFO_FILENAME), $searchTerm)) {
                     continue;
                 }
                 
@@ -280,7 +356,10 @@ class FileController extends Controller
                     $filePath = $file->getPathname();
                     
                     // Проверяем имя файла и путь на совпадение с разделом медицины
-                    if (stripos($fileContent, $medicine) === false && stripos($filePath, $medicine) === false) {
+                    if (
+                        !$this->containsCaseInsensitive($fileContent, $medicine) &&
+                        !$this->containsCaseInsensitive($filePath, $medicine)
+                    ) {
                         continue;
                     }
                 }
@@ -292,7 +371,10 @@ class FileController extends Controller
                     $filePath = $file->getPathname();
                     
                     // Проверяем имя файла и путь на совпадение с кодом МКБ
-                    if (stripos($fileContent, $mkb) === false && stripos($filePath, $mkb) === false) {
+                    if (
+                        !$this->containsCaseInsensitive($fileContent, $mkb) &&
+                        !$this->containsCaseInsensitive($filePath, $mkb)
+                    ) {
                         continue;
                     }
                 }
@@ -841,5 +923,147 @@ class FileController extends Controller
         }
         
         return 'unknown';
+    }
+
+    private function containsCaseInsensitive(string $haystack, string $needle): bool
+    {
+        if ($needle === '') {
+            return true;
+        }
+
+        return mb_stripos($haystack, $needle, 0, 'UTF-8') !== false;
+    }
+
+    private function arrayContainsInsensitive(array $haystack, string $needle): bool
+    {
+        foreach ($haystack as $value) {
+            if ($this->containsCaseInsensitive($value, $needle)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function getRelativeStoragePath(string $absolutePath): string
+    {
+        $storageRoot = realpath(public_path('storage'));
+        $realPath = realpath($absolutePath);
+
+        if ($storageRoot && $realPath && str_starts_with($realPath, $storageRoot)) {
+            $relative = ltrim(str_replace($storageRoot, '', $realPath), DIRECTORY_SEPARATOR);
+            return str_replace(DIRECTORY_SEPARATOR, '/', $relative);
+        }
+
+        return str_replace(DIRECTORY_SEPARATOR, '/', ltrim(str_replace(public_path(), '', $absolutePath), DIRECTORY_SEPARATOR));
+    }
+
+    private function getMetadataCollection(array $paths): Collection
+    {
+        if (empty($paths) || !Schema::hasTable('clinical_protocol_metadata')) {
+            return collect();
+        }
+        
+        $queryPaths = collect($paths)
+            ->flatMap(fn ($path) => $this->generateMetadataKeyVariants($path))
+            ->unique()
+            ->values()
+            ->all();
+
+        if (empty($queryPaths)) {
+            return collect();
+        }
+
+        try {
+            return ClinicalProtocolMetadata::whereIn('file_path', $queryPaths)->get()->keyBy('file_path');
+        } catch (QueryException $exception) {
+            Log::warning('Не удалось получить метаданные клинических протоколов', [
+                'error' => $exception->getMessage(),
+            ]);
+            return collect();
+        }
+    }
+
+    private function generateMetadataKeyVariants(string $path): array
+    {
+        $normalized = str_replace('\\', '/', $path);
+        $variants = [
+            $normalized,
+            ltrim($normalized, '/'),
+        ];
+
+        if (str_starts_with($normalized, 'documents/')) {
+            $variants[] = substr($normalized, strlen('documents/'));
+        }
+
+        if (str_starts_with($normalized, 'storage/')) {
+            $variants[] = substr($normalized, strlen('storage/'));
+        }
+
+        if (str_starts_with($normalized, 'storage/documents/')) {
+            $afterStorage = substr($normalized, strlen('storage/'));
+            $variants[] = $afterStorage;
+            $variants[] = substr($normalized, strlen('storage/documents/'));
+            $variants[] = 'documents/' . substr($normalized, strlen('storage/documents/'));
+        }
+
+        return array_values(array_unique(array_filter($variants)));
+    }
+
+    private function findMetadataByPath(Collection $metadataCollection, string $path): ?ClinicalProtocolMetadata
+    {
+        foreach ($this->generateMetadataKeyVariants($path) as $variant) {
+            if ($metadataCollection->has($variant)) {
+                return $metadataCollection->get($variant);
+            }
+        }
+
+        return null;
+    }
+
+    private function getMedicineCategoriesMap(Collection $metadataCollection): Collection
+    {
+        if ($metadataCollection->isEmpty() || !Schema::hasTable('clinical_medicine_categories')) {
+            return collect();
+        }
+        
+        $allCategoryIds = $metadataCollection
+            ->flatMap(fn ($meta) => $meta->medicine_category_ids ?? [])
+            ->unique()
+            ->filter();
+        
+        if ($allCategoryIds->isEmpty()) {
+            return collect();
+        }
+        
+        try {
+            return ClinicalMedicineCategory::whereIn('id', $allCategoryIds)->pluck('name', 'id');
+        } catch (QueryException $exception) {
+            Log::warning('Не удалось получить справочник категорий медицины', [
+                'error' => $exception->getMessage(),
+            ]);
+            return collect();
+        }
+    }
+
+    private function fetchMedicineCategories(): array
+    {
+        if (!Schema::hasTable('clinical_medicine_categories')) {
+            return [];
+        }
+
+        try {
+            return ClinicalMedicineCategory::orderBy('name')->pluck('name')->toArray();
+        } catch (QueryException $exception) {
+            Log::warning('Ошибка чтения категорий медицины', [
+                'error' => $exception->getMessage(),
+            ]);
+            return [];
+        }
+    }
+
+    private function getDefaultMedicineCategories(): array
+    {
+        return config('clinical_protocols.defaults.medicine_categories', []);
     }
 }

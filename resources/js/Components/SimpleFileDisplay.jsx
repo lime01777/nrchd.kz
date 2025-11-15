@@ -28,6 +28,9 @@ function SimpleFileDisplay({
   const [viewerUrl, setViewerUrl] = useState(null);
   const [modalError, setModalError] = useState(null);
   const [copiedFileId, setCopiedFileId] = useState(null);
+  const INITIAL_BATCH = 60;
+  const LOAD_MORE_STEP = 60;
+  const [visibleCount, setVisibleCount] = useState(INITIAL_BATCH);
   const [fileInfos, setFileInfos] = useState({});
   
   // Форматирование даты
@@ -77,22 +80,13 @@ function SimpleFileDisplay({
         let apiEndpoint = `${baseUrl}/api/files`;
         
         if (useClinicalProtocols) {
-          // Используем новый API-эндпоинт для клинических протоколов
           apiEndpoint = `${baseUrl}/api/clinical-protocols`;
           
-          // Добавляем параметры фильтрации для клинических протоколов
           if (folder) {
-            // Нормализуем путь, заменяя обратные слеши на прямые для корректной работы URL
             const normalizedFolder = folder.replace(/\\/g, '/');
             params.append('folder', normalizedFolder);
           }
           if (searchTerm) params.append('search', searchTerm);
-          if (medicine) params.append('medicine', medicine);
-          if (mkb) params.append('mkb', mkb);
-          if (category) params.append('category', category);
-          if (year) params.append('year', year);
-          if (fileType) params.append('filetype', fileType);
-          // Убираем type для клинических протоколов, так как тип определяется через folderPath
         } else {
           // Стандартный режим работы с файлами из папки
           if (folder) {
@@ -257,6 +251,7 @@ function SimpleFileDisplay({
         const limitedFiles = limit ? processedFiles.slice(0, limit) : processedFiles;
         
         setFiles(limitedFiles);
+        setVisibleCount(Math.min(INITIAL_BATCH, limitedFiles.length || INITIAL_BATCH));
         
         // Получаем информацию о размере и дате для каждого файла
         const fileInfoPromises = limitedFiles.map(file => {
@@ -308,9 +303,9 @@ function SimpleFileDisplay({
           setFileInfos(fileInfoMap);
           
           // Вызываем обработчик onFilesLoaded, если он предоставлен
-          if (onFilesLoaded && Array.isArray(filesData)) {
+        if (onFilesLoaded && Array.isArray(filesData)) {
             try {
-              onFilesLoaded(filesData);
+              onFilesLoaded(filesData.length);
             } catch (error) {
               console.error('Ошибка при вызове onFilesLoaded:', error);
               
@@ -558,6 +553,9 @@ function SimpleFileDisplay({
     });
   };
 
+  const normalize = (value) =>
+    typeof value === 'string' ? value.trim().toLowerCase() : '';
+
   // Фильтрация файлов на клиентской стороне
   const filteredFiles = useMemo(() => {
     // Если нет параметров фильтрации, возвращаем все файлы
@@ -567,6 +565,14 @@ function SimpleFileDisplay({
     }
     
     return files.filter(file => {
+      const medicineList = Array.isArray(file.medicine_categories) && file.medicine_categories.length
+        ? file.medicine_categories
+        : (file.medicine ? [file.medicine] : []);
+
+      const mkbList = Array.isArray(file.mkb_codes) && file.mkb_codes.length
+        ? file.mkb_codes
+        : (file.mkb ? [file.mkb] : []);
+
       // Фильтрация по поисковому запросу
       if (searchTerm && searchTerm.trim() !== '') {
         const normalizedSearchTerm = searchTerm.toLowerCase().trim();
@@ -580,13 +586,25 @@ function SimpleFileDisplay({
       }
       
       // Фильтрация по разделу медицины
-      if (medicine && file.medicine !== medicine) {
-        return false;
+      if (medicine) {
+        const normalizedMedicine = normalize(medicine);
+        const hasMedicine = medicineList.some(
+          (item) => normalize(item) === normalizedMedicine
+        );
+        if (!hasMedicine) {
+          return false;
+        }
       }
       
       // Фильтрация по категории МКБ
-      if (mkb && file.mkb !== mkb) {
-        return false;
+      if (mkb) {
+        const normalizedMkb = normalize(mkb);
+        const hasMkb = mkbList.some(
+          (item) => normalize(item) === normalizedMkb
+        );
+        if (!hasMkb) {
+          return false;
+        }
       }
       
       // Фильтрация по категории протокола
@@ -607,6 +625,19 @@ function SimpleFileDisplay({
       return true;
     });
   }, [files, searchTerm, medicine, mkb, category, year, fileType, type]);
+
+  const filteredLength = filteredFiles.length;
+
+  useEffect(() => {
+    setVisibleCount(Math.min(INITIAL_BATCH, filteredLength || INITIAL_BATCH));
+  }, [filteredLength]);
+
+  const visibleFiles = useMemo(() => filteredFiles.slice(0, visibleCount), [filteredFiles, visibleCount]);
+  const hasMore = visibleCount < filteredFiles.length;
+
+  const handleLoadMore = () => {
+    setVisibleCount(prev => Math.min(prev + LOAD_MORE_STEP, filteredFiles.length));
+  };
 
   if (loading) {
     return (
@@ -629,14 +660,11 @@ function SimpleFileDisplay({
 
   return (
     <div className={`py-6 ${bgColor}`}>
-      <div className="flex justify-between items-center mb-4">
-        {title && (
+      {title && (
+        <div className="mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
-        )}
-        <div className="text-sm font-medium text-gray-600">
-          Всего найдено: <span className="font-bold">{filteredFiles.length}</span>
         </div>
-      </div>
+      )}
       
       {filteredFiles.length === 0 ? (
         <div className="py-8 text-center text-gray-500 bg-white rounded-lg shadow border border-gray-200" data-translate>
@@ -644,7 +672,7 @@ function SimpleFileDisplay({
         </div>
       ) : (
         <div className={`grid ${singleColumn ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} gap-4`}>
-          {filteredFiles.map((file, index) => {
+          {visibleFiles.map((file, index) => {
             // Подготовка полей файла, учитывая разные форматы данных
             const fileName = extractFileName(file);
             const fileDescription = file.description || file.name || 'Файл';
@@ -657,8 +685,6 @@ function SimpleFileDisplay({
             const fileType = getFileTypeShort(file);
             const iconType = getFileTypeIcon(file);
             
-            console.log("Rendering file:", fileName, "Icon type:", iconType);
-            
             return (
               <div className="w-full" key={index}>
                 <div className="flex flex-col h-[250px] bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-200">
@@ -667,16 +693,24 @@ function SimpleFileDisplay({
                     
                     {/* Метки для файлов */}
                     <div className="flex flex-wrap gap-1 mb-2">
-                      {file.medicine && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                          Раздел: {file.medicine}
+                      {(
+                        Array.isArray(file.medicine_categories) && file.medicine_categories.length
+                          ? file.medicine_categories
+                          : (file.medicine ? [file.medicine] : [])
+                      ).map((item, idx) => (
+                        <span key={`med-${idx}`} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                          Раздел: {item}
                         </span>
-                      )}
-                      {file.mkb && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
-                          МКБ: {file.mkb}
+                      ))}
+                      {(
+                        Array.isArray(file.mkb_codes) && file.mkb_codes.length
+                          ? file.mkb_codes
+                          : (file.mkb ? [file.mkb] : [])
+                      ).map((item, idx) => (
+                        <span key={`mkb-${idx}`} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
+                          МКБ: {item}
                         </span>
-                      )}
+                      ))}
                     </div>
                   </div>
                   <div className="flex mt-auto justify-between items-center">
@@ -708,6 +742,21 @@ function SimpleFileDisplay({
               </div>
             );
           })}
+        </div>
+      )}
+
+      <div className="mt-4 text-sm text-gray-500 text-center">
+        Показано {visibleFiles.length} из {filteredFiles.length}
+      </div>
+
+      {hasMore && (
+        <div className="mt-4 flex justify-center">
+          <button
+            onClick={handleLoadMore}
+            className="px-6 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-200 transition-colors duration-200"
+          >
+            Показать ещё
+          </button>
         </div>
       )}
       

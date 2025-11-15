@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import axios from 'axios';
+import { DEFAULT_MEDICINE_CATEGORIES, DEFAULT_MKB_OPTIONS } from '@/data/clinicalFilters';
 
 export default function DocumentsIndex() {
-  const [path, setPath] = useState('');
+  const initialPath = 'documents/Клинические протоколы';
+  const [path, setPath] = useState(initialPath);
   const [items, setItems] = useState([]);
   const [parent, setParent] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [preview, setPreview] = useState(null); // {type, url, name}
+  const [metadata, setMetadata] = useState({});
+  const [medicineOptions, setMedicineOptions] = useState([]);
+  const [mkbOptions, setMkbOptions] = useState([]);
+  const [newCategoryInputs, setNewCategoryInputs] = useState({});
+  const [savingPath, setSavingPath] = useState(null);
 
   const fetchList = (p = '') => {
     setLoading(true);
@@ -18,13 +25,35 @@ export default function DocumentsIndex() {
         setItems(res.data.items);
         setPath(res.data.current);
         setParent(res.data.parent);
+        const metaMap = {};
+        res.data.items.forEach((item) => {
+          if (item.type === 'file') {
+            metaMap[item.path] = {
+              medicineCategories: item.medicine_categories || [],
+              mkbCodes: item.mkb_codes || [],
+            };
+          }
+        });
+        setMetadata(metaMap);
       })
       .catch(e => setError(e.response?.data?.error || e.message))
       .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    fetchList('');
+    fetchList(initialPath);
+  }, []);
+
+  useEffect(() => {
+    axios.get('/api/clinical-protocols/filters')
+      .then(({ data }) => {
+        setMedicineOptions(data.medicine_categories || []);
+        setMkbOptions(data.mkb_categories || []);
+      })
+      .catch(() => {
+        setMedicineOptions(DEFAULT_MEDICINE_CATEGORIES);
+        setMkbOptions(DEFAULT_MKB_OPTIONS);
+      });
   }, []);
 
   const handleOpenFolder = (folderPath) => {
@@ -64,6 +93,65 @@ export default function DocumentsIndex() {
         name: item.name,
       });
     }
+  };
+
+  const getMetadataFor = (itemPath) => {
+    return metadata[itemPath] || { medicineCategories: [], mkbCodes: [] };
+  };
+
+  const handleMedicineSelectChange = (itemPath, values) => {
+    setMetadata((prev) => ({
+      ...prev,
+      [itemPath]: {
+        medicineCategories: values,
+        mkbCodes: prev[itemPath]?.mkbCodes || [],
+      },
+    }));
+  };
+
+  const handleAddCategory = (itemPath) => {
+    const value = (newCategoryInputs[itemPath] || '').trim();
+    if (!value) {
+      return;
+    }
+    setMedicineOptions((prev) => (prev.includes(value) ? prev : [...prev, value]));
+    const existing = getMetadataFor(itemPath).medicineCategories;
+    handleMedicineSelectChange(itemPath, Array.from(new Set([...existing, value])));
+    setNewCategoryInputs((prev) => ({ ...prev, [itemPath]: '' }));
+  };
+
+  const handleMkbSelectChange = (itemPath, values) => {
+    setMetadata((prev) => ({
+      ...prev,
+      [itemPath]: {
+        medicineCategories: prev[itemPath]?.medicineCategories || [],
+        mkbCodes: values,
+      },
+    }));
+  };
+
+  const handleSaveMetadata = (itemPath) => {
+    const meta = getMetadataFor(itemPath);
+    setSavingPath(itemPath);
+    axios.post('/admin/storage/metadata', {
+      path: itemPath,
+      medicine_categories: meta.medicineCategories,
+      mkb_codes: meta.mkbCodes,
+    })
+      .then(({ data }) => {
+        setMetadata((prev) => ({
+          ...prev,
+          [itemPath]: {
+            medicineCategories: data.medicine_categories || [],
+            mkbCodes: data.mkb_codes || [],
+          },
+        }));
+        if (data.available_categories) {
+          setMedicineOptions(data.available_categories);
+        }
+      })
+      .catch((e) => alert('Ошибка сохранения метаданных: ' + (e.response?.data?.error || e.message)))
+      .finally(() => setSavingPath(null));
   };
 
   const closePreview = () => setPreview(null);
@@ -113,6 +201,8 @@ export default function DocumentsIndex() {
             <thead>
               <tr className="border-b">
                 <th className="text-left py-2">Имя</th>
+                <th className="text-left py-2">Категории (медицина)</th>
+                <th className="text-left py-2">МКБ-10</th>
                 <th className="text-left py-2">Тип</th>
                 <th className="text-left py-2">Размер</th>
                 <th className="text-left py-2">Изменён</th>
@@ -121,7 +211,7 @@ export default function DocumentsIndex() {
             </thead>
             <tbody>
               {items.length === 0 && (
-                <tr><td colSpan={5} className="text-center text-gray-400 py-8">Папка пуста</td></tr>
+                <tr><td colSpan={7} className="text-center text-gray-400 py-8">Папка пуста</td></tr>
               )}
               {items.map(item => (
                 <tr key={item.path} className="border-b hover:bg-gray-50">
@@ -134,12 +224,87 @@ export default function DocumentsIndex() {
                       <span className="cursor-pointer" onClick={() => handlePreview(item)}>📄 {item.name}</span>
                     )}
                   </td>
+                  <td className="py-2 align-top">
+                    {item.type === 'file' ? (
+                      <div className="space-y-2">
+                        <select
+                          multiple
+                          className="w-full border rounded p-1 text-xs min-h-[80px]"
+                          value={getMetadataFor(item.path).medicineCategories}
+                          onChange={(e) =>
+                            handleMedicineSelectChange(
+                              item.path,
+                              Array.from(e.target.selectedOptions).map((option) => option.value)
+                            )
+                          }
+                        >
+                          {medicineOptions.map((name) => (
+                            <option key={name} value={name}>
+                              {name}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            className="flex-1 border rounded px-2 py-1 text-xs"
+                            placeholder="Новая категория"
+                            value={newCategoryInputs[item.path] || ''}
+                            onChange={(e) =>
+                              setNewCategoryInputs((prev) => ({ ...prev, [item.path]: e.target.value }))
+                            }
+                          />
+                          <button
+                            type="button"
+                            className="px-2 py-1 bg-blue-500 text-white text-xs rounded"
+                            onClick={() => handleAddCategory(item.path)}
+                          >
+                            Добавить
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+                  <td className="py-2 align-top">
+                    {item.type === 'file' ? (
+                      <select
+                        multiple
+                        className="w-full border rounded p-1 text-xs min-h-[80px]"
+                        value={getMetadataFor(item.path).mkbCodes}
+                        onChange={(e) =>
+                          handleMkbSelectChange(
+                            item.path,
+                            Array.from(e.target.selectedOptions).map((option) => option.value)
+                          )
+                        }
+                      >
+                        {mkbOptions.map((option) => (
+                          <option key={option.code} value={option.code}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
                   <td className="py-2">{item.type === 'folder' ? 'Папка' : 'Файл'}</td>
                   <td className="py-2">{item.type === 'file' ? (item.size / 1024).toFixed(1) + ' KB' : ''}</td>
                   <td className="py-2">{item.type === 'file' ? new Date(item.modified * 1000).toLocaleString() : ''}</td>
                   <td className="py-2 space-x-2">
                     {item.type === 'file' && (
-                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">Скачать</a>
+                      <>
+                        <button
+                          onClick={() => handleSaveMetadata(item.path)}
+                          className="text-blue-600 hover:underline mr-2"
+                          disabled={savingPath === item.path}
+                        >
+                          {savingPath === item.path ? 'Сохранение…' : 'Сохранить'}
+                        </button>
+                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline mr-2">Скачать</a>
+                      </>
                     )}
                     <button onClick={() => handleDelete(item)} className="text-red-600 hover:underline">Удалить</button>
                   </td>

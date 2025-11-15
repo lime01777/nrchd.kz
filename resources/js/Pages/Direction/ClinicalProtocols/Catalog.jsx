@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
+import axios from 'axios';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import translationService from '@/services/TranslationService';
+import { DEFAULT_MEDICINE_CATEGORIES, DEFAULT_MKB_OPTIONS } from '@/data/clinicalFilters';
 
 export default function ClinicalProtocolsCatalog() {
   const t = (key, fallback = '') => translationService.t(key, fallback);
@@ -15,69 +17,43 @@ export default function ClinicalProtocolsCatalog() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [availableCategories, setAvailableCategories] = useState([]);
+  const [medicineOptions, setMedicineOptions] = useState([]);
+  const [mkbOptions, setMkbOptions] = useState([]);
   const [filteredProtocols, setFilteredProtocols] = useState(0);
   
   useEffect(() => {
     console.log('Catalog component mounted');
+    fetchFilters();
     return () => {
       console.log('Catalog component unmounted');
     };
   }, []);
 
-  // Разделы медицины
+  const fetchFilters = () => {
+    setLoading(true);
+    axios.get('/api/clinical-protocols/filters')
+      .then(({ data }) => {
+        setMedicineOptions(data.medicine_categories || []);
+        setMkbOptions(data.mkb_categories || []);
+      })
+      .catch(() => {
+        setMedicineOptions(DEFAULT_MEDICINE_CATEGORIES);
+        setMkbOptions(DEFAULT_MKB_OPTIONS);
+      })
+      .finally(() => setLoading(false));
+  };
+
   const medicineSections = [
     { value: '', label: t('directionsPages.clinicalProtocolsSubpages.catalog.allSections') },
-    { value: 'cardiology', label: 'Кардиология' },
-    { value: 'neurology', label: 'Неврология' },
-    { value: 'oncology', label: 'Онкология' },
-    { value: 'pediatrics', label: 'Педиатрия' },
-    { value: 'surgery', label: 'Хирургия' },
-    { value: 'therapy', label: 'Терапия' },
-    { value: 'gynecology', label: 'Гинекология' },
-    { value: 'psychiatry', label: 'Психиатрия' },
-    { value: 'dermatology', label: 'Дерматология' },
-    { value: 'ophthalmology', label: 'Офтальмология' },
-    { value: 'otolaryngology', label: 'Оториноларингология' },
-    { value: 'urology', label: 'Урология' },
-    { value: 'orthopedics', label: 'Ортопедия' },
-    { value: 'anesthesiology', label: 'Анестезиология' },
-    { value: 'radiology', label: 'Радиология' },
-    { value: 'pathology', label: 'Патология' },
-    { value: 'infectious', label: 'Инфекционные болезни' },
-    { value: 'endocrinology', label: 'Эндокринология' },
-    { value: 'gastroenterology', label: 'Гастроэнтерология' },
-    { value: 'pulmonology', label: 'Пульмонология' },
-    { value: 'nephrology', label: 'Нефрология' },
-    { value: 'rheumatology', label: 'Ревматология' },
-    { value: 'hematology', label: 'Гематология' },
-    { value: 'immunology', label: 'Иммунология' }
+    ...medicineOptions.map((name) => ({ value: name, label: name })),
   ];
 
-  // Категории МКБ
   const mkbCategories = [
     { value: '', label: t('directionsPages.clinicalProtocolsSubpages.catalog.allMkbCategories') },
-    { value: 'A00-B99', label: 'A00-B99 Инфекционные и паразитарные болезни' },
-    { value: 'C00-D48', label: 'C00-D48 Новообразования' },
-    { value: 'D50-D89', label: 'D50-D89 Болезни крови и кроветворных органов' },
-    { value: 'E00-E90', label: 'E00-E90 Болезни эндокринной системы' },
-    { value: 'F01-F99', label: 'F01-F99 Психические расстройства' },
-    { value: 'G00-G99', label: 'G00-G99 Болезни нервной системы' },
-    { value: 'H00-H59', label: 'H00-H59 Болезни глаза' },
-    { value: 'H60-H95', label: 'H60-H95 Болезни уха' },
-    { value: 'I00-I99', label: 'I00-I99 Болезни системы кровообращения' },
-    { value: 'J00-J99', label: 'J00-J99 Болезни органов дыхания' },
-    { value: 'K00-K93', label: 'K00-K93 Болезни органов пищеварения' },
-    { value: 'L00-L99', label: 'L00-L99 Болезни кожи' },
-    { value: 'M00-M99', label: 'M00-M99 Болезни костно-мышечной системы' },
-    { value: 'N00-N99', label: 'N00-N99 Болезни мочеполовой системы' },
-    { value: 'O00-O99', label: 'O00-O99 Беременность, роды и послеродовой период' },
-    { value: 'P00-P96', label: 'P00-P96 Отдельные состояния, возникающие в перинатальном периоде' },
-    { value: 'Q00-Q99', label: 'Q00-Q99 Врожденные аномалии' },
-    { value: 'R00-R99', label: 'R00-R99 Симптомы, признаки и отклонения от нормы' },
-    { value: 'S00-T98', label: 'S00-T98 Травмы, отравления и другие последствия воздействия внешних причин' },
-    { value: 'U00-U99', label: 'U00-U99 Коды для особых целей' },
-    { value: 'V01-Y98', label: 'V01-Y98 Внешние причины заболеваемости и смертности' },
-    { value: 'Z00-Z99', label: 'Z00-Z99 Факторы, влияющие на состояние здоровья' }
+    ...mkbOptions.map((option) => ({
+      value: option.code || option,
+      label: option.label || option,
+    })),
   ];
 
   // Типы документов
@@ -113,19 +89,7 @@ export default function ClinicalProtocolsCatalog() {
   };
 
   // Формирование поискового запроса
-  const getSearchQuery = () => {
-    let query = searchTerm;
-    
-    if (selectedMedicine) {
-      query += (query ? ' ' : '') + `medicine:${selectedMedicine}`;
-    }
-    
-    if (selectedMkb) {
-      query += (query ? ' ' : '') + `mkb:${selectedMkb}`;
-    }
-    
-    return query;
-  };
+  const getSearchQuery = () => searchTerm.trim();
 
   // Определение пути к папке на основе типа документа
   const getFolderPath = () => {
@@ -227,12 +191,6 @@ export default function ClinicalProtocolsCatalog() {
                   </div>
                 </div>
 
-                {/* Информация о количестве найденных протоколов */}
-                {filteredProtocols > 0 && (
-                  <div className="text-center text-sm text-gray-600">
-                    {t('directionsPages.clinicalProtocolsSubpages.catalog.foundProtocols')} {filteredProtocols}
-                  </div>
-                )}
               </div>
               
               <div className="mt-4 flex justify-center">
@@ -271,6 +229,8 @@ export default function ClinicalProtocolsCatalog() {
               bgColor='bg-white'
               useClinicalProtocols={true}
               searchTerm={getSearchQuery()}
+              medicine={selectedMedicine}
+              mkb={selectedMkb}
               onFilesLoaded={(count) => setFilteredProtocols(count)}
               onError={(errorMessage) => setError(errorMessage)}
             />
