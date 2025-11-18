@@ -27,11 +27,23 @@ class NewsRequest extends FormRequest
      */
     public function rules(): array
     {
+        // Преобразуем content в body для обратной совместимости
+        if ($this->has('content') && !$this->has('body')) {
+            $this->merge(['body' => $this->input('content')]);
+        }
+        
         $rules = [
             'title' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:news,slug,' . $this->route('news')?->id,
+            'slug' => [
+                'nullable',
+                'string',
+                'max:255',
+                'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/i', // Только буквы, цифры и дефисы
+                Rule::unique('news', 'slug')->ignore($this->route('news')?->id),
+            ],
             'excerpt' => 'nullable|string|max:1000',
             'body' => 'required|string|min:10',
+            'content' => 'nullable|string|min:10', // Для обратной совместимости
             'cover' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120|dimensions:min_width=800,min_height=400',
             'cover_image_alt' => 'nullable|string|max:255',
             'seo_title' => 'nullable|string|max:255',

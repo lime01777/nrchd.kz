@@ -1,5 +1,31 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import axios from 'axios';
+import translationService from '@/services/TranslationService';
+
+// Константы для конфигурации
+const INITIAL_BATCH = 60;
+const LOAD_MORE_STEP = 60;
+const MAX_CONCURRENT_REQUESTS = 5; // Максимальное количество параллельных HEAD-запросов
+const IS_DEV = process.env.NODE_ENV === 'development';
+
+// Вспомогательная функция для логирования (только в dev режиме)
+const devLog = (...args) => {
+  if (IS_DEV) {
+    console.log(...args);
+  }
+};
+
+const devError = (...args) => {
+  if (IS_DEV) {
+    console.error(...args);
+  }
+};
+
+const devWarn = (...args) => {
+  if (IS_DEV) {
+    console.warn(...args);
+  }
+};
 
 function SimpleFileDisplay({ 
   folder = '', 
@@ -28,10 +54,13 @@ function SimpleFileDisplay({
   const [viewerUrl, setViewerUrl] = useState(null);
   const [modalError, setModalError] = useState(null);
   const [copiedFileId, setCopiedFileId] = useState(null);
-  const INITIAL_BATCH = 60;
-  const LOAD_MORE_STEP = 60;
   const [visibleCount, setVisibleCount] = useState(INITIAL_BATCH);
   const [fileInfos, setFileInfos] = useState({});
+  
+  // Refs для управления cleanup
+  const abortControllerRef = useRef(null);
+  const timeoutRefsRef = useRef([]);
+  const originalOverflowRef = useRef(null);
   
   // Форматирование даты
   const formatDate = (date) => {
@@ -70,9 +99,25 @@ function SimpleFileDisplay({
 
   // Получение файлов из API
   useEffect(() => {
+    // Отменяем предыдущий запрос, если он существует
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    
+    // Создаем новый AbortController для этого запроса
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+    
     const fetchFiles = async () => {
       try {
         setLoading(true);
+        
+        // Проверка на SSR
+        if (typeof window === 'undefined') {
+          setLoading(false);
+          return;
+        }
+        
         const baseUrl = window.location.origin;
         const params = new URLSearchParams();
         
@@ -87,6 +132,11 @@ function SimpleFileDisplay({
             params.append('folder', normalizedFolder);
           }
           if (searchTerm) params.append('search', searchTerm);
+          // Передаем параметры фильтрации для клинических протоколов
+          if (medicine) params.append('medicine', medicine);
+          if (mkb) params.append('mkb', mkb);
+          if (category) params.append('category', category);
+          if (year) params.append('year', year);
         } else {
           // Стандартный режим работы с файлами из папки
           if (folder) {
@@ -127,8 +177,8 @@ function SimpleFileDisplay({
           }
         }
         
-        console.log(`Fetching files from: ${apiEndpoint}${params.toString() ? '?' + params.toString() : ''}`);
-        console.log('Search parameters:', { 
+        devLog(`Fetching files from: ${apiEndpoint}${params.toString() ? '?' + params.toString() : ''}`);
+        devLog('Search parameters:', { 
           searchTerm, 
           medicine, 
           mkb, 
@@ -140,17 +190,19 @@ function SimpleFileDisplay({
           folder
         });
         
-        console.log(`Выполняем запрос к API: ${apiEndpoint}${params.toString() ? '?' + params.toString() : ''}`);
+        devLog(`Выполняем запрос к API: ${apiEndpoint}${params.toString() ? '?' + params.toString() : ''}`);
         
         let response;
         try {
-          response = await axios.get(`${apiEndpoint}${params.toString() ? '?' + params.toString() : ''}`);
-          console.log('API response получен:', response);
-          console.log('API response data:', response.data);
+          response = await axios.get(`${apiEndpoint}${params.toString() ? '?' + params.toString() : ''}`, {
+            signal: abortController.signal
+          });
+          devLog('API response получен:', response);
+          devLog('API response data:', response.data);
           
           if (!response.data) {
             const errorMessage = 'Ответ API не содержит данных';
-            console.error(errorMessage);
+            devError(errorMessage);
             setError('Ошибка при загрузке файлов: нет данных');
             
             // Передаем ошибку в родительский компонент, если проп предоставлен
@@ -165,7 +217,7 @@ function SimpleFileDisplay({
           // Проверяем наличие ошибки в ответе API
           if (response.data.error) {
             const errorMessage = `Ошибка API: ${response.data.error}`;
-            console.error(errorMessage);
+            devError(errorMessage);
             setError(errorMessage);
             
             // Передаем ошибку в родительский компонент, если проп предоставлен
@@ -177,10 +229,43 @@ function SimpleFileDisplay({
             return;
           }
         } catch (error) {
-          const errorMessage = `Ошибка при загрузке файлов: ${error.message}`;
-          console.error('Ошибка при запросе к API:', error);
-          console.error('API Endpoint:', apiEndpoint);
-          console.error('Search Parameters:', { searchTerm, medicine, mkb, category, year, fileType, type });
+          // Игнорируем ошибки отмены запроса
+          if (error.name === 'AbortError' || error.name === 'CanceledError') {
+            return;
+          }
+          
+          // Извлекаем сообщение об ошибке из ответа API, если оно есть
+          let errorMessage = 'Ошибка при загрузке файлов';
+          
+          if (error.response) {
+            // Сервер ответил с кодом ошибки
+            const responseData = error.response.data;
+            if (responseData && responseData.error) {
+              errorMessage = responseData.error;
+              // Если есть детали, добавляем их к сообщению
+              if (responseData.details) {
+                devError('Детали ошибки:', responseData.details);
+                // Можно добавить детали в сообщение, если нужно
+                if (responseData.details.full_path) {
+                  errorMessage += ` (Путь: ${responseData.details.full_path})`;
+                }
+              }
+            } else {
+              errorMessage = `Ошибка сервера: ${error.response.status} ${error.response.statusText}`;
+            }
+          } else if (error.request) {
+            // Запрос был отправлен, но ответа не получено
+            errorMessage = 'Не удалось получить ответ от сервера. Проверьте подключение к интернету.';
+          } else {
+            // Ошибка при настройке запроса
+            errorMessage = `Ошибка при выполнении запроса: ${error.message}`;
+          }
+          
+          devError('Ошибка при запросе к API:', error);
+          devError('API Endpoint:', apiEndpoint);
+          devError('Search Parameters:', { searchTerm, medicine, mkb, category, year, fileType, type });
+          devError('Full error response:', error.response?.data);
+          
           setError(errorMessage);
           
           // Передаем ошибку в родительский компонент, если проп предоставлен
@@ -197,19 +282,19 @@ function SimpleFileDisplay({
         
         if (useClinicalProtocols) {
           // Обработка данных из API клинических протоколов
-          console.log('Обрабатываем данные клинических протоколов:', response.data);
+          devLog('Обрабатываем данные клинических протоколов:', response.data);
           
           if (response.data && response.data.documents) {
-            console.log('Найдены документы в response.data.documents:', response.data.documents);
+            devLog('Найдены документы в response.data.documents:', response.data.documents);
             filesData = response.data.documents;
           } else if (response.data && response.data.protocols) {
             // Если данные в формате clinical_protocols.json
-            console.log('Найдены протоколы в response.data.protocols:', response.data.protocols);
+            devLog('Найдены протоколы в response.data.protocols:', response.data.protocols);
             filesData = response.data.protocols;
           } else {
             const errorMessage = 'Не найдены ни documents, ни protocols в ответе API. Response data: ' + JSON.stringify(response.data);
-            console.error(errorMessage);
-            console.error('Full response:', response);
+            devError(errorMessage);
+            devError('Full response:', response);
             
             // Передаем ошибку в родительский компонент, если проп предоставлен
             if (onError) {
@@ -234,7 +319,7 @@ function SimpleFileDisplay({
           filesData = response.data.files;
         }
         
-        console.log('Processed files data:', filesData);
+        devLog('Processed files data:', filesData);
         
         // Обрабатываем данные файлов, убеждаемся, что у каждого файла есть имя
         const processedFiles = filesData.map(file => {
@@ -254,7 +339,8 @@ function SimpleFileDisplay({
         setVisibleCount(Math.min(INITIAL_BATCH, limitedFiles.length || INITIAL_BATCH));
         
         // Получаем информацию о размере и дате для каждого файла
-        const fileInfoPromises = limitedFiles.map(file => {
+        // Оптимизация: батчинг HEAD-запросов для обычных файлов
+        const fileInfoPromises = limitedFiles.map((file, index) => {
           if (file.url && file.url !== "#") {
             // Для клинических протоколов не делаем HEAD-запрос, используем данные из JSON
             if (useClinicalProtocols) {
@@ -265,27 +351,38 @@ function SimpleFileDisplay({
               });
             }
             
-            // Для обычных файлов делаем HEAD-запрос
-            return axios.head(file.url)
-              .then(response => {
-                const contentLength = response.headers['content-length'];
-                const lastModified = response.headers['last-modified'];
-                
-                return {
-                  id: file.id || file.url,
-                  size: contentLength ? formatFileSize(contentLength) : '0 Bytes',
-                  date: lastModified ? formatDate(new Date(lastModified)) : formatDate(file.date || file.created_at || '')
-                };
-              })
-              .catch(error => {
-                console.error('Error fetching file info:', error);
-                return {
-                  id: file.id || file.url,
-                  size: formatFileSize(file.size || 0),
-
-                  date: formatDate(file.date || file.created_at || '')
-                };
-              });
+            // Для обычных файлов делаем HEAD-запрос с задержкой для батчинга
+            // Запросы выполняются батчами по MAX_CONCURRENT_REQUESTS
+            const batchDelay = Math.floor(index / MAX_CONCURRENT_REQUESTS) * 100;
+            
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                axios.head(file.url, { signal: abortController.signal })
+                  .then(response => {
+                    const contentLength = response.headers['content-length'];
+                    const lastModified = response.headers['last-modified'];
+                    
+                    resolve({
+                      id: file.id || file.url,
+                      size: contentLength ? formatFileSize(contentLength) : '0 Bytes',
+                      date: lastModified ? formatDate(new Date(lastModified)) : formatDate(file.date || file.created_at || '')
+                    });
+                  })
+                  .catch(error => {
+                    // Игнорируем ошибки отмены
+                    if (error.name === 'AbortError' || error.name === 'CanceledError') {
+                      resolve(null);
+                      return;
+                    }
+                    devError('Error fetching file info:', error);
+                    resolve({
+                      id: file.id || file.url,
+                      size: formatFileSize(file.size || 0),
+                      date: formatDate(file.date || file.created_at || '')
+                    });
+                  });
+              }, batchDelay);
+            });
           }
           
           return Promise.resolve({
@@ -295,7 +392,22 @@ function SimpleFileDisplay({
           });
         });
         
-        Promise.all(fileInfoPromises).then(infos => {
+        // Используем Promise.allSettled для устойчивости к ошибкам
+        Promise.allSettled(fileInfoPromises).then(results => {
+          const infos = results
+            .map((result, index) => {
+              if (result.status === 'fulfilled' && result.value) {
+                return result.value;
+              }
+              // Fallback для неудачных запросов
+              const file = limitedFiles[index];
+              return {
+                id: file.id || file.url,
+                size: formatFileSize(file.size || 0),
+                date: formatDate(file.date || file.created_at || '')
+              };
+            })
+            .filter(Boolean);
           const fileInfoMap = {};
           infos.forEach((info, index) => {
             fileInfoMap[limitedFiles[index].id || limitedFiles[index].url] = info;
@@ -303,11 +415,11 @@ function SimpleFileDisplay({
           setFileInfos(fileInfoMap);
           
           // Вызываем обработчик onFilesLoaded, если он предоставлен
-        if (onFilesLoaded && Array.isArray(filesData)) {
+          if (onFilesLoaded && Array.isArray(filesData)) {
             try {
               onFilesLoaded(filesData.length);
             } catch (error) {
-              console.error('Ошибка при вызове onFilesLoaded:', error);
+              devError('Ошибка при вызове onFilesLoaded:', error);
               
               // Передаем ошибку в родительский компонент, если проп предоставлен
               if (onError) {
@@ -317,19 +429,34 @@ function SimpleFileDisplay({
           }
           setLoading(false);
         }).catch(error => {
-          console.error('Ошибка при загрузке файлов:', error);
+          // Игнорируем ошибки отмены
+          if (error.name === 'AbortError' || error.name === 'CanceledError') {
+            return;
+          }
+          devError('Ошибка при загрузке файлов:', error);
           setError('Ошибка при загрузке файлов. Пожалуйста, попробуйте позже.');
           setLoading(false);
         });
       } catch (err) {
-        console.error('Error fetching files:', err);
+        // Игнорируем ошибки отмены
+        if (err.name === 'AbortError' || err.name === 'CanceledError') {
+          return;
+        }
+        devError('Error fetching files:', err);
         setError('Ошибка при загрузке файлов');
         setLoading(false);
       }
     };
 
     fetchFiles();
-  }, [folder, title, limit, searchTerm, medicine, mkb, category, year, fileType, useClinicalProtocols]);
+    
+    // Cleanup функция
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [folder, title, limit, searchTerm, medicine, mkb, category, year, fileType, type, useClinicalProtocols, onFilesLoaded, onError]);
 
   // Определение иконки по типу файла
   const getFileTypeIcon = (file) => {
@@ -435,7 +562,7 @@ function SimpleFileDisplay({
           return lastSegment;
         }
       } catch (error) {
-        console.warn('Не удалось извлечь имя файла из URL', error);
+        devWarn('Не удалось извлечь имя файла из URL', error);
       }
     }
 
@@ -460,8 +587,13 @@ function SimpleFileDisplay({
   };
 
   // Получаем абсолютный URL для файла
-  const getAbsoluteFileUrl = (url) => {
+  const getAbsoluteFileUrl = useCallback((url) => {
     if (!url || url === "#") return "";
+    
+    // Проверка на SSR
+    if (typeof window === 'undefined') {
+      return url;
+    }
     
     // Если URL уже абсолютный (начинается с http:// или https://), возвращаем его как есть
     if (url.startsWith('http://') || url.startsWith('https://')) {
@@ -469,11 +601,28 @@ function SimpleFileDisplay({
     }
     
     // Иначе добавляем origin текущего сайта
-    return `${window.location.origin}${url.startsWith('/') ? '' : '/'}${url}`;
-  };
+    const origin = window.location?.origin || '';
+    return `${origin}${url.startsWith('/') ? '' : '/'}${url}`;
+  }, []);
+  
+  // Функция для закрытия модального окна
+  const closeModal = useCallback(() => {
+    setShowModal(false);
+    
+    // Восстанавливаем исходное значение overflow
+    if (typeof document !== 'undefined' && document.body && originalOverflowRef.current !== null) {
+      document.body.style.overflow = originalOverflowRef.current;
+      originalOverflowRef.current = null;
+    }
+    
+    setActiveFile(null);
+    setViewerUrl(null);
+    setIsLoading(false);
+    setModalError(null);
+  }, []);
   
   // Конвертация документов Office с помощью Google Docs Viewer
-  const convertOfficeDocument = (file) => {
+  const convertOfficeDocument = useCallback((file) => {
     try {
       setIsLoading(true);
       setModalError(null);
@@ -489,27 +638,32 @@ function SimpleFileDisplay({
       setIsLoading(false);
       return googleViewerUrl;
     } catch (error) {
-      console.error('Ошибка при конвертации документа:', error);
+      devError('Ошибка при конвертации документа:', error);
       setModalError('Не удалось подготовить документ для просмотра');
       setIsLoading(false);
       return null;
     }
-  };
+  }, [getAbsoluteFileUrl]);
 
   // Функция для открытия файла
-  const handleFileClick = (file, e) => {
+  const handleFileClick = useCallback((file, e) => {
     if (e) e.preventDefault();
-    console.log("Opening file:", file);
+    devLog("Opening file:", file);
     
     setActiveFile(file);
     setShowModal(true);
-    document.body.style.overflow = 'hidden';
+    
+    // Сохраняем исходное значение overflow и устанавливаем hidden
+    if (typeof document !== 'undefined' && document.body) {
+      originalOverflowRef.current = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+    }
     
     const fileName = extractFileName(file);
-    console.log("File name for determining type:", fileName);
+    devLog("File name for determining type:", fileName);
     
     const fileType = getFileType(fileName);
-    console.log("Detected file type:", fileType);
+    devLog("Detected file type:", fileType);
     
     // Для разных типов файлов разная обработка
     if (['word', 'excel', 'powerpoint'].includes(fileType)) {
@@ -523,35 +677,71 @@ function SimpleFileDisplay({
       // Для других типов файлов сбрасываем состояние просмотрщика
       setViewerUrl(null);
     }
-  };
+  }, [convertOfficeDocument, closeModal]);
   
-  // Функция для закрытия модального окна
-  const closeModal = () => {
-    setShowModal(false);
-    document.body.style.overflow = 'auto';
-    setActiveFile(null);
-    setViewerUrl(null);
-    setIsLoading(false);
-    setModalError(null);
-  };
+  // Cleanup при размонтировании компонента
+  useEffect(() => {
+    return () => {
+      // Восстанавливаем overflow при размонтировании
+      if (typeof document !== 'undefined' && document.body && originalOverflowRef.current !== null) {
+        document.body.style.overflow = originalOverflowRef.current;
+      }
+      // Очищаем все таймеры
+      timeoutRefsRef.current.forEach(timeoutId => clearTimeout(timeoutId));
+      timeoutRefsRef.current = [];
+    };
+  }, []);
   
   // Функция для копирования информации о файле
-  const copyFileInfo = (file) => {
+  const copyFileInfo = useCallback((file) => {
     const fileInfo = [
-      `Название: ${file.description || file.name || 'Файл'}`,
-      file.category ? `Категория: ${file.category}` : '',
-      file.medicine ? `Раздел медицины: ${file.medicine}` : '',
-      file.mkb ? `МКБ: ${file.mkb}` : '',
-      file.year ? `Год: ${file.year}` : '',
-      file.filetype ? `Тип файла: ${file.filetype.toUpperCase()}` : '',
-      `Ссылка: ${file.url}`
+      `${translationService.t('components.simpleFileDisplay.fileName', 'Название')}: ${file.description || file.name || translationService.t('components.simpleFileDisplay.file', 'Файл')}`,
+      file.category ? `${translationService.t('components.simpleFileDisplay.category', 'Категория')}: ${file.category}` : '',
+      file.medicine ? `${translationService.t('components.simpleFileDisplay.medicineSection', 'Раздел медицины')}: ${file.medicine}` : '',
+      file.mkb ? `${translationService.t('components.simpleFileDisplay.mkb', 'МКБ')}: ${file.mkb}` : '',
+      file.year ? `${translationService.t('components.simpleFileDisplay.year', 'Год')}: ${file.year}` : '',
+      file.filetype ? `${translationService.t('components.simpleFileDisplay.fileType', 'Тип файла')}: ${file.filetype.toUpperCase()}` : '',
+      `${translationService.t('components.simpleFileDisplay.link', 'Ссылка')}: ${file.url}`
     ].filter(Boolean).join('\n');
     
-    navigator.clipboard.writeText(fileInfo).then(() => {
-      setCopiedFileId(file.id || file.url);
-      setTimeout(() => setCopiedFileId(null), 2000);
-    });
-  };
+    // Проверка на наличие Clipboard API
+    if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(fileInfo).then(() => {
+        setCopiedFileId(file.id || file.url);
+        const timeoutId = setTimeout(() => {
+          setCopiedFileId(null);
+          // Удаляем timeout из массива после выполнения
+          timeoutRefsRef.current = timeoutRefsRef.current.filter(id => id !== timeoutId);
+        }, 2000);
+        timeoutRefsRef.current.push(timeoutId);
+      }).catch((error) => {
+        devError('Ошибка при копировании в буфер обмена:', error);
+        // Fallback для старых браузеров
+        if (document.execCommand) {
+          const textArea = document.createElement('textarea');
+          textArea.value = fileInfo;
+          textArea.style.position = 'fixed';
+          textArea.style.opacity = '0';
+          document.body.appendChild(textArea);
+          textArea.select();
+          try {
+            document.execCommand('copy');
+            setCopiedFileId(file.id || file.url);
+            const timeoutId = setTimeout(() => {
+              setCopiedFileId(null);
+              timeoutRefsRef.current = timeoutRefsRef.current.filter(id => id !== timeoutId);
+            }, 2000);
+            timeoutRefsRef.current.push(timeoutId);
+          } catch (err) {
+            devError('Ошибка при использовании fallback копирования:', err);
+          }
+          document.body.removeChild(textArea);
+        }
+      });
+    } else {
+      devWarn('Clipboard API не доступен');
+    }
+  }, []);
 
   const normalize = (value) =>
     typeof value === 'string' ? value.trim().toLowerCase() : '';
@@ -635,15 +825,15 @@ function SimpleFileDisplay({
   const visibleFiles = useMemo(() => filteredFiles.slice(0, visibleCount), [filteredFiles, visibleCount]);
   const hasMore = visibleCount < filteredFiles.length;
 
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     setVisibleCount(prev => Math.min(prev + LOAD_MORE_STEP, filteredFiles.length));
-  };
+  }, [filteredFiles.length]);
 
   if (loading) {
     return (
       <div className="py-8 text-center">
         <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-500"></div>
-        <p className="mt-2" data-translate>Загрузка файлов...</p>
+        <p className="mt-2">{translationService.t('components.simpleFileDisplay.loading', 'Загрузка файлов...')}</p>
       </div>
     );
   }
@@ -667,8 +857,8 @@ function SimpleFileDisplay({
       )}
       
       {filteredFiles.length === 0 ? (
-        <div className="py-8 text-center text-gray-500 bg-white rounded-lg shadow border border-gray-200" data-translate>
-          Нет доступных документов
+        <div className="py-8 text-center text-gray-500 bg-white rounded-lg shadow border border-gray-200">
+          {translationService.t('components.simpleFileDisplay.noDocuments', 'Нет доступных документов')}
         </div>
       ) : (
         <div className={`grid ${singleColumn ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'} gap-4`}>
@@ -718,14 +908,14 @@ function SimpleFileDisplay({
                       <button
                         onClick={(e) => handleFileClick(file, e)}
                         className="cursor-pointer text-black inline-flex items-center border-gray-300 border rounded-lg px-3 py-2 text-sm hover:bg-gray-50 transition-colors duration-200">
-                        <span data-translate>Открыть</span>
+                        <span>{translationService.t('components.simpleFileDisplay.open', 'Открыть')}</span>
                       </button>
                       {!hideDownload && (
                         <a
                           href={file.url}
                           download
                           className="cursor-pointer text-black inline-flex items-center border-gray-300 border rounded-lg px-3 py-2 text-sm hover:bg-gray-50 transition-colors duration-200">
-                          <span data-translate>Скачать</span>
+                          <span>{translationService.t('components.simpleFileDisplay.download', 'Скачать')}</span>
                         </a>
                       )}
                     </div>
@@ -746,7 +936,7 @@ function SimpleFileDisplay({
       )}
 
       <div className="mt-4 text-sm text-gray-500 text-center">
-        Показано {visibleFiles.length} из {filteredFiles.length}
+        {translationService.t('components.simpleFileDisplay.showing', 'Показано')} {visibleFiles.length} {translationService.t('components.simpleFileDisplay.of', 'из')} {filteredFiles.length}
       </div>
 
       {hasMore && (
@@ -755,7 +945,7 @@ function SimpleFileDisplay({
             onClick={handleLoadMore}
             className="px-6 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-200 transition-colors duration-200"
           >
-            Показать ещё
+            {translationService.t('components.simpleFileDisplay.showMore', 'Показать ещё')}
           </button>
         </div>
       )}
@@ -781,7 +971,7 @@ function SimpleFileDisplay({
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center h-[70vh]">
                   <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900 mb-4"></div>
-                  <p className="text-gray-600" data-translate>Подготовка документа к просмотру...</p>
+                  <p className="text-gray-600">{translationService.t('components.simpleFileDisplay.preparingDocument', 'Подготовка документа к просмотру...')}</p>
                 </div>
               ) : modalError ? (
                 <div className="flex flex-col items-center justify-center h-[70vh]">
@@ -797,7 +987,7 @@ function SimpleFileDisplay({
                     rel="noopener noreferrer"
                     className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
                   >
-                    Скачать файл
+                    {translationService.t('components.simpleFileDisplay.downloadFile', 'Скачать файл')}
                   </a>
                 </div>
               ) : activeFileType === 'image' ? (
@@ -856,7 +1046,7 @@ function SimpleFileDisplay({
                     rel="noopener noreferrer"
                     className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
                   >
-                    Скачать файл
+                    {translationService.t('components.simpleFileDisplay.downloadFile', 'Скачать файл')}
                   </a>
                 </div>
               ) : (
@@ -873,7 +1063,7 @@ function SimpleFileDisplay({
                     rel="noopener noreferrer"
                     className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
                   >
-                    Скачать файл
+                    {translationService.t('components.simpleFileDisplay.downloadFile', 'Скачать файл')}
                   </a>
                 </div>
               )}
@@ -885,13 +1075,13 @@ function SimpleFileDisplay({
                 rel="noopener noreferrer"
                 className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg mr-2 transition-colors duration-200"
               >
-                Открыть в новой вкладке
+                {translationService.t('components.simpleFileDisplay.openInNewTab', 'Открыть в новой вкладке')}
               </a>
               <button 
                 onClick={closeModal}
                 className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
               >
-                Закрыть
+                {translationService.t('components.simpleFileDisplay.close', 'Закрыть')}
               </button>
             </div>
           </div>

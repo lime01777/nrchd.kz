@@ -8,11 +8,13 @@ use App\Models\News;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Database\QueryException;
 use Inertia\Inertia;
-use Inertia\Response;
+use Inertia\Response as InertiaResponse;
 use Intervention\Image\Laravel\Facades\Image;
 use App\Services\MediaService;
 
@@ -35,9 +37,9 @@ class NewsController extends Controller
      * Отображение списка новостей с фильтрацией и пагинацией
      * 
      * @param Request $request
-     * @return Response
+     * @return InertiaResponse
      */
-    public function index(Request $request, ?string $section = null): Response
+    public function index(Request $request, ?string $section = null): InertiaResponse
     {
         $type = $this->resolveType($section ?? $request->route('type') ?? $request->input('type'));
         $query = News::query()->ofType($type);
@@ -110,9 +112,9 @@ class NewsController extends Controller
     /**
      * Форма создания новости
      * 
-     * @return Response
+     * @return InertiaResponse
      */
-    public function create(?string $section = 'news'): Response
+    public function create(?string $section = 'news'): InertiaResponse
     {
         // Жёсткая нормализация секции для обхода фильтров WAF.
         $normalizedSection = $this->resolveSection($section);
@@ -144,13 +146,94 @@ class NewsController extends Controller
      */
     public function store(NewsRequest $request): RedirectResponse
     {
+        // Проверяем права доступа
         try {
+            $this->authorize('create', News::class);
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            Log::error('Отказ в доступе при создании новости', [
+                'user_id' => auth()->id(),
+                'user_role' => auth()->user()?->role,
+                'error' => $e->getMessage(),
+            ]);
+            
+            return back()
+                ->withInput()
+                ->withErrors(['error' => 'У вас нет прав для создания новостей. Требуется роль admin или editor.']);
+        }
+        
+        // Логируем начало обработки запроса
+        Log::info('Начало создания новости', [
+            'user_id' => auth()->id(),
+            'user_email' => auth()->user()?->email,
+            'user_role' => auth()->user()?->role,
+            'request_method' => $request->method(),
+            'request_path' => $request->path(),
+            'has_title' => $request->has('title'),
+            'has_body' => $request->has('body'),
+            'has_content' => $request->has('content'),
+            'all_input_keys' => array_keys($request->all()),
+            'ip' => $request->ip(),
+        ]);
+        
+        try {
+            // Преобразуем content в body для обратной совместимости
+            if ($request->has('content') && !$request->has('body')) {
+                $request->merge(['body' => $request->input('content')]);
+                Log::info('Преобразовано поле content в body');
+            }
+            
             $validated = $request->validated();
+            
+            Log::info('Валидация прошла успешно', [
+                'validated_keys' => array_keys($validated),
+                'title' => $validated['title'] ?? 'не указан',
+                'body_length' => isset($validated['body']) ? strlen($validated['body']) : 0,
+            ]);
 
             // Создаем новость
             $news = new News();
             $news->title = $validated['title'];
-            $news->slug = $validated['slug'] ?? News::generateUniqueSlug($validated['title']);
+            
+            // Генерируем уникальный slug с гарантией уникальности
+            $slug = $validated['slug'] ?? null;
+            
+            // Нормализуем slug: убираем пробелы и проверяем формат
+            if ($slug) {
+                $slug = trim($slug);
+                // Если slug пустой, содержит только цифры (как "123"), или не соответствует формату - генерируем новый
+                if (empty($slug) || 
+                    preg_match('/^\d+$/', $slug) || // Только цифры
+                    !preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/i', $slug)) { // Неправильный формат
+                    $slug = null; // Будет сгенерирован ниже
+                }
+            }
+            
+            // Если slug не передан или некорректный, генерируем из заголовка
+            if (!$slug) {
+                $slug = News::generateUniqueSlug($validated['title']);
+            } else {
+                // Если slug был передан и корректен, проверяем его уникальность
+                if (News::where('slug', $slug)->exists()) {
+                    // Если slug уже существует, генерируем новый
+                    $slug = News::generateUniqueSlug($validated['title']);
+                }
+            }
+            
+            // Финальная проверка уникальности (на случай race condition)
+            $originalSlug = $slug;
+            $counter = 0;
+            while (News::where('slug', $slug)->exists() && $counter < 100) {
+                $counter++;
+                $slug = $originalSlug . '-' . $counter;
+            }
+            
+            Log::info('Сгенерирован slug для новости', [
+                'title' => $validated['title'],
+                'final_slug' => $slug,
+                'was_provided' => !empty($validated['slug']),
+            ]);
+            
+            $news->slug = $slug;
             $news->excerpt = $validated['excerpt'] ?? null;
             $news->body = $validated['body'];
             // Для обратной совместимости со старым полем content
@@ -179,11 +262,53 @@ class NewsController extends Controller
                 $this->handleCoverUpload($request->file('cover'), $news);
             }
 
-            $news->save();
+            // Сохраняем новость с обработкой ошибок дублирования slug
+            $maxRetries = 5;
+            $retryCount = 0;
+            $saved = false;
+            
+            while (!$saved && $retryCount < $maxRetries) {
+                try {
+                    $news->save();
+                    $saved = true;
+                } catch (QueryException $e) {
+                    // Если ошибка дублирования slug, генерируем новый уникальный slug
+                    if ($e->getCode() === '23000' && (str_contains($e->getMessage(), 'news_slug_unique') || str_contains($e->getMessage(), 'Duplicate entry'))) {
+                        $retryCount++;
+                        Log::warning('Обнаружен дублирующийся slug, генерируем новый', [
+                            'original_slug' => $news->slug,
+                            'title' => $news->title,
+                            'retry' => $retryCount,
+                            'error' => $e->getMessage(),
+                        ]);
+                        
+                        // Генерируем новый уникальный slug
+                        $baseSlug = News::generateUniqueSlug($news->title);
+                        $counter = $retryCount;
+                        do {
+                            $news->slug = $baseSlug . ($counter > 0 ? '-' . $counter : '');
+                            $counter++;
+                        } while (News::where('slug', $news->slug)->exists() && $counter < 100);
+                    } else {
+                        // Если это не ошибка дублирования slug, пробрасываем исключение дальше
+                        throw $e;
+                    }
+                }
+            }
+            
+            if (!$saved) {
+                Log::error('Не удалось сохранить новость после нескольких попыток', [
+                    'title' => $news->title,
+                    'slug' => $news->slug,
+                    'retries' => $retryCount,
+                ]);
+                throw new \RuntimeException('Не удалось сохранить новость. Пожалуйста, попробуйте еще раз.');
+            }
 
             Log::info('Создана новость', [
                 'id' => $news->id,
                 'title' => $news->title,
+                'slug' => $news->slug,
                 'status' => $news->status,
             ]);
 
@@ -191,15 +316,32 @@ class NewsController extends Controller
                 ->route('admin.news.index', $this->newsRouteParams($type))
                 ->with('success', 'Новость успешно создана');
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Ошибка валидации при создании новости', [
+                'errors' => $e->errors(),
+                'input_data' => $request->except(['cover', 'media']), // Исключаем большие файлы
+                'user_id' => auth()->id(),
+            ]);
+            
+            return back()
+                ->withInput()
+                ->withErrors($e->errors());
+                
         } catch (\Exception $e) {
-            Log::error('Ошибка при создании новости', [
+            Log::error('Критическая ошибка при создании новости', [
                 'error' => $e->getMessage(),
+                'error_class' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
+                'input_data' => $request->except(['cover', 'media']), // Исключаем большие файлы
+                'user_id' => auth()->id(),
+                'memory_usage' => memory_get_usage(true) / 1024 / 1024 . ' MB',
             ]);
 
             return back()
                 ->withInput()
-                ->withErrors(['error' => 'Произошла ошибка при создании новости. Проверьте логи сервера.']);
+                ->withErrors(['error' => 'Произошла ошибка при создании новости: ' . $e->getMessage()]);
         }
     }
 
@@ -207,9 +349,9 @@ class NewsController extends Controller
      * Форма редактирования новости
      * 
      * @param News $news
-     * @return Response
+     * @return InertiaResponse
      */
-    public function edit(News $news): Response
+    public function edit(News $news): InertiaResponse
     {
         $meta = $this->sectionMeta($news->type ?? News::TYPE_NEWS);
 
@@ -393,37 +535,113 @@ class NewsController extends Controller
     }
 
     /**
+     * Экспорт новостей в Excel с просмотрами
+     * 
+     * @param Request $request
+     * @return Response
+     */
+    public function exportViews(Request $request): Response
+    {
+        // Проверяем права доступа
+        $this->authorize('viewAny', News::class);
+        
+        // Получаем все новости с просмотрами
+        $news = News::select('title', 'published_at', 'created_at', 'views')
+            ->orderBy('published_at', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        // Создаем CSV содержимое с BOM для правильного отображения кириллицы в Excel
+        $csv = "\xEF\xBB\xBF"; // UTF-8 BOM
+        $csv .= "Наименование новости;Дата размещения;Количество просмотров\n";
+        
+        foreach ($news as $item) {
+            $title = str_replace([';', "\n", "\r"], [' ', ' ', ' '], $item->title);
+            // Используем published_at, если есть, иначе created_at
+            $date = $item->published_at 
+                ? $item->published_at->format('d.m.Y H:i') 
+                : ($item->created_at ? $item->created_at->format('d.m.Y H:i') : 'Не указана');
+            $views = $item->views ?? 0;
+            
+            $csv .= sprintf('"%s";"%s";"%d"' . "\n", $title, $date, $views);
+        }
+        
+        // Генерируем имя файла с текущей датой
+        $filename = 'news_views_' . date('Y-m-d_His') . '.csv';
+        
+        Log::info('Экспорт просмотров новостей', [
+            'user_id' => auth()->id(),
+            'count' => $news->count(),
+        ]);
+        
+        return response($csv, 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Pragma' => 'public',
+        ]);
+    }
+
+    /**
      * Загрузка временных медиа файлов (изображения/видео)
      */
     public function uploadMediaFiles(Request $request): JsonResponse
     {
-        $request->validate([
-            'media_files' => 'required|array|max:50',
-            'media_files.*' => 'file|max:102400',
-        ]);
-
-        $files = $request->file('media_files', []);
-
-        if (empty($files)) {
+        // Проверяем права доступа
+        try {
+            $this->authorize('create', News::class);
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            Log::error('Отказ в доступе при загрузке медиа', [
+                'user_id' => auth()->id(),
+                'user_role' => auth()->user()?->role,
+            ]);
+            
             return response()->json([
                 'success' => false,
-                'message' => 'Файлы для загрузки не выбраны',
-            ], 422);
+                'message' => 'У вас нет прав для загрузки медиа файлов.',
+            ], 403);
         }
-
+        
         try {
+            $request->validate([
+                'media_files' => 'required|array|max:50',
+                'media_files.*' => 'file|max:102400',
+            ]);
+
+            $files = $request->file('media_files', []);
+
+            if (empty($files)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Файлы для загрузки не выбраны',
+                ], 422);
+            }
+
             $uploaded = $this->mediaService->uploadMultipleMedia($files);
 
             return response()->json([
                 'success' => true,
                 'media' => $this->mediaService->normalizeMediaForFrontend($uploaded),
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Ошибка валидации при загрузке медиа', [
+                'errors' => $e->errors(),
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Ошибка валидации: ' . implode(', ', array_map(fn($errors) => implode(', ', $errors), $e->errors())),
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Throwable $e) {
-            Log::error('uploadMediaFiles error', ['error' => $e->getMessage()]);
+            Log::error('uploadMediaFiles error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Не удалось загрузить файлы',
+                'message' => 'Не удалось загрузить файлы: ' . $e->getMessage(),
             ], 500);
         }
     }

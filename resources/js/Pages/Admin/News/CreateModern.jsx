@@ -58,17 +58,42 @@ export default function CreateModern() {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Добавляем медиа к данным формы
+    // Преобразуем content в body для соответствия API
     const formData = {
       ...data,
+      body: data.content || data.body || '', // Используем content как body
       media: media
     };
+    
+    // Удаляем content, если есть body
+    if (formData.body && formData.content) {
+      delete formData.content;
+    }
+
+    console.log('Отправка формы создания новости (Modern):', {
+      title: formData.title,
+      body_length: formData.body?.length || 0,
+      category_count: formData.category?.length || 0,
+      status: formData.status,
+      media_count: media.length
+    });
 
     post(route('admin.news.store'), {
       data: formData,
       onSuccess: () => {
         reset();
         setMedia([]);
+      },
+      onError: (errors) => {
+        console.error('Ошибки валидации:', errors);
+        if (errors) {
+          Object.keys(errors).forEach(key => {
+            console.error(`Ошибка в поле ${key}:`, errors[key]);
+          });
+        }
+      },
+      onFinish: () => {
+        console.log('Запрос завершен');
       }
     });
   };

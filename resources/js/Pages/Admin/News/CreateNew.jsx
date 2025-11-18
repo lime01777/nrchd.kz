@@ -30,10 +30,25 @@ export default function NewsCreateNew({ availableCategories = [] }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     
+    // Преобразуем content в body для соответствия API
     const formData = {
       ...data,
+      body: data.content || data.body || '', // Используем content как body
       images: media
     };
+    
+    // Удаляем content, если есть body
+    if (formData.body && formData.content) {
+      delete formData.content;
+    }
+
+    console.log('Отправка формы создания новости:', {
+      title: formData.title,
+      body_length: formData.body?.length || 0,
+      category_count: formData.category?.length || 0,
+      status: formData.status,
+      media_count: media.length
+    });
 
     post(route('admin.news.store'), {
       data: formData,
@@ -43,6 +58,15 @@ export default function NewsCreateNew({ availableCategories = [] }) {
       },
       onError: (errors) => {
         console.error('Ошибки валидации:', errors);
+        // Показываем детальные ошибки в консоли для отладки
+        if (errors) {
+          Object.keys(errors).forEach(key => {
+            console.error(`Ошибка в поле ${key}:`, errors[key]);
+          });
+        }
+      },
+      onFinish: () => {
+        console.log('Запрос завершен');
       }
     });
   };

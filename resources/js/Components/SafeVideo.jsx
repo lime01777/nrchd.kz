@@ -93,8 +93,10 @@ export default function SafeVideo({
       <video
         src={src}
         className={`${className} ${isLoading ? 'hidden' : ''}`}
-        onLoad={handleLoad}
+        onLoadedData={handleLoad}
+        onCanPlay={handleLoad}
         onError={handleError}
+        preload="metadata"
         {...props}
       />
     </>

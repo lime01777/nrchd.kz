@@ -197,10 +197,38 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                 onSuccess,
             });
         } else {
+            console.log('Отправка формы создания новости (Form.jsx):', {
+                title: payload.title,
+                body_length: payload.body?.length || 0,
+                category_count: payload.category?.length || 0,
+                status: payload.status,
+                media_count: media.length,
+                type: payload.type
+            });
+            
             router.post(route('admin.news.store'), payload, {
                 forceFormData: true,
                 onFinish,
                 onSuccess,
+                onError: (errors) => {
+                    console.error('Ошибки валидации в Form.jsx:', errors);
+                    if (errors) {
+                        Object.keys(errors).forEach(key => {
+                            console.error(`Ошибка в поле ${key}:`, errors[key]);
+                        });
+                        
+                        // Если ошибка 419 (CSRF токен истек), обновляем страницу
+                        if (errors.error && errors.error.includes('419') || 
+                            (typeof errors === 'object' && errors.status === 419)) {
+                            alert('Сессия истекла. Страница будет обновлена.');
+                            window.location.reload();
+                            return;
+                        }
+                    }
+                },
+                onCancel: () => {
+                    console.log('Запрос отменен');
+                },
             });
         }
     }, [data, media, isEditing, news?.id, editor, reset, setData, currentType]);

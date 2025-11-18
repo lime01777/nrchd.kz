@@ -118,12 +118,18 @@ export default function ModernMediaUploader({
         formData.append(`media_files[${index}]`, file);
       });
 
+      // Получаем CSRF токен
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      if (!csrfToken) {
+        throw new Error('CSRF токен не найден. Пожалуйста, обновите страницу.');
+      }
+
       // Загружаем файлы на сервер
       const response = await fetch('/admin/news/upload-media', {
         method: 'POST',
         body: formData,
         headers: {
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+          'X-CSRF-TOKEN': csrfToken,
           'X-Requested-With': 'XMLHttpRequest',
           'Accept': 'application/json',
         },
@@ -131,7 +137,22 @@ export default function ModernMediaUploader({
       });
 
       if (!response.ok) {
-        throw new Error('Ошибка загрузки файлов');
+        // Если ошибка 419, значит CSRF токен истек
+        if (response.status === 419) {
+          const errorText = await response.text();
+          throw new Error('Сессия истекла. Пожалуйста, обновите страницу и попробуйте снова.');
+        }
+        
+        // Пытаемся получить детальную ошибку
+        let errorMessage = 'Ошибка загрузки файлов';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorData.error || errorMessage;
+        } catch (e) {
+          errorMessage = `Ошибка ${response.status}: ${response.statusText}`;
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const result = await response.json();

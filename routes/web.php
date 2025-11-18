@@ -549,6 +549,8 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
     Route::post('/news', [App\Http\Controllers\Admin\NewsController::class, 'store'])
         ->can('create', News::class)
         ->name('news.store');
+    Route::get('/news/export-views', [App\Http\Controllers\Admin\NewsController::class, 'exportViews'])
+        ->name('news.export-views');
     Route::get('/news/{news}/edit', [App\Http\Controllers\Admin\NewsController::class, 'edit'])->name('news.edit');
     Route::put('/news/{news}', [App\Http\Controllers\Admin\NewsController::class, 'update'])->name('news.update');
     Route::delete('/news/{news}', [App\Http\Controllers\Admin\NewsController::class, 'destroy'])->name('news.destroy');

@@ -108,31 +108,34 @@ export default function MediaLightbox({
           ‹
         </button>
 
-        <div className="flex h-full w-full max-w-5xl items-center justify-center">
+        <div className="flex h-full w-full max-w-7xl items-center justify-center px-4">
           {currentMedia?.type === 'video' ? (
-            currentMedia.is_embed && (currentMedia.embed_url || currentMedia.path) ? (
+            currentMedia.is_embed && (currentMedia.embed_url || currentMedia.path || currentMedia.url) ? (
               <iframe
-                key={currentMedia.id}
-                src={currentMedia.embed_url || currentMedia.path}
+                key={currentMedia.id || `embed-${currentIndex}`}
+                src={currentMedia.embed_url || currentMedia.path || currentMedia.url}
                 title={currentMedia.name || 'Видео'}
-                className="h-full w-full max-h-[80vh] rounded-xl border border-white/10 object-contain shadow-2xl"
+                className="h-full w-full max-h-[85vh] rounded-xl border border-white/10 object-contain shadow-2xl"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
               />
             ) : (
               <SafeVideo
-                key={currentMedia.path}
-                src={currentMedia.path}
-                className="h-full w-full max-h-[80vh] rounded-xl border border-white/10 object-contain shadow-2xl"
+                key={currentMedia.path || currentMedia.url || currentMedia.id || `video-${currentIndex}`}
+                src={currentMedia.path || currentMedia.url || currentMedia.src}
+                className="h-full w-full max-h-[85vh] rounded-xl border border-white/10 object-contain shadow-2xl"
                 controls
                 autoPlay
+                playsInline
+                preload="auto"
               />
             )
           ) : (
             <SafeImage
-              src={currentMedia?.path}
+              src={currentMedia?.path || currentMedia?.url}
               alt={currentMedia?.name || 'Изображение'}
-              className="h-full w-full max-h-[80vh] rounded-xl border border-white/10 object-contain shadow-2xl"
+              className="max-h-[85vh] w-auto h-auto rounded-xl border border-white/10 object-contain shadow-2xl"
+              style={{ maxWidth: '100%' }}
             />
           )}
         </div>

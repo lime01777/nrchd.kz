@@ -51,15 +51,108 @@ class FileController extends Controller
         
         // Если указана конкретная папка
         if ($folderPath) {
+            // Декодируем URL-кодированный путь (на случай, если он пришел закодированным)
+            $decodedPath = urldecode($folderPath);
+            
             // Нормализуем путь, заменяя прямые слеши на системные разделители
-            $normalizedPath = str_replace('/', DIRECTORY_SEPARATOR, $folderPath);
+            $normalizedPath = str_replace('/', DIRECTORY_SEPARATOR, $decodedPath);
             $fullPath = $baseDirectory . DIRECTORY_SEPARATOR . $normalizedPath;
+            
+            // Логируем информацию о пути для отладки
+            Log::info('Проверка существования папки:', [
+                'originalFolderPath' => $folderPath,
+                'decodedPath' => $decodedPath,
+                'normalizedPath' => $normalizedPath,
+                'baseDirectory' => $baseDirectory,
+                'fullPath' => $fullPath,
+                'baseDirectoryExists' => File::isDirectory($baseDirectory),
+                'fullPathExists' => File::exists($fullPath),
+                'fullPathIsDirectory' => File::isDirectory($fullPath)
+            ]);
+            
+            // Проверяем существование базовой директории
+            if (!File::isDirectory($baseDirectory)) {
+                Log::error('Базовая директория не существует', ['path' => $baseDirectory]);
+                return response()->json([
+                    'error' => 'Базовая директория не найдена: ' . $baseDirectory
+                ], 500);
+            }
             
             // Проверяем существование папки
             if (!File::isDirectory($fullPath)) {
-                return response()->json([
-                    'error' => 'Указанная папка не существует: ' . $folderPath
-                ], 404);
+                // Пытаемся найти альтернативные варианты пути
+                $foundAlternativePath = null;
+                
+                // Вариант 1: без декодирования (на случай двойного кодирования)
+                $altPath1 = $baseDirectory . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $folderPath);
+                if (File::isDirectory($altPath1)) {
+                    $foundAlternativePath = $altPath1;
+                    Log::info('Найден альтернативный путь (без декодирования)', ['path' => $altPath1]);
+                }
+                
+                // Вариант 2: проверяем содержимое базовой директории на похожие имена
+                if (!$foundAlternativePath && File::isDirectory($baseDirectory)) {
+                    $baseContents = array_filter(scandir($baseDirectory), function($item) {
+                        return $item !== '.' && $item !== '..';
+                    });
+                    
+                    // Ищем первую часть пути в содержимом
+                    $pathParts = explode('/', $decodedPath);
+                    $firstPart = $pathParts[0] ?? '';
+                    
+                    foreach ($baseContents as $item) {
+                        // Проверяем точное совпадение или совпадение без учета регистра
+                        if (strcasecmp($item, $firstPart) === 0 || 
+                            mb_strtolower($item) === mb_strtolower($firstPart)) {
+                            $testPath = $baseDirectory . DIRECTORY_SEPARATOR . $item;
+                            if (count($pathParts) > 1) {
+                                // Если есть вложенные папки, проверяем их
+                                $remainingPath = implode(DIRECTORY_SEPARATOR, array_slice($pathParts, 1));
+                                $testPath .= DIRECTORY_SEPARATOR . $remainingPath;
+                            }
+                            
+                            if (File::isDirectory($testPath)) {
+                                $foundAlternativePath = $testPath;
+                                Log::info('Найден альтернативный путь (поиск по содержимому)', [
+                                    'original' => $fullPath,
+                                    'found' => $testPath
+                                ]);
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                // Если нашли альтернативный путь, используем его
+                if ($foundAlternativePath) {
+                    $fullPath = $foundAlternativePath;
+                    Log::info('Используется альтернативный путь', ['path' => $fullPath]);
+                } else {
+                    // Вариант 3: проверяем, может быть это файл, а не папка
+                    if (File::exists($fullPath) && !File::isDirectory($fullPath)) {
+                        Log::warning('Указанный путь существует, но это файл, а не папка', ['path' => $fullPath]);
+                    }
+                    
+                    // Логируем ошибку с детальной информацией
+                    Log::error('Указанная папка не существует', [
+                        'requestedPath' => $folderPath,
+                        'decodedPath' => $decodedPath,
+                        'fullPath' => $fullPath,
+                        'baseDirectory' => $baseDirectory,
+                        'baseDirectoryContents' => File::exists($baseDirectory) ? array_slice(scandir($baseDirectory), 2) : []
+                    ]);
+                    
+                    return response()->json([
+                        'error' => 'Указанная папка не существует: ' . $folderPath,
+                        'details' => [
+                            'requested_path' => $folderPath,
+                            'decoded_path' => $decodedPath,
+                            'full_path' => $fullPath,
+                            'base_directory' => $baseDirectory,
+                            'base_directory_exists' => File::isDirectory($baseDirectory)
+                        ]
+                    ], 404);
+                }
             }
             
             $files = [];
@@ -97,40 +190,12 @@ class FileController extends Controller
                     ? array_values(array_filter(array_map(fn ($id) => $categoriesMap[$id] ?? null, $metadata->medicine_category_ids ?? [])))
                     : [];
                 $metadataMkb = $metadata->mkb_codes ?? [];
-
-                if ($medicine) {
-                    $matchesMetadata = $this->arrayContainsInsensitive($metadataMedicine, $medicine);
-                    if (!$matchesMetadata) {
-                        $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
-                        $filePath = $file->getPathname();
-                        if (
-                            !$this->containsCaseInsensitive($fileContent, $medicine) &&
-                            !$this->containsCaseInsensitive($filePath, $medicine)
-                        ) {
-                            continue;
-                        }
-                    }
-                }
                 
-                if ($mkb) {
-                    $matchesMetadata = $this->arrayContainsInsensitive($metadataMkb, $mkb);
-                    if (!$matchesMetadata) {
-                        $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
-                        $filePath = $file->getPathname();
-                        
-                        if (
-                            !$this->containsCaseInsensitive($fileContent, $mkb) &&
-                            !$this->containsCaseInsensitive($filePath, $mkb)
-                        ) {
-                            continue;
-                        }
-                    }
-                }
+                // Определяем категории МКБ и медицины из имени файла и пути ДО фильтрации
+                $fileNameLower = strtolower(pathinfo($fileName, PATHINFO_FILENAME));
+                $filePathLower = strtolower($file->getPathname());
                 
-                $imgType = $this->getImageTypeForExtension($fileExtension);
-                
-                $fileCategory = $this->getCategoryFromPath($file->getPathname(), $fullPath);
-                
+                // Определяем раздел медицины из имени файла/пути
                 $medicineSectionName = '';
                 $medicineSections = [
                     'cardiology' => 'Кардиология',
@@ -152,9 +217,6 @@ class FileController extends Controller
                     'traumatology' => 'Травматология и ортопедия'
                 ];
                 
-                $fileNameLower = strtolower(pathinfo($fileName, PATHINFO_FILENAME));
-                $filePathLower = strtolower($file->getPathname());
-                
                 foreach ($medicineSections as $key => $value) {
                     if (stripos($fileNameLower, $key) !== false || 
                         stripos($fileNameLower, $value) !== false ||
@@ -165,6 +227,7 @@ class FileController extends Controller
                     }
                 }
                 
+                // Определяем категорию МКБ из имени файла/пути
                 $mkbCategory = '';
                 $mkbPatterns = [
                     'A\d+' => 'A00-B99',
@@ -202,6 +265,62 @@ class FileController extends Controller
                         break;
                     }
                 }
+
+                // Фильтрация по разделу медицины
+                if ($medicine) {
+                    $matchesMetadata = $this->arrayContainsInsensitive($metadataMedicine, $medicine);
+                    $matchesSection = $this->containsCaseInsensitive($medicineSectionName, $medicine);
+                    if (!$matchesMetadata && !$matchesSection) {
+                        $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
+                        $filePath = $file->getPathname();
+                        if (
+                            !$this->containsCaseInsensitive($fileContent, $medicine) &&
+                            !$this->containsCaseInsensitive($filePath, $medicine)
+                        ) {
+                            continue;
+                        }
+                    }
+                }
+                
+                // Фильтрация по МКБ - проверяем метаданные, автоматически определенную категорию и имя файла/путь
+                if ($mkb) {
+                    // Проверяем метаданные
+                    $matchesMetadata = $this->arrayContainsInsensitive($metadataMkb, $mkb);
+                    // Проверяем автоматически определенную категорию МКБ
+                    $matchesCategory = $mkbCategory && (
+                        $this->containsCaseInsensitive($mkbCategory, $mkb) || 
+                        $this->containsCaseInsensitive($mkb, $mkbCategory)
+                    );
+                    
+                    // Логируем для отладки (только для первых нескольких файлов)
+                    if (count($documents) < 3) {
+                        Log::debug('Фильтрация по МКБ', [
+                            'fileName' => $fileName,
+                            'requestedMkb' => $mkb,
+                            'metadataMkb' => $metadataMkb,
+                            'mkbCategory' => $mkbCategory,
+                            'matchesMetadata' => $matchesMetadata,
+                            'matchesCategory' => $matchesCategory
+                        ]);
+                    }
+                    
+                    if (!$matchesMetadata && !$matchesCategory) {
+                        // Если не совпало в метаданных и категории, проверяем имя файла и путь
+                        $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
+                        $filePath = $file->getPathname();
+                        
+                        $matchesFileName = $this->containsCaseInsensitive($fileContent, $mkb);
+                        $matchesFilePath = $this->containsCaseInsensitive($filePath, $mkb);
+                        
+                        if (!$matchesFileName && !$matchesFilePath) {
+                            continue;
+                        }
+                    }
+                }
+                
+                $imgType = $this->getImageTypeForExtension($fileExtension);
+                
+                $fileCategory = $this->getCategoryFromPath($file->getPathname(), $fullPath);
 
                 $primaryMedicine = $metadataMedicine[0] ?? $medicineSectionName;
                 $primaryMkb = $metadataMkb[0] ?? '';
