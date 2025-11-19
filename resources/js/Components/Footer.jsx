@@ -48,7 +48,7 @@ const FooterLinks = () => {
             { title: "Организация и проведение обучающих циклов", url: "services.training", translate: true },
             { title: "Оценка рекламных материалов", url: "services.adsEvaluation", translate: true },
             { title: "Оценка технологий здравоохранения", url: "services.healthTechAssessment", translate: true },
-            { title: "Экспертиза лекарственных средств", url: "services.drugExpertise", translate: true },
+            { title: "Профессиональная экспертиза лекарственных средств", url: "services.drugExpertise", translate: true },
             { title: "Экспертиза научно-образовательных программ", url: "services.educationPrograms", translate: true },
             { title: "Научно-медицинская экспертиза", url: "services.medicalExpertise", translate: true },
             { title: "Аккредитация медицинских организаций", url: "services.accreditation", translate: true },

@@ -98,7 +98,7 @@ export default function DrugExpertise() {
 
   return (
     <>
-              <Head title={tComponent('services.drug_expertise', 'Экспертиза лекарственных средств')} meta={[{ name: 'description', content: 'Экспертиза лекарственных средств и фармацевтических препаратов.' }]} />
+              <Head title={t('services.drug_expertise', 'Профессиональная экспертиза лекарственных средств')} meta={[{ name: 'description', content: 'Профессиональная экспертиза лекарственных средств и фармацевтических препаратов.' }]} />
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-2/3 px-4 mt-10">
@@ -134,7 +134,7 @@ export default function DrugExpertise() {
         
         <div className="mt-10">
           <FilesAccord 
-            folder="Услуги/Экспертиза лекарственных средств/как получить услугу" 
+            folder="Услуги/Профессиональная экспертиза лекарственных средств/как получить услугу" 
             title="Как получить услугу" 
             bgColor="bg-purple-100"
             defaultOpen={true}
@@ -142,7 +142,7 @@ export default function DrugExpertise() {
         </div>
         <div className="mt-10">
           <FilesAccord 
-            folder="Услуги/Экспертиза лекарственных средств/полезные материалы" 
+            folder="Услуги/Профессиональная экспертиза лекарственных средств/полезные материалы" 
             title="Полезные материалы" 
             bgColor="bg-purple-100"
             defaultOpen={true}
