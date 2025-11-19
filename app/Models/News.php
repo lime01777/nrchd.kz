@@ -73,6 +73,7 @@ class News extends Model
         'seo_description',
         'status',
         'type',
+        'external_url',
         'published_at',
         'created_by',
         // Старые поля для обратной совместимости
@@ -175,6 +176,10 @@ class News extends Model
     {
         // Новый формат
         if ($this->cover_image_path) {
+            // Если это внешний URL (начинается с http), возвращаем как есть
+            if (str_starts_with($this->cover_image_path, 'http')) {
+                return $this->cover_image_path;
+            }
             return asset('storage/' . $this->cover_image_path);
         }
         
@@ -199,11 +204,19 @@ class News extends Model
     public function getCoverThumbUrlAttribute(): string
     {
         if ($this->cover_image_thumb_path) {
+            // Если это внешний URL (начинается с http), возвращаем как есть
+            if (str_starts_with($this->cover_image_thumb_path, 'http')) {
+                return $this->cover_image_thumb_path;
+            }
             return asset('storage/' . $this->cover_image_thumb_path);
         }
         
         // Если есть оригинал, но нет миниатюры, используем оригинал
         if ($this->cover_image_path) {
+            // Если это внешний URL (начинается с http), возвращаем как есть
+            if (str_starts_with($this->cover_image_path, 'http')) {
+                return $this->cover_image_path;
+            }
             return asset('storage/' . $this->cover_image_path);
         }
         

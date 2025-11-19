@@ -648,6 +648,9 @@ Route::get('admin/news/test-upload', function () {
 
 Route::post('admin/news/test-upload', [\App\Http\Controllers\Admin\NewsController::class, 'testUpload'])->middleware(['auth']);
 
+// API для парсинга метаданных из URL (для материалов СМИ)
+Route::post('admin/news/parse-url', [\App\Http\Controllers\Admin\NewsController::class, 'parseUrl'])->middleware(['auth']);
+
 // Простой тестовый маршрут для проверки данных формы
 Route::post('admin/news/test-form', function (Request $request) {
     Log::info('Тестовый запрос формы', [

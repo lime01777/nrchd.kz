@@ -17,6 +17,7 @@ use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Intervention\Image\Laravel\Facades\Image;
 use App\Services\MediaService;
+use App\Services\UrlMetadataService;
 
 /**
  * Контроллер админки для управления новостями
@@ -28,8 +29,10 @@ class NewsController extends Controller
     /**
      * Конструктор: применяем политику доступа
      */
-    public function __construct(private readonly MediaService $mediaService)
-    {
+    public function __construct(
+        private readonly MediaService $mediaService,
+        private readonly UrlMetadataService $urlMetadataService
+    ) {
         $this->authorizeResource(News::class, 'news');
     }
 
@@ -190,6 +193,9 @@ class NewsController extends Controller
                 'body_length' => isset($validated['body']) ? strlen($validated['body']) : 0,
             ]);
 
+            // Определяем тип публикации ДО использования
+            $type = $this->resolveSection($request->input('section', $validated['type'] ?? null));
+            
             // Создаем новость
             $news = new News();
             $news->title = $validated['title'];
@@ -209,13 +215,27 @@ class NewsController extends Controller
             }
             
             // Если slug не передан или некорректный, генерируем из заголовка
+            // Для СМИ, если нет заголовка, используем external_url или дефолтное значение
+            $titleForSlug = $validated['title'] ?? null;
+            if (!$titleForSlug && $type === News::TYPE_MEDIA && !empty($validated['external_url'])) {
+                try {
+                    $url = parse_url($validated['external_url']);
+                    $titleForSlug = $url['host'] ?? 'media-item';
+                } catch (\Exception $e) {
+                    $titleForSlug = 'media-item';
+                }
+            }
+            if (!$titleForSlug) {
+                $titleForSlug = 'news-item';
+            }
+            
             if (!$slug) {
-                $slug = News::generateUniqueSlug($validated['title']);
+                $slug = News::generateUniqueSlug($titleForSlug);
             } else {
                 // Если slug был передан и корректен, проверяем его уникальность
                 if (News::where('slug', $slug)->exists()) {
                     // Если slug уже существует, генерируем новый
-                    $slug = News::generateUniqueSlug($validated['title']);
+                    $slug = News::generateUniqueSlug($titleForSlug);
                 }
             }
             
@@ -228,20 +248,24 @@ class NewsController extends Controller
             }
             
             Log::info('Сгенерирован slug для новости', [
-                'title' => $validated['title'],
+                'title' => $validated['title'] ?? 'N/A',
                 'final_slug' => $slug,
                 'was_provided' => !empty($validated['slug']),
             ]);
             
             $news->slug = $slug;
+            $news->title = $validated['title'] ?? ($type === News::TYPE_MEDIA && !empty($validated['external_url']) 
+                ? (parse_url($validated['external_url'], PHP_URL_HOST) ?? 'Материал из СМИ')
+                : 'Новость без заголовка');
             $news->excerpt = $validated['excerpt'] ?? null;
-            $news->body = $validated['body'];
+            $news->body = $validated['body'] ?? null;
             // Для обратной совместимости со старым полем content
-            $news->content = $validated['body'];
+            $news->content = $validated['body'] ?? null;
             $news->cover_image_alt = $validated['cover_image_alt'] ?? null;
             $news->seo_title = $validated['seo_title'] ?? null;
             $news->seo_description = $validated['seo_description'] ?? null;
-            $type = $this->resolveSection($request->input('section', $validated['type'] ?? null));
+            $news->external_url = $validated['external_url'] ?? null;
+            // $type уже определен выше
 
             $news->status = $validated['status'];
             $news->published_at = $validated['status'] === 'published' 
@@ -255,11 +279,31 @@ class NewsController extends Controller
             $mediaItems = $this->parseMediaInput($request->input('media'));
             if (!empty($mediaItems)) {
                 $news->images = $mediaItems;
+                
+                // Для материалов СМИ: если есть внешнее изображение с is_cover, сохраняем его как обложку
+                if ($type === News::TYPE_MEDIA) {
+                    $coverMedia = collect($mediaItems)->firstWhere('is_cover', true);
+                    if ($coverMedia && !empty($coverMedia['url']) && str_starts_with($coverMedia['url'], 'http')) {
+                        // Внешнее изображение - сохраняем URL напрямую
+                        $news->cover_image_path = $coverMedia['url'];
+                        $news->cover_image_thumb_path = $coverMedia['url'];
+                    }
+                }
             }
 
-            // Обработка обложки
+            // Обработка обложки (только для загруженных файлов)
             if ($request->hasFile('cover')) {
                 $this->handleCoverUpload($request->file('cover'), $news);
+            }
+            
+            // Если передан cover_image_path напрямую (для внешних изображений)
+            if ($request->has('cover_image_path') && $request->input('cover_image_path')) {
+                $coverPath = $request->input('cover_image_path');
+                // Если это внешний URL, сохраняем как есть
+                if (str_starts_with($coverPath, 'http')) {
+                    $news->cover_image_path = $coverPath;
+                    $news->cover_image_thumb_path = $coverPath;
+                }
             }
 
             // Сохраняем новость с обработкой ошибок дублирования slug
@@ -367,6 +411,7 @@ class NewsController extends Controller
                 'cover_image_alt' => $news->cover_image_alt,
                 'seo_title' => $news->seo_title,
                 'seo_description' => $news->seo_description,
+                'external_url' => $news->external_url,
                 'status' => $news->status,
                 'published_at' => $news->published_at?->format('Y-m-d\TH:i'),
                 'media' => $this->mediaService->normalizeMediaForFrontend($news->images ?? []),
@@ -401,12 +446,13 @@ class NewsController extends Controller
                 $news->slug = News::generateUniqueSlug($validated['title'], $news->id);
             }
             $news->excerpt = $validated['excerpt'] ?? null;
-            $news->body = $validated['body'];
+            $news->body = $validated['body'] ?? null;
             // Синхронизируем устаревшее поле content
             $news->content = $news->body;
             $news->cover_image_alt = $validated['cover_image_alt'] ?? null;
             $news->seo_title = $validated['seo_title'] ?? null;
             $news->seo_description = $validated['seo_description'] ?? null;
+            $news->external_url = $validated['external_url'] ?? null;
             $news->status = $validated['status'];
             $newsType = $this->resolveType($request->input('type', $news->type));
             $news->type = $newsType;
@@ -540,6 +586,35 @@ class NewsController extends Controller
      * @param Request $request
      * @return Response
      */
+    /**
+     * Парсит метаданные из URL (для материалов СМИ)
+     */
+    public function parseUrl(Request $request): JsonResponse
+    {
+        $request->validate([
+            'url' => 'required|url|max:512',
+        ]);
+
+        try {
+            $metadata = $this->urlMetadataService->parseUrl($request->input('url'));
+
+            return response()->json([
+                'success' => true,
+                'data' => $metadata,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Ошибка парсинга URL', [
+                'url' => $request->input('url'),
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'error' => 'Не удалось получить данные из ссылки: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function exportViews(Request $request): Response
     {
         // Проверяем права доступа

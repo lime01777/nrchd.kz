@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Head, Link, useForm, usePage, router } from '@inertiajs/react';
 import LayoutNews from '@/Layouts/LayoutNews';
 import NewsImageSlider from '@/Components/NewsImageSlider';
+import MediaCard from '@/Components/MediaCard';
 import { isValidVideoUrl } from '@/Utils/mediaUtils';
 import translationService from '@/services/TranslationService';
 
@@ -138,6 +139,8 @@ export default function Index({ section: sectionProp }) {
                 galleryVideos,
                 videoItems: videoAccumulator,
                 preparedExcerpt: formattedExcerpt,
+                // Для MediaCard передаем images из media массива
+                images: item.images || filteredImages,
             };
         });
     }, [news]);
@@ -373,7 +376,14 @@ export default function Index({ section: sectionProp }) {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
-                    {preparedNews.map((item) => (
+                    {preparedNews.map((item) => {
+                        // Для материалов СМИ используем специальный компонент MediaCard
+                        if (isMediaSection && item.external_url) {
+                            return <MediaCard key={item.id} item={item} />;
+                        }
+
+                        // Обычные новости - стандартная карточка
+                        return (
                         <article
                             key={item.id}
                             className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
@@ -458,7 +468,8 @@ export default function Index({ section: sectionProp }) {
                                 </div>
                             </Link>
                         </article>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
 

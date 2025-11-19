@@ -7,6 +7,7 @@ import TextInput from '@/Components/TextInput';
 import PrimaryButton from '@/Components/PrimaryButton';
 import ModernMediaUploader from '@/Components/Admin/News/ModernMediaUploader';
 import CategorySelector from '@/Components/Admin/News/CategorySelector';
+import UrlParser from '@/Components/Admin/News/UrlParser';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
@@ -52,6 +53,8 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
         body: news?.body || '',
         seo_title: news?.seo_title || '',
         seo_description: news?.seo_description || '',
+        external_url: news?.external_url || '',
+        cover_image_path: news?.cover_image_path || '',
         status: news?.status || 'draft',
         published_at: news?.published_at || '',
         media: initialMedia,
@@ -170,6 +173,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
             body: editor ? editor.getHTML() : data.body,
             type: currentType,
             section: currentType,
+            cover_image_path: data.cover_image_path || null,
         };
         delete payload.cover;
 
@@ -261,6 +265,51 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                     </div>
 
                     <form onSubmit={(event) => submitForm(event)} className="space-y-6">
+                        {/* Парсер URL для материалов СМИ */}
+                        {currentType === 'media' && (
+                            <div className="bg-white shadow rounded-lg p-6">
+                                <UrlParser
+                                    initialUrl={data.external_url}
+                                    onMetadataParsed={(metadata) => {
+                                        // Автозаполнение полей из метаданных
+                                        if (metadata.title && !data.title) {
+                                            setData('title', metadata.title);
+                                        }
+                                        if (metadata.description && !data.excerpt) {
+                                            setData('excerpt', metadata.description);
+                                        }
+                                        if (metadata.description && !data.body) {
+                                            setData('body', `<p>${metadata.description}</p>`);
+                                            editor?.commands.setContent(`<p>${metadata.description}</p>`);
+                                        }
+                                        if (metadata.image) {
+                                            // Добавляем изображение как медиа (даже если уже есть медиа)
+                                            const imageMedia = {
+                                                id: `external-${Date.now()}`,
+                                                type: 'image',
+                                                path: metadata.image,
+                                                url: metadata.image,
+                                                name: metadata.title || 'Изображение',
+                                                is_external: true,
+                                                is_cover: true, // Помечаем как обложку
+                                            };
+                                            // Если медиа уже есть, добавляем в начало, иначе создаем новый массив
+                                            if (media.length > 0) {
+                                                setMedia([imageMedia, ...media]);
+                                            } else {
+                                                setMedia([imageMedia]);
+                                            }
+                                            // Также устанавливаем как cover_image_path для сохранения
+                                            setData('cover_image_path', metadata.image);
+                                        }
+                                        // Сохраняем URL
+                                        setData('external_url', metadata.url);
+                                    }}
+                                />
+                                <InputError message={errors.external_url} className="mt-2" />
+                            </div>
+                        )}
+
                         <div className="bg-white shadow rounded-lg p-6 space-y-6">
                             <div>
                                 <InputLabel htmlFor="title" value="Заголовок *" />
@@ -271,112 +320,118 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                                     onChange={(e) => setData('title', e.target.value)}
                                     className="mt-1 block w-full"
                                     required
+                                    placeholder={currentType === 'media' ? 'Заголовок будет заполнен автоматически из ссылки' : 'Введите заголовок новости'}
                                 />
                                 <InputError message={errors.title} className="mt-2" />
                             </div>
 
-                            <div>
-                                <div className="flex items-center gap-2">
-                                    <InputLabel htmlFor="slug" value="URL-адрес (slug)" />
-                                    <button
-                                        type="button"
-                                        onClick={generateSlug}
-                                        className="text-sm text-blue-600 hover:text-blue-800"
-                                    >
-                                        Обновить из заголовка
-                                    </button>
-                                </div>
-                                <TextInput
-                                    id="slug"
-                                    type="text"
-                                    value={data.slug}
-                                    onChange={(e) => setData('slug', e.target.value)}
-                                    className="mt-1 block w-full"
-                                    placeholder="Автоматически генерируется из заголовка"
-                                />
-                                <InputError message={errors.slug} className="mt-2" />
-                            </div>
-
-                            <div>
-                                <InputLabel htmlFor="excerpt" value="Краткое описание" />
-                                <textarea
-                                    id="excerpt"
-                                    value={data.excerpt}
-                                    onChange={(e) => setData('excerpt', e.target.value)}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                    rows={3}
-                                    placeholder="Краткое описание новости для превью..."
-                                />
-                                <InputError message={errors.excerpt} className="mt-2" />
-                            </div>
-
-                            <div>
-                                <InputLabel htmlFor="body" value="Текст новости *" />
-                                <div className="mt-1 border border-gray-300 rounded-md">
-                                    {editor && (
-                                        <div className="border-b border-gray-200 p-2 flex flex-wrap gap-2">
+                            {/* Для СМИ скрываем ненужные поля, если данные уже подтянуты */}
+                            {currentType !== 'media' && (
+                                <>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <InputLabel htmlFor="slug" value="URL-адрес (slug)" />
                                             <button
                                                 type="button"
-                                                onClick={() => editor.chain().focus().toggleBold().run()}
-                                                className={`px-3 py-1 rounded text-sm ${editor.isActive('bold') ? 'bg-gray-200 font-semibold' : 'hover:bg-gray-100'}`}
+                                                onClick={generateSlug}
+                                                className="text-sm text-blue-600 hover:text-blue-800"
                                             >
-                                                Жирный
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => editor.chain().focus().toggleItalic().run()}
-                                                className={`px-3 py-1 rounded text-sm italic ${editor.isActive('italic') ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
-                                            >
-                                                Курсив
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => editor.chain().focus().toggleBulletList().run()}
-                                                className={`px-3 py-1 rounded text-sm ${editor.isActive('bulletList') ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
-                                            >
-                                                Список
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => editor.chain().focus().setParagraph().run()}
-                                                className="px-3 py-1 rounded text-sm hover:bg-gray-100"
-                                            >
-                                                Абзац
+                                                Обновить из заголовка
                                             </button>
                                         </div>
-                                    )}
-                                    <EditorContent editor={editor} className="prose max-w-none p-4 min-h-[320px] focus:outline-none" />
-                                </div>
-                                <InputError message={errors.body} className="mt-2" />
-                            </div>
+                                        <TextInput
+                                            id="slug"
+                                            type="text"
+                                            value={data.slug}
+                                            onChange={(e) => setData('slug', e.target.value)}
+                                            className="mt-1 block w-full"
+                                            placeholder="Автоматически генерируется из заголовка"
+                                        />
+                                        <InputError message={errors.slug} className="mt-2" />
+                                    </div>
 
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                <div>
-                                    <InputLabel htmlFor="seo_title" value="SEO заголовок" />
-                                    <TextInput
-                                        id="seo_title"
-                                        type="text"
-                                        value={data.seo_title}
-                                        onChange={(e) => setData('seo_title', e.target.value)}
-                                        className="mt-1 block w-full"
-                                        placeholder="Если не указано — используется основной заголовок"
-                                    />
-                                    <InputError message={errors.seo_title} className="mt-2" />
-                                </div>
+                                    <div>
+                                        <InputLabel htmlFor="excerpt" value="Краткое описание" />
+                                        <textarea
+                                            id="excerpt"
+                                            value={data.excerpt}
+                                            onChange={(e) => setData('excerpt', e.target.value)}
+                                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                            rows={3}
+                                            placeholder="Краткое описание новости для превью..."
+                                        />
+                                        <InputError message={errors.excerpt} className="mt-2" />
+                                    </div>
 
-                                <div>
-                                    <InputLabel htmlFor="seo_description" value="SEO описание" />
-                                    <textarea
-                                        id="seo_description"
-                                        value={data.seo_description}
-                                        onChange={(e) => setData('seo_description', e.target.value)}
-                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                        rows={2}
-                                        placeholder="Если не указано — используется краткое описание"
-                                    />
-                                    <InputError message={errors.seo_description} className="mt-2" />
-                                </div>
-                            </div>
+                                    <div>
+                                        <InputLabel htmlFor="body" value="Текст новости *" />
+                                        <div className="mt-1 border border-gray-300 rounded-md">
+                                            {editor && (
+                                                <div className="border-b border-gray-200 p-2 flex flex-wrap gap-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => editor.chain().focus().toggleBold().run()}
+                                                        className={`px-3 py-1 rounded text-sm ${editor.isActive('bold') ? 'bg-gray-200 font-semibold' : 'hover:bg-gray-100'}`}
+                                                    >
+                                                        Жирный
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => editor.chain().focus().toggleItalic().run()}
+                                                        className={`px-3 py-1 rounded text-sm italic ${editor.isActive('italic') ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+                                                    >
+                                                        Курсив
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => editor.chain().focus().toggleBulletList().run()}
+                                                        className={`px-3 py-1 rounded text-sm ${editor.isActive('bulletList') ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+                                                    >
+                                                        Список
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => editor.chain().focus().setParagraph().run()}
+                                                        className="px-3 py-1 rounded text-sm hover:bg-gray-100"
+                                                    >
+                                                        Абзац
+                                                    </button>
+                                                </div>
+                                            )}
+                                            <EditorContent editor={editor} className="prose max-w-none p-4 min-h-[320px] focus:outline-none" />
+                                        </div>
+                                        <InputError message={errors.body} className="mt-2" />
+                                    </div>
+
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <div>
+                                            <InputLabel htmlFor="seo_title" value="SEO заголовок" />
+                                            <TextInput
+                                                id="seo_title"
+                                                type="text"
+                                                value={data.seo_title}
+                                                onChange={(e) => setData('seo_title', e.target.value)}
+                                                className="mt-1 block w-full"
+                                                placeholder="Если не указано — используется основной заголовок"
+                                            />
+                                            <InputError message={errors.seo_title} className="mt-2" />
+                                        </div>
+
+                                        <div>
+                                            <InputLabel htmlFor="seo_description" value="SEO описание" />
+                                            <textarea
+                                                id="seo_description"
+                                                value={data.seo_description}
+                                                onChange={(e) => setData('seo_description', e.target.value)}
+                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                                rows={2}
+                                                placeholder="Если не указано — используется краткое описание"
+                                            />
+                                            <InputError message={errors.seo_description} className="mt-2" />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
 
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 <div>
@@ -407,41 +462,46 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                             </div>
                         </div>
 
-                    <div className="bg-white shadow rounded-lg p-6">
-                        <h2 className="text-lg font-medium text-gray-900 mb-4">Категории</h2>
-                        {availableCategories.length === 0 ? (
-                            <p className="text-sm text-gray-500">
-                                Список категорий пуст. Обратитесь к администратору для настройки.
-                            </p>
-                        ) : (
-                            <CategorySelector
-                                selectedCategories={data.category}
-                                onCategoriesChange={(categories) => setData('category', categories)}
-                                availableCategories={availableCategories}
-                                maxCategories={5}
-                            />
-                        )}
-                        <InputError message={errors.category} className="mt-2" />
-                    </div>
-
-                        <div className="bg-white shadow rounded-lg p-6">
-                            <div className="flex items-center justify-between mb-4">
-                                <div>
-                                    <h2 className="text-lg font-medium text-gray-900">Галерея</h2>
-                                    <p className="text-sm text-gray-500 mt-1">
-                                        Загрузите дополнительные изображения или видео (поддерживаются форматы jpg, png, webp, mp4 и др.).
+                    {/* Категории и медиа только для обычных новостей */}
+                    {currentType !== 'media' && (
+                        <>
+                            <div className="bg-white shadow rounded-lg p-6">
+                                <h2 className="text-lg font-medium text-gray-900 mb-4">Категории</h2>
+                                {availableCategories.length === 0 ? (
+                                    <p className="text-sm text-gray-500">
+                                        Список категорий пуст. Обратитесь к администратору для настройки.
                                     </p>
-                                </div>
-                                <span className="text-sm text-gray-400">Файлов: {media.length}</span>
+                                ) : (
+                                    <CategorySelector
+                                        selectedCategories={data.category}
+                                        onCategoriesChange={(categories) => setData('category', categories)}
+                                        availableCategories={availableCategories}
+                                        maxCategories={5}
+                                    />
+                                )}
+                                <InputError message={errors.category} className="mt-2" />
                             </div>
-                            <ModernMediaUploader
-                                existingMedia={media}
-                                onMediaUploaded={handleMediaUploaded}
-                                onMediaRemoved={handleMediaRemoved}
-                                maxFiles={30}
-                            />
-                            <InputError message={errors.media} className="mt-2" />
-                        </div>
+
+                            <div className="bg-white shadow rounded-lg p-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div>
+                                        <h2 className="text-lg font-medium text-gray-900">Галерея</h2>
+                                        <p className="text-sm text-gray-500 mt-1">
+                                            Загрузите дополнительные изображения или видео (поддерживаются форматы jpg, png, webp, mp4 и др.).
+                                        </p>
+                                    </div>
+                                    <span className="text-sm text-gray-400">Файлов: {media.length}</span>
+                                </div>
+                                <ModernMediaUploader
+                                    existingMedia={media}
+                                    onMediaUploaded={handleMediaUploaded}
+                                    onMediaRemoved={handleMediaRemoved}
+                                    maxFiles={30}
+                                />
+                                <InputError message={errors.media} className="mt-2" />
+                            </div>
+                        </>
+                    )}
 
                         <div className="flex flex-wrap justify-end gap-4">
                             <Link

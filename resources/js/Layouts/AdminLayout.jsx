@@ -9,9 +9,16 @@ export default function AdminLayout({ children, title }) {
 
   const isCurrent = (...patterns) => patterns.some((pattern) => route().current(pattern));
 
-  const sectionType = page.props?.section?.type;
-  const pageSectionType = sectionType || 'news';
+  // Получаем тип секции из разных источников
+  const sectionType = page.props?.section?.type || page.props?.section || page.props?.type;
+  const pageSectionType = sectionType === 'media' ? 'media' : 'news';
   const isNewsRoute = route().current('admin.news.*');
+  
+  // Дополнительная проверка по URL для надежности
+  const currentUrl = typeof window !== 'undefined' ? window.location.pathname : '';
+  const isMediaSection = (currentUrl.includes('/admin/news/media') || 
+                         currentUrl.includes('/admin/news/create/media') || 
+                         pageSectionType === 'media');
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -51,7 +58,7 @@ export default function AdminLayout({ children, title }) {
           <Link 
             href={route('admin.news.index')}
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${
-              isNewsRoute && pageSectionType !== 'media'
+              isNewsRoute && !isMediaSection
                 ? 'text-white bg-blue-500'
                 : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'
             }`}
@@ -64,7 +71,7 @@ export default function AdminLayout({ children, title }) {
           <Link 
             href={route('admin.news.index', 'media')}
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${
-              isNewsRoute && pageSectionType === 'media'
+              isNewsRoute && isMediaSection
                 ? 'text-white bg-blue-500'
                 : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'
             }`}
