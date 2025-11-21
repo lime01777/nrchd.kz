@@ -422,7 +422,12 @@ Route::get('/direction/medical-education/rating', function () {
 
 // Маршрут для Отраслевого центра технологических компетенций
 Route::get('/direction/tech-competence', function () {
-    return Inertia::render('Direction/TechCompetence');
+    $medTechController = new \App\Http\Controllers\Api\MedTechController();
+    $medTechData = $medTechController->getPlatformData();
+    
+    return Inertia::render('Direction/TechCompetence', [
+        'medTechData' => $medTechData,
+    ]);
 })->name('direction.tech.competence');
 
 // Маршруты для медицинского туризма
@@ -593,6 +598,44 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
     Route::put('/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
     Route::post('/settings/backup', [App\Http\Controllers\Admin\SettingController::class, 'createBackup'])->name('admin.settings.backup');
     
+    // Платформа MedTech
+    Route::prefix('medtech')->name('medtech.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\MedTechController::class, 'index'])->name('index');
+        
+        // Документы
+        Route::get('/documents', [App\Http\Controllers\Admin\MedTechController::class, 'documents'])->name('documents');
+        Route::get('/documents/create', [App\Http\Controllers\Admin\MedTechController::class, 'createDocument'])->name('documents.create');
+        Route::post('/documents', [App\Http\Controllers\Admin\MedTechController::class, 'storeDocument'])->name('documents.store');
+        Route::get('/documents/{document}/edit', [App\Http\Controllers\Admin\MedTechController::class, 'editDocument'])->name('documents.edit');
+        Route::put('/documents/{document}', [App\Http\Controllers\Admin\MedTechController::class, 'updateDocument'])->name('documents.update');
+        Route::delete('/documents/{document}', [App\Http\Controllers\Admin\MedTechController::class, 'destroyDocument'])->name('documents.destroy');
+        
+        // Реестр технологий
+        Route::get('/registry', [App\Http\Controllers\Admin\MedTechController::class, 'registry'])->name('registry');
+        Route::get('/registry/create', [App\Http\Controllers\Admin\MedTechController::class, 'createRegistry'])->name('registry.create');
+        Route::post('/registry', [App\Http\Controllers\Admin\MedTechController::class, 'storeRegistry'])->name('registry.store');
+        Route::get('/registry/{registry}/edit', [App\Http\Controllers\Admin\MedTechController::class, 'editRegistry'])->name('registry.edit');
+        Route::put('/registry/{registry}', [App\Http\Controllers\Admin\MedTechController::class, 'updateRegistry'])->name('registry.update');
+        Route::delete('/registry/{registry}', [App\Http\Controllers\Admin\MedTechController::class, 'destroyRegistry'])->name('registry.destroy');
+        
+        // Пилотные площадки
+        Route::get('/pilot-sites', [App\Http\Controllers\Admin\MedTechController::class, 'pilotSites'])->name('pilot-sites');
+        Route::get('/pilot-sites/create', [App\Http\Controllers\Admin\MedTechController::class, 'createPilotSite'])->name('pilot-sites.create');
+        Route::post('/pilot-sites', [App\Http\Controllers\Admin\MedTechController::class, 'storePilotSite'])->name('pilot-sites.store');
+        Route::get('/pilot-sites/{pilotSite}/edit', [App\Http\Controllers\Admin\MedTechController::class, 'editPilotSite'])->name('pilot-sites.edit');
+        Route::put('/pilot-sites/{pilotSite}', [App\Http\Controllers\Admin\MedTechController::class, 'updatePilotSite'])->name('pilot-sites.update');
+        Route::delete('/pilot-sites/{pilotSite}', [App\Http\Controllers\Admin\MedTechController::class, 'destroyPilotSite'])->name('pilot-sites.destroy');
+        
+        // Заявки
+        Route::get('/submissions', [App\Http\Controllers\Admin\MedTechController::class, 'submissions'])->name('submissions');
+        Route::get('/submissions/{submission}', [App\Http\Controllers\Admin\MedTechController::class, 'showSubmission'])->name('submissions.show');
+        Route::patch('/submissions/{submission}/status', [App\Http\Controllers\Admin\MedTechController::class, 'updateSubmissionStatus'])->name('submissions.update-status');
+        
+        // Контент (алгоритм)
+        Route::get('/content', [App\Http\Controllers\Admin\MedTechController::class, 'content'])->name('content');
+        Route::post('/content', [App\Http\Controllers\Admin\MedTechController::class, 'storeContent'])->name('content.store');
+    });
+
     // Глоссарий
     Route::resource('glossary', GlossaryController::class)->names([
         'index' => 'admin.glossary.index',
@@ -771,6 +814,9 @@ Route::post('/about-centre/vacancies/{slug}/apply', [App\Http\Controllers\Vacanc
 
 // Маршруты для форм обратной связи (публичные)
 Route::post('/contact/submit', [App\Http\Controllers\ContactApplicationController::class, 'store'])->name('contact.submit');
+
+// Маршрут для подачи технологии MedTech
+Route::post('/medtech/submit', [App\Http\Controllers\MedTechSubmissionController::class, 'submit'])->name('medtech.submit');
 
 // Маршруты для админ-панели вакансий (требуют авторизации)
 Route::middleware(['auth'])->prefix('admin')->group(function () {

@@ -3,6 +3,7 @@ import { Head, usePage, useForm } from '@inertiajs/react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import VideoModal from '@/Components/VideoModal';
 import FilesAccord from '@/Components/FilesAccord';
+import MedTechPlatform from '@/Components/MedTech/MedTechPlatform';
 import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
@@ -12,7 +13,7 @@ const t = (key, fallback = '') => {
 
 
 export default function TechCompetence() {
-    const { flash } = usePage().props;
+    const { flash, medTechData = {} } = usePage().props;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -121,6 +122,15 @@ export default function TechCompetence() {
               {t('directionsPages.techCompetence.conclusion')}
             </p>
           </div>
+
+          {/* Технологическая платформа MedTech */}
+          <MedTechPlatform
+            documents={medTechData.documents || []}
+            registry={medTechData.registry || []}
+            pilotSites={medTechData.pilot_sites || []}
+            content={medTechData.content || {}}
+            algorithmImage={medTechData.algorithm_image || null}
+          />
         </div>
       </section>
       

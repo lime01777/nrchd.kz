@@ -8,7 +8,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 /**
  * Компонент для парсинга метаданных из URL (для материалов СМИ)
  */
-export default function UrlParser({ onMetadataParsed, initialUrl = '' }) {
+export default function UrlParser({ onMetadataParsed, onUrlChange, initialUrl = '' }) {
     const [url, setUrl] = useState(initialUrl);
     const [parsing, setParsing] = useState(false);
     const [error, setError] = useState('');
@@ -64,20 +64,26 @@ export default function UrlParser({ onMetadataParsed, initialUrl = '' }) {
     return (
         <div className="space-y-4">
             <div>
-                <InputLabel htmlFor="external_url" value="Ссылка на публикацию в СМИ" />
+                <InputLabel htmlFor="external_url" value="Ссылка на публикацию в СМИ *" />
                 <div className="mt-1 flex gap-2">
                     <TextInput
                         id="external_url"
                         type="url"
                         value={url}
                         onChange={(e) => {
-                            setUrl(e.target.value);
+                            const newUrl = e.target.value;
+                            setUrl(newUrl);
                             setError('');
                             setPreview(null);
+                            // Вызываем callback для обновления external_url в форме
+                            if (onUrlChange) {
+                                onUrlChange(newUrl);
+                            }
                         }}
                         onKeyPress={handleKeyPress}
                         className="flex-1"
                         placeholder="https://example.com/article"
+                        required
                     />
                     <PrimaryButton
                         type="button"

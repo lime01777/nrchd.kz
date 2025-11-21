@@ -54,7 +54,8 @@ class NewsRequest extends FormRequest
             'seo_description' => 'nullable|string|max:255',
             'status' => 'required|in:draft,published',
             'type' => 'nullable|string|in:news,media',
-            'external_url' => 'nullable|url|max:512',
+            // Для материалов СМИ external_url обязателен
+            'external_url' => $isMedia ? 'required|url|max:512' : 'nullable|url|max:512',
             'published_at' => 'nullable|date',
             'media' => 'nullable',
             'section' => 'nullable|string|in:news,media',
@@ -80,6 +81,10 @@ class NewsRequest extends FormRequest
             // Для СМИ body необязателен даже при обновлении
             if ($this->input('type') !== 'media' && $this->input('section') !== 'media') {
                 $rules['body'] = 'sometimes|nullable|string|min:10';
+            }
+            // Для материалов СМИ external_url обязателен даже при обновлении
+            if ($isMedia) {
+                $rules['external_url'] = 'sometimes|required|url|max:512';
             }
             $rules['cover'] = 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120|dimensions:min_width=800,min_height=400';
             $rules['category'] = array_merge(['sometimes'], $categoryRules);
@@ -115,6 +120,9 @@ class NewsRequest extends FormRequest
             'published_at.date' => 'Дата публикации должна быть корректной датой.',
             'type.in' => 'Недопустимый тип публикации.',
             'section.in' => 'Недопустимый раздел для новости.',
+            'external_url.required' => 'Ссылка на публикацию в СМИ обязательна для заполнения.',
+            'external_url.url' => 'Ссылка должна быть корректным URL-адресом.',
+            'external_url.max' => 'Ссылка не должна превышать 512 символов.',
             'category.array' => 'Категории должны быть переданы в виде списка.',
             'category.max' => 'Нельзя выбрать больше 5 категорий.',
             'category.*.max' => 'Название категории не должно превышать 100 символов.',

@@ -270,6 +270,10 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                             <div className="bg-white shadow rounded-lg p-6">
                                 <UrlParser
                                     initialUrl={data.external_url}
+                                    onUrlChange={(url) => {
+                                        // Обновляем external_url при изменении URL в поле ввода
+                                        setData('external_url', url);
+                                    }}
                                     onMetadataParsed={(metadata) => {
                                         // Автозаполнение полей из метаданных
                                         if (metadata.title && !data.title) {
