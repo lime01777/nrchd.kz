@@ -36,8 +36,8 @@ class NewsRequest extends FormRequest
         $isMedia = $this->input('type') === 'media' || $this->input('section') === 'media';
         
         $rules = [
-            // Для СМИ заголовок необязателен, если есть external_url
-            'title' => $isMedia ? 'nullable|string|max:255' : 'required|string|max:255',
+            // Для СМИ только заголовок обязателен
+            'title' => $isMedia ? 'required|string|max:255' : 'required|string|max:255',
             'slug' => [
                 'nullable',
                 'string',
@@ -46,16 +46,16 @@ class NewsRequest extends FormRequest
                 Rule::unique('news', 'slug')->ignore($this->route('news')?->id),
             ],
             'excerpt' => 'nullable|string|max:1000',
-            'body' => 'nullable|string|min:10', // Для СМИ может быть пустым
-            'content' => 'nullable|string|min:10', // Для обратной совместимости
-            'cover' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120|dimensions:min_width=800,min_height=400',
+            'body' => 'nullable|string', // Для СМИ может быть пустым, убираем min:10
+            'content' => 'nullable|string', // Для обратной совместимости, убираем min:10
+            'cover' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120', // Убираем dimensions для СМИ
             'cover_image_alt' => 'nullable|string|max:255',
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string|max:255',
-            'status' => 'required|in:draft,published',
+            'status' => $isMedia ? 'nullable|in:draft,published' : 'required|in:draft,published', // Для СМИ необязателен
             'type' => 'nullable|string|in:news,media',
-            // Для материалов СМИ external_url обязателен
-            'external_url' => $isMedia ? 'required|url|max:512' : 'nullable|url|max:512',
+            // Для материалов СМИ external_url необязателен
+            'external_url' => 'nullable|url|max:512',
             'published_at' => 'nullable|date',
             'media' => 'nullable',
             'section' => 'nullable|string|in:news,media',
@@ -70,23 +70,26 @@ class NewsRequest extends FormRequest
         $rules['category'] = $categoryRules;
         $rules['category.*'] = $categoryItemRules;
 
-        // Для материалов СМИ body необязателен
+        // Для материалов СМИ body необязателен (уже установлено выше)
         if ($this->input('type') === 'media' || $this->input('section') === 'media') {
-            $rules['body'] = 'nullable|string|min:10';
+            $rules['body'] = 'nullable|string'; // Убираем min:10
+            $rules['cover'] = 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120'; // Убираем dimensions
         }
 
         // Для обновления некоторые поля необязательны
         if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
-            $rules['title'] = 'sometimes|required|string|max:255';
-            // Для СМИ body необязателен даже при обновлении
-            if ($this->input('type') !== 'media' && $this->input('section') !== 'media') {
-                $rules['body'] = 'sometimes|nullable|string|min:10';
-            }
-            // Для материалов СМИ external_url обязателен даже при обновлении
+            // Для СМИ только title обязателен
             if ($isMedia) {
-                $rules['external_url'] = 'sometimes|required|url|max:512';
+                $rules['title'] = 'sometimes|required|string|max:255';
+                $rules['body'] = 'nullable|string'; // Убираем min:10
+                $rules['external_url'] = 'nullable|url|max:512'; // Необязателен
+                $rules['status'] = 'nullable|in:draft,published'; // Необязателен
+                $rules['cover'] = 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120'; // Убираем dimensions
+            } else {
+                $rules['title'] = 'sometimes|required|string|max:255';
+                $rules['body'] = 'sometimes|nullable|string|min:10';
+                $rules['cover'] = 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120|dimensions:min_width=800,min_height=400';
             }
-            $rules['cover'] = 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120|dimensions:min_width=800,min_height=400';
             $rules['category'] = array_merge(['sometimes'], $categoryRules);
         }
 
@@ -174,6 +177,11 @@ class NewsRequest extends FormRequest
                 } catch (\Exception $e) {
                     $this->merge(['title' => 'Материал из СМИ']);
                 }
+            }
+            
+            // Для материалов СМИ: если статус не указан, устанавливаем draft по умолчанию
+            if ($isMedia && empty($this->input('status'))) {
+                $this->merge(['status' => 'draft']);
             }
             
             // Для опубликованных новостей рекомендуется указать дату публикации

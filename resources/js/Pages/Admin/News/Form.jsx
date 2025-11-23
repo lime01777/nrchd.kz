@@ -439,13 +439,13 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
 
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 <div>
-                                    <InputLabel htmlFor="status" value="Статус *" />
+                                    <InputLabel htmlFor="status" value={currentType === 'media' ? 'Статус' : 'Статус *'} />
                                     <select
                                         id="status"
                                         value={data.status}
                                         onChange={(e) => setData('status', e.target.value)}
                                         className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                        required
+                                        required={currentType !== 'media'}
                                     >
                                         <option value="draft">Черновик</option>
                                         <option value="published">Опубликовано</option>

@@ -803,8 +803,50 @@ function SimpleFileDisplay({
       }
       
       // Фильтрация по году
-      if (year && file.year !== parseInt(year)) {
-        return false;
+      if (year) {
+        // Пытаемся извлечь год из разных источников
+        let fileYear = null;
+        
+        // Проверяем поле year, если оно есть
+        if (file.year) {
+          fileYear = file.year.toString();
+        } else {
+          // Пытаемся извлечь год из имени файла
+          const fileName = file.name || file.description || '';
+          const yearMatch = fileName.match(/\b(20[0-2][0-9]|2010)\b/);
+          if (yearMatch) {
+            fileYear = yearMatch[1];
+          } else if (file.date) {
+            // Пытаемся извлечь год из даты
+            const dateMatch = file.date.match(/\b(20[0-2][0-9]|2010)\b/);
+            if (dateMatch) {
+              fileYear = dateMatch[1];
+            }
+          } else if (file.url) {
+            // Пытаемся извлечь год из URL
+            const urlYearMatch = file.url.match(/\b(20[0-2][0-9]|2010)\b/);
+            if (urlYearMatch) {
+              fileYear = urlYearMatch[1];
+            }
+          } else if (file.modified) {
+            // Пытаемся извлечь год из даты модификации
+            const modifiedDate = new Date(file.modified);
+            if (!isNaN(modifiedDate.getTime())) {
+              fileYear = modifiedDate.getFullYear().toString();
+            }
+          } else if (file.created_at) {
+            // Пытаемся извлечь год из даты создания
+            const createdDate = new Date(file.created_at);
+            if (!isNaN(createdDate.getTime())) {
+              fileYear = createdDate.getFullYear().toString();
+            }
+          }
+        }
+        
+        // Если не удалось извлечь год или год не совпадает, исключаем файл
+        if (!fileYear || fileYear !== year) {
+          return false;
+        }
       }
       
       // Фильтрация по типу файла
