@@ -1,31 +1,13 @@
 import React from 'react';
 import LayoutBranch from '@/Layouts/LayoutBranch';
 import { Head } from '@inertiajs/react';
+import BranchContactInfo from '@/Components/BranchContactInfo';
+
+// Определение переменных вне компонента, чтобы они были доступны и в layout
+const title = "Филиал области Абай"; // data-translate добавлен в компоненте LayoutBranch
+const description = "Филиал области Абай занимается координацией и реализацией государственной политики в сфере здравоохранения на территории области Абай. Филиал осуществляет мониторинг качества медицинских услуг, проводит анализ состояния здоровья населения и разрабатывает рекомендации по улучшению системы здравоохранения в регионе."; // data-translate добавлен в разметке страницы
 
 export default function Abay() {
-    const title = "Филиал области Абай"; // data-translate добавлен в компоненте LayoutBranch
-    const description = "Филиал области Абай занимается координацией и реализацией государственной политики в сфере здравоохранения на территории области Абай. Филиал осуществляет мониторинг качества медицинских услуг, проводит анализ состояния здоровья населения и разрабатывает рекомендации по улучшению системы здравоохранения в регионе."; // data-translate добавлен в разметке страницы
-    
-    // Данные руководства филиала
-    const leaders = [
-        {
-            name: "Рахимов Саян Мухтарович",
-            position: "Директор филиала области Абай",
-            photo: "/storage/leadership/placeholder.jpg",
-            phone: "+7 (7222) 50-00-00",
-            email: "abay@nrchd.kz",
-            bio: "Кандидат медицинских наук. Опыт работы в сфере организации здравоохранения более 10 лет."
-        },
-        {
-            name: "Нурланова Карлыгаш Есенбаевна",
-            position: "Заместитель директора",
-            photo: "/storage/leadership/placeholder.jpg",
-            phone: "+7 (7222) 50-00-01",
-            email: "k.nurlanova@nrchd.kz",
-            bio: "Магистр общественного здравоохранения. Специалист в области управления качеством медицинских услуг."
-        }
-    ];
-    
     return (
         <>
             <Head title={title} />
@@ -38,15 +20,14 @@ export default function Abay() {
                     </div>
                 </div>
             </section>
-            {page}
-                            {/* Страница будет отображаться через layout */}
+            <BranchContactInfo branchFolder="Abay" title={title} />
         </>
     );
 }
+
 Abay.layout = (page) => <LayoutBranch 
-img={'branch'}
-h1={title} 
-description={description}
-branchFolder="Abay"
-leaders={leaders}
+    img={'branch'}
+    h1={title} 
+    description={description}
+    branchFolder="Abay"
 >{page}</LayoutBranch>

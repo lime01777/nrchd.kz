@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
+use ZipArchive;
 
 class FileController extends Controller
 {
@@ -373,6 +374,263 @@ class FileController extends Controller
             'medicine_categories' => $medicineCategories,
             'mkb_categories' => $mkbCategories,
         ]);
+    }
+
+    /**
+     * Скачать все клинические протоколы архивом
+     * Использует ту же логику фильтрации, что и getClinicalProtocols
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     */
+    public function downloadClinicalProtocolsArchive(Request $request)
+    {
+        try {
+            // Получаем параметры фильтрации (те же, что и в getClinicalProtocols)
+            $searchTerm = $request->input('search', '');
+            $medicine = $request->input('medicine', '');
+            $mkb = $request->input('mkb', '');
+            $year = $request->input('year', '');
+            $category = $request->input('category', '');
+            $folderPath = $request->input('folder', '');
+            
+            // Получаем список файлов с учетом фильтров, используя ту же логику, что и getClinicalProtocols
+            $baseDirectory = public_path('storage/documents');
+            
+            if (!$folderPath) {
+                return response()->json(['error' => 'Не указан путь к папке'], 400);
+            }
+            
+            // Используем ту же логику определения пути, что и в getClinicalProtocols
+            $decodedPath = urldecode($folderPath);
+            $normalizedPath = str_replace('/', DIRECTORY_SEPARATOR, $decodedPath);
+            $fullPath = $baseDirectory . DIRECTORY_SEPARATOR . $normalizedPath;
+            
+            // Проверяем существование папки
+            if (!File::isDirectory($fullPath)) {
+                // Пытаемся найти альтернативные варианты пути (как в getClinicalProtocols)
+                $altPath1 = $baseDirectory . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $folderPath);
+                if (File::isDirectory($altPath1)) {
+                    $fullPath = $altPath1;
+                } else {
+                    return response()->json(['error' => 'Папка не найдена'], 404);
+                }
+            }
+            
+            // Получаем список файлов рекурсивно (как в getClinicalProtocols)
+            $files = [];
+            $this->getFilesRecursively($fullPath, $files, $category);
+            
+            // Получаем метаданные для фильтрации
+            $absoluteToRelativePath = [];
+            foreach ($files as $file) {
+                $absoluteToRelativePath[$file->getPathname()] = $this->getRelativeStoragePath($file->getPathname());
+            }
+            
+            $metadataCollection = $this->getMetadataCollection(array_values($absoluteToRelativePath));
+            
+            // Фильтруем файлы с применением той же логики, что и в getClinicalProtocols
+            $documentsToArchive = [];
+            
+            foreach ($files as $file) {
+                $fileName = $file->getFilename();
+                $fileExtension = strtolower($file->getExtension());
+                
+                // Пропускаем не-PDF файлы
+                if ($fileExtension !== 'pdf') {
+                    continue;
+                }
+                
+                $relativeStoragePath = $absoluteToRelativePath[$file->getPathname()];
+                $metadata = $metadataCollection->get($relativeStoragePath);
+                
+                $metadataMedicine = $metadata ? ($metadata->medicine_categories ?? []) : [];
+                $metadataMkb = $metadata ? ($metadata->mkb_codes ?? []) : [];
+                
+                $fileNameLower = mb_strtolower($fileName);
+                $filePathLower = mb_strtolower($file->getPathname());
+                
+                // Определяем раздел медицины из имени файла/пути (как в getClinicalProtocols)
+                $medicineSectionName = '';
+                $medicineSections = [
+                    'cardiology' => 'Кардиология',
+                    'gastroenterology' => 'Гастроэнтерология',
+                    'neurology' => 'Неврология',
+                    'pulmonology' => 'Пульмонология',
+                    'endocrinology' => 'Эндокринология',
+                    'oncology' => 'Онкология',
+                    'pediatrics' => 'Педиатрия',
+                    'surgery' => 'Хирургия',
+                    'obstetrics' => 'Акушерство и гинекология',
+                    'urology' => 'Урология',
+                    'ophthalmology' => 'Офтальмология',
+                    'otolaryngology' => 'Оториноларингология',
+                    'dermatology' => 'Дерматология',
+                    'infectious' => 'Инфекционные болезни',
+                    'psychiatry' => 'Психиатрия',
+                    'rheumatology' => 'Ревматология',
+                    'traumatology' => 'Травматология и ортопедия'
+                ];
+                
+                foreach ($medicineSections as $key => $value) {
+                    if (stripos($fileNameLower, $key) !== false || 
+                        stripos($fileNameLower, $value) !== false ||
+                        stripos($filePathLower, $key) !== false ||
+                        stripos($filePathLower, $value) !== false) {
+                        $medicineSectionName = $value;
+                        break;
+                    }
+                }
+                
+                // Определяем категорию МКБ (как в getClinicalProtocols)
+                $mkbCategory = '';
+                $mkbPatterns = [
+                    'A\d+' => 'A00-B99',
+                    'B\d+' => 'A00-B99',
+                    'C\d+' => 'C00-D48',
+                    'D[0-4]\d' => 'C00-D48',
+                    'D[5-8]\d' => 'D50-D89',
+                    'E\d+' => 'E00-E90',
+                    'F\d+' => 'F00-F99',
+                    'G\d+' => 'G00-G99',
+                    'H[0-5]\d' => 'H00-H59',
+                    'H[6-9]\d' => 'H60-H95',
+                    'I\d+' => 'I00-I99',
+                    'J\d+' => 'J00-J99',
+                    'K\d+' => 'K00-K93',
+                    'L\d+' => 'L00-L99',
+                    'M\d+' => 'M00-M99',
+                    'N\d+' => 'N00-N99',
+                    'O\d+' => 'O00-O99',
+                    'P\d+' => 'P00-P96',
+                    'Q\d+' => 'Q00-Q99',
+                    'R\d+' => 'R00-R99',
+                    'S\d+' => 'S00-T98',
+                    'T\d+' => 'S00-T98',
+                    'V\d+' => 'V01-Y98',
+                    'W\d+' => 'V01-Y98',
+                    'X\d+' => 'V01-Y98',
+                    'Y\d+' => 'V01-Y98',
+                    'Z\d+' => 'Z00-Z99'
+                ];
+                
+                foreach ($mkbPatterns as $pattern => $categoryCode) {
+                    if (preg_match('/' . $pattern . '/', $fileNameLower) || preg_match('/' . $pattern . '/', $filePathLower)) {
+                        $mkbCategory = $categoryCode;
+                        break;
+                    }
+                }
+                
+                // Фильтрация по разделу медицины (как в getClinicalProtocols)
+                if ($medicine) {
+                    $matchesMetadata = $this->arrayContainsInsensitive($metadataMedicine, $medicine);
+                    $matchesSection = $this->containsCaseInsensitive($medicineSectionName, $medicine);
+                    if (!$matchesMetadata && !$matchesSection) {
+                        $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
+                        $filePath = $file->getPathname();
+                        if (
+                            !$this->containsCaseInsensitive($fileContent, $medicine) &&
+                            !$this->containsCaseInsensitive($filePath, $medicine)
+                        ) {
+                            continue;
+                        }
+                    }
+                }
+                
+                // Фильтрация по МКБ (как в getClinicalProtocols)
+                if ($mkb) {
+                    $matchesMetadata = $this->arrayContainsInsensitive($metadataMkb, $mkb);
+                    $matchesCategory = $mkbCategory && (
+                        $this->containsCaseInsensitive($mkbCategory, $mkb) || 
+                        $this->containsCaseInsensitive($mkb, $mkbCategory)
+                    );
+                    
+                    if (!$matchesMetadata && !$matchesCategory) {
+                        $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
+                        $filePath = $file->getPathname();
+                        
+                        $matchesFileName = $this->containsCaseInsensitive($fileContent, $mkb);
+                        $matchesFilePath = $this->containsCaseInsensitive($filePath, $mkb);
+                        
+                        if (!$matchesFileName && !$matchesFilePath) {
+                            continue;
+                        }
+                    }
+                }
+                
+                // Фильтрация по поисковому запросу
+                if ($searchTerm) {
+                    $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
+                    $filePath = $file->getPathname();
+                    if (
+                        !$this->containsCaseInsensitive($fileContent, $searchTerm) &&
+                        !$this->containsCaseInsensitive($filePath, $searchTerm)
+                    ) {
+                        continue;
+                    }
+                }
+                
+                // Фильтрация по году
+                if ($year) {
+                    $fileYear = date('Y', $file->getMTime());
+                    if ($fileYear !== $year) {
+                        $fileContent = pathinfo($fileName, PATHINFO_FILENAME);
+                        if (stripos($fileContent, $year) === false) {
+                            continue;
+                        }
+                    }
+                }
+                
+                // Добавляем файл в список для архива
+                $relativePath = str_replace($fullPath . DIRECTORY_SEPARATOR, '', $file->getPathname());
+                $documentsToArchive[] = [
+                    'path' => $file->getPathname(),
+                    'name' => $relativePath
+                ];
+            }
+            
+            if (empty($documentsToArchive)) {
+                return response()->json(['error' => 'Не найдено файлов для скачивания по заданным фильтрам'], 404);
+            }
+            
+            // Проверяем наличие расширения ZipArchive
+            if (!class_exists('ZipArchive')) {
+                return response()->json(['error' => 'Расширение ZipArchive не установлено на сервере'], 500);
+            }
+            
+            // Создаем временный ZIP архив
+            $zipFileName = 'clinical_protocols_' . date('Y-m-d_His') . '.zip';
+            $zipPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $zipFileName;
+            
+            $zip = new ZipArchive();
+            if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TRUE) {
+                return response()->json(['error' => 'Не удалось создать архив'], 500);
+            }
+            
+            // Добавляем файлы в архив
+            foreach ($documentsToArchive as $document) {
+                if (File::exists($document['path'])) {
+                    $zip->addFile($document['path'], $document['name']);
+                }
+            }
+            
+            $zip->close();
+            
+            // Проверяем, что архив создан
+            if (!File::exists($zipPath)) {
+                return response()->json(['error' => 'Ошибка при создании архива'], 500);
+            }
+            
+            // Возвращаем архив для скачивания
+            return response()->download($zipPath, $zipFileName)->deleteFileAfterSend(true);
+            
+        } catch (\Exception $e) {
+            Log::error('Ошибка при создании архива клинических протоколов', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'Ошибка при создании архива: ' . $e->getMessage()], 500);
+        }
     }
 
     public function getFiles(Request $request)

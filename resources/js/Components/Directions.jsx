@@ -37,7 +37,7 @@ const Directions = () => {
         { imgname: 12, title: t('directions.primary_healthcare'), bgcolor: "bg-green-100", bgborder: "border-green-200", url: "primary.healthcare", hasRoute: true, path: "/primary-healthcare"},
         { imgname: 13, title: t('directions.health_accounts'), bgcolor: "bg-purple-200", bgborder: "border-purple-200", url: "health.accounts", hasRoute: true, path: "/health-accounts"},
         { imgname: 6, title: t('directions.medical_statistics'), bgcolor: "bg-teal-100", bgborder: "border-teal-200", url: "medical.statistics", hasRoute: true, path: "/medical-statistics"},
-        { imgname: 3, title: t('directions.direction_tech_competence'), bgcolor: "bg-orange-100", bgborder: "border-orange-200", url: "direction.tech.competence", hasRoute: true, path: "/direction/tech-competence"},
+        { imgname: 3, title: t('directions.direction_tech_competence'), bgcolor: "bg-orange-100", bgborder: "border-orange-200", url: "direction.tech.competence", hasRoute: true, path: "/tech"},
         { imgname: 16, title: t('directions.center_prevention'), bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "center.prevention", hasRoute: true, path: "/center-prevention"},
         { imgname: 4, title: t('directions.quality_commission'), bgcolor: "bg-blue-100", bgborder: "border-blue-200", url: "quality.commission", hasRoute: true, path: "/quality-commission"},
         { imgname: 7, title: t('directions.medical_tourism'), bgcolor: "bg-green-100", bgborder: "border-green-200", url: "medical.tourism", hasRoute: true, path: "/medical-tourism"}

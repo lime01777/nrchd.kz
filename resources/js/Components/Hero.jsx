@@ -7,14 +7,44 @@ function Hero({
   useGif = false, 
   useVideo = false, // Новый параметр для видео
   overlay = true, 
-  videoFormat = 'mp4' // Формат видео (по умолчанию mp4)
+  videoFormat = 'mp4', // Формат видео (по умолчанию mp4)
+  branchFolder = null, // Папка филиала для использования изображений из BranchImg
+  overlayColor = 'black' // Цвет overlay: 'black' или 'purple'
 }) {
   // Создаем ref для доступа к видео-элементу
   const videoRef = useRef(null);
 
+  // Маппинг между branchFolder и именами файлов изображений
+  const branchImageMap = {
+    'Abay': 'Abay.jpg',
+    'Akmola': 'Akmola.jpg',
+    'Aktobe': 'Aktobe.jpg',
+    'Almaty': 'almaty.jpg',
+    'AlmatyRegion': 'almaty.jpg',
+    'Astana': 'Astana.jpeg',
+    'Atyrau': 'Atyrau.png',
+    'East': 'vko.jpg',
+    'Karaganda': 'karaganda.jpg',
+    'Kostanay': 'kostanay.jpg',
+    'Kyzylorda': 'kyzylorda.jpg',
+    'Mangistau': 'Aktau.jpeg',
+    'North': 'sko.jpg',
+    'Pavlodar': 'Pavlodar.jpg',
+    'Shymkent': 'shymkent.jpeg',
+    'Turkestan': 'turkestan.jpeg',
+    'Ulytau': 'ulytau.jpg',
+    'West': 'zko.jpeg',
+    'Zhambyl': 'Taraz.jpg',
+    'Zhetisu': 'zhetysu.jpeg'
+  };
+
   // Определяем путь к медиа в зависимости от типа (видео, GIF или PNG)
   let mediaPath = '';
-  if (useVideo) {
+  
+  // Если передан branchFolder, используем изображение из BranchImg
+  if (branchFolder && branchImageMap[branchFolder]) {
+    mediaPath = `/img/BranchImg/${branchImageMap[branchFolder]}`;
+  } else if (useVideo) {
     mediaPath = `/img/HeroVideos/${img}.${videoFormat}`;
   } else if (useGif) {
     mediaPath = `/img/HeroGifs/${img}.gif`;
@@ -124,9 +154,15 @@ function Hero({
           )}
           
           {/* Опциональный полупрозрачный оверлей для лучшей читаемости текста */}
-          {/* Оверлей отключен по запросу пользователя */}
-          {false && overlay && (useGif || useVideo) && (
-            <div className="absolute inset-0 bg-black bg-opacity-30 z-0"></div>
+          {/* Фиолетовый overlay для филиалов, черный для видео/GIF */}
+          {overlay && (
+            branchFolder ? (
+              // Фиолетовый overlay для филиалов
+              <div className="absolute inset-0 bg-purple-900 bg-opacity-40 z-0"></div>
+            ) : (useGif || useVideo) ? (
+              // Черный overlay для видео/GIF
+              <div className="absolute inset-0 bg-black bg-opacity-30 z-0"></div>
+            ) : null
           )}
           
           {/* Контентная часть */}

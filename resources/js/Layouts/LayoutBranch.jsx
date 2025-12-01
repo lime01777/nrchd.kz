@@ -8,17 +8,19 @@ export default function LayoutBranch({
   img, 
   h1, 
   useGif = false, // Параметр для использования GIF
-  overlay = true  // Параметр для управления полупрозрачным оверлеем
+  overlay = true,  // Параметр для управления полупрозрачным оверлеем
+  branchFolder = null // Папка филиала для использования изображений из BranchImg
 }) {
   return (
     <>
-      <Header />
+      <Header isBranchPage={true} />
       <Hero 
         img={img} 
         h1={h1} 
         useGif={false}
         useVideo={false} // Явно отключаем видео в этом макете
-        overlay={overlay} 
+        overlay={overlay}
+        branchFolder={branchFolder} // Передаем branchFolder в Hero
       />
       <section className="text-gray-600 body-font">
         {children}

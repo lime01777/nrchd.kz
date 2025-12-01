@@ -163,4 +163,4 @@ export default function DrugPolicy() {
   );
 }
 
-DrugPolicy.layout = (page) => <LayoutDirection img="drugpolicy" h1={t('directions.drug_policy', 'Лекарственная политика')}>{page}</LayoutDirection>;
+DrugPolicy.layout = (page) => <LayoutDirection img="politica" h1={t('directions.drug_policy', 'Лекарственная политика')}>{page}</LayoutDirection>;

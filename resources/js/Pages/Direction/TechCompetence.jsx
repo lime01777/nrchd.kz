@@ -281,4 +281,4 @@ export default function TechCompetence() {
   );
 }
 
-TechCompetence.layout = (page) => <LayoutDirection img="science" h1={t('direction_tech_competence', 'Отраслевой центр технологических компетенций')}>{page}</LayoutDirection>;
+TechCompetence.layout = (page) => <LayoutDirection img="techcomtence" h1={t('direction_tech_competence', 'Отраслевой центр технологических компетенций')}>{page}</LayoutDirection>;

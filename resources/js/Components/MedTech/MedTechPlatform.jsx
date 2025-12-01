@@ -95,13 +95,23 @@ export default function MedTechPlatform({
 
                 {activeTab === 'registry' && (
                     <div id="medtech-registry">
-                        <Registry registry={registry} />
+                        <Registry 
+                            registry={registry} 
+                            initialFilterSite={null}
+                        />
                     </div>
                 )}
 
                 {activeTab === 'pilot-sites' && (
                     <div id="medtech-pilot-sites">
-                        <PilotSites pilotSites={pilotSites} />
+                        <PilotSites 
+                            pilotSites={pilotSites}
+                            onFilterBySite={(siteId, siteName) => {
+                                // Переключаемся на вкладку реестра
+                                scrollToSection('registry');
+                                // Можно добавить логику фильтрации реестра по площадке
+                            }}
+                        />
                     </div>
                 )}
 

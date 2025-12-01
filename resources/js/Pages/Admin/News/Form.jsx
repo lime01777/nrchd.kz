@@ -174,6 +174,8 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
             type: currentType,
             section: currentType,
             cover_image_path: data.cover_image_path || null,
+            // Для типа "media" всегда передаем пустой массив категорий
+            category: currentType === 'media' ? [] : (data.category || []),
         };
         delete payload.cover;
 

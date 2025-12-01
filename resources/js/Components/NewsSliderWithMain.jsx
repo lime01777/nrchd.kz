@@ -121,7 +121,7 @@ export default function NewsSliderWithMain({
   useEffect(() => {
     setLoadedImages(new Set());
     setErrorImages(new Set());
-    setIsLoading(false); // Убираем общий индикатор загрузки
+    setIsLoading(true); // Показываем индикатор загрузки при смене изображений
     setCurrentIndex(0);
   }, [processedImages]);
 
@@ -129,15 +129,22 @@ export default function NewsSliderWithMain({
   useEffect(() => {
     if (!autoPlay || processedImages.length <= 1) return;
     
-    // Запускаем автопрокрутку только если первое изображение загружено
-    if (!loadedImages.has(0)) return;
+    // Запускаем автопрокрутку только если первое изображение загружено или произошла ошибка
+    if (!loadedImages.has(0) && !errorImages.has(0)) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % processedImages.length);
+      setCurrentIndex((prevIndex) => {
+        const nextIndex = (prevIndex + 1) % processedImages.length;
+        // Сбрасываем состояние загрузки для нового изображения
+        if (!loadedImages.has(nextIndex) && !errorImages.has(nextIndex)) {
+          setIsLoading(true);
+        }
+        return nextIndex;
+      });
     }, interval);
 
     return () => clearInterval(timer);
-  }, [processedImages.length, autoPlay, interval, loadedImages]);
+  }, [processedImages.length, autoPlay, interval, loadedImages, errorImages]);
 
   useEffect(() => {
     const handleGoTo = (event) => {
@@ -191,7 +198,7 @@ export default function NewsSliderWithMain({
           className={`w-full h-full object-cover transition-opacity duration-300 ${
             loadedImages.has(0) ? 'opacity-100' : 'opacity-0'
           }`}
-          fallbackSrc="/img/placeholder.jpg"
+          fallbackSrc=""
           onLoad={() => handleImageLoad(0)}
           onError={() => handleImageError(0)}
         />
@@ -234,17 +241,48 @@ export default function NewsSliderWithMain({
       style={{ height }}
     >
       {/* Основное изображение */}
-      <div className="relative w-full h-full">
-        <SafeImage
-          src={processedImages[currentIndex]}
-          alt={`Изображение ${currentIndex + 1}`}
-          className={`w-full h-full object-cover transition-opacity duration-500 ${
-            loadedImages.has(currentIndex) ? 'opacity-100' : 'opacity-0'
-          }`}
-          fallbackSrc="/img/news/placeholder.jpg"
-          onLoad={() => handleImageLoad(currentIndex)}
-          onError={() => handleImageError(currentIndex)}
-        />
+      <div className="relative w-full h-full bg-gray-200">
+        {/* Показываем предыдущее изображение, пока новое загружается */}
+        {currentIndex > 0 && loadedImages.has(currentIndex - 1) && !errorImages.has(currentIndex - 1) && !loadedImages.has(currentIndex) && (
+          <SafeImage
+            src={processedImages[currentIndex - 1]}
+            alt="Предыдущее изображение"
+            className="absolute inset-0 w-full h-full object-cover opacity-30"
+            fallbackSrc=""
+            style={{ 
+              minHeight: '100%',
+              minWidth: '100%',
+              objectFit: 'cover'
+            }}
+          />
+        )}
+        
+        {!errorImages.has(currentIndex) ? (
+          <SafeImage
+            src={processedImages[currentIndex]}
+            alt={`Изображение ${currentIndex + 1}`}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+              loadedImages.has(currentIndex) ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            }`}
+            fallbackSrc=""
+            onLoad={() => handleImageLoad(currentIndex)}
+            onError={() => handleImageError(currentIndex)}
+            style={{ 
+              minHeight: '100%',
+              minWidth: '100%',
+              objectFit: 'cover'
+            }}
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gray-200 flex items-center justify-center z-20">
+            <div className="text-center text-gray-400">
+              <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <p className="text-xs">Изображение недоступно</p>
+            </div>
+          </div>
+        )}
         
         {/* Предварительная загрузка остальных изображений */}
         {processedImages.map((image, index) => 
@@ -260,15 +298,10 @@ export default function NewsSliderWithMain({
           )
         )}
         
-        {/* Индикатор ошибки загрузки текущего изображения */}
-        {errorImages.has(currentIndex) && (
-          <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
-            <div className="text-center text-gray-500">
-              <svg className="w-6 h-6 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-              </svg>
-              <p className="text-xs">Ошибка</p>
-            </div>
+        {/* Индикатор загрузки */}
+        {!loadedImages.has(currentIndex) && !errorImages.has(currentIndex) && (
+          <div className="absolute inset-0 bg-gray-200 flex items-center justify-center z-10">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
           </div>
         )}
       </div>

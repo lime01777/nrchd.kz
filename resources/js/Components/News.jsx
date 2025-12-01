@@ -104,6 +104,8 @@ function News() {
                                     slug={news.slug}
                                     image={news.image}
                                     images={news.images || [news.image]}
+                                    external_url={news.external_url}
+                                    type={news.type}
                                 />
                             </div>
                         ))}

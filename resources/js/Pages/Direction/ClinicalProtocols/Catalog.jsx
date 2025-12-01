@@ -88,6 +88,45 @@ export default function ClinicalProtocolsCatalog() {
     setError(null);
   };
 
+  const handleDownloadAll = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Формируем параметры для запроса
+      const params = new URLSearchParams();
+      const folderPath = getFolderPath();
+      
+      if (folderPath) {
+        params.append('folder', folderPath);
+      }
+      if (searchTerm) {
+        params.append('search', searchTerm);
+      }
+      if (selectedMedicine) {
+        params.append('medicine', selectedMedicine);
+      }
+      if (selectedMkb) {
+        params.append('mkb', selectedMkb);
+      }
+      if (selectedType) {
+        params.append('type', selectedType);
+      }
+      
+      // Создаем URL для скачивания
+      const downloadUrl = `/api/clinical-protocols/download-archive?${params.toString()}`;
+      
+      // Открываем ссылку в новом окне для скачивания
+      window.location.href = downloadUrl;
+      
+    } catch (err) {
+      console.error('Ошибка при скачивании архива:', err);
+      setError('Не удалось скачать архив. Попробуйте позже.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Формирование поискового запроса
   const getSearchQuery = () => searchTerm.trim();
 
@@ -193,7 +232,7 @@ export default function ClinicalProtocolsCatalog() {
 
               </div>
               
-              <div className="mt-4 flex justify-center">
+              <div className="mt-4 flex justify-center gap-4">
                 <button
                   onClick={resetFilters}
                   className="px-6 py-2.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200 flex items-center shadow-md"
@@ -202,6 +241,16 @@ export default function ClinicalProtocolsCatalog() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                   {t('directionsPages.clinicalProtocolsSubpages.catalog.resetFiltersButton')}
+                </button>
+                <button
+                  onClick={handleDownloadAll}
+                  disabled={loading || filteredProtocols === 0}
+                  className="px-6 py-2.5 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200 flex items-center shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  {t('directionsPages.clinicalProtocolsSubpages.catalog.downloadAllButton', 'Скачать все протоколы')}
                 </button>
               </div>
             </div>

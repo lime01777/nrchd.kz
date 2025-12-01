@@ -1,0 +1,32 @@
+# Разрешаем доступ к изображениям новостей
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Разрешаем доступ к файлам изображений
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico)$">
+        Order Allow,Deny
+        Allow from all
+    </FilesMatch>
+    
+    # Устанавливаем правильные заголовки для изображений
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico)$">
+        Header set Cache-Control "public, max-age=31536000"
+        Header set Access-Control-Allow-Origin "*"
+        Header set Content-Type "image/jpeg"
+    </FilesMatch>
+</IfModule>
+
+# Альтернативная конфигурация для Apache 2.4+
+<IfModule mod_authz_core.c>
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico)$">
+        Require all granted
+    </FilesMatch>
+</IfModule>
+
+# Для старых версий Apache
+<IfModule !mod_authz_core.c>
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico)$">
+        Order Allow,Deny
+        Allow from all
+    </FilesMatch>
+</IfModule>

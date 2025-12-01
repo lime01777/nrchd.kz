@@ -421,7 +421,7 @@ Route::get('/direction/medical-education/rating', function () {
 })->name('direction.medical.education.rating');
 
 // Маршрут для Отраслевого центра технологических компетенций
-Route::get('/direction/tech-competence', function () {
+Route::get('/tech', function () {
     $medTechController = new \App\Http\Controllers\Api\MedTechController();
     $medTechData = $medTechController->getPlatformData();
     
@@ -525,6 +525,8 @@ Route::prefix('api')->group(function () {
                         'image' => $news->cover_thumb_url ?? $news->cover_url,
                         'images' => $imagePaths,
                         'publish_date' => optional($news->published_at ?? $news->publish_date)->toDateTimeString(),
+                        'external_url' => $news->external_url,
+                        'type' => $news->type,
                     ];
                 });
 

@@ -1,41 +1,23 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import LayoutBranch from '@/Layouts/LayoutBranch';
-import News from '@/Components/News';
-import FilesAccord from '@/Components/FilesAccord';
-import Leadership from '@/Components/Leadership';
+import { getBranchContacts } from '@/data/branchesContacts';
 
-export default function BranchTemplate({ title, description, branchFolder, leaders }) {
-    // Если не переданы данные о руководстве, используем шаблонные данные
-    const defaultLeaders = [
-        {
-            name: "Иванов Иван Иванович",
-            position: "Директор филиала",
-            photo: "/storage/leadership/placeholder.jpg",
-            phone: "+7 (777) 123-45-67",
-            email: "director@example.com",
-            bio: "Опыт работы более 15 лет в сфере здравоохранения."
-        },
-        {
-            name: "Петрова Анна Сергеевна",
-            position: "Заместитель директора",
-            photo: "/storage/leadership/placeholder.jpg",
-            phone: "+7 (777) 765-43-21",
-            email: "deputy@example.com",
-            bio: "Специалист в области организации здравоохранения."
-        }
-    ];
-
-    // Используем переданных лидеров или дефолтных, если не переданы
-    const branchLeaders = leaders || defaultLeaders;
+export default function BranchTemplate({ title, description, branchFolder, address, phone, email }) {
     
-    // Используем переданный код папки или генерируем из названия
-    const folderCode = branchFolder || title.replace(/[^а-яА-Яa-zA-Z0-9]/g, '');
+    // Получаем контактную информацию из файла данных, если не передана через пропсы
+    const contacts = address && phone && email 
+        ? { address, phone, email }
+        : getBranchContacts(branchFolder) || {
+            address: 'г. Нур-Султан, ул. Примерная, 123',
+            phone: '+7(7172) 700-000',
+            email: branchFolder ? `${branchFolder.toLowerCase()}@nrchd.kz` : 'branch@nrchd.kz'
+        };
     
     return (
         <>
             <Head title={title} />
-            <LayoutBranch img="branch" h1={title} className="text-white">
+            <LayoutBranch img="branch" h1={title} className="text-white" branchFolder={branchFolder}>
                 {/* 1. Блок с текстовой информацией о филиале */}
                 <section className="text-gray-600 body-font pb-8">
                     <div className="container px-5 py-12 mx-auto">
@@ -72,43 +54,6 @@ export default function BranchTemplate({ title, description, branchFolder, leade
                     </div>
                 </section>
                 
-                {/* 2. Блок новостей */}
-                <News />
-                
-                {/* 3. Блок с документами (FilesAccord) */}
-                <section className="text-gray-600 body-font">
-                    <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">
-                        <h2 className="sm:text-3xl text-2xl font-medium title-font mb-8 text-gray-900 text-center" data-translate>
-                            Документы
-                        </h2>
-                        
-                        <FilesAccord 
-                            folder={`Branches/${folderCode}/Documents`}
-                            title="Нормативные документы" data-translate-title="true"
-                            bgColor="bg-blue-100"
-                        />
-                        
-                        <FilesAccord 
-                            folder={`Branches/${folderCode}/Reports`}
-                            title="Отчеты о деятельности" data-translate-title="true"
-                            bgColor="bg-blue-100"
-                        />
-                        
-                        <FilesAccord 
-                            folder={`Branches/${folderCode}/Programs`}
-                            title="Образовательные программы" data-translate-title="true"
-                            bgColor="bg-blue-100"
-                        />
-                    </div>
-                </section>
-                
-                {/* 4. Блок руководство */}
-                <Leadership 
-                    leaders={branchLeaders} 
-                    title="Руководство филиала" data-translate-title="true"
-                    bgColor="bg-blue-50"
-                />
-                
                 {/* Контактная информация */}
                 <section className="text-gray-600 body-font pb-8">
                     <div className="container px-5 py-12 mx-auto">
@@ -129,7 +74,7 @@ export default function BranchTemplate({ title, description, branchFolder, leade
                                         </div>
                                         <div>
                                             <p className="text-sm text-gray-500 mb-1" data-translate>Адрес:</p>
-                                            <p className="text-base font-medium" data-translate>г. Нур-Султан, ул. Примерная, 123</p>
+                                            <p className="text-base font-medium" data-translate>{contacts.address}</p>
                                         </div>
                                     </div>
                                     
@@ -141,7 +86,7 @@ export default function BranchTemplate({ title, description, branchFolder, leade
                                         </div>
                                         <div>
                                             <p className="text-sm text-gray-500 mb-1" data-translate>Телефон:</p>
-                                            <p className="text-base font-medium">+7(7172) 700-000</p>
+                                            <a href={`tel:${contacts.phone.replace(/\s/g, '')}`} className="text-base font-medium text-blue-700 hover:underline">{contacts.phone}</a>
                                         </div>
                                     </div>
                                     
@@ -154,7 +99,7 @@ export default function BranchTemplate({ title, description, branchFolder, leade
                                         </div>
                                         <div>
                                             <p className="text-sm text-gray-500 mb-1" data-translate>Электронный адрес:</p>
-                                            <a href={`mailto:${branchFolder ? branchFolder.toLowerCase() : 'branch'}@nrchd.kz`} className="text-base font-medium text-blue-700 hover:underline">{branchFolder ? branchFolder.toLowerCase() : 'branch'}@nrchd.kz</a>
+                                            <a href={`mailto:${contacts.email}`} className="text-base font-medium text-blue-700 hover:underline">{contacts.email}</a>
                                         </div>
                                     </div>
                                     

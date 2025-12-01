@@ -199,6 +199,9 @@ export default function Registry({ registry = [] }) {
                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Разработчик
                                 </th>
+                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Пилоты
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -227,6 +230,15 @@ export default function Registry({ registry = [] }) {
                                     </td>
                                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                                         {item.developer || '-'}
+                                    </td>
+                                    <td className="px-4 py-3 text-sm text-gray-500">
+                                        {item.pilot_sites ? (
+                                            <span className="line-clamp-2" title={item.pilot_sites}>
+                                                {item.pilot_sites}
+                                            </span>
+                                        ) : (
+                                            '-'
+                                        )}
                                     </td>
                                 </tr>
                             ))}
@@ -305,6 +317,18 @@ export default function Registry({ registry = [] }) {
                                 <div>
                                     <strong>Пилотные площадки:</strong>
                                     <p className="text-gray-700 mt-1">{selectedItem.pilot_sites}</p>
+                                </div>
+                            )}
+                            {selectedItem.trl_history && (
+                                <div>
+                                    <strong>TRL-история:</strong>
+                                    <p className="text-gray-700 mt-1">{selectedItem.trl_history}</p>
+                                </div>
+                            )}
+                            {selectedItem.contact_developer && (
+                                <div>
+                                    <strong>Контакты разработчика:</strong>
+                                    <p className="text-gray-700 mt-1">{selectedItem.contact_developer}</p>
                                 </div>
                             )}
                         </div>

@@ -6,7 +6,7 @@ import ImprovedLanguageSwitcher from './ImprovedLanguageSwitcher';
 // Импортируем новый сервис переводов
 import translationService from '../services/TranslationService';
 
-export default function Header() {
+export default function Header({ isBranchPage = false }) {
     const { auth } = usePage().props;
     const [isScrolled, setIsScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -115,15 +115,27 @@ export default function Header() {
             localStorage.setItem('accessibilityMode', 'false');
         }
     };
+  // Определяем классы фона в зависимости от состояния прокрутки и типа страницы
+  const getBackgroundClass = () => {
+    if (isScrolled) {
+      return "bg-white shadow-md";
+    } else if (isBranchPage) {
+      // Полупрозрачный белый фон для страниц филиалов (20% непрозрачности)
+      return "bg-white/20 backdrop-blur-sm";
+    } else {
+      return "bg-transparent";
+    }
+  };
+
   return (
-    <header className={`fixed top-0 text-gray-600 font-medium body-font z-50 w-full ease-in duration-150 ${ isScrolled
-        ? "bg-white shadow-md" : "bg-transparent" }`}>
+    <header className={`fixed top-0 text-gray-600 font-medium body-font z-50 w-full ease-in duration-150 ${getBackgroundClass()}`}>
         <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
             <Link href={route('home')}
-                className="hidden lg:flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
-            <span className="text-sm uppercase">национальный научный центр развития <br />здравоохранения им.
-                салидат
-                каирбековой</span>
+                className="hidden lg:flex title-font font-medium items-start text-gray-900 mb-4 md:mb-0 max-w-[280px]">
+            <span className="text-sm uppercase leading-tight">
+                <span className="block">{t('header.siteNameLine1', 'НАЦИОНАЛЬНЫЙ НАУЧНЫЙ ЦЕНТР')}</span>
+                <span className="block">{t('header.siteNameLine2', 'РАЗВИТИЯ ЗДРАВООХРАНЕНИЯ ИМ. САЛИДАТ КАИРБЕКОВОЙ')}</span>
+            </span>
             </Link>
             <nav className="hidden md:ml-auto md:mr-auto lg:flex flex-wrap items-center text-base justify-center">
                 <div className="relative group mr-8">

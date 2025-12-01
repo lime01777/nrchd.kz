@@ -3,28 +3,8 @@ import React from 'react';
 import LayoutBranch from "@/Layouts/LayoutBranch";
 import News from "@/Components/News";
 import FilesAccord from "@/Components/FilesAccord";
-import Leadership from "@/Components/Leadership";
 
 export default function BranchPageTemplate({ branchName, branchFolder = "" }) {
-  // Пример данных для руководства филиала
-  const leaders = [
-    {
-      name: "Иванов Иван Иванович",
-      position: "Директор филиала",
-      photo: "/storage/leadership/placeholder.jpg",
-      phone: "+7 (777) 123-45-67",
-      email: "director@example.com",
-      bio: "Опыт работы более 15 лет в сфере здравоохранения."
-    },
-    {
-      name: "Петрова Анна Сергеевна",
-      position: "Заместитель директора",
-      photo: "/storage/leadership/placeholder.jpg",
-      phone: "+7 (777) 765-43-21",
-      email: "deputy@example.com",
-      bio: "Специалист в области организации здравоохранения."
-    }
-  ];
 
   return (
     <>
@@ -105,13 +85,6 @@ export default function BranchPageTemplate({ branchName, branchFolder = "" }) {
             />
           </div>
         </section>
-        
-        {/* Блок руководство */}
-        <Leadership 
-          leaders={leaders} 
-          title="Руководство филиала"
-          bgColor="bg-blue-50"
-        />
         
         {/* Контактная информация */}
         <section className="text-gray-600 body-font pb-8">

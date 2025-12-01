@@ -91,8 +91,8 @@ export default function HealthAccounts() {
       <div className="container px-5 mx-auto">
         {/* Используем именованный маршрут подпапки с документами */}
         <FolderChlank 
-          color="bg-gray-200"
-          colorsec="bg-gray-300"
+          color="bg-purple-200"
+          colorsec="bg-purple-300"
           title={t('directionsPages.healthAccounts.subfolders.documents.title')} 
           description={t('directionsPages.healthAccounts.subfolders.documents.description')}
           href={route('health.accounts.documents')}

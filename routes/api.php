@@ -39,6 +39,7 @@ Route::post('/page-translations', [I18nController::class, 'updatePageTranslation
 Route::get('/files', [FileController::class, 'getFiles']);
 Route::get('/clinical-protocols', [FileController::class, 'getClinicalProtocols']);
 Route::get('/clinical-protocols/filters', [FileController::class, 'getClinicalProtocolFilters']);
+Route::get('/clinical-protocols/download-archive', [FileController::class, 'downloadClinicalProtocolsArchive']);
 
 // Маршруты для контактных форм
 Route::post('/contact/tech-competence', [\App\Http\Controllers\ContactController::class, 'sendTechCompetenceForm']);

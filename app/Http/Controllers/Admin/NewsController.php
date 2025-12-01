@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Database\QueryException;
 use Inertia\Inertia;
@@ -123,9 +124,10 @@ class NewsController extends Controller
         $normalizedSection = $this->resolveSection($section);
 
         // Логируем обращение к форме админки (временная диагностика WAF).
+        $user = Auth::user();
         Log::info('admin.news.create', [
-            'uid' => auth()->id(),
-            'role' => auth()->user()?->role,
+            'uid' => $user?->id,
+            'role' => $user?->role,
             'section' => $normalizedSection,
         ]);
 
@@ -153,9 +155,10 @@ class NewsController extends Controller
         try {
             $this->authorize('create', News::class);
         } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            $user = Auth::user();
             Log::error('Отказ в доступе при создании новости', [
-                'user_id' => auth()->id(),
-                'user_role' => auth()->user()?->role,
+                'user_id' => $user?->id,
+                'user_role' => $user?->role,
                 'error' => $e->getMessage(),
             ]);
             
@@ -165,10 +168,11 @@ class NewsController extends Controller
         }
         
         // Логируем начало обработки запроса
+        $user = Auth::user();
         Log::info('Начало создания новости', [
-            'user_id' => auth()->id(),
-            'user_email' => auth()->user()?->email,
-            'user_role' => auth()->user()?->role,
+            'user_id' => $user?->id,
+            'user_email' => $user?->email,
+            'user_role' => $user?->role,
             'request_method' => $request->method(),
             'request_path' => $request->path(),
             'has_title' => $request->has('title'),
@@ -271,10 +275,12 @@ class NewsController extends Controller
             $news->published_at = $validated['status'] === 'published' 
                 ? ($validated['published_at'] ?? now())
                 : null;
-            $news->created_by = auth()->id();
+            $news->created_by = Auth::id();
             $news->type = $type;
             $categories = $this->normalizeCategories($request->input('category'));
-            $news->category = ! empty($categories) ? $categories : null;
+            // Всегда устанавливаем массив (пустой или с категориями), чтобы избежать null
+            // Это важно, так как поле category в БД может не принимать null
+            $news->category = ! empty($categories) ? $categories : [];
 
             $mediaItems = $this->parseMediaInput($request->input('media'));
             if (!empty($mediaItems)) {
@@ -364,7 +370,7 @@ class NewsController extends Controller
             Log::error('Ошибка валидации при создании новости', [
                 'errors' => $e->errors(),
                 'input_data' => $request->except(['cover', 'media']), // Исключаем большие файлы
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
             ]);
             
             return back()
@@ -379,7 +385,7 @@ class NewsController extends Controller
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
                 'input_data' => $request->except(['cover', 'media']), // Исключаем большие файлы
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'memory_usage' => memory_get_usage(true) / 1024 / 1024 . ' MB',
             ]);
 
@@ -645,7 +651,7 @@ class NewsController extends Controller
         $filename = 'news_views_' . date('Y-m-d_His') . '.csv';
         
         Log::info('Экспорт просмотров новостей', [
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'count' => $news->count(),
         ]);
         
@@ -666,9 +672,10 @@ class NewsController extends Controller
         try {
             $this->authorize('create', News::class);
         } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            $user = Auth::user();
             Log::error('Отказ в доступе при загрузке медиа', [
-                'user_id' => auth()->id(),
-                'user_role' => auth()->user()?->role,
+                'user_id' => $user?->id,
+                'user_role' => $user?->role,
             ]);
             
             return response()->json([
