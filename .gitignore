@@ -2,7 +2,7 @@
 /node_modules
 # /public/build
 /public/hot
-# /public/storage  # Разрешаем отслеживать папку storage
+/public/storage  # Исключаем папку storage из Git
 /storage/*.key
 /storage/pail
 # /vendor
