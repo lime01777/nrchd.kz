@@ -1,0 +1,15 @@
+name: Fix Long Paths on Checkout
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fix-checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure Git for long paths
+        run: |
+          git config core.longpaths true
+          git sparse-checkout init --cone
+          git sparse-checkout set '/*' '!public/storage'
+

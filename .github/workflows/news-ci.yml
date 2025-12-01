@@ -11,8 +11,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ВАЖНО: Настройка Git ДО checkout для пропуска проблемных файлов с длинными путями
+      - name: Configure Git for long paths
+        run: |
+          git config core.longpaths true
+          git sparse-checkout init --cone
+          git sparse-checkout set '/*' '!public/storage'
+      
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Дополнительная настройка для исключения папки storage
+          sparse-checkout: |
+            /*
+            !public/storage
+          sparse-checkout-cone-mode: true
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
