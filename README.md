@@ -68,7 +68,7 @@ ModSecurity в Plesk блокировал `GET /admin/news/create?type=media`, �
 
 ## Технологии
 
-- Backend: Laravel (PHP)
+- Backend: PHP
 - Frontend: React (через Inertia.js)
 - База данных: MySQL
 - Email-уведомления, автоматический перевод контента

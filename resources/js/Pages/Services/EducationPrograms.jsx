@@ -17,22 +17,15 @@ export default function EducationPrograms() {
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-full px-4">
             <p className="mb-6 text-gray-700 leading-relaxed">
-              Проведение экспертизы образовательной программы (ОП) для включения 
-              ОП ДО в Каталог осуществляется на основании заключенного с 
-              заявителем договора об оказании услуг.
+              {t('servicesPages.educationPrograms.intro')}
             </p>
             
             <p className="mb-6 text-gray-700 leading-relaxed">
-              Процедура экспертизы предполагает анализ содержания, структуры 
-              и оформления образовательной программы на соответствие требованиям 
-              и стандартам качества, актуальности и применимости информации, 
-              а также оценку практической ценности программы.
+              {t('servicesPages.educationPrograms.procedure')}
             </p>
             
             <p className="mb-6 text-gray-700 leading-relaxed">
-              По итогам экспертизы заявителю предоставляется подробное экспертное 
-              заключение с рекомендациями по улучшению программы или одобрением 
-              для включения в Каталог программ дополнительного образования.
+              {t('servicesPages.educationPrograms.results')}
             </p>
           </div>
           
@@ -42,16 +35,16 @@ export default function EducationPrograms() {
       <div className="container px-5 py-24 mx-auto">
         <div className="border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden bg-white">
           <div className="p-6 lg:p-10">
-            <h1 className="title-font text-2xl font-medium text-gray-900 mb-3">Описание услуги</h1>
+            <h1 className="title-font text-2xl font-medium text-gray-900 mb-3">{t('servicesPages.educationPrograms.serviceDescription.title')}</h1>
             <p className="leading-relaxed mb-3">
-              Экспертиза образовательных программ дополнительного образования проводится согласно Правилам дополнительного и неформального образования специалистов в области здравоохранения, утвержденным приказом МЗ РК от 21 декабря 2020 года № ҚР ДСМ-303/2020. (Зарегистрирован в Министерстве юстиции Республики Казахстан 22 декабря 2020 года № 21847.)
+              {t('servicesPages.educationPrograms.serviceDescription.paragraph1')}
             </p>
             <p className="leading-relaxed mb-3">
-              Экспертиза проводится с целью проверки качества и соответствия образовательных программ установленным требованиям и существующим потребностям обучения согласно приоритетам развития отрасли здравоохранения.
+              {t('servicesPages.educationPrograms.serviceDescription.paragraph2')}
             </p>
             <div className="flex items-center flex-wrap">
               <a href="#" className="text-green-500 inline-flex items-center md:mb-2 lg:mb-0">
-                Подробнее о требованиях к ОП
+                {t('servicesPages.educationPrograms.serviceDescription.moreLink')}
                 <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14"></path>
                   <path d="M12 5l7 7-7 7"></path>
@@ -66,9 +59,9 @@ export default function EducationPrograms() {
       <div className="container px-5 py-16 mx-auto">
         <div className="border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden bg-white">
           <div className="p-6 lg:p-10">
-            <h1 className="title-font text-2xl font-medium text-gray-900 mb-6">Стоимость услуг</h1>
+            <h1 className="title-font text-2xl font-medium text-gray-900 mb-6">{t('servicesPages.educationPrograms.pricing.title')}</h1>
             <p className="leading-relaxed mb-6">
-              Проведение экспертизы образовательной программы (ОП) для включения ОП ДО в Каталог осуществляется на основании заключенного с заявителем договора об оказании услуг.
+              {t('servicesPages.educationPrograms.pricing.description')}
             </p>
             
             <div className="overflow-x-auto">
@@ -79,16 +72,16 @@ export default function EducationPrograms() {
                       №
                     </th>
                     <th className="border border-green-200 py-3 px-4 text-left">
-                      Наименование товара, работ, услуг
+                      {t('servicesPages.educationPrograms.pricing.serviceName')}
                     </th>
                     <th className="border border-green-200 py-3 px-4 text-center">
-                      Ед. измерения
+                      {t('servicesPages.educationPrograms.pricing.unit')}
                     </th>
                     <th className="border border-green-200 py-3 px-4 text-center">
-                      Кол-во
+                      {t('servicesPages.educationPrograms.pricing.quantity')}
                     </th>
                     <th className="border border-green-200 py-3 px-4 text-center">
-                      Цена в тенге<br/>(с учетом НДС)
+                      {t('servicesPages.educationPrograms.pricing.priceWithVAT')}
                     </th>
                   </tr>
                 </thead>
@@ -98,16 +91,16 @@ export default function EducationPrograms() {
                       1
                     </td>
                     <td className="border border-green-200 py-3 px-4 text-left">
-                      Научно-исследовательская работа по проведению экспертизы образовательных программ дополнительного образования в части сертификационных курсов
+                      {t('servicesPages.educationPrograms.pricing.service1')}
                     </td>
                     <td className="border border-green-200 py-3 px-4 text-center">
-                      Услуга
+                      {t('servicesPages.educationPrograms.pricing.serviceUnit')}
                     </td>
                     <td className="border border-green-200 py-3 px-4 text-center">
                       1
                     </td>
                     <td className="border border-green-200 py-3 px-4 text-center font-medium">
-                      Бесплатно<br/><span className="text-sm">(по протоколу утверждения программы на УМО РУМС)</span>
+                      {t('servicesPages.educationPrograms.pricing.free')}<br/><span className="text-sm">({t('servicesPages.educationPrograms.pricing.freeNote')})</span>
                     </td>
                   </tr>
                   <tr className="hover:bg-green-50">
@@ -115,16 +108,16 @@ export default function EducationPrograms() {
                       2
                     </td>
                     <td className="border border-green-200 py-3 px-4 text-left">
-                      Научно-исследовательская работа по проведению экспертизы образовательных программ дополнительного образования в части курсов повышения квалификации
+                      {t('servicesPages.educationPrograms.pricing.service2')}
                     </td>
                     <td className="border border-green-200 py-3 px-4 text-center">
-                      Услуга
+                      {t('servicesPages.educationPrograms.pricing.serviceUnit')}
                     </td>
                     <td className="border border-green-200 py-3 px-4 text-center">
                       1
                     </td>
                     <td className="border border-green-200 py-3 px-4 text-center font-medium">
-                      93 200 тг
+                      93 200 {t('servicesPages.educationPrograms.pricing.currency')}
                     </td>
                   </tr>
                 </tbody>
@@ -132,7 +125,7 @@ export default function EducationPrograms() {
             </div>
             
             <div className="mt-6 text-sm text-gray-500 italic">
-              * Цены актуальны на текущий год и могут быть изменены в соответствии с действующими тарифами
+              {t('servicesPages.educationPrograms.pricing.note')}
             </div>
           </div>
         </div>
@@ -145,7 +138,7 @@ export default function EducationPrograms() {
             {/* Второй аккордеон */}
                 <FilesAccord 
                     folder="Услуги/Экспертиза образовательных программ/НПА"
-                    title="Нормативно-правовые акты"
+                    title={t('servicesPages.educationPrograms.regulatoryActs')}
                     bgColor="bg-green-100"
                     defaultOpen={true}
                 />
@@ -153,7 +146,7 @@ export default function EducationPrograms() {
             {/* Третий аккордеон */}
                 <FilesAccord 
                     folder="Услуги/Экспертиза образовательных программ/Полезные материалы"
-                    title="Полезные материалы"
+                    title={t('servicesPages.educationPrograms.usefulMaterials')}
                     bgColor="bg-green-100"
                     defaultOpen={true}
                   />
@@ -164,14 +157,14 @@ export default function EducationPrograms() {
       <div className="container px-5 py-12 mx-auto">
         <div className="bg-green-100 p-6 rounded-lg shadow-sm">
           <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            Контактная информация
+            {t('servicesPages.educationPrograms.contact.title')}
           </h3>
           <p className="text-lg mb-4">
-            По возникшим вопросам касательно процедуры подачи заявок для экспертизы и включения программ сертификационных курсов и повышения квалификации в Каталог просим обратиться в:
+            {t('servicesPages.educationPrograms.contact.description')}
           </p>
           
           <div className="pl-4 border-l-4 border-green-300 mt-5 mb-5">
-            <p className="font-medium text-gray-700 mb-1">Департамент развития медицинского образования и науки ННЦРЗ</p>
+            <p className="font-medium text-gray-700 mb-1">{t('servicesPages.educationPrograms.contact.department')}</p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
               <div className="flex items-start">
@@ -181,7 +174,7 @@ export default function EducationPrograms() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">Рабочий телефон:</p>
+                  <p className="text-sm text-gray-500 mb-1">{t('servicesPages.educationPrograms.contact.workPhone')}:</p>
                   <p className="text-base font-medium">+7(7172) 700950 (вн. 1114)</p>
                 </div>
               </div>
@@ -193,7 +186,7 @@ export default function EducationPrograms() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">Мобильный телефон:</p>
+                  <p className="text-sm text-gray-500 mb-1">{t('servicesPages.educationPrograms.contact.mobilePhone')}:</p>
                   <p className="text-base font-medium">+7(707)189-46-80</p>
                 </div>
               </div>
@@ -206,7 +199,7 @@ export default function EducationPrograms() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">Электронный адрес:</p>
+                  <p className="text-sm text-gray-500 mb-1">{t('servicesPages.educationPrograms.contact.email')}:</p>
                   <a href="mailto:ddmes.rcrz@mail.ru" className="text-base font-medium text-green-700 hover:underline">ddmes.rcrz@mail.ru</a>
                 </div>
               </div>
@@ -218,8 +211,8 @@ export default function EducationPrograms() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">Контактное лицо:</p>
-                  <p className="text-base font-medium">Есдаулет Самат Азаматұлы</p>
+                  <p className="text-sm text-gray-500 mb-1">{t('servicesPages.educationPrograms.contact.contactPerson')}:</p>
+                  <p className="text-base font-medium">{t('servicesPages.educationPrograms.contact.personName')}</p>
                 </div>
               </div>
             </div>
@@ -231,4 +224,7 @@ export default function EducationPrograms() {
   );
 }
 
-EducationPrograms.layout = (page) => <ServicesPageLayout title="Экспертиза образовательных программ дополнительного образования" img="service-education" bgColor='bg-green-100'>{page}</ServicesPageLayout>;
+EducationPrograms.layout = (page) => {
+  const t = (key, fallback = '') => translationService.t(key, fallback);
+  return <ServicesPageLayout title={t('services.educationPrograms')} img="service-education" bgColor='bg-green-100'>{page}</ServicesPageLayout>;
+};

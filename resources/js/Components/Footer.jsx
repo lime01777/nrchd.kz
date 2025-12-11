@@ -91,36 +91,35 @@ const FooterLinks = () => {
                 <div className="flex-grow flex flex-wrap -mb-10 md:mt-0 mt-10 md:text-left text-center">
                     <FooterNav title={t('footer.mainMenu')} links={navLinks1} subMenus={mainMenuSubmenus} />
                     <FooterNav title={t('footer.aboutCenter')} links={navLinks2} />
-                    <div className="lg:w-1/4 md:w-1/2 w-full px-4">
+                    <div className="lg:w-1/4 md:w-1/2 w-full px-4 min-w-[280px] sm:min-w-0">
                         <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3" data-translate>{t('footer.contacts.title')}</h2>
 
-                            <div className="flex items-center mb-2">
-                                <a href="mailto:office@nrchd.kz" className="hover:text-blue-600 hover:underline">
-                                    <span className="font-medium">office@nrchd.kz</span>
+                            <div className="flex items-center mb-2 break-words">
+                                <a href="mailto:office@nrchd.kz" className="hover:text-blue-600 hover:underline break-all">
+                                    <span className="font-medium text-sm sm:text-base">office@nrchd.kz</span>
                                 </a>
                             </div>
                             <div className="flex items-center mt-2 mb-1">
                                 <a href="tel:+77172648951" className="hover:text-blue-600 hover:underline">
-                                    <span className="font-medium">+7 (7172) 648-951</span> <span className="text-gray-500 text-sm"></span>
+                                    <span className="font-medium text-sm sm:text-base">+7 (7172) 648-951</span> <span className="text-gray-500 text-sm"></span>
                                 </a>
                             </div>
                             <div className="flex items-center">
                                 <a href="tel:+77172648951" className="hover:text-blue-600 hover:underline">
-                                    <span className="font-medium">+7 (7172) 648-951</span> <span className="text-gray-500 text-sm"></span>
+                                    <span className="font-medium text-sm sm:text-base">+7 (7172) 648-951</span> <span className="text-gray-500 text-sm"></span>
                                 </a>
                             </div>
 
                     </div>
-                    <div className="lg:w-1/4 md:w-1/2 w-full px-4">
+                    <div className="lg:w-1/4 md:w-1/2 w-full px-4 min-w-[280px] sm:min-w-0 mt-6 md:mt-0">
                         <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3">{t('footer.workingHours.title')}</h2>
 
                             <div className="flex flex-col space-y-2">
                                 <div className="flex items-center">
-                                    <span className="text-gray-700">{t('footer.workingHours.weekdays')} <span className="">{t('footer.workingHours.time')}</span></span>
+                                    <span className="text-gray-700 text-sm sm:text-base">{t('footer.workingHours.weekdays')} <span className="">{t('footer.workingHours.time')}</span></span>
                                 </div>
                                 <div className="flex items-center">
-
-                                    <span className="text-gray-700">{t('footer.workingHours.lunch')} <span className="">{t('footer.workingHours.lunchTime')}</span></span>
+                                    <span className="text-gray-700 text-sm sm:text-base">{t('footer.workingHours.lunch')} <span className="">{t('footer.workingHours.lunchTime')}</span></span>
                                 </div>
                             </div>
 

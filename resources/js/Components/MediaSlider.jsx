@@ -114,22 +114,31 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
 
   // Обработчик клика по основному изображению/видео
   const handleMainMediaClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setLightboxIndex(currentIndex);
-    setIsLightboxOpen(true);
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    // Предотвращаем повторное открытие, если уже открыто
+    if (!isLightboxOpen) {
+      setLightboxIndex(currentIndex);
+      setIsLightboxOpen(true);
+    }
   };
 
   // Обработчик клика по превью для открытия в полном размере
   const handleThumbnailClick = (index) => {
-    setCurrentIndex(index);
-    setLightboxIndex(index);
-    setIsLightboxOpen(true);
+    if (!isLightboxOpen) {
+      setCurrentIndex(index);
+      setLightboxIndex(index);
+      setIsLightboxOpen(true);
+    }
   };
 
   const handleLightboxClose = () => {
-    setIsLightboxOpen(false);
-    setIsPlaying(computedAutoPlay);
+    if (isLightboxOpen) {
+      setIsLightboxOpen(false);
+      setIsPlaying(computedAutoPlay);
+    }
   };
 
   if (normalizedMedia.length === 0) {
@@ -169,14 +178,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
         >
           {currentMedia.type === 'video' ? (
             currentMedia.is_embed && (currentMedia.embed_url || currentMedia.path) ? (
-              <div 
-                className="w-full h-full relative"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleMainMediaClick(e);
-                }}
-              >
+              <div className="w-full h-full relative">
                 <iframe
                   key={currentMedia.id}
                   src={currentMedia.embed_url || currentMedia.path}
@@ -185,13 +187,6 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                 />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center cursor-pointer">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 rounded-full p-3">
-                    <svg className="w-8 h-8 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-                    </svg>
-                  </div>
-                </div>
               </div>
             ) : (
               <div className="w-full h-full relative">
@@ -214,22 +209,6 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
                     </div>
                   }
                 />
-                {/* Overlay для открытия lightbox - кликабельный только в верхней части (не над controls) */}
-                <div 
-                  className="absolute top-0 left-0 right-0 h-[85%] cursor-pointer group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleMainMediaClick(e);
-                  }}
-                  style={{ pointerEvents: 'auto' }}
-                >
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 rounded-full p-3">
-                    <svg className="w-8 h-8 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-                    </svg>
-                  </div>
-                </div>
               </div>
             )
           ) : (
@@ -241,14 +220,16 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
             />
           )}
           
-          {/* Overlay с иконкой увеличения */}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 rounded-full p-3">
-              <svg className="w-8 h-8 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-              </svg>
+          {/* Overlay с иконкой увеличения - только для изображений */}
+          {currentMedia.type === 'image' && (
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center pointer-events-none">
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 rounded-full p-3">
+                <svg className="w-8 h-8 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                </svg>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Индикатор типа медиа */}
           <div className="absolute top-2 left-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">

@@ -121,7 +121,7 @@ function ensureCsrfToken() {
     const meta = document.createElement('meta');
     meta.setAttribute('name', 'csrf-token');
     
-    // Пробуем получить токен из window.Laravel
+    // Пробуем получить токен из window.Laravel (техническая переменная бэкенда)
     let tokenValue = '';
     if (window.Laravel && window.Laravel.csrfToken) {
       tokenValue = window.Laravel.csrfToken;

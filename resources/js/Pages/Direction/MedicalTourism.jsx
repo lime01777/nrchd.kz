@@ -3,6 +3,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
 import translationService from '@/services/TranslationService';
+import { route } from '@/ziggy-helper'; // Импорт функции для генерации маршрутов
 
 export default function MedicalTourism() {
     const [search, setSearch] = useState('');
@@ -259,15 +260,15 @@ export default function MedicalTourism() {
                       </span>
                     ))}
                   </div>
-                                     <button 
-                     className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium"
-                     onClick={() => {
-                       // Переход на страницу клиники
-                       router.visit(route('clinics.show.by.route', clinic.route));
-                     }}
-                   >
-                     {detailsButton}
-                   </button>
+                  <button 
+                    className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium"
+                    onClick={() => {
+                      // Переход на страницу клиники
+                      router.visit(route('clinics.show.by.route', { route: clinic.route }));
+                    }}
+                  >
+                    {detailsButton}
+                  </button>
                 </div>
               </div>
             ))}

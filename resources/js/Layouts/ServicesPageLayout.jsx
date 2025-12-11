@@ -2,8 +2,13 @@ import React, { useState } from 'react';
 import Header from '@/Components/Header';
 import Footer from '@/Components/Footer';
 import { Link } from '@inertiajs/react';
+import translationService from '@/services/TranslationService';
 
 export default function ServicesPageLayout({ children, title, img, bgColor = "bg-blue-100", customForm, hideForm = false }) {
+  const t = (key, fallback = '') => {
+    return translationService.t(key, fallback);
+  };
+
   const [formData, setFormData] = useState({
     name: '',
     organization: '',
@@ -25,7 +30,7 @@ export default function ServicesPageLayout({ children, title, img, bgColor = "bg
     // Здесь будет логика отправки формы
     console.log('Submitted data:', formData);
     // TODO: добавить API для отправки данных
-    alert('Заявка успешно отправлена!');
+    alert(t('servicesPages.form.successMessage'));
     // Сброс формы
     setFormData({
       name: '',
@@ -70,7 +75,7 @@ export default function ServicesPageLayout({ children, title, img, bgColor = "bg
                   onClick={scrollToTimeline}
                   className="bg-transparent hover:bg-blue-100 text-blue-500 border border-blue-500 px-4 md:px-6 py-2 md:py-3 text-sm md:text-base rounded-md font-medium transition-all duration-300 inline-flex items-center w-full sm:w-auto justify-center"
                 >
-                  Подробнее
+                  {t('common.more')}
                   <svg className="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"></path>
                   </svg>
@@ -84,80 +89,80 @@ export default function ServicesPageLayout({ children, title, img, bgColor = "bg
                 {customForm ? (
                   customForm
                 ) : (
-                  <div className="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-                  <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4 text-center">Свяжитесь с нами</h2>
+                  <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 border border-gray-200">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-800 mb-4 text-center">{t('servicesPages.form.title')}</h2>
                   <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                      <label htmlFor="name" className="block text-gray-700 text-sm font-medium mb-1">ФИО</label>
+                      <label htmlFor="name" className="block text-gray-700 text-sm font-medium mb-1">{t('servicesPages.form.fullName')}</label>
                       <input 
                         type="text" 
                         id="name" 
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                        className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm min-h-[44px]"
                         required
                       />
                     </div>
                     
                     <div className="mb-4">
-                      <label htmlFor="organization" className="block text-gray-700 text-sm font-medium mb-1">Название организации</label>
+                      <label htmlFor="organization" className="block text-gray-700 text-sm font-medium mb-1">{t('servicesPages.form.organization')}</label>
                       <input 
                         type="text" 
                         id="organization" 
                         name="organization"
                         value={formData.organization}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                        className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm min-h-[44px]"
                         required
                       />
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                       <div>
-                        <label htmlFor="email" className="block text-gray-700 text-sm font-medium mb-1">Email</label>
+                        <label htmlFor="email" className="block text-gray-700 text-sm font-medium mb-1">{t('servicesPages.form.email')}</label>
                         <input 
                           type="email" 
                           id="email" 
                           name="email"
                           value={formData.email}
                           onChange={handleChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                          className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm min-h-[44px]"
                           required
                         />
                       </div>
                       <div>
-                        <label htmlFor="phone" className="block text-gray-700 text-sm font-medium mb-1">Телефон</label>
+                        <label htmlFor="phone" className="block text-gray-700 text-sm font-medium mb-1">{t('servicesPages.form.phone')}</label>
                         <input 
                           type="tel" 
                           id="phone" 
                           name="phone"
                           value={formData.phone}
                           onChange={handleChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                          className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm min-h-[44px]"
                           required
                         />
                       </div>
                     </div>
                     
                     <div className="mb-4">
-                      <label htmlFor="message" className="block text-gray-700 text-sm font-medium mb-1">Сообщение</label>
+                      <label htmlFor="message" className="block text-gray-700 text-sm font-medium mb-1">{t('servicesPages.form.message')}</label>
                       <textarea 
                         id="message" 
                         name="message"
                         value={formData.message}
                         onChange={handleChange}
                         rows="3"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                        className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm min-h-[80px]"
                       ></textarea>
                     </div>
                     
                     <div className="flex justify-center">
                       <button 
                         type="submit"
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-5 rounded-md text-sm transition duration-300 w-auto"
+                        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-6 rounded-md text-sm sm:text-base transition duration-300 w-full sm:w-auto min-h-[44px]"
                       >
-                        Отправить заявку
+                        {t('servicesPages.form.submit')}
                       </button>
                     </div>
                   </form>

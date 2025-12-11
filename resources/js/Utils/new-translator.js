@@ -201,7 +201,7 @@ async function translateViaAPI(text, sourceLang, targetLang) {
   if (!text || text.trim() === '') return text;
   
   try {
-    // Получаем CSRF токен для Laravel
+    // Получаем CSRF токен для бэкенда
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
     if (!csrfToken) {
       console.error('[Translator] No CSRF token found');

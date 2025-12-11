@@ -116,8 +116,8 @@ function Hero({
   return (
     /* Main Hero */
     <section className="text-gray-600 body-font relative hero-section">
-      <div className="container h-screen my-auto mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
-        <div className="w-full h-full">
+      <div className="container min-h-screen sm:h-screen my-auto mx-auto flex px-5 py-12 sm:py-24 md:flex-row flex-col items-center">
+        <div className="w-full h-full min-h-[400px] sm:min-h-screen">
           {/* Фоновый медиа-контент (видео, GIF или изображение) */}
           {useVideo ? (
             <video 

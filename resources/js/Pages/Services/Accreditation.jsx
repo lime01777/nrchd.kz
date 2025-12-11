@@ -41,12 +41,12 @@ export default function Accreditation() {
       question: t('servicesPages.commonElements.howToGetService'),
       answer: (
         <div>
-          <h3 className="font-semibold mb-2">Порядок подачи заявления на проведение аккредитации</h3>
+          <h3 className="font-semibold mb-2">{t('servicesPages.accreditation.faq.applicationProcedure.title')}</h3>
           <p className="mb-4">
-            Для получения аккредитации медицинской организации заявитель заключает с РГП на ПХВ «Национальный научный центр развития здравоохранения им. С. Каирбековой» (далее – ННЦРЗ) договор установленного образца.
+            {t('servicesPages.accreditation.faq.applicationProcedure.text1')}
           </p>
           <p className="mb-4">
-            Оплата стоимости за проведение аккредитации осуществляется заявителем в соответствии с прейскурантом, утвержденным ННЦРЗ.
+            {t('servicesPages.accreditation.faq.applicationProcedure.text2')}
           </p>
         </div>
       )
@@ -58,12 +58,12 @@ export default function Accreditation() {
           <ul className="space-y-3">
             <li>
               <a href="https://adilet.zan.kz/rus/docs/K2000000360" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                Кодекс Республики Казахстан от 7 июля 2020 года № 360-VI ЗРК «О ЗДОРОВЬЕ НАРОДА И СИСТЕМЕ ЗДРАВООХРАНЕНИЯ»
+                {t('servicesPages.accreditation.faq.regulatoryActs.code')}
               </a>
             </li>
             <li>
               <a href="https://adilet.zan.kz/rus/docs/V2000021852" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              Приказ Министра здравоохранения Республики Казахстан от 21 декабря 2020 года № ҚР ДСМ-305/2020 “Об утверждении правил аккредитации в области здравоохранения”
+                {t('servicesPages.accreditation.faq.regulatoryActs.order')}
               </a>
             </li>
           </ul>
@@ -81,32 +81,32 @@ export default function Accreditation() {
           <div className="w-full lg:w-2/3 px-4 mt-10">
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <p className="text-gray-700 leading-relaxed mb-4">
-                Одним из основных инструментов управления качеством медицинской помощи выступает аккредитация медицинских организаций, как ключевой процесс оценки обеспечения и поддержания высоких стандартов качества и безопасности оказываемых медицинских услуг и процессов в медицинской организации.
+                {t('servicesPages.accreditation.description1')}
               </p>
               
-              <h4 className="font-semibold text-lg text-gray-800 mb-2">Процедура аккредитации включает:</h4>
+              <h4 className="font-semibold text-lg text-gray-800 mb-2">{t('servicesPages.accreditation.procedureTitle')}</h4>
               <ul className="list-disc pl-6 mb-4 text-gray-700">
-                <li>Самооценку</li>
-                <li>Внешнюю комплексную оценку на соответствие установленным стандартам аккредитации</li>
-                <li>Постаккредитационный мониторинг</li>
+                <li>{t('servicesPages.accreditation.procedureItem1')}</li>
+                <li>{t('servicesPages.accreditation.procedureItem2')}</li>
+                <li>{t('servicesPages.accreditation.procedureItem3')}</li>
               </ul>
 
-              <h4 className="font-semibold text-lg text-gray-800 mb-2">Конкурентные преимущества и меры мотивации к прохождению аккредитации:</h4>
+              <h4 className="font-semibold text-lg text-gray-800 mb-2">{t('servicesPages.accreditation.advantagesTitle')}</h4>
               <ul className="list-disc pl-6 mb-4 text-gray-700">
-                <li>Подтверждённый уровень качества и безопасности предоставляемых медицинских услуг</li>
-                <li>Преимущественное право в системе ОСМС и ГОБМП</li>
-                <li>Повышение эффективности управления медицинской организацией</li>
-                <li>Рост вовлечённости персонала в развитие и поддержание высокого статуса медицинской организации</li>
-                <li>Освобождение от профилактического контроля на следующий календарный год</li>
-                <li>Учет статуса аккредитации в рейтинге медицинских организаций</li>
+                <li>{t('servicesPages.accreditation.advantage1')}</li>
+                <li>{t('servicesPages.accreditation.advantage2')}</li>
+                <li>{t('servicesPages.accreditation.advantage3')}</li>
+                <li>{t('servicesPages.accreditation.advantage4')}</li>
+                <li>{t('servicesPages.accreditation.advantage5')}</li>
+                <li>{t('servicesPages.accreditation.advantage6')}</li>
               </ul>
 
               <p className="text-gray-700 leading-relaxed mb-4">
-                Согласно приказа Комитета медицинского и фармацевтического контроля Министерства здравоохранения Республики Казахстан № 99-НҚ от 13.03.2023 года, ННЦРЗ аккредитован уполномоченным органом на осуществление аккредитации медицинских организаций сроком на 5 лет.
+                {t('servicesPages.accreditation.description2')}
               </p>
 
               <p className="text-gray-700 leading-relaxed">
-                ННЦРЗ, представитель государственного сектора среди аккредитующих организаций, обладает высоким экспертным и научным потенциалом, обусловленным историей формирования и опытом начала внедрения аккредитации медицинских организаций в Казахстане, разработки методических рекомендаций, протоколов и стандартов, а также высокой прозрачностью основной деятельности.
+                {t('servicesPages.accreditation.description3')}
               </p>
             </div>
           </div>
@@ -119,7 +119,7 @@ export default function Accreditation() {
         </div>
         
         <ActualFile 
-          title="Действующий документ" 
+          title={t('servicesPages.accreditation.currentDocument')} 
           folder="Услуги/Аккредитация/Документ"
           bgColor="bg-purple-50"
           hideDownload={true}
@@ -128,7 +128,7 @@ export default function Accreditation() {
         <div className="mt-10">
           <FilesAccord 
             folder="Услуги/Аккредитация" 
-            title="Полезные материалы" 
+            title={t('servicesPages.accreditation.usefulMaterials')} 
             bgColor="bg-fuchsia-50"
             defaultOpen={true}
           />
@@ -136,7 +136,7 @@ export default function Accreditation() {
 
         <div className="mt-10">
           <FAQ 
-            title="Информация об услуге"
+            title={t('servicesPages.accreditation.serviceInfo')}
             items={faqItems}
           />
         </div>
@@ -144,14 +144,14 @@ export default function Accreditation() {
         {/* Контактная информация */}
 {/* Контактная информация */}
 <div className="mt-20">
-  <h2 className="text-2xl font-semibold text-gray-900 mb-6">Контактная информация</h2>
+  <h2 className="text-2xl font-semibold text-gray-900 mb-6">{t('servicesPages.accreditation.contacts.title')}</h2>
   
   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
     {/* Первый блок - Контакты */}
     <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-gray-800 mb-3">Отдел по аккредитации</h3>
-      <p className="text-gray-600">г. Астана, улица Мангилик Ел, 20</p>
-      <p className="text-gray-600">8-7172-648-951, вн: 1143, 1127, 1046, 1064, 1014</p>
+      <h3 className="text-lg font-semibold text-gray-800 mb-3">{t('servicesPages.accreditation.contacts.department')}</h3>
+      <p className="text-gray-600">{t('servicesPages.accreditation.contacts.address')}</p>
+      <p className="text-gray-600">{t('servicesPages.accreditation.contacts.phone')}</p>
       <div className="flex flex-col space-y-2 mb-3">
         <div className="flex items-center">
           <a href="https://wa.me/77472996410" target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-green-600 hover:text-green-800 transition-colors">
@@ -175,50 +175,50 @@ export default function Accreditation() {
     
     {/* Второй блок - График работы */}
     <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-gray-800 mb-3">График аккредитующего органа:</h3>
+      <h3 className="text-lg font-semibold text-gray-800 mb-3">{t('servicesPages.accreditation.contacts.scheduleTitle')}</h3>
       <ul className="space-y-2 text-gray-600">
         <li className="flex items-start">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <span>с понедельника по пятницу с 09.00 до 18.00 часов</span>
+          <span>{t('servicesPages.accreditation.contacts.workDays')}</span>
         </li>
         <li className="flex items-start">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-orange-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
-          <span>обеденный перерыв: с 13.00 до 14.00 часов</span>
+          <span>{t('servicesPages.accreditation.contacts.lunchBreak')}</span>
         </li>
         <li className="flex items-start">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-red-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
-          <span>выходные: суббота, воскресенье</span>
+          <span>{t('servicesPages.accreditation.contacts.weekends')}</span>
         </li>
       </ul>
     </div>
     
     {/* Третий блок - Документы */}
     <div className="bg-white rounded-lg p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-gray-800 mb-3">Перечень необходимых документов:</h3>
+      <h3 className="text-lg font-semibold text-gray-800 mb-3">{t('servicesPages.accreditation.contacts.documentsTitle')}</h3>
       <ul className="space-y-2 text-gray-600">
         <li className="flex items-start">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <span>для предоставления точки доступа к ИС МЗ РК «СУКМУ» <a href="https://nrchd.kz/files/%D0%BD%D0%BE%D0%B2%D0%BE%D0%B5 2023/%D0%BF%D0%B5%D1%80%D0%B5%D1%87%D0%B5%D0%BD%D1%8C %D0%BD%D0%B5%D0%BE%D0%B1%D1%85%D0%BE%D0%B4%D0%B8%D0%BC%D1%8B%D1%85 %D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%BE%D0%B2 %D0%B4%D0%BB%D1%8F %D0%BC%D0%B5%D0%B4%D0%B8%D1%86%D0%B8%D0%BD%D1%81%D0%BA%D0%B8%D1%85 %D0%BE%D1%80%D0%B3%D0%B0%D0%BD%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8 %D0%B4%D0%BB%D1%8F %D0%BF%D1%80%D0%B5%D0%B4%D0%BE%D1%81%D1%82%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F %D1%82%D0%BE%D1%87%D0%BA%D0%B8 %D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0 %D0%BA %D0%98%D0%A1 %D0%9C%D0%97 %D0%A0%D0%9A %C2%AB%D0%A1%D0%A3%D0%9A%D0%9C%D0%A3%C2%BB.docx" className="text-blue-600 hover:underline">(скачать)</a></span>
+          <span>{t('servicesPages.accreditation.contacts.document1')} <a href="https://nrchd.kz/files/%D0%BD%D0%BE%D0%B2%D0%BE%D0%B5 2023/%D0%BF%D0%B5%D1%80%D0%B5%D1%87%D0%B5%D0%BD%D1%8C %D0%BD%D0%B5%D0%BE%D0%B1%D1%85%D0%BE%D0%B4%D0%B8%D0%BC%D1%8B%D1%85 %D0%B4%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%BE%D0%B2 %D0%B4%D0%BB%D1%8F %D0%BC%D0%B5%D0%B4%D0%B8%D1%86%D0%B8%D0%BD%D1%81%D0%BA%D0%B8%D1%85 %D0%BE%D1%80%D0%B3%D0%B0%D0%BD%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8 %D0%B4%D0%BB%D1%8F %D0%BF%D1%80%D0%B5%D0%B4%D0%BE%D1%81%D1%82%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F %D1%82%D0%BE%D1%87%D0%BA%D0%B8 %D0%B4%D0%BE%D1%81%D1%82%D1%83%D0%BF%D0%B0 %D0%BA %D0%98%D0%A1 %D0%9C%D0%97 %D0%A0%D0%9A %C2%AB%D0%A1%D0%A3%D0%9A%D0%9C%D0%A3%C2%BB.docx" className="text-blue-600 hover:underline">({t('servicesPages.commonElements.downloadForm')})</a></span>
         </li>
         <li className="flex items-start">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <span>образец заявки на пользователя ИС МЗ РК <a href="https://nrchd.kz/files/%D0%BD%D0%BE%D0%B2%D0%BE%D0%B5 2023/%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%B5%D1%86 %D0%B7%D0%B0%D1%8F%D0%B2%D0%BA%D0%B8 %D0%BD%D0%B0 %D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F %D0%98%D0%A1 %D0%9C%D0%97 %D0%A0%D0%9A.docx" className="text-blue-600 hover:underline">(скачать)</a></span>
+          <span>{t('servicesPages.accreditation.contacts.document2')} <a href="https://nrchd.kz/files/%D0%BD%D0%BE%D0%B2%D0%BE%D0%B5 2023/%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%B5%D1%86 %D0%B7%D0%B0%D1%8F%D0%B2%D0%BA%D0%B8 %D0%BD%D0%B0 %D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F %D0%98%D0%A1 %D0%9C%D0%97 %D0%A0%D0%9A.docx" className="text-blue-600 hover:underline">({t('servicesPages.commonElements.downloadForm')})</a></span>
         </li>
         <li className="flex items-start">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <span>образец обязательства о неразглашении <a href="https://nrchd.kz/files/%D0%BD%D0%BE%D0%B2%D0%BE%D0%B5 2023/%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%B5%D1%86 %D0%BE%D0%B1%D1%8A%D1%8F%D0%B7%D0%B0%D1%82%D0%B5%D0%BB%D1%8C%D1%81%D1%82%D0%B2%D0%B0 %D0%BE %D0%BD%D0%B5%D1%80%D0%B0%D0%B7%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B8.docx" className="text-blue-600 hover:underline">(скачать)</a></span>
+          <span>{t('servicesPages.accreditation.contacts.document3')} <a href="https://nrchd.kz/files/%D0%BD%D0%BE%D0%B2%D0%BE%D0%B5 2023/%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%B5%D1%86 %D0%BE%D0%B1%D1%8A%D1%8F%D0%B7%D0%B0%D1%82%D0%B5%D0%BB%D1%8C%D1%81%D1%82%D0%B2%D0%B0 %D0%BE %D0%BD%D0%B5%D1%80%D0%B0%D0%B7%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B8.docx" className="text-blue-600 hover:underline">({t('servicesPages.commonElements.downloadForm')})</a></span>
         </li>
       </ul>
     </div>
@@ -229,8 +229,11 @@ export default function Accreditation() {
   );
 }
 
-Accreditation.layout = (page) => <ServicesPageLayout 
-  title="Аккредитация медицинских организаций" 
-  img="service-accreditation" 
-  bgColor="bg-orange-300"
->{page}</ServicesPageLayout>;
+Accreditation.layout = (page) => {
+  const tLocal = (key, fallback = '') => translationService.t(key, fallback);
+  return <ServicesPageLayout 
+    title={tLocal('servicesPages.accreditation.layoutTitle')} 
+    img="service-accreditation" 
+    bgColor="bg-orange-300"
+  >{page}</ServicesPageLayout>;
+};

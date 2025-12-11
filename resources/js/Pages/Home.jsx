@@ -7,8 +7,432 @@ import Services from '@/Components/Services';
 import BannerCatalog from '@/Components/BannerCatalog';
 import Sponsors from '@/Components/Sponsors';
 import Footer from '@/Components/Footer';
-import ChartHead from '@/Components/ChartHead';
 import translationService from '@/services/TranslationService';
+import HealthAccountsDashboard from '@/Pages/Direction/HealthAccounts/HealthAccountsDashboard';
+import HealthAccountsRegions from '@/Pages/Direction/HealthAccounts/HealthAccountsRegions';
+import SwitchableChart from '@/Components/SwitchableChart';
+import {
+    MacroIndicatorsChart,
+    CurrentExpensesFSChart,
+    CurrentExpensesHCChart,
+    CurrentExpensesHFChart,
+    CurrentExpensesHPChart,
+    GovernmentExpensesTotalChart,
+    GovernmentExpensesPercentChart,
+    GovernmentExpensesHCChart,
+    GovernmentExpensesHPChart,
+} from '@/Components/HealthAccountsCharts';
+
+// Компонент для графиков на главной странице (вынесен за пределы Home, чтобы состояние не сбрасывалось)
+const HomeCharts = () => {
+    const t = (key, fallback = '') => {
+        return translationService.t(key, fallback);
+    };
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedChart, setSelectedChart] = useState('medicalStatistics'); // По умолчанию медицинская статистика
+
+    // Структура с категориями графиков
+    const chartCategories = [
+        {
+            id: 'medicalStatistics',
+            name: t('home.reports.categories.medicalStatistics', 'Медицинская статистика'),
+            reports: [
+                { 
+                    id: 'medicalStatistics', 
+                    name: t('home.reports.medicalStatistics', 'Медицинская статистика'),
+                    type: 'report'
+                }
+            ]
+        },
+        {
+            id: 'healthAccounts',
+            name: t('home.reports.categories.healthAccounts', 'Национальные счета здравоохранения'),
+            reports: [
+                { 
+                    id: 'dashboard', 
+                    name: t('home.reports.dashboard', 'Дашборд с ключевыми финансовыми показателями'),
+                    type: 'report'
+                },
+                { 
+                    id: 'macro', 
+                    name: t('home.reports.macro', 'Макро показатели РК 2010-2022'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'currentFS', 
+                    name: t('home.reports.currentFS', 'Текущие расходы на здравоохранение (FS)'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'currentHC', 
+                    name: t('home.reports.currentHC', 'Текущие расходы на здравоохранение (HC)'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'currentHF', 
+                    name: t('home.reports.currentHF', 'Текущие расходы на здравоохранение (HF)'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'currentHP', 
+                    name: t('home.reports.currentHP', 'Текущие расходы на здравоохранение (HP)'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'govTotal', 
+                    name: t('home.reports.govTotal', 'Государственные расходы - Итоги'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'govPercent', 
+                    name: t('home.reports.govPercent', 'Государственные расходы - Процент от ТРЗ'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'govHC', 
+                    name: t('home.reports.govHC', 'Государственные расходы HC'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'govHP', 
+                    name: t('home.reports.govHP', 'Государственные расходы HP'),
+                    type: 'chart'
+                },
+                // Региональные графики - Расходы на здравоохранение по регионам
+                { 
+                    id: 'regionExpenses', 
+                    name: t('home.reports.regionExpenses', 'Расходы на здравоохранение по регионам'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'regionFunctions', 
+                    name: t('home.reports.regionFunctions', 'Расходы на здравоохранение по функциям'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'regionPerCapita', 
+                    name: t('home.reports.regionPerCapita', 'Расходы на здравоохранение на душу населения'),
+                    type: 'chart'
+                },
+                // Региональные графики - Распределение по мед.помощи
+                { 
+                    id: 'regionStationary', 
+                    name: t('home.reports.regionStationary', 'Расходы на стационар по регионам'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'regionPrimary', 
+                    name: t('home.reports.regionPrimary', 'Расходы на АПП по регионам'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'regionPharma', 
+                    name: t('home.reports.regionPharma', 'Расходы на фармпрепараты по регионам'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'regionRehab', 
+                    name: t('home.reports.regionRehab', 'Расходы на реабилитацию по регионам'),
+                    type: 'chart'
+                },
+                // Региональные графики - Расходы по виду финансирования
+                { 
+                    id: 'regionShare', 
+                    name: t('home.reports.regionShare', 'Доли мед.услуг от ТРЗ по регионам'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'regionFinancingBudget', 
+                    name: t('home.reports.regionFinancingBudget', 'Расходы по виду финансирования (Бюджет) по регионам'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'regionFinancingDMS', 
+                    name: t('home.reports.regionFinancingDMS', 'Расходы по виду финансирования (ДМС) по регионам'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'regionFinancingPocket', 
+                    name: t('home.reports.regionFinancingPocket', 'Расходы по виду финансирования (Карманные) по регионам'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'regionFinancingOSMS', 
+                    name: t('home.reports.regionFinancingOSMS', 'Расходы по виду финансирования (ОСМС) по регионам'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'regionFinancingEnterprise', 
+                    name: t('home.reports.regionFinancingEnterprise', 'Расходы по виду финансирования (Предприятия) по регионам'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'regionFinancingService', 
+                    name: t('home.reports.regionFinancingService', 'Расходы по виду финансирования по мед.услугам по регионам'),
+                    type: 'chart'
+                },
+                // Региональные графики - Доли расходов гос/част
+                { 
+                    id: 'regionStateShareStationary', 
+                    name: t('home.reports.regionStateShareStationary', 'Доли расходов на стационар (гос/част) по регионам'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'regionStateSharePrimary', 
+                    name: t('home.reports.regionStateSharePrimary', 'Доли расходов на АПП (гос/част) по регионам'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'regionStateSharePharma', 
+                    name: t('home.reports.regionStateSharePharma', 'Доли расходов на фармпрепараты (гос/част) по регионам'),
+                    type: 'chart'
+                },
+                { 
+                    id: 'regionStateShareRehab', 
+                    name: t('home.reports.regionStateShareRehab', 'Доли расходов на реабилитацию (гос/част) по регионам'),
+                    type: 'chart'
+                },
+                // Региональные графики - Население
+                { 
+                    id: 'regionPopulation', 
+                    name: t('home.reports.regionPopulation', 'Расходы на 1 жителя по регионам'),
+                    type: 'chart'
+                }
+            ]
+        }
+    ];
+
+    // Список всех доступных графиков (для поиска)
+    const availableReports = chartCategories.flatMap(category => category.reports);
+
+        // Фильтрация категорий и отчетов по поисковому запросу
+        const filteredCategories = chartCategories.map(category => ({
+            ...category,
+            reports: category.reports.filter(report =>
+                report.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+        })).filter(category => category.reports.length > 0);
+        
+        const filteredReports = availableReports.filter(report =>
+            report.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+        // Обработчик клика по графику для открытия модального окна
+        const handleChartClick = () => {
+            setIsModalOpen(true);
+        };
+
+        // Закрытие модального окна
+        const closeModal = () => {
+            setIsModalOpen(false);
+            setSearchTerm('');
+        };
+
+        // Выбор отчета из списка
+        const selectReport = (reportId) => {
+            setSelectedChart(reportId);
+            closeModal();
+        };
+
+        // Рендер графика/отчета
+        const renderChart = (chartId) => {
+            switch (chartId) {
+                case 'macro':
+                    return (
+                        <div className="h-80">
+                            <MacroIndicatorsChart t={t} />
+                        </div>
+                    );
+                case 'currentFS':
+                    return (
+                        <div className="h-80">
+                            <CurrentExpensesFSChart t={t} />
+                        </div>
+                    );
+                case 'currentHC':
+                    return (
+                        <div className="h-80">
+                            <CurrentExpensesHCChart t={t} />
+                        </div>
+                    );
+                case 'currentHF':
+                    return (
+                        <div className="h-80">
+                            <CurrentExpensesHFChart t={t} />
+                        </div>
+                    );
+                case 'currentHP':
+                    return (
+                        <div className="h-80">
+                            <CurrentExpensesHPChart t={t} />
+                        </div>
+                    );
+                case 'govTotal':
+                    return (
+                        <div className="h-80">
+                            <GovernmentExpensesTotalChart t={t} />
+                        </div>
+                    );
+                case 'govPercent':
+                    return (
+                        <div className="h-80">
+                            <GovernmentExpensesPercentChart t={t} />
+                        </div>
+                    );
+                case 'govHC':
+                    return (
+                        <div className="h-80">
+                            <GovernmentExpensesHCChart t={t} />
+                        </div>
+                    );
+                case 'govHP':
+                    return (
+                        <div className="h-80">
+                            <GovernmentExpensesHPChart t={t} />
+                        </div>
+                    );
+                case 'dashboard':
+                    return <HealthAccountsDashboard t={t} />;
+                case 'medicalStatistics':
+                    return <SwitchableChart t={t} />;
+                // Региональные графики
+                case 'regionExpenses':
+                case 'regionFunctions':
+                case 'regionPerCapita':
+                case 'regionStationary':
+                case 'regionPrimary':
+                case 'regionPharma':
+                case 'regionRehab':
+                case 'regionShare':
+                case 'regionFinancingBudget':
+                case 'regionFinancingDMS':
+                case 'regionFinancingPocket':
+                case 'regionFinancingOSMS':
+                case 'regionFinancingEnterprise':
+                case 'regionFinancingService':
+                case 'regionStateShareStationary':
+                case 'regionStateSharePrimary':
+                case 'regionStateSharePharma':
+                case 'regionStateShareRehab':
+                case 'regionPopulation':
+                    return <HealthAccountsRegions t={t} chartId={chartId} />;
+                default:
+                    return <SwitchableChart t={t} />;
+            }
+        };
+
+        return (
+            <section className="text-gray-600 body-font py-16 bg-gray-50">
+                <div className="container mx-auto px-5">
+                    <h2 className="text-3xl font-bold mb-12 text-gray-800">
+                        {t('home.statistics.title', 'Статистика и аналитика')}
+                    </h2>
+                    
+                    {/* Один график */}
+                    <div className="w-full">
+                        <div 
+                            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+                            onClick={handleChartClick}
+                        >
+                            {renderChart(selectedChart)}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Модальное окно выбора отчетов */}
+                {isModalOpen && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
+                        <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+                            {/* Заголовок и поиск */}
+                            <div className="p-4 border-b">
+                                <div className="flex justify-between items-center mb-3">
+                                    <h2 className="text-xl font-semibold text-gray-800">
+                                        {t('home.reports.modal.title', 'Выбор статистических данных')}
+                                    </h2>
+                                    <button 
+                                        onClick={closeModal}
+                                        className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                                    >
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        placeholder={t('home.reports.modal.search', 'Поиск графиков и отчетов...')}
+                                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                    <svg className="w-5 h-5 text-gray-400 absolute right-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            {/* Список отчетов с категориями */}
+                            <div className="overflow-y-auto flex-grow p-4">
+                                {filteredCategories.length > 0 ? (
+                                    <div className="space-y-4">
+                                        {filteredCategories.map((category) => (
+                                            <div key={category.id} className="border border-gray-200 rounded-lg overflow-hidden">
+                                                <div className="bg-gray-100 px-4 py-2 border-b border-gray-200">
+                                                    <h3 className="font-semibold text-gray-800">{category.name}</h3>
+                                                </div>
+                                                <ul className="divide-y divide-gray-100">
+                                                    {category.reports.map((report) => {
+                                                        const isSelected = selectedChart === report.id;
+                                                        return (
+                                                            <li key={report.id} className="py-2">
+                                                                <button
+                                                                    className={`w-full text-left px-6 py-2 rounded-md transition ${
+                                                                        isSelected
+                                                                            ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
+                                                                            : 'hover:bg-gray-50'
+                                                                    }`}
+                                                                    onClick={() => selectReport(report.id)}
+                                                                >
+                                                                    <span className="font-medium text-sm">{report.name}</span>
+                                                                </button>
+                                                            </li>
+                                                        );
+                                                    })}
+                                                </ul>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-8 text-gray-500">
+                                        {t('home.reports.modal.noResults', 'Нет результатов по запросу')} "{searchTerm}"
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Кнопки внизу */}
+                            <div className="p-4 border-t bg-gray-50 flex justify-end">
+                                <button
+                                    onClick={closeModal}
+                                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 mr-2 hover:bg-gray-100 transition"
+                                >
+                                    {t('home.reports.modal.cancel', 'Отмена')}
+                                </button>
+                                <button
+                                    onClick={closeModal}
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                                >
+                                    {t('home.reports.modal.apply', 'Применить')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </section>
+        );
+    };
 
 export default function Home() {
     // Используем новый сервис переводов
@@ -77,41 +501,6 @@ export default function Home() {
             image: "/img/HeroImg/home-hero.png"
         }
     ];
-    
-    // Создаем специальный компонент для графиков на главной странице
-    const HomeCharts = () => {
-        return (
-            <section className="text-gray-600 body-font py-16 bg-gray-50">
-                <div className="container mx-auto px-5">
-                    <h2 className="text-3xl font-bold mb-12 text-gray-800">{t('home.statistics.title')}</h2>
-                    
-                    <div className="flex flex-wrap -mx-4">
-                        {/* График травм */}
-                        <div className="w-full lg:w-1/2 px-4 mb-12 lg:mb-0">
-                            <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 h-full">
-                                <div className="h-80">
-                                    <ChartHead 
-                                        chartType="injuries" 
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        
-                        {/* График аккредитаций */}
-                        <div className="w-full lg:w-1/2 px-4">
-                            <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 h-full">
-                                <div className="h-80">
-                                    <ChartHead 
-                                        chartType="accreditation" 
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        );
-    };
     
     const handleImageError = () => {
         document

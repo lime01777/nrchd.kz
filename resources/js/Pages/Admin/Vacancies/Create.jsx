@@ -19,7 +19,7 @@ export default function VacancyCreate() {
         title: '',
         slug: '',
         excerpt: '',
-        body: [], // Инициализируем body как массив для соответствия валидатору Laravel
+        body: [], // Инициализируем body как массив для соответствия валидатору на бэкенде
         functional_responsibilities: [], // Функциональные обязанности
         qualification_requirements: [], // Квалификационные требования
         application_procedure: [], // Порядок подачи заявки

@@ -19,8 +19,6 @@ Route::get('/', function () {
     return Inertia::render('Home', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
         'locale' => app()->getLocale(),
         'locales' => config('i18n.locales', ['ru', 'kk', 'en']),
     ]);

@@ -135,10 +135,7 @@ export default function NewsSliderWithMain({
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) => {
         const nextIndex = (prevIndex + 1) % processedImages.length;
-        // Сбрасываем состояние загрузки для нового изображения
-        if (!loadedImages.has(nextIndex) && !errorImages.has(nextIndex)) {
-          setIsLoading(true);
-        }
+        // Не показываем индикатор загрузки - изображения уже предзагружены
         return nextIndex;
       });
     }, interval);

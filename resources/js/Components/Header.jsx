@@ -4,7 +4,7 @@ import DirectionsSubLinks from './DirectionsSubLinks';
 import LanguageSwitcher from './LanguageSwitcher';
 import ImprovedLanguageSwitcher from './ImprovedLanguageSwitcher';
 // Импортируем новый сервис переводов
-import translationService from '../services/TranslationService';
+import translationService from '@/services/TranslationService';
 
 export default function Header({ isBranchPage = false }) {
     const { auth } = usePage().props;
@@ -311,12 +311,13 @@ export default function Header({ isBranchPage = false }) {
             </div>
 
             {/* Бургер-меню (мобильная версия) */}
-            <div className="lg:hidden flex justify-between w-full">
-                <Link href={route('home')} className="flex font-medium items-start text-gray-900 mb-4 md:mb-0">
-                <span className="text-xs uppercase leading-tight" data-translate>{t('header.siteName')}</span>
+            <div className="lg:hidden flex justify-between w-full items-center">
+                <Link href={route('home')} className="flex font-medium items-start text-gray-900 mb-4 md:mb-0 max-w-[calc(100%-60px)]">
+                <span className="text-[10px] xs:text-xs sm:text-sm uppercase leading-tight break-words" data-translate>{t('header.siteName')}</span>
                 </Link>
                 <button onClick={()=> setMenuOpen(!menuOpen)}
-                    className="text-gray-900 focus:outline-none content-center mb-4"
+                    className="text-gray-900 focus:outline-none content-center mb-4 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                    aria-label="Toggle menu"
                     >
                     {menuOpen ? (
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -333,9 +334,10 @@ export default function Header({ isBranchPage = false }) {
             </div>
             {/* Мобильное меню на полный экран */}
             <div className={`fixed inset-0 bg-white text-gray-800 flex flex-col items-start justify-start transform
-                transition-transform duration-300 ${ menuOpen ? "translate-x-0" : "-translate-x-full" } z-50 overflow-y-auto`}>
+                transition-transform duration-300 ${ menuOpen ? "translate-x-0" : "-translate-x-full" } z-50`}>
                 <button onClick={()=> setMenuOpen(false)}
-                    className="absolute top-5 right-5 text-gray-800 hover:text-gray-600"
+                    className="absolute top-5 right-5 text-gray-800 hover:text-gray-600 min-w-[44px] min-h-[44px] flex items-center justify-center z-10"
+                    aria-label="Close menu"
                     >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -343,12 +345,12 @@ export default function Header({ isBranchPage = false }) {
                     </svg>
                 </button>
                 
-                <nav className="flex flex-col items-start w-full px-4 py-12 space-y-6 text-xl overflow-y-auto max-h-[80vh]">
+                <nav className="flex flex-col items-start w-full px-4 py-12 space-y-6 text-lg sm:text-xl overflow-y-auto flex-1 pb-24">
                     {/* Направления - выпадающий список */}
                     <div className="w-full">
                         <button 
                             onClick={() => setDropdownOpen(dropdownOpen === 'directions' ? null : 'directions')}
-                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
+                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2 min-h-[44px] py-2">
                             <span>{t('header.directions')}</span>
                             <svg xmlns="http://www.w3.org/2000/svg" 
                                 className={`h-5 w-5 transition-transform ${dropdownOpen === 'directions' ? 'rotate-180' : ''}`} 
@@ -357,10 +359,10 @@ export default function Header({ isBranchPage = false }) {
                             </svg>
                         </button>
                         {dropdownOpen === 'directions' && (
-                            <div className="w-full mt-3 space-y-1 text-base border-l-2 border-gray-200 pl-4 max-h-[50vh] overflow-y-auto pb-4">
+                            <div className="w-full mt-3 space-y-1 text-sm sm:text-base border-l-2 border-gray-200 pl-4 max-h-[40vh] sm:max-h-[50vh] overflow-y-auto pb-4">
                                 {allDirectionsSubLinks.map((link, index) => (
                                     <div key={index} className="py-2 border-b border-gray-100">
-                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600 min-h-[44px] flex items-center" onClick={() => setMenuOpen(false)}>
                                             {link.title}
                                         </Link>
                                     </div>
@@ -373,7 +375,7 @@ export default function Header({ isBranchPage = false }) {
                     <div className="w-full">
                         <button 
                             onClick={() => setDropdownOpen(dropdownOpen === 'services' ? null : 'services')}
-                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
+                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2 min-h-[44px] py-2">
                             <span>{t('header.services')}</span>
                             <svg xmlns="http://www.w3.org/2000/svg" 
                                 className={`h-5 w-5 transition-transform ${dropdownOpen === 'services' ? 'rotate-180' : ''}`} 
@@ -382,10 +384,10 @@ export default function Header({ isBranchPage = false }) {
                             </svg>
                         </button>
                         {dropdownOpen === 'services' && (
-                            <div className="w-full mt-3 space-y-1 text-base border-l-2 border-gray-200 pl-4 max-h-[50vh] overflow-y-auto pb-4">
+                            <div className="w-full mt-3 space-y-1 text-sm sm:text-base border-l-2 border-gray-200 pl-4 max-h-[40vh] sm:max-h-[50vh] overflow-y-auto pb-4">
                                 {allServicesSubLinks.map((link, index) => (
                                     <div key={index} className="py-2 border-b border-gray-100">
-                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600 min-h-[44px] flex items-center" onClick={() => setMenuOpen(false)}>
                                             {link.title}
                                         </Link>
                                     </div>
@@ -398,7 +400,7 @@ export default function Header({ isBranchPage = false }) {
                     <div className="w-full">
                         <button 
                             onClick={() => setDropdownOpen(dropdownOpen === 'about' ? null : 'about')}
-                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
+                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2 min-h-[44px] py-2">
                             <span>{t('header.aboutCenter')}</span>
                             <svg xmlns="http://www.w3.org/2000/svg" 
                                 className={`h-5 w-5 transition-transform ${dropdownOpen === 'about' ? 'rotate-180' : ''}`} 
@@ -407,10 +409,10 @@ export default function Header({ isBranchPage = false }) {
                             </svg>
                         </button>
                         {dropdownOpen === 'about' && (
-                            <div className="w-full mt-3 space-y-1 text-base border-l-2 border-gray-200 pl-4 max-h-[50vh] overflow-y-auto pb-4">
+                            <div className="w-full mt-3 space-y-1 text-sm sm:text-base border-l-2 border-gray-200 pl-4 max-h-[40vh] sm:max-h-[50vh] overflow-y-auto pb-4">
                                 {allAboutCentreSubLinks.map((link, index) => (
                                     <div key={index} className="py-2 border-b border-gray-100">
-                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600 min-h-[44px] flex items-center" onClick={() => setMenuOpen(false)}>
                                             {link.title}
                                         </Link>
                                     </div>
@@ -423,7 +425,7 @@ export default function Header({ isBranchPage = false }) {
                     <div className="w-full">
                         <button 
                             onClick={() => setDropdownOpen(dropdownOpen === 'branches' ? null : 'branches')}
-                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
+                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2 min-h-[44px] py-2">
                             <span>{t('header.branches')}</span>
                             <svg xmlns="http://www.w3.org/2000/svg" 
                                 className={`h-5 w-5 transition-transform ${dropdownOpen === 'branches' ? 'rotate-180' : ''}`} 
@@ -432,10 +434,10 @@ export default function Header({ isBranchPage = false }) {
                             </svg>
                         </button>
                         {dropdownOpen === 'branches' && (
-                            <div className="w-full mt-3 space-y-1 text-base border-l-2 border-gray-200 pl-4 max-h-[50vh] overflow-y-auto pb-4">
+                            <div className="w-full mt-3 space-y-1 text-sm sm:text-base border-l-2 border-gray-200 pl-4 max-h-[40vh] sm:max-h-[50vh] overflow-y-auto pb-4">
                                 {branchesSubLinks.map((link, index) => (
                                     <div key={index} className="py-2 border-b border-gray-100">
-                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>
+                                        <Link href={route(link.url)} className="block w-full text-gray-700 hover:text-blue-600 min-h-[44px] flex items-center" onClick={() => setMenuOpen(false)}>
                                             {link.title}
                                         </Link>
                                     </div>
@@ -451,7 +453,7 @@ export default function Header({ isBranchPage = false }) {
                                 setMenuOpen(false);
                                 window.location.href = route('news.index');
                             }}
-                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2">
+                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2 min-h-[44px]">
                             <span>{t('header.news')}</span>
                         </button>
                     </div>
@@ -461,7 +463,7 @@ export default function Header({ isBranchPage = false }) {
                         <Link 
                             href={route('medical.tourism')}
                             onClick={() => setMenuOpen(false)}
-                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2 px-4 py-2 border border-gray-300 rounded-md bg-transparent hover:bg-gray-50/50 transition-all duration-200"
+                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2 px-4 py-3 border border-gray-300 rounded-md bg-transparent hover:bg-gray-50/50 transition-all duration-200 min-h-[44px]"
                             style={{
                                 animation: 'bgBlink 2s ease-in-out infinite'
                             }}
@@ -471,42 +473,43 @@ export default function Header({ isBranchPage = false }) {
                     </div>
                 </nav>
                 
-                {/* Языки и админ-панель */}
-                <div className="flex items-center space-x-2 ml-4">
-                    {/* Улучшенный переключатель языков для мобильной версии */}
-                    <ImprovedLanguageSwitcher />
+                {/* Языки и админ-панель - закреплены внизу */}
+                <div className="sticky bottom-0 bg-white border-t border-gray-200 px-4 py-3 flex flex-wrap items-center justify-between gap-2 w-full z-10">
+                    <div className="flex items-center space-x-2 flex-1 min-w-0">
+                        {/* Улучшенный переключатель языков для мобильной версии - открывается вверх */}
+                        <ImprovedLanguageSwitcher openUpwards={true} />
                         
                         {/* Кнопка версии для слабовидящих (мобильная) */}
                         <button 
-                            className={`px-2 py-1 rounded text-sm font-medium border ${accessibilityMode ? 'bg-blue-600 text-white border-blue-700' : 'bg-white text-blue-600 border-blue-500'}`}
+                            className={`px-3 py-2 rounded text-sm font-medium border min-w-[44px] min-h-[44px] flex items-center justify-center ${accessibilityMode ? 'bg-blue-600 text-white border-blue-700' : 'bg-white text-blue-600 border-blue-500'}`}
                             onClick={toggleAccessibilityMode}
                             title={t('header.accessibilityMode')}
+                            aria-label={t('header.accessibilityMode')}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
                         </button>
                     </div>
                     
-                    {/* Кнопка очистки кэша переводов удалена */}
-                    
                     {/* Admin panel link */}
                     {auth?.user && (
                         <Link
                             href={route('admin.dashboard')}
-                            className="flex items-center py-1 px-3 ml-2 focus:outline-none text-gray-800 hover:text-blue-600"
+                            className="flex items-center py-2 px-3 focus:outline-none text-gray-800 hover:text-blue-600 min-h-[44px] text-sm sm:text-base"
                             onClick={() => setMenuOpen(false)}
                         >
                             <svg className="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                            {t('header.admin')}
+                            <span className="hidden sm:inline">{t('header.admin')}</span>
                         </Link>
                     )}
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
     );
 }

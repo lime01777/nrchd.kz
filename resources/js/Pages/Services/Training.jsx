@@ -11,27 +11,31 @@ const t = (key, fallback = '') => {
 };
 
 export default function Training() {
+  const tLocal = (key, fallback = '') => {
+    return translationService.t(key, fallback);
+  };
+
   return (
     <>
-    <Head title={t('servicesPages.training.title')} />
+    <Head title={tLocal('servicesPages.training.title')} />
     <section className="text-gray-600 body-font pb-8">
       <div className="container px-5 py-12 mx-auto">
         <div className='flex flex-wrap px-12 text-justify mb-4'>
-          <h1 className="text-3xl font-semibold text-gray-900 mb-6 w-full">{t('servicesPages.training.title')}</h1>
+          <h1 className="text-3xl font-semibold text-gray-900 mb-6 w-full">{tLocal('servicesPages.training.title')}</h1>
           <p className="tracking-wide leading-relaxed">
-            РГП на ПХВ «Национальный научный центр развития здравоохранения имени Салидат Каирбековой» Министерства здравоохранения РК (далее - ННЦРЗ) организовывает обучение курсов повышения квалификации и семинаров в сфере здравоохранения Республики Казахстан.
+            {tLocal('servicesPages.training.description')}
           </p>
           <br />
           <p className="tracking-wide leading-relaxed">
-            Количество слушателей для офлайн обучения – не менее 20 человек, а для выездного обучения не менее 30.
+            {tLocal('servicesPages.training.participantsInfo')}
           </p>
           <br />
           <p className="tracking-wide leading-relaxed">
-            Проведение курсов планируется на постоянной основе. График проведения курсов на текущий период представлен в разделе документов ниже.
+            {tLocal('servicesPages.training.scheduleInfo')}
           </p>
           <br />
           <p className="tracking-wide leading-relaxed font-medium">
-            По вопросам участия в мероприятиях обращаться по телефонам:<br />
+            {tLocal('servicesPages.training.contactInfo')}<br />
             8 (7172) 648 950, 648 951 (вн.1106, 1028), +7 (707) 556-98-70, +7 (701) 682-07-31
           </p>
         </div>
@@ -42,7 +46,7 @@ export default function Training() {
             rel="noopener noreferrer"
             className="cursor-pointer text-black inline-flex items-center border-yellow-500 border-[1px] bg-yellow-50 hover:bg-yellow-100
               rounded-xl p-3 transition-all duration-150 ease-in">
-            {t('servicesPages.training.rulesButton')}
+            {tLocal('servicesPages.training.rulesButton')}
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
               <polyline points="15 3 21 3 21 9"></polyline>
@@ -55,24 +59,24 @@ export default function Training() {
 
     <section className="text-gray-600 body-font">
         <div className="container px-5 py-12 mx-auto">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-8">{t('servicesPages.commonElements.faqTitle')}</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-8">{tLocal('servicesPages.training.faqTitle')}</h2>
             <FAQ 
                 items={[
                     {
-                        question: "Как записаться на обучающий цикл?",
-                        answer: "Для получения информации, а также по вопросам организации и проведения обучения необходимо заполнить заявку на нашем сайте или обратиться по указанным контактам: 8 (7172) 648 950, 648 951 (вн.1028, 1151), +7 (707) 556-98-70, +7 (700) 900-13-34. После обработки заявки специалист свяжется с вами для подтверждения участия и предоставления дополнительной информации."
+                        question: tLocal('servicesPages.training.faq.question1'),
+                        answer: tLocal('servicesPages.training.faq.answer1')
                     },
                     {
-                        question: "Какие документы необходимы для участия в обучении?",
-                        answer: "Для участия в обучении вам понадобятся: удостоверение личности, диплом о медицинском образовании (наличие высшего или среднего медицинского образования), копия трудовой книжки."
+                        question: tLocal('servicesPages.training.faq.question2'),
+                        answer: tLocal('servicesPages.training.faq.answer2')
                     },
                     {
-                        question: "Выдается ли свидетельство / сертификат после прохождения обучения?",
-                        answer: "По результатам оказания услуг, успешно завершившим обучение, выдается свидетельство государственного образца о повышении квалификации через портал Е-лицензирование (свидетельство выдаются для специалистов, проходивших обучения по дополнительному образованию). Для специалистов, прошедших обучение по неформальному образованию, выдаются сертификаты установленного государственного образца."
+                        question: tLocal('servicesPages.training.faq.question3'),
+                        answer: tLocal('servicesPages.training.faq.answer3')
                     },
                     {
-                        question: "Можно ли пройти обучение дистанционно?",
-                        answer: "Да, возможно, в случае если в учебной программе предусмотрен формат дистанционного обучения."
+                        question: tLocal('servicesPages.training.faq.question4'),
+                        answer: tLocal('servicesPages.training.faq.answer4')
                     }
                 ]}
             />
@@ -83,7 +87,7 @@ export default function Training() {
         <div className="container px-5 mx-auto">
           <FilesAccord
             folder="Услуги/Организация проведения учебных циклов"
-            title="Организация и проведение учебных циклов по дополнительному и неформальному образованию"
+            title={tLocal('servicesPages.training.documentsTitle')}
             bgColor="bg-yellow-100"
             defaultOpen={true}
           />
@@ -94,4 +98,7 @@ export default function Training() {
   );
 }
 
-Training.layout = page => <ServicesPageLayout title={t('services.training', 'Организация и проведение обучающих циклов по дополнительному и неформальному образованию')} img="headcentre">{page}</ServicesPageLayout>
+Training.layout = page => {
+  const tLocal = (key, fallback = '') => translationService.t(key, fallback);
+  return <ServicesPageLayout title={tLocal('services.training')} img="headcentre">{page}</ServicesPageLayout>;
+}

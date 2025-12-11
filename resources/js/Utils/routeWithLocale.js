@@ -3,7 +3,7 @@ import { route as ziggyRoute } from 'ziggy-js';
 /**
  * Хелпер для генерации URL с учетом параметра locale.
  * 
- * В Laravel маршруты настроены с префиксом {locale} как ЧАСТЬ ПУТИ (segment),
+ * В бэкенде маршруты настроены с префиксом {locale} как ЧАСТЬ ПУТИ (segment),
  * а не query-параметр. Например: /ru/home вместо /home?locale=ru
  * 
  * @param {string} name - Имя маршрута

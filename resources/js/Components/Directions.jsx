@@ -69,7 +69,7 @@ const Directions = () => {
             <div className="flex justify-center mt-4">
                 <button onClick={()=> setShowMore(!showMore)}
                     className="cursor-pointer text-black inline-flex items-center border-gray-900 border-[1px]
-                    rounded-xl p-3 transition-all duration-150 ease-in"
+                    rounded-xl px-4 py-3 sm:px-6 sm:py-3 text-sm sm:text-base transition-all duration-150 ease-in min-h-[44px] min-w-[120px] justify-center"
                     >
                     {showMore ? t('directionsComponent.hide') : t('directionsComponent.showAll')}
                 </button>

@@ -23,11 +23,11 @@ export default function AboutCentre() {
     const departments = organizationalStructureData;
 
     const allNameWatchers = [
-      { name: "Локшин Вячеслав Нотанович", about: "Президент Казахстанской ассоциации репродуктивной медицины. Доктор медицинских наук, профессор, академик Российской академии медико-технических наук, академик Национальной академии наук Казахстана, специальности – лечебное дело, общественное здравоохранение, акушерство и гинекология."},
-      { name: "Султангазиев Тимур Сламжанович", about: "Первый вице-министр здравоохранения Республики Казахстан. Окончил Казахский национальный медицинский университет, специальность «Врач», интернатура по специальности «Общая хирургия», магистратура по специальности «Менеджер системы здравоохранения» в Университете Tulane, США по программе Болашак."},
-      { name: "Бакиров Ильяс Келесович", about: "Директор департамента стратегического развития. Мастер делового администрирования (МВА), врач, организатор здравоохранения высшей категории."},
-      { name: "Идрисова Салтанат Садыровна", about: "Директор TOO \"Viva Consulting\". МВА «Финансовый менеджмент», докторантура «Менеджмент в здравоохранении», специальности - экономист, юрист. Сертификат профессионального бухгалтера Республики Казахстан. Диплом профессионального внутреннего аудитора DipPIA, медиатор-тренер, коуч, Член ассоциации независимых директоров QID."},
-      { name: "Карибеков Темирлан Сибирьевич", about: "Доктор медицинских наук, специальности – лечебное дело, экономика и менеджмент."},
+      { name: t('aboutCentre.supervisoryBoard.member1.name'), about: t('aboutCentre.supervisoryBoard.member1.about')},
+      { name: t('aboutCentre.supervisoryBoard.member2.name'), about: t('aboutCentre.supervisoryBoard.member2.about')},
+      { name: t('aboutCentre.supervisoryBoard.member3.name'), about: t('aboutCentre.supervisoryBoard.member3.about')},
+      { name: t('aboutCentre.supervisoryBoard.member4.name'), about: t('aboutCentre.supervisoryBoard.member4.about')},
+      { name: t('aboutCentre.supervisoryBoard.member5.name'), about: t('aboutCentre.supervisoryBoard.member5.about')},
     ];
 
 
@@ -115,7 +115,7 @@ export default function AboutCentre() {
 
         {/* Остальное руководство */}
         <div className="mt-12">
-          <h3 className="text-2xl font-semibold text-gray-900 mb-8 text-center">Заместители</h3>
+          <h3 className="text-2xl font-semibold text-gray-900 mb-8 text-center">{t('aboutCentre.leadership.deputies')}</h3>
           <div className="flex flex-wrap -m-4">
                       {leadership.filter(leader => !leader.isMain).map((leader, index) => (
               <SimpleLeadershipCard 
@@ -148,7 +148,7 @@ export default function AboutCentre() {
     <section className="text-gray-600 body-font">
       <div className="container px-5 pt-12 mx-auto">
         <div className="flex flex-col text-left w-full">
-          <h1 className="sm:text-2xl text-2xl font-semibold title-font text-gray-900 mb-6">Наблюдательный совет</h1>
+          <h1 className="sm:text-2xl text-2xl font-semibold title-font text-gray-900 mb-6">{t('aboutCentre.supervisoryBoard.title')}</h1>
         </div>
         <div className="flex flex-wrap -m-2">
           {allNameWatchers.map((namewatcher, index) =>(
@@ -162,4 +162,7 @@ export default function AboutCentre() {
   )
 }
 
-AboutCentre.layout = (page) => <LayoutDirection img="headcentre" h1="О центре">{page}</LayoutDirection>
+AboutCentre.layout = (page) => {
+    const t = (key, fallback = '') => translationService.t(key, fallback);
+    return <LayoutDirection img="headcentre" h1={t('aboutCentre.pageTitle', 'О центре')}>{page}</LayoutDirection>;
+}

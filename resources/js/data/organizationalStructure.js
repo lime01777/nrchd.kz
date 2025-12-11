@@ -2,25 +2,31 @@
 // Импортируем полные данные из отдельного файла
 
 import { fullOrganizationalStructureData } from './fullOrganizationalStructure';
+import translationService from '@/services/TranslationService';
 
 export const organizationalStructureData = fullOrganizationalStructureData;
 
-// Данные руководства
+// Функция для получения перевода
+const t = (key, fallback = '') => {
+  return translationService.t(key, fallback);
+};
+
+// Данные руководства с переводами
 export const leadershipData = [
   {
-    name: "Кулкаева Гульнара Утепергеновна",
-    position: "Председатель Правления РГП на ПХВ «Национальный научный центр развития здравоохранения им.Салидат Каирбековой» МЗ РК",
+    name: t('aboutCentre.leadership.main.name'),
+    position: t('aboutCentre.leadership.main.position'),
     photo: "img/leadership/1.jpg",
     contact: {
       email: "g.kulkaeva@nrchd.kz",
       phone: "+7 (7172) 648-951"
     },
-    biography: "Родилась в 1969 году в г. Волгоград, РФ.\n\nОбразование:\n• 1994 г. - Астраханская государственная медицинская академия, специальность «Лечебное дело»\n• 2009 г. - магистратура, Нагойский университет (Япония), специальность «Управление здравоохранением»\n• 2015 г. - магистратура, Алматинская Международная академия бизнеса, специальность «Деловое администрирование»\n\nУченая степень:\nКандидат медицинских наук\n\nТрудовая деятельность:\n• 1996 г. - врач-инфекционист, областная клиническая инфекционная больница, г. Астрахань, РФ\n• 2002-2010 гг. - главный эксперт Управления первичной медико-санитарной помощи Департамента лечебно-профилактической работы Министерства здравоохранения РК\n• 2010-2014 гг. - руководящие должности в управлении здравоохранения г. Астаны и министерстве здравоохранения РК\n• 2014-2015 гг. - директор Департамента организации медицинской помощи Министерства здравоохранения и социального развития РК\n• 2015-2016 гг. - заместитель Председателя Комитета контроля медицинской и фармацевтической деятельности\n• 2016-2017 гг. - заместитель руководителя Управления здравоохранения г. Алматы\n• 2017-2018 гг. - директор Департамента по организации закупа медицинских услуг НАО «Фонд социального медицинского страхования»\n• 2018-2021 гг. - первый заместитель Председателя Правления Национального научного онкологического центра\n• 2021-2023 гг. - председатель Правления Национального научного онкологического центра\n• С мая 2023 г. - Председатель Правления РГП на ПХВ «Национальный научный центр развития здравоохранения имени Салидат Каирбековой»\n\nНаграды:\nПочетная Грамота Президента Республики Казахстан, Почетные Грамоты Министерства здравоохранения РК, медаль «Ерен енбегi үшiн», нагрудные знаки «Денсаулық сақтау ісінің үздігі», «Денсаулық сақтау ісіне қосқан үлесі үшін».",
+    biography: t('aboutCentre.leadership.main.biography'),
     isMain: true
   },
   {
-    name: "Шайхиев Саин Саинович",
-    position: "Заместитель Председателя Правления",
+    name: t('aboutCentre.leadership.deputy1.name'),
+    position: t('aboutCentre.leadership.deputy1.position'),
     photo: "img/leadership/3.jpg",
     contact: {
       email: "s.shaykhiev@nrchd.kz",
@@ -28,8 +34,8 @@ export const leadershipData = [
     }
   },
   {
-    name: "Каржаубаева Шолпан Естемесовна",
-    position: "Заместитель Председателя Правления",
+    name: t('aboutCentre.leadership.deputy2.name'),
+    position: t('aboutCentre.leadership.deputy2.position'),
     photo: "img/leadership/2.jpg",
     contact: {
       email: "s.karzhaubaeva@nrchd.kz",
@@ -37,8 +43,8 @@ export const leadershipData = [
     }
   },
   {
-    name: "Табаров Адлет Берикболович",
-    position: "Заместитель Председателя Правления",
+    name: t('aboutCentre.leadership.deputy3.name'),
+    position: t('aboutCentre.leadership.deputy3.position'),
     photo: "img/leadership/4.jpg",
     contact: {
       email: "a.tabarov@nrchd.kz",
@@ -46,8 +52,8 @@ export const leadershipData = [
     }
   },
   {
-    name: "Топаева Айнур Киргизбаевна",
-    position: "Управляющий директор",
+    name: t('aboutCentre.leadership.director1.name'),
+    position: t('aboutCentre.leadership.director1.position'),
     photo: "img/leadership/5.jpg",
     contact: {
       email: "a.topaeva@nrchd.kz",
@@ -55,8 +61,8 @@ export const leadershipData = [
     }
   },
   {
-    name: "Ботагарина Жанар Сериковна",
-    position: "Управляющий директор",
+    name: t('aboutCentre.leadership.director2.name'),
+    position: t('aboutCentre.leadership.director2.position'),
     photo: "img/leadership/6.jpg",
     contact: {
       email: "z.botagarina@nrchd.kz",

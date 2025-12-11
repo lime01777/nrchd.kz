@@ -1,26 +1,35 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Link } from '@inertiajs/react';
 import NewsSliderWithMain from './NewsSliderWithMain';
 import { isValidVideoUrl } from '../Utils/mediaUtils';
 import translationService from '@/services/TranslationService';
 
-function News_chlank({ date, description, slug, image, images = [], external_url, type }) {
+const News_chlank = React.memo(({ date, description, slug, image, images = [], external_url, type }) => {
   const t = (key, fallback = '') => translationService.t(key, fallback);
-  const rawImages = images && images.length > 0 ? images : (image ? [image] : []);
-  const normalizedImages = rawImages
-    .map((img) => {
-      if (!img) return null;
-      if (typeof img === 'string') {
-        return img;
-      }
-      if (typeof img === 'object') {
-        return img.url || img.path || null;
-      }
-      return null;
-    })
-    .filter(Boolean);
+  
+  // Мемоизируем обработку изображений, чтобы массив не пересоздавался при каждом рендере
+  const imageOnlyImages = useMemo(() => {
+    const rawImages = images && images.length > 0 ? images : (image ? [image] : []);
+    const normalizedImages = rawImages
+      .map((img) => {
+        if (!img) return null;
+        if (typeof img === 'string') {
+          return img;
+        }
+        if (typeof img === 'object') {
+          return img.url || img.path || null;
+        }
+        return null;
+      })
+      .filter(Boolean);
 
-  const imageOnlyImages = normalizedImages.filter((src) => !isValidVideoUrl(src));
+    return normalizedImages.filter((src) => !isValidVideoUrl(src));
+  }, [images, image]);
+
+  // Создаём стабильный ключ для слайдера на основе изображений
+  const sliderKey = useMemo(() => {
+    return imageOnlyImages.join('|');
+  }, [imageOnlyImages]);
   
   // Определяем, является ли это публикацией из СМИ
   const isMediaPublication = type === 'media' && external_url;
@@ -56,6 +65,7 @@ function News_chlank({ date, description, slug, image, images = [], external_url
         <div className="h-40 overflow-hidden rounded-t-lg bg-gray-100">
           {imageOnlyImages.length > 0 ? (
             <NewsSliderWithMain 
+              key={sliderKey}
               images={imageOnlyImages}
               className="h-40"
               height="160px"
@@ -114,6 +124,8 @@ function News_chlank({ date, description, slug, image, images = [], external_url
       {cardContent}
     </div>
   )
-}
+});
+
+News_chlank.displayName = 'News_chlank';
 
 export default News_chlank

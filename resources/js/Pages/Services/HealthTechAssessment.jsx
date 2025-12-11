@@ -10,12 +10,16 @@ const t = (key, fallback = '') => {
 };
 
 
-export default function HealthTechAssessmentComponent() {
+export default function HealthTechAssessment() {
+  const tLocal = (key, fallback = '') => {
+    return translationService.t(key, fallback);
+  };
+
   const timelineItems = [
-    { title: t('servicesPages.commonElements.applicationForm'), value: `10 ${t('servicesPages.commonElements.workingDays')}` },
-    { title: t('servicesPages.healthTechAssessment.fullReport'), value: `${t('servicesPages.commonElements.notMoreThan')} 3 ${t('servicesPages.commonElements.months')}` },
-    { title: t('servicesPages.healthTechAssessment.shortReport'), value: `1-3 ${t('servicesPages.commonElements.months')}` },
-    { title: t('servicesPages.healthTechAssessment.refOverview'), value: `${t('servicesPages.commonElements.notMoreThan')} 1 ${t('servicesPages.commonElements.month')}` }
+    { title: tLocal('servicesPages.healthTechAssessment.timeline.applicationForm'), value: tLocal('servicesPages.healthTechAssessment.timeline.applicationFormTime') },
+    { title: tLocal('servicesPages.healthTechAssessment.timeline.fullReport'), value: tLocal('servicesPages.healthTechAssessment.timeline.fullReportTime') },
+    { title: tLocal('servicesPages.healthTechAssessment.timeline.shortReport'), value: tLocal('servicesPages.healthTechAssessment.timeline.shortReportTime') },
+    { title: tLocal('servicesPages.healthTechAssessment.timeline.refOverview'), value: tLocal('servicesPages.healthTechAssessment.timeline.refOverviewTime') }
   ];
 
   const handleDownloadForm = () => {
@@ -46,30 +50,21 @@ export default function HealthTechAssessmentComponent() {
 
   return (
     <>
-              <Head title={t('servicesPages.healthTechAssessment.title')} />
+              <Head title={tLocal('servicesPages.healthTechAssessment.title')} />
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-2/3 px-4">
           <br />
             <p className="mb-6 text-gray-700 leading-relaxed">
-              Оценка технологий здравоохранения (ОТЗ) - это систематический процесс 
-              анализа клинической эффективности, безопасности и экономической 
-              целесообразности новых или существующих медицинских технологий, 
-              включая лекарственные препараты, медицинские изделия и процедуры.
+              {tLocal('servicesPages.healthTechAssessment.description1')}
             </p>
             
             <p className="mb-6 text-gray-700 leading-relaxed">
-            Согласно Правилам проведения оценки технологий здравоохранения и их применения РГП на ПХВ «Национальный научный центр развития здравоохранения им.Салидат Каирбековой» проводит оценку технологий здравоохранения для одобрения заявляемой технологии здравоохранения к применению, включения заявляемой технологии здравоохранения в перечни для оплаты в рамках ГОБМП в качестве специализированной медицинской помощи/высокотехнологичной медицинской помощи, включения заявляемой технологии здравоохранения в перечни для оплаты в рамках ОСМС в качестве специализированной медицинской помощи.
+              {tLocal('servicesPages.healthTechAssessment.description2')}
             </p>
             
             <p className="mb-6 text-gray-700 leading-relaxed">
-              Результаты оценки представляются в виде детального отчета, содержащего 
-              объективное заключение о целесообразности внедрения и применения оцениваемой 
-              технологии, рекомендации по оптимизации использования и снижению 
-              потенциальных рисков.
-            </p>
-
-            <p className="mb-6 text-gray-700 leading-relaxed">
+              {tLocal('servicesPages.healthTechAssessment.description3')}
             </p>
           </div>
           
@@ -80,11 +75,11 @@ export default function HealthTechAssessmentComponent() {
         
         {/* Блок "Как подать технологию на оценку?" */}
         <div className="mt-12 bg-gray-50 rounded-lg shadow-sm p-6 md:p-8">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-5 text-center">Как подать технологию на оценку?</h2>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-5 text-center">{tLocal('servicesPages.healthTechAssessment.howToSubmit.title')}</h2>
           
           <div className="space-y-4 text-gray-700 leading-relaxed">
             <p>
-              Как инициатор, первым шагом для подачи технологии на оценку является подготовка и подача официального запроса, включающего в себя сопроводительное письмо и заявку на проведение ОТЗ в электронном или бумажном формате Национальному научному центру развития здравоохранения имени Салидат Каирбековой.
+              {tLocal('servicesPages.healthTechAssessment.howToSubmit.paragraph1')}
             </p>
             
             {/* Блок с кнопками для скачивания документов */}
@@ -96,7 +91,7 @@ export default function HealthTechAssessmentComponent() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Скачать форму заявки
+                {tLocal('servicesPages.healthTechAssessment.howToSubmit.downloadForm')}
               </button>
               
               <button 
@@ -106,31 +101,31 @@ export default function HealthTechAssessmentComponent() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Скачать сопроводительное письмо
+                {tLocal('servicesPages.healthTechAssessment.howToSubmit.downloadLetter')}
               </button>
             </div>
             
             <p>
-              Исполнители ОТЗ затем проверят предоставленные документы и, если необходимо, запросят дополнительные материалы в течение 10 рабочих дней. После этого процесса происходит приоритизация, где выбираются наиболее актуальные технологии для оценки.
+              {tLocal('servicesPages.healthTechAssessment.howToSubmit.paragraph2')}
             </p>
             
             <p>
-              Технологии, не вошедшие в список приоритетных, могут быть рассмотрены на договорной основе исполнителями ОТЗ.
+              {tLocal('servicesPages.healthTechAssessment.howToSubmit.paragraph3')}
             </p>
             
             <div className="my-6 bg-white rounded-lg p-5 border border-blue-100">
-              <h3 className="text-lg font-medium text-black mb-3">Этапы рассмотрения после проведения оценки:</h3>
+              <h3 className="text-lg font-medium text-black mb-3">{tLocal('servicesPages.healthTechAssessment.howToSubmit.stagesTitle')}</h3>
               <ol className="list-decimal pl-5 space-y-2">
-                <li>Результаты передаются на рассмотрение Комитета</li>
-                <li>Комитет принимает решение о передаче отчета на рассмотрение Объединенной комиссии по качеству медицинских услуг (ОКК) или отклоняет технологию с указанием причин</li>
-                <li>Заявитель может предоставить дополнительные данные на основе замечаний Комитета для пересмотра решения</li>
-                <li>ОКК принимает решение о дальнейших шагах по технологии</li>
-                <li>Если заявка отклонена, она может быть рассмотрена повторно через год при предоставлении новых данных</li>
+                <li>{tLocal('servicesPages.healthTechAssessment.howToSubmit.stage1')}</li>
+                <li>{tLocal('servicesPages.healthTechAssessment.howToSubmit.stage2')}</li>
+                <li>{tLocal('servicesPages.healthTechAssessment.howToSubmit.stage3')}</li>
+                <li>{tLocal('servicesPages.healthTechAssessment.howToSubmit.stage4')}</li>
+                <li>{tLocal('servicesPages.healthTechAssessment.howToSubmit.stage5')}</li>
               </ol>
             </div>
             
             <p>
-              В конечном итоге, решение о финансировании технологии принимает Бюджетная Комиссия, основываясь на доступных средствах и правилах формирования тарифов на медицинские услуги.
+              {tLocal('servicesPages.healthTechAssessment.howToSubmit.paragraph4')}
             </p>
           </div>
         </div>
@@ -139,4 +134,7 @@ export default function HealthTechAssessmentComponent() {
   );
 }
 
-HealthTechAssessment.layout = (page) => <ServicesPageLayout title={t('services.health_tech_assessment', 'Оценка технологий здравоохранения')} img="service-hta">{page}</ServicesPageLayout>;
+HealthTechAssessment.layout = (page) => {
+  const tLocal = (key, fallback = '') => translationService.t(key, fallback);
+  return <ServicesPageLayout title={tLocal('services.healthTechAssessment')} img="service-hta">{page}</ServicesPageLayout>;
+};

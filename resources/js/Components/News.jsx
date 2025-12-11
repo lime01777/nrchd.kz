@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import News_chlank from './News_chlank';
 import { Link } from '@inertiajs/react';
 import Slider from 'react-slick';
@@ -41,6 +41,14 @@ function News() {
       });
   }, []);
 
+  // Мемоизируем обработанные новости, чтобы массивы изображений не пересоздавались
+  const processedNews = useMemo(() => {
+    return latestNews.slice(0, 10).map(news => ({
+      ...news,
+      processedImages: news.images || [news.image]
+    }));
+  }, [latestNews]);
+
   return (
     <section className="text-gray-600 body-font">
         <div className="container px-5 py-24 mx-auto">
@@ -62,7 +70,7 @@ function News() {
                     <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
                     <p className="mt-2">{t('newsComponent.loading')}</p>
                 </div>
-            ) : latestNews.length > 0 ? (
+            ) : processedNews.length > 0 ? (
                 <div className="relative news-slider-container">
                     <Slider
                         dots={true}
@@ -96,14 +104,14 @@ function News() {
                         adaptiveHeight={false}
                         vertical={false}
                     >
-                        {latestNews.slice(0, 10).map((news, index) => (
+                        {processedNews.map((news, index) => (
                             <div key={news.id || index} className="px-2">
                                 <News_chlank
                                     date={news.date || new Date(news.publish_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}
                                     description={news.title}
                                     slug={news.slug}
                                     image={news.image}
-                                    images={news.images || [news.image]}
+                                    images={news.processedImages}
                                     external_url={news.external_url}
                                     type={news.type}
                                 />

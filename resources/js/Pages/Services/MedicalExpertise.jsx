@@ -11,36 +11,32 @@ const t = (key, fallback = '') => {
 
 
 export default function MedicalExpertise() {
+  const tLocal = (key, fallback = '') => {
+    return translationService.t(key, fallback);
+  };
+
   const timelineItems = [
-    { title: t('servicesPages.accreditation.applicationRegistration'), value: `1 ${t('servicesPages.commonElements.workingDay')}` },
-    { title: "Срок проведения экспертизы", value: `15 ${t('servicesPages.commonElements.workingDays')}` },
-    { title: "Предоставление экспертного заключения", value: `3 ${t('servicesPages.commonElements.workingDays')}` }
+    { title: tLocal('servicesPages.medicalExpertise.timeline.applicationRegistration'), value: tLocal('servicesPages.medicalExpertise.timeline.applicationRegistrationTime') },
+    { title: tLocal('servicesPages.medicalExpertise.timeline.expertisePeriod'), value: tLocal('servicesPages.medicalExpertise.timeline.expertisePeriodTime') },
+    { title: tLocal('servicesPages.medicalExpertise.timeline.conclusionProvision'), value: tLocal('servicesPages.medicalExpertise.timeline.conclusionProvisionTime') }
   ];
 
   return (
     <>
-              <Head title={t('servicesPages.medicalExpertise.title')} />
+              <Head title={tLocal('servicesPages.medicalExpertise.title')} />
       <div className="container mx-auto py-10">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full lg:w-2/3 px-4">
             <p className="mb-6 text-gray-700 leading-relaxed">
-              Научно-медицинская экспертиза проводится высококвалифицированными 
-              специалистами центра с целью оценки научной обоснованности и 
-              клинической эффективности медицинских технологий, методов и практик.
+              {tLocal('servicesPages.medicalExpertise.description1')}
             </p>
             
             <p className="mb-6 text-gray-700 leading-relaxed">
-              Процесс экспертизы включает анализ предоставленных научных данных, 
-              результатов исследований, методологии и соответствия современным 
-              научным стандартам. При необходимости может быть проведена консультация 
-              с профильными экспертами.
+              {tLocal('servicesPages.medicalExpertise.description2')}
             </p>
             
             <p className="mb-6 text-gray-700 leading-relaxed">
-              По результатам экспертизы заказчику выдается официальное заключение, 
-              содержащее аргументированную оценку, выводы и рекомендации для 
-              дальнейшего применения или совершенствования рассматриваемой 
-              медицинской технологии или метода.
+              {tLocal('servicesPages.medicalExpertise.description3')}
             </p>
           </div>
           
@@ -53,4 +49,7 @@ export default function MedicalExpertise() {
   );
 }
 
-MedicalExpertise.layout = (page) => <ServicesPageLayout title={t('services.medical_expertise', 'Научно-медицинская экспертиза')} img="service-expertise" bgColor='bg-gray-200'>{page}</ServicesPageLayout>;
+MedicalExpertise.layout = (page) => {
+  const tLocal = (key, fallback = '') => translationService.t(key, fallback);
+  return <ServicesPageLayout title={tLocal('services.medicalExpertise')} img="service-expertise" bgColor='bg-gray-200'>{page}</ServicesPageLayout>;
+};

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -221,11 +221,79 @@ const perCapitaExpenses = [
     { region: 'СКО', value: 3_000_000 },
 ];
 
-const HealthAccountsRegions = ({ t }) => {
-    const [activeTab, setActiveTab] = useState('expenses');
-    const [financingTab, setFinancingTab] = useState('budget');
-    const [stateShareTab, setStateShareTab] = useState('stationaryShare');
+const HealthAccountsRegions = ({ t, chartId }) => {
+    // Определяем активную вкладку и параметры на основе chartId
+    const getInitialState = () => {
+        if (!chartId) return { tab: 'expenses', financingTab: 'budget', stateShareTab: 'stationaryShare' };
+        
+        // Вкладка "Расходы на здравоохранение по регионам"
+        if (chartId === 'regionExpenses' || chartId === 'regionFunctions' || chartId === 'regionPerCapita') {
+            return { tab: 'expenses', financingTab: 'budget', stateShareTab: 'stationaryShare' };
+        }
+        
+        // Вкладка "Распределение по мед.помощи"
+        if (chartId === 'regionStationary' || chartId === 'regionPrimary' || chartId === 'regionPharma' || chartId === 'regionRehab') {
+            return { tab: 'placeholder2', financingTab: 'budget', stateShareTab: 'stationaryShare' };
+        }
+        
+        // Вкладка "Расходы по виду финансирования"
+        if (chartId === 'regionShare') {
+            return { tab: 'placeholder3', financingTab: 'budget', stateShareTab: 'stationaryShare' };
+        }
+        if (chartId === 'regionFinancingBudget') {
+            return { tab: 'placeholder3', financingTab: 'budget', stateShareTab: 'stationaryShare' };
+        }
+        if (chartId === 'regionFinancingDMS') {
+            return { tab: 'placeholder3', financingTab: 'dms', stateShareTab: 'stationaryShare' };
+        }
+        if (chartId === 'regionFinancingPocket') {
+            return { tab: 'placeholder3', financingTab: 'pocket', stateShareTab: 'stationaryShare' };
+        }
+        if (chartId === 'regionFinancingOSMS') {
+            return { tab: 'placeholder3', financingTab: 'osms', stateShareTab: 'stationaryShare' };
+        }
+        if (chartId === 'regionFinancingEnterprise') {
+            return { tab: 'placeholder3', financingTab: 'enterprise', stateShareTab: 'stationaryShare' };
+        }
+        if (chartId === 'regionFinancingService') {
+            return { tab: 'placeholder3', financingTab: 'budget', stateShareTab: 'stationaryShare' };
+        }
+        
+        // Вкладка "Доли расходов гос/част"
+        if (chartId === 'regionStateShareStationary') {
+            return { tab: 'placeholder4', financingTab: 'budget', stateShareTab: 'stationaryShare' };
+        }
+        if (chartId === 'regionStateSharePrimary') {
+            return { tab: 'placeholder4', financingTab: 'budget', stateShareTab: 'primaryShare' };
+        }
+        if (chartId === 'regionStateSharePharma') {
+            return { tab: 'placeholder4', financingTab: 'budget', stateShareTab: 'pharmaShare' };
+        }
+        if (chartId === 'regionStateShareRehab') {
+            return { tab: 'placeholder4', financingTab: 'budget', stateShareTab: 'rehabShare' };
+        }
+        
+        // Вкладка "Население"
+        if (chartId === 'regionPopulation') {
+            return { tab: 'placeholder5', financingTab: 'budget', stateShareTab: 'stationaryShare' };
+        }
+        
+        return { tab: 'expenses', financingTab: 'budget', stateShareTab: 'stationaryShare' };
+    };
+    
+    const initialState = getInitialState();
+    const [activeTab, setActiveTab] = useState(initialState.tab);
+    const [financingTab, setFinancingTab] = useState(initialState.financingTab);
+    const [stateShareTab, setStateShareTab] = useState(initialState.stateShareTab);
     const [populationFilter, setPopulationFilter] = useState('all');
+
+    // Обновляем состояние при изменении chartId
+    useEffect(() => {
+        const newState = getInitialState();
+        setActiveTab(newState.tab);
+        setFinancingTab(newState.financingTab);
+        setStateShareTab(newState.stateShareTab);
+    }, [chartId]);
 
     const barWithTrendData = useMemo(
         () => ({
@@ -1506,6 +1574,312 @@ const HealthAccountsRegions = ({ t }) => {
         },
     ];
 
+    // Функция для рендеринга конкретного графика
+    const renderSpecificChart = () => {
+        if (!chartId) return null;
+
+        // Графики из вкладки "Расходы на здравоохранение по регионам"
+        if (chartId === 'regionExpenses') {
+            return (
+                <div className="bg-white rounded-2xl shadow-sm p-6">
+                    <div className="h-[460px]">
+                        <Bar data={barWithTrendData} options={barWithTrendOptions} />
+                    </div>
+                </div>
+            );
+        }
+        if (chartId === 'regionFunctions') {
+            return (
+                <div className="bg-white rounded-2xl shadow-sm p-6">
+                    <div className="h-[420px]">
+                        <Bar data={functionsStackedData} options={functionsStackedOptions} />
+                    </div>
+                </div>
+            );
+        }
+        if (chartId === 'regionPerCapita') {
+            return (
+                <div className="bg-white rounded-2xl shadow-sm p-6">
+                    <div className="h-[420px]">
+                        <Bar data={perCapitaData} options={perCapitaOptions} />
+                    </div>
+                </div>
+            );
+        }
+
+        // Графики из вкладки "Распределение по мед.помощи"
+        if (chartId === 'regionStationary') {
+            const chart = medicalAidCharts.find(c => c.id === 'stationary');
+            if (chart) {
+                return (
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <h3 className="text-sm font-semibold text-slate-600 mb-4">{chart.title}</h3>
+                        <div className="h-[360px]">
+                            <Bar
+                                data={{
+                                    labels: chart.labels,
+                                    datasets: chart.datasets.map((dataset) => ({
+                                        ...dataset,
+                                        borderRadius: 4,
+                                    })),
+                                }}
+                                options={medicalAidOptions}
+                            />
+                        </div>
+                    </div>
+                );
+            }
+        }
+        if (chartId === 'regionPrimary') {
+            const chart = medicalAidCharts.find(c => c.id === 'primary');
+            if (chart) {
+                return (
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <h3 className="text-sm font-semibold text-slate-600 mb-4">{chart.title}</h3>
+                        <div className="h-[360px]">
+                            <Bar
+                                data={{
+                                    labels: chart.labels,
+                                    datasets: chart.datasets.map((dataset) => ({
+                                        ...dataset,
+                                        borderRadius: 4,
+                                    })),
+                                }}
+                                options={medicalAidOptions}
+                            />
+                        </div>
+                    </div>
+                );
+            }
+        }
+        if (chartId === 'regionPharma') {
+            const chart = medicalAidCharts.find(c => c.id === 'pharma');
+            if (chart) {
+                return (
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <h3 className="text-sm font-semibold text-slate-600 mb-4">{chart.title}</h3>
+                        <div className="h-[360px]">
+                            <Bar
+                                data={{
+                                    labels: chart.labels,
+                                    datasets: chart.datasets.map((dataset) => ({
+                                        ...dataset,
+                                        borderRadius: 4,
+                                    })),
+                                }}
+                                options={medicalAidOptions}
+                            />
+                        </div>
+                    </div>
+                );
+            }
+        }
+        if (chartId === 'regionRehab') {
+            const chart = medicalAidCharts.find(c => c.id === 'rehab');
+            if (chart) {
+                return (
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <h3 className="text-sm font-semibold text-slate-600 mb-4">{chart.title}</h3>
+                        <div className="h-[360px]">
+                            <Bar
+                                data={{
+                                    labels: chart.labels,
+                                    datasets: chart.datasets.map((dataset) => ({
+                                        ...dataset,
+                                        borderRadius: 4,
+                                    })),
+                                }}
+                                options={medicalAidOptions}
+                            />
+                        </div>
+                    </div>
+                );
+            }
+        }
+
+        // Графики из вкладки "Расходы по виду финансирования"
+        if (chartId === 'regionShare') {
+            return (
+                <div className="bg-white rounded-2xl shadow-sm p-6">
+                    <div className="h-[450px]">
+                        <Bar data={shareChartData} options={shareChartOptions} />
+                    </div>
+                </div>
+            );
+        }
+        if (chartId === 'regionFinancingBudget' || chartId === 'regionFinancingDMS' || 
+            chartId === 'regionFinancingPocket' || chartId === 'regionFinancingOSMS' || 
+            chartId === 'regionFinancingEnterprise') {
+            return (
+                <div className="bg-white rounded-2xl shadow-sm p-6">
+                    <div className="h-[360px]">
+                        <Bar data={financingBarData} options={financingBarOptions} />
+                    </div>
+                </div>
+            );
+        }
+        if (chartId === 'regionFinancingService') {
+            return (
+                <div className="bg-white rounded-2xl shadow-sm p-6">
+                    <div className="h-[360px]">
+                        <Bar data={financingServiceData} options={financingServiceOptions} />
+                    </div>
+                </div>
+            );
+        }
+
+        // Графики из вкладки "Доли расходов гос/част"
+        if (chartId === 'regionStateShareStationary') {
+            const chart = stateShareCharts.find(c => c.id === 'stationaryShare');
+            if (chart) {
+                return (
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <h3 className="text-sm font-semibold text-slate-700 mb-4">{chart.title}</h3>
+                        <div className="h-[320px]">
+                            <Bar
+                                data={{
+                                    labels: chart.labels,
+                                    datasets: [
+                                        {
+                                            label: t('directionsPages.healthAccounts.regions.stateShare.stateLabel', 'Государственные'),
+                                            data: chart.stateData,
+                                            backgroundColor: '#2563eb',
+                                            borderRadius: 4,
+                                            stack: 'share',
+                                        },
+                                        {
+                                            label: t('directionsPages.healthAccounts.regions.stateShare.privateLabel', 'Частные'),
+                                            data: chart.stateData.map((value) => 1 - value),
+                                            backgroundColor: '#1d4ed8',
+                                            borderRadius: 4,
+                                            stack: 'share',
+                                        },
+                                    ],
+                                }}
+                                options={stateShareOptions}
+                            />
+                        </div>
+                    </div>
+                );
+            }
+        }
+        if (chartId === 'regionStateSharePrimary') {
+            const chart = stateShareCharts.find(c => c.id === 'primaryShare');
+            if (chart) {
+                return (
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <h3 className="text-sm font-semibold text-slate-700 mb-4">{chart.title}</h3>
+                        <div className="h-[320px]">
+                            <Bar
+                                data={{
+                                    labels: chart.labels,
+                                    datasets: [
+                                        {
+                                            label: t('directionsPages.healthAccounts.regions.stateShare.stateLabel', 'Государственные'),
+                                            data: chart.stateData,
+                                            backgroundColor: '#2563eb',
+                                            borderRadius: 4,
+                                            stack: 'share',
+                                        },
+                                        {
+                                            label: t('directionsPages.healthAccounts.regions.stateShare.privateLabel', 'Частные'),
+                                            data: chart.stateData.map((value) => 1 - value),
+                                            backgroundColor: '#1d4ed8',
+                                            borderRadius: 4,
+                                            stack: 'share',
+                                        },
+                                    ],
+                                }}
+                                options={stateShareOptions}
+                            />
+                        </div>
+                    </div>
+                );
+            }
+        }
+        if (chartId === 'regionStateSharePharma') {
+            const chart = stateShareCharts.find(c => c.id === 'pharmaShare');
+            if (chart) {
+                return (
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <h3 className="text-sm font-semibold text-slate-700 mb-4">{chart.title}</h3>
+                        <div className="h-[320px]">
+                            <Bar
+                                data={{
+                                    labels: chart.labels,
+                                    datasets: [
+                                        {
+                                            label: t('directionsPages.healthAccounts.regions.stateShare.stateLabel', 'Государственные'),
+                                            data: chart.stateData,
+                                            backgroundColor: '#2563eb',
+                                            borderRadius: 4,
+                                            stack: 'share',
+                                        },
+                                        {
+                                            label: t('directionsPages.healthAccounts.regions.stateShare.privateLabel', 'Частные'),
+                                            data: chart.stateData.map((value) => 1 - value),
+                                            backgroundColor: '#1d4ed8',
+                                            borderRadius: 4,
+                                            stack: 'share',
+                                        },
+                                    ],
+                                }}
+                                options={stateShareOptions}
+                            />
+                        </div>
+                    </div>
+                );
+            }
+        }
+        if (chartId === 'regionStateShareRehab') {
+            const chart = stateShareCharts.find(c => c.id === 'rehabShare');
+            if (chart) {
+                return (
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <h3 className="text-sm font-semibold text-slate-700 mb-4">{chart.title}</h3>
+                        <div className="h-[320px]">
+                            <Bar
+                                data={{
+                                    labels: chart.labels,
+                                    datasets: [
+                                        {
+                                            label: t('directionsPages.healthAccounts.regions.stateShare.stateLabel', 'Государственные'),
+                                            data: chart.stateData,
+                                            backgroundColor: '#2563eb',
+                                            borderRadius: 4,
+                                            stack: 'share',
+                                        },
+                                        {
+                                            label: t('directionsPages.healthAccounts.regions.stateShare.privateLabel', 'Частные'),
+                                            data: chart.stateData.map((value) => 1 - value),
+                                            backgroundColor: '#1d4ed8',
+                                            borderRadius: 4,
+                                            stack: 'share',
+                                        },
+                                    ],
+                                }}
+                                options={stateShareOptions}
+                            />
+                        </div>
+                    </div>
+                );
+            }
+        }
+
+        // График из вкладки "Население"
+        if (chartId === 'regionPopulation') {
+            return (
+                <div className="bg-white rounded-2xl shadow-sm p-6">
+                    <div className="h-[480px]">
+                        <Bar data={populationChartData} options={populationChartOptions} />
+                    </div>
+                </div>
+            );
+        }
+
+        return null;
+    };
+
     const renderTabContent = () => {
         const tab = tabs.find((item) => item.id === activeTab);
         if (!tab) {
@@ -1525,6 +1899,15 @@ const HealthAccountsRegions = ({ t }) => {
             </div>
         );
     };
+
+    // Если передан chartId, показываем только конкретный график без вкладок
+    if (chartId) {
+        return (
+            <div className="bg-white rounded-3xl shadow-sm p-6">
+                {renderSpecificChart()}
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white rounded-3xl shadow-sm p-6">

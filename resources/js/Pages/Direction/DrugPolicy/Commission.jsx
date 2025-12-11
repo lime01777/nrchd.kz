@@ -99,7 +99,7 @@ export default function Commission() {
                 {t('directionsPages.drugPolicySubpages.commission.resultsIntro')}
               </p>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
                 <div className="bg-amber-50 p-3 rounded-lg text-center">
                   <div className="text-xl font-bold text-amber-700">24</div>
                   <div className="text-sm text-gray-600">{t('directionsPages.drugPolicySubpages.commission.since2021')}</div>
@@ -114,7 +114,11 @@ export default function Commission() {
                 </div>
                 <div className="bg-amber-50 p-3 rounded-lg text-center">
                   <div className="text-xl font-bold text-amber-700">25</div>
-                  <div className="text-sm text-gray-600">{t('directionsPages.drugPolicySubpages.commission.until2024')}</div>
+                  <div className="text-sm text-gray-600">{t('directionsPages.drugPolicySubpages.commission.year2024')}</div>
+                </div>
+                <div className="bg-amber-50 p-3 rounded-lg text-center">
+                  <div className="text-xl font-bold text-amber-700">30</div>
+                  <div className="text-sm text-gray-600">{t('directionsPages.drugPolicySubpages.commission.until2025')}</div>
                 </div>
               </div>
 

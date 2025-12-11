@@ -229,16 +229,16 @@ export default function Index({ section: sectionProp }) {
                     <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
                         <div className="max-w-3xl">
                             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">
-                                {isMediaSection ? 'СМИ О НАС' : 'НОВОСТИ'}
+                                {isMediaSection ? t('news.hero.mediaAboutUs', 'СМИ О НАС') : t('news.hero.news', 'НОВОСТИ')}
                             </p>
                             <h1 className="mt-4 text-4xl font-extrabold leading-tight text-gray-900 lg:text-5xl">
-                                {section.subtitle || (isMediaSection ? 'Публикации в ведущих СМИ' : 'Актуальные события ННЦРЗ')}
+                                {section.subtitle || (isMediaSection ? t('news.hero.mediaPublications', 'Публикации в ведущих СМИ') : t('news.hero.actualEvents', 'Актуальные события ННЦРЗ'))}
                             </h1>
                             <p className="mt-5 text-lg leading-relaxed text-gray-600">
                                 {section.description ||
                                     (isMediaSection
-                                        ? 'Читайте статьи и интервью о деятельности центра из авторитетных источников.'
-                                        : 'Следите за обновлениями и важными новостями Национального научного центра развития здравоохранения.')}
+                                        ? t('news.hero.mediaDescription', 'Читайте статьи и интервью о деятельности центра из авторитетных источников.')
+                                        : t('news.hero.newsDescription', 'Следите за обновлениями и важными новостями Национального научного центра развития здравоохранения.'))}
                             </p>
 
                             <form
@@ -249,7 +249,7 @@ export default function Index({ section: sectionProp }) {
                                     <div className="flex-1 min-w-0">
                                     <label className="block text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
                                         {isMediaSection
-                                            ? 'Поиск по источнику или заголовку'
+                                            ? t('news.filters.search.mediaLabel', 'Поиск по источнику или заголовку')
                                             : t('news.filters.search.label', 'Поиск по ключевому слову')}
                                     </label>
                                     <input
@@ -258,7 +258,7 @@ export default function Index({ section: sectionProp }) {
                                         onChange={(event) => setData('search', event.target.value)}
                                         placeholder={
                                             isMediaSection
-                                                ? 'Например: Forbes, Kazinform, интервью'
+                                                ? t('news.filters.search.mediaPlaceholder', 'Например: Forbes, Kazinform, интервью')
                                                 : t('news.filters.search.placeholder', 'Например: медицина будущего')
                                         }
                                             className="mt-2 w-full rounded-xl border border-blue-100 px-4 py-3 text-base shadow-sm transition focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
@@ -288,7 +288,7 @@ export default function Index({ section: sectionProp }) {
                             {availableTags.length > 0 && (
                                 <div className="mt-8">
                                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
-                                        {isMediaSection ? 'Упоминания' : 'Теги новостей'}
+                                        {isMediaSection ? t('news.hero.mentions', 'Упоминания') : t('news.hero.newsTags', 'Теги новостей')}
                                     </p>
                                     <div className="mt-3 flex flex-wrap gap-2">
                                         {availableTags.map((tag) => {
@@ -316,7 +316,7 @@ export default function Index({ section: sectionProp }) {
                         {/* Кнопки переключения разделов */}
                         <div className="flex flex-col gap-3 md:items-end">
                             <span className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                Разделы
+                                {t('news.hero.sections', 'Разделы')}
                             </span>
                             <div className="relative flex w-full max-w-xs items-center rounded-full border border-blue-100 bg-white/90 p-1 shadow-inner backdrop-blur">
                                 <span
@@ -333,7 +333,7 @@ export default function Index({ section: sectionProp }) {
                                             : 'text-gray-600 hover:text-blue-600'
                                     }`}
                                 >
-                                    Новости
+                                    {t('news.hero.newsButton', 'Новости')}
                                 </button>
                                 <button
                                     type="button"
@@ -344,7 +344,7 @@ export default function Index({ section: sectionProp }) {
                                             : 'text-gray-600 hover:text-blue-600'
                                     }`}
                                 >
-                                    СМИ о нас
+                                    {t('news.hero.mediaButton', 'СМИ о нас')}
                                 </button>
                             </div>
                         </div>
@@ -367,7 +367,7 @@ export default function Index({ section: sectionProp }) {
                     </h3>
                     <p className="mt-2 text-gray-600">
                         {isMediaSection
-                            ? 'Мы пока не добавили материалы СМИ. Проверьте позже или предложите публикацию.'
+                            ? t('news.empty.mediaDescription', 'Мы пока не добавили материалы СМИ. Проверьте позже или предложите публикацию.')
                             : t(
                                 'news.empty.description',
                                 'Попробуйте изменить поисковый запрос или зайдите позже — мы уже готовим новые публикации.'

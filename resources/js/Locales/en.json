@@ -116,6 +116,50 @@
     },
     "statistics": {
       "title": "Statistics and Analytics"
+    },
+    "reports": {
+      "categories": {
+        "medicalStatistics": "Medical Statistics",
+        "healthAccounts": "National Health Accounts"
+      },
+      "macro": "Macro Indicators of RK 2010-2022",
+      "currentFS": "Current Healthcare Expenditures (FS)",
+      "currentHC": "Current Healthcare Expenditures (HC)",
+      "currentHF": "Current Healthcare Expenditures (HF)",
+      "currentHP": "Current Healthcare Expenditures (HP)",
+      "govTotal": "Government Expenditures - Totals",
+      "govPercent": "Government Expenditures - Percentage of THE",
+      "govHC": "Government Expenditures HC",
+      "govHP": "Government Expenditures HP",
+      "dashboard": "Dashboard with Key Financial Indicators",
+      "regions": "Regional Analytical Dashboard",
+      "medicalStatistics": "Medical Statistics",
+      "regionExpenses": "Healthcare Expenditures by Regions",
+      "regionFunctions": "Healthcare Expenditures by Functions",
+      "regionPerCapita": "Healthcare Expenditures per Capita",
+      "regionStationary": "Inpatient Care Expenditures by Regions",
+      "regionPrimary": "Primary Care Expenditures by Regions",
+      "regionPharma": "Pharmaceutical Expenditures by Regions",
+      "regionRehab": "Rehabilitation Expenditures by Regions",
+      "regionShare": "Medical Services Share of THE by Regions",
+      "regionFinancingBudget": "Expenditures by Financing Type (Budget) by Regions",
+      "regionFinancingDMS": "Expenditures by Financing Type (DMS) by Regions",
+      "regionFinancingPocket": "Expenditures by Financing Type (Out-of-pocket) by Regions",
+      "regionFinancingOSMS": "Expenditures by Financing Type (OSMS) by Regions",
+      "regionFinancingEnterprise": "Expenditures by Financing Type (Enterprises) by Regions",
+      "regionFinancingService": "Expenditures by Financing Type by Medical Services by Regions",
+      "regionStateShareStationary": "State/Private Expenditure Shares for Inpatient Care by Regions",
+      "regionStateSharePrimary": "State/Private Expenditure Shares for Primary Care by Regions",
+      "regionStateSharePharma": "State/Private Expenditure Shares for Pharmaceuticals by Regions",
+      "regionStateShareRehab": "State/Private Expenditure Shares for Rehabilitation by Regions",
+      "regionPopulation": "Expenditures per 1 Resident by Regions",
+      "modal": {
+        "title": "Select Statistical Data",
+        "search": "Search charts and reports...",
+        "noResults": "No results found for query",
+        "cancel": "Cancel",
+        "apply": "Apply"
+      }
     }
   },
   "footer": {
@@ -204,7 +248,43 @@
     "title": "News",
     "latest": "Latest News",
     "readMore": "Read More",
-    "allNews": "All News"
+    "allNews": "All News",
+    "meta": {
+      "title": "News",
+      "description": "Latest news from the National Scientific Center for Healthcare Development."
+    },
+    "hero": {
+      "news": "NEWS",
+      "mediaAboutUs": "MEDIA ABOUT US",
+      "actualEvents": "NSCHD Current Events",
+      "mediaPublications": "Publications in Leading Media",
+      "newsDescription": "Stay updated with the latest news and important updates from the National Scientific Center for Healthcare Development.",
+      "mediaDescription": "Read articles and interviews about the center's activities from authoritative sources.",
+      "sections": "Sections",
+      "newsButton": "News",
+      "mediaButton": "Media about us",
+      "mentions": "Mentions",
+      "newsTags": "News Tags"
+    },
+    "filters": {
+      "search": {
+        "label": "Search by keyword",
+        "placeholder": "For example: medicine of the future",
+        "mediaLabel": "Search by source or title",
+        "mediaPlaceholder": "For example: Forbes, Kazinform, interview",
+        "cta": "Find",
+        "processing": "Searching...",
+        "reset": "Reset"
+      }
+    },
+    "empty": {
+      "title": "No news found",
+      "description": "Try changing your search query or check back later — we are already preparing new publications.",
+      "mediaDescription": "We haven't added media materials yet. Check back later or suggest a publication."
+    },
+    "card": {
+      "read_more": "Read More"
+    }
   },
   "contacts": {
     "pageTitle": "Contact Information",
@@ -310,61 +390,380 @@
     "regulatoryDocuments": "Regulatory Documents",
     "leadership": {
       "title": "Center Leadership",
-      "description": "Our leaders ensure strategic development and effective management of the center, guided by the principles of innovation and quality of medical services."
+      "description": "Our leaders ensure strategic development and effective management of the center, guided by the principles of innovation and quality of medical services.",
+      "deputies": "Deputies",
+      "main": {
+        "name": "Kulkaeva Gulnara Utepergenovna",
+        "position": "Chairman of the Board of RSE on REM \"National Scientific Center for Healthcare Development named after Salidat Kairbekova\" MH RK",
+        "biography": "Born in 1969 in Volgograd, Russian Federation.\n\nEducation:\n• 1994 - Astrakhan State Medical Academy, specialty \"General Medicine\"\n• 2009 - Master's degree, Nagoya University (Japan), specialty \"Healthcare Management\"\n• 2015 - Master's degree, Almaty International Academy of Business, specialty \"Business Administration\"\n\nAcademic degree:\nCandidate of Medical Sciences\n\nWork experience:\n• 1996 - Infectious disease physician, Regional Clinical Infectious Diseases Hospital, Astrakhan, RF\n• 2002-2010 - Chief Expert of the Primary Healthcare Department of the Ministry of Health of the RK\n• 2010-2014 - Leadership positions in the Astana Healthcare Department and the Ministry of Health of the RK\n• 2014-2015 - Director of the Healthcare Organization Department of the Ministry of Health and Social Development of the RK\n• 2015-2016 - Deputy Chairman of the Committee for Medical and Pharmaceutical Activities Control\n• 2016-2017 - Deputy Head of the Almaty Healthcare Department\n• 2017-2018 - Director of the Medical Services Procurement Department of JSC \"Social Health Insurance Fund\"\n• 2018-2021 - First Deputy Chairman of the Board of the National Scientific Oncological Center\n• 2021-2023 - Chairman of the Board of the National Scientific Oncological Center\n• Since May 2023 - Chairman of the Board of RSE on REM \"National Scientific Center for Healthcare Development named after Salidat Kairbekova\"\n\nAwards:\nHonorary Diploma of the President of the Republic of Kazakhstan, Honorary Diplomas of the Ministry of Health of the RK, medal \"Eren enbegi үshin\", badges \"Densaulyқ saқtau isiniң үzdigi\", \"Densaulyқ saқtau isine қosқan үlesi үshin\"."
+      },
+      "deputy1": {
+        "name": "Shaykhiev Sain Sainovich",
+        "position": "Deputy Chairman of the Board"
+      },
+      "deputy2": {
+        "name": "Karzhaubaeva Sholpan Estemesovna",
+        "position": "Deputy Chairman of the Board"
+      },
+      "deputy3": {
+        "name": "Tabarov Adlet Berikbolovich",
+        "position": "Deputy Chairman of the Board"
+      },
+      "director1": {
+        "name": "Topaeva Ainur Kirgizbaevna",
+        "position": "Managing Director"
+      },
+      "director2": {
+        "name": "Botagarina Zhanar Serikovna",
+        "position": "Managing Director"
+      }
+    },
+    "supervisoryBoard": {
+      "title": "Supervisory Board",
+      "member1": {
+        "name": "Lokshin Vyacheslav Notanovich",
+        "about": "President of the Kazakhstan Association of Reproductive Medicine. Doctor of Medical Sciences, Professor, Academician of the Russian Academy of Medical and Technical Sciences, Academician of the National Academy of Sciences of Kazakhstan, specialties - general medicine, public health, obstetrics and gynecology."
+      },
+      "member2": {
+        "name": "Sultangaziev Timur Slamzhanovich",
+        "about": "First Vice Minister of Health of the Republic of Kazakhstan. Graduated from Kazakh National Medical University, specialty \"Doctor\", internship in \"General Surgery\", master's degree in \"Health System Manager\" at Tulane University, USA under the Bolashak program."
+      },
+      "member3": {
+        "name": "Bakirov Ilyas Kelesovich",
+        "about": "Director of the Strategic Development Department. Master of Business Administration (MBA), doctor, healthcare organizer of the highest category."
+      },
+      "member4": {
+        "name": "Idrisova Saltanat Sadyrovna",
+        "about": "Director of Viva Consulting LLP. MBA \"Financial Management\", PhD \"Healthcare Management\", specialties - economist, lawyer. Certificate of Professional Accountant of the Republic of Kazakhstan. Diploma of Professional Internal Auditor DipPIA, mediator-trainer, coach, Member of the QID Independent Directors Association."
+      },
+      "member5": {
+        "name": "Karibekov Temirlan Sibiryevich",
+        "about": "Doctor of Medical Sciences, specialties - general medicine, economics and management."
+      }
+    }
+  },
+  "salidatKairbekova": {
+    "pageTitle": "Salidat Kairbekova",
+    "intro": "The National Scientific Center for Healthcare Development bears the name of Salidat Zekenovna Kairbekova. This memorial page is about an undoubtedly outstanding woman whose role in the medicine of the Republic of Kazakhstan cannot be overestimated.",
+    "earlyYears": {
+      "title": "Early Years",
+      "paragraph1": "Salidat Zekenovna Kairbekova was born on August 1, 1961 in Karaganda region in a family of doctors. She received her higher medical education (specialty \"general medicine\") in 1984, her Alma Mater is the Medical University of Karaganda.",
+      "paragraph2": "1984 became the starting point of a lifelong journey entirely dedicated to the development of Kazakhstan's healthcare system. Salidat Zekenovna chose neurology as her narrow specialty, beginning her professional activity in medical institutions of Karaganda region."
+    },
+    "doctorToManager": {
+      "title": "From Doctor to Manager",
+      "paragraph1": "Salidat Zekenovna Kairbekova was born on August 1, 1961 in Karaganda region in a family of doctors. She received her higher medical education (specialty \"general medicine\") in 1984, her Alma Mater is the Medical University of Karaganda.",
+      "paragraph2": "1984 became the starting point of a lifelong journey entirely dedicated to the development of Kazakhstan's healthcare system. Salidat Zekenovna chose neurology as her narrow specialty, beginning her professional activity in medical institutions of Karaganda region."
+    },
+    "academicActivity": {
+      "title": "Academic Activity",
+      "paragraph1": "Having completed training in public health and healthcare management, Salidat Zekenovna became a candidate at the department of Kazakh State Medical Academy. From 2001 to 2004, she held key positions in the Department of Treatment and Preventive Work and in the Ministry of Health of the Republic of Kazakhstan.",
+      "paragraph2": "An important milestone in Salidat Zekenovna's career was her study in the specialty \"law\" at E. A. Buketov Karaganda State University. Another higher education became an additional asset in her professional portfolio.",
+      "paragraph3": "From 2004 to 2006, Salidat Zekenovna held the position of Vice-Rector of Kazakh State Medical Academy."
+    },
+    "presidentialAdministration": {
+      "title": "Work in Presidential Administration",
+      "paragraph1": "From 2006 to 2008, Salidat Zekenovna was the chief expert and chief inspector of the socio-economic analysis department, as well as head of sector of the socio-economic monitoring department of the Administration of the President of the Republic of Kazakhstan.",
+      "paragraph2": "From December 4, 2008, she held the position of Chairman of the Committee for Control in the Sphere of Medical Services Provision of the Ministry of Health of the Republic of Kazakhstan.",
+      "paragraph3": "From November 5, 2009, Salidat Zekenovna's career growth rose to Chairman of the Committee for Payment of Medical Services of the Ministry of Health of the Republic of Kazakhstan."
+    },
+    "lifesWork": {
+      "title": "Life's Work",
+      "paragraph1": "Salidat Zekenovna's appointment as Minister of Health of the Republic of Kazakhstan in 2010 was the pinnacle of her professional success.",
+      "paragraph2": "From 2011 to 2015, the State Program for Healthcare Development of the RK \"Salamatty Kazakhstan\" was successfully implemented, within which global changes occurred in the country's healthcare sector. Under Salidat Zekenovna's leadership, reforms aimed at improving accessibility and quality of medical care were introduced. The principle \"money follows the patient\" was successfully implemented, and the private medical care sector began to develop actively.",
+      "paragraph3": "The most advanced, innovative medical technologies came to the country. If in 2000 only a few open-heart surgeries were performed in Kazakhstan, during Salidat Zekenovna's leadership of the Ministry of Health, their number exceeded several tens of thousands. Such an important direction as organ and tissue transplantation received development.",
+      "paragraph4": "Salidat Zekenovna made a significant contribution to reducing maternal and child mortality, increasing life expectancy and developing healthcare human resources. The introduction of compulsory health insurance, development of primary healthcare, modernization of healthcare infrastructure and implementation of innovative technologies – all this became the result of her work and determination."
+    },
+    "afterMinistry": {
+      "title": "After Leaving the Position of Minister of Health",
+      "paragraph1": "Due to the reorganization of the Ministry of Health of the RK on August 6, 2014, Salidat Zekenovna was relieved from the position of minister. On August 13 of the same year, she took the position of First Vice-Minister of the new Ministry of Health and Social Development of the Republic of Kazakhstan.",
+      "paragraph2": "Since 2015, she headed JSC \"National Medical Holding\", where she continued her aspiration to improve healthcare and promote innovative medical technologies.",
+      "paragraph3": "The awards received by Salidat Zekenovna, in particular, the Order \"Kurmet\" received in 2009, reflect her outstanding achievements and contribution to public and state activities."
+    },
+    "memorialization": {
+      "title": "Memorialization",
+      "paragraph1": "Salidat Zekenovna passed away prematurely on July 3, 2016 after a serious illness. Consumor aliis inserviendo – she burned out, giving light to others. Her life path was interrupted at its very peak.",
+      "paragraph2": "For her dedication to her chosen profession, deep knowledge, ability to rally like-minded people around her, magnificent erudition, Salidat Zekenovna enjoyed well-deserved authority and respect in the medical communities of Kazakhstan, near and far abroad. Her name is immortalized in the name of the National Scientific Center for Healthcare Development, as an expression of gratitude and respect for her work and sacrifice."
     }
   },
   "servicesPages": {
     "training": {
       "title": "Organization and conduct of training cycles for additional and non-formal education",
+      "description": "RSE on REM \"National Scientific Center for Healthcare Development named after Salidat Kairbekova\" of the Ministry of Health of the RK (hereinafter - NSCHD) organizes training of advanced training courses and seminars in the field of healthcare of the Republic of Kazakhstan.",
+      "participantsInfo": "The number of participants for offline training is at least 20 people, and for on-site training at least 30.",
+      "scheduleInfo": "Courses are planned to be held on a regular basis. The schedule of courses for the current period is presented in the documents section below.",
+      "contactInfo": "For questions about participation in events, please contact:",
       "rulesButton": "Rules for organizing educational activities",
-      "faqTitle": "Frequently Asked Questions"
+      "faqTitle": "Frequently Asked Questions",
+      "documentsTitle": "Organization and conduct of training cycles for additional and non-formal education",
+      "faq": {
+        "question1": "How to register for a training cycle?",
+        "answer1": "To obtain information, as well as on issues of organizing and conducting training, you need to fill out an application on our website or contact the specified contacts: 8 (7172) 648 950, 648 951 (ext. 1028, 1151), +7 (707) 556-98-70, +7 (700) 900-13-34. After processing the application, a specialist will contact you to confirm participation and provide additional information.",
+        "question2": "What documents are required to participate in training?",
+        "answer2": "To participate in training you will need: identity card, diploma of medical education (presence of higher or secondary medical education), copy of work record book.",
+        "question3": "Is a certificate issued after completing the training?",
+        "answer3": "Based on the results of services provided, those who successfully complete training receive a state-issued certificate of advanced training through the E-licensing portal (certificates are issued for specialists who have completed training in additional education). For specialists who have completed training in non-formal education, certificates of the established state standard are issued.",
+        "question4": "Is it possible to take training remotely?",
+        "answer4": "Yes, it is possible if the curriculum provides for a distance learning format."
+      }
     },
     "adsEvaluation": {
       "title": "Evaluation of advertising materials",
+      "description": "The National Scientific Center for Healthcare Development conducts evaluation of advertising materials containing information about medicines and medical devices.",
+      "metaDescription": "Evaluation of advertising materials for medical and pharmaceutical services.",
+      "priceListTitle": "Price List",
+      "usefulMaterials": "Useful Materials",
       "timeline": {
-        "registration": "Application registration",
+        "registration": "Application Registration",
         "registrationTime": "1 business day",
-        "evaluation": "Evaluation period",
+        "evaluation": "Evaluation Period",
         "evaluationTime": "10 business days"
       },
       "priceList": {
-        "title": "Price List",
         "article": "Evaluation of advertising article",
+        "articleUnit": "1 article",
         "video": "Evaluation of advertising video",
+        "videoUnit": "1 video",
         "printModule": "Evaluation of print advertising module",
+        "moduleUnit": "1 module",
         "audio": "Evaluation of advertising audio",
-        "banner": "Evaluation of advertising banner (single text-graphic image)",
-        "bannerMulti": "Evaluation of advertising banner (series of text-graphic images)",
-        "unit": "Unit",
-        "withVAT": "With VAT (KZT)",
-        "withoutVAT": "Without VAT (KZT)"
+        "audioUnit": "1 audio",
+        "bannerSingle": "Evaluation of advertising banner (single text-graphic image)",
+        "bannerMultiple": "Evaluation of advertising banner (series of text-graphic images)",
+        "bannerUnit": "1 banner"
+      },
+      "faq": {
+        "question1": "How to get the service?",
+        "answer1": {
+          "subtitle": "Procedure for submitting an application for evaluation of advertising materials for medicines and medical devices",
+          "paragraph1": "To obtain a conclusion on the compliance of advertising with the requirements of the legislation of the Republic of Kazakhstan in the field of healthcare, the applicant concludes an agreement of the established form with RSE on REM \"National Scientific Center for Healthcare Development named after S. Kairbekova\" (hereinafter - NSCHD) on conducting an evaluation of advertising materials for medicines and medical devices.",
+          "paragraph2": "Payment for the evaluation of advertising materials for medicines and medical devices is made by the applicant in accordance with the price list approved by NSCHD.",
+          "documentsTitle": "After payment, the applicant sends the following documents and materials to NSCHD:",
+          "doc1": "Cover letter according to the application",
+          "doc2": "Application in form according to the application",
+          "doc3": "Advertising material in paper and electronic media in Kazakh and Russian languages (module, article, video advertising or banner storyboard, audio advertising text)",
+          "doc4": "Video, audio recordings of advertising in Kazakh and Russian languages when distributed on video, radio channels",
+          "doc5": "Operational document of a medical device (in case of providing advertising for medical devices)",
+          "doc6": "Information confirming the applicant's payment to the NSCHD settlement account of the amount for conducting evaluation of advertising materials for medicines and medical devices",
+          "submission": "The applicant sends the above materials to the NSCHD email (s.zhaldybaeva@nrchd.kz) and provides original documents in person to the Department for Improving Drug Policy of NSCHD at Astana, Mangilik El str., 20 (4th floor), on weekdays from 9:00 to 17:00, lunch break from 13:00 to 14:00.",
+          "contact": "For all questions, contact by phone: 8 7172 700 950 (1049/1079)."
+        },
+        "question2": "Regulatory Legal Acts",
+        "answer2": {
+          "law1": "Code of the Republic of Kazakhstan dated July 7, 2020 No. 360-VI ZRK \"ON PUBLIC HEALTH AND THE HEALTHCARE SYSTEM\"",
+          "law2": "Law of the Republic of Kazakhstan dated December 19, 2003 No. 508-II \"On Advertising\" (with amendments and additions as of September 10, 2023)",
+          "law3": "Order of the Minister of Health of the Republic of Kazakhstan dated December 20, 2020 No. QR DSM-288/2020 \"On approval of the rules for advertising medicines and medical devices\""
+        }
       }
     },
     "healthTechAssessment": {
       "title": "Health Technology Assessment",
-      "fullReport": "Full health technology assessment report",
-      "shortReport": "Brief health technology assessment report",
-      "refOverview": "Reference overview of health technology"
+      "description1": "Health Technology Assessment (HTA) is a systematic process of analyzing the clinical effectiveness, safety and economic feasibility of new or existing medical technologies, including pharmaceuticals, medical devices and procedures.",
+      "description2": "In accordance with the Rules for conducting health technology assessment and their application, RSE on REM \"National Scientific Center for Healthcare Development named after Salidat Kairbekova\" conducts health technology assessment for approval of the claimed health technology for use, inclusion of the claimed health technology in the lists for payment within the framework of GOBMP as specialized medical care/high-tech medical care, inclusion of the claimed health technology in the lists for payment within the framework of OSMS as specialized medical care.",
+      "description3": "The evaluation results are presented in the form of a detailed report containing an objective conclusion on the feasibility of implementation and application of the evaluated technology, recommendations for optimization of use and reduction of potential risks.",
+      "timeline": {
+        "applicationForm": "Application Form",
+        "applicationFormTime": "10 business days",
+        "fullReport": "Full health technology assessment report",
+        "fullReportTime": "no more than 3 months",
+        "shortReport": "Brief health technology assessment report",
+        "shortReportTime": "1-3 months",
+        "refOverview": "Reference overview of health technology",
+        "refOverviewTime": "no more than 1 month"
+      },
+      "howToSubmit": {
+        "title": "How to submit a technology for evaluation?",
+        "paragraph1": "As an initiator, the first step to submit a technology for evaluation is to prepare and submit an official request including a cover letter and an application for HTA in electronic or paper format to the National Scientific Center for Healthcare Development named after Salidat Kairbekova.",
+        "downloadForm": "Download application form",
+        "downloadLetter": "Download cover letter",
+        "paragraph2": "HTA executors will then verify the submitted documents and, if necessary, request additional materials within 10 business days. After this process, prioritization occurs, where the most relevant technologies for evaluation are selected.",
+        "paragraph3": "Technologies not included in the priority list may be considered on a contractual basis by HTA executors.",
+        "stagesTitle": "Review stages after evaluation:",
+        "stage1": "Results are submitted to the Committee for review",
+        "stage2": "The Committee decides to submit the report to the Joint Commission on Quality of Medical Services (JCC) for review or rejects the technology with reasons",
+        "stage3": "The applicant may provide additional data based on the Committee's comments to review the decision",
+        "stage4": "JCC makes a decision on further steps for the technology",
+        "stage5": "If the application is rejected, it may be reconsidered after a year upon provision of new data",
+        "paragraph4": "Ultimately, the decision on technology financing is made by the Budget Commission, based on available funds and the rules for forming tariffs for medical services."
+      }
     },
     "drugExpertise": {
       "title": "Professional Pharmaceutical Expertise",
-      "initialEvaluation": "Initial evaluation",
-      "professionalExpertise": "Conducting professional expertise",
-      "conclusion": "Formation and provision of conclusion"
+      "metaDescription": "Professional expertise of medicines and pharmaceutical preparations.",
+      "regulatoryDocuments": "Regulatory Documents",
+      "howToGetService": "How to Get Service",
+      "usefulMaterials": "Useful Materials",
+      "description1": "Professional expertise of health technology results is a type of activity called Health Technology Appraisal in international practice. According to information posted on the UK Ministry of Health website, \"Health Technology Appraisal determines whether a medicine, medical device or surgical procedure should be funded by the state based on its cost-effectiveness\".",
+      "description2": "Based on professional expertise, clinically and economically effective technologies are determined and recommendations are provided to the Ministry of Health of the Republic of Kazakhstan for making decisions on the feasibility of their financing and application within the framework of state-supported lists of medicines, medical devices and packages of medical services.",
+      "description3": "This type of activity is performed by RSE \"NSCHD named after Salidat Kairbekova\" from the state's position in order to develop healthcare policy and make effective financing decisions. Providing objective and reliable information about technologies is necessary to ensure access to unbiased, professional and high-quality information, which contributes to the effective use of technologies and making scientifically based decisions based on evidence-based medicine and economic feasibility.",
+      "description4": "Professional expertise of medicines for inclusion in the KNF, List of outpatient drug provision and Procurement List provides for the evaluation of data on the clinical and economic effectiveness of a medicine. RSE \"NSCHD named after Salidat Kairbekova\" prepares conclusions based on the results of professional expertise for the Formulary Commission, which makes decisions on the formation and approval of lists of medicines based on these conclusions.",
+      "timeline": {
+        "initialEvaluation": "Initial Evaluation",
+        "initialEvaluationTime": "5 business days",
+        "professionalExpertise": "Conducting Professional Expertise",
+        "professionalExpertiseTime": "20 / 30 / 40 business days",
+        "conclusion": "Formation and Provision of Conclusion",
+        "conclusionTime": "5 business days"
+      },
+      "faq": {
+        "question1": "Reimbursement Lists within GOBMP and OSMS",
+        "answer1": {
+          "law1": "Order of the Minister of Health of the Republic of Kazakhstan dated May 18, 2021 No. QR DSM - 41 \"On approval of the Kazakhstan National Drug Formulary\"",
+          "law2": "Order of the Minister of Health of the Republic of Kazakhstan dated August 5, 2021 No. QR DSM - 75 \"On approval of the List of medicines and medical devices for free and (or) preferential outpatient provision for certain categories of citizens of the Republic of Kazakhstan with certain diseases (conditions)\"",
+          "law3": "Order of the Minister of Health of the Republic of Kazakhstan dated August 20, 2021 No. QR DSM-88 \"On determining the list of medicines and medical devices purchased from a single distributor\"",
+          "law4": "Order of the Minister of Health of the Republic of Kazakhstan dated October 20, 2020 No. QR DSM - 142/2020 \"On approval of the list of orphan diseases and medicines for their treatment (orphan)\""
+        },
+        "question2": "Formation Rules",
+        "answer2": {
+          "law1": "Order of the Minister of Health of the Republic of Kazakhstan dated October 16, 2020 No. QR DSM-135/2020 \"On approval of the rules for forming the list of orphan diseases and medicines for their treatment\"",
+          "law2": "Order of the Acting Minister of Health of the Republic of Kazakhstan dated December 24, 2020 No. QR DSM-326/2020 \"On approval of the rules for forming the Kazakhstan National Drug Formulary, as well as the rules for developing drug formularies of healthcare organizations\"",
+          "law3": "Order of the Acting Minister of Health of the Republic of Kazakhstan dated December 24, 2020 No. QR DSM-324/2020 \"On approval of the rules for forming the list of procurement of medicines and medical devices within the guaranteed volume of free medical care and (or) in the compulsory social health insurance system\"",
+          "law4": "Order of the Minister of Health of the Republic of Kazakhstan dated July 29, 2021 No. QR DSM-68 \"On approval of the Rules for forming the list of medicines and medical devices for free and (or) preferential outpatient provision for certain categories of citizens of the Republic of Kazakhstan with certain diseases (conditions)\""
+        },
+        "question3": "Regulatory Legal Framework",
+        "answer3": {
+          "law1": "Code of the Republic of Kazakhstan dated July 7, 2020 No. 360-VI ZRK \"ON PUBLIC HEALTH AND THE HEALTHCARE SYSTEM\"",
+          "description": "This Code regulates public relations in the field of healthcare in order to implement the constitutional right of citizens to health protection."
+        }
+      }
     },
     "educationPrograms": {
-      "title": "Expertise of scientific and educational programs of additional education"
+      "title": "Expertise of scientific and educational programs of additional education",
+      "intro": "Conducting an examination of the educational program (EP) for inclusion of the EP in the Catalog is carried out on the basis of a service agreement concluded with the applicant.",
+      "procedure": "The examination procedure involves analyzing the content, structure and format of the educational program for compliance with requirements and quality standards, relevance and applicability of information, as well as assessing the practical value of the program.",
+      "results": "Based on the results of the examination, the applicant is provided with a detailed expert opinion with recommendations for improving the program or approval for inclusion in the Catalog of additional education programs.",
+      "regulatoryActs": "Regulatory Legal Acts",
+      "usefulMaterials": "Useful Materials",
+      "serviceDescription": {
+        "title": "Service Description",
+        "paragraph1": "Examination of educational programs of additional education is carried out in accordance with the Rules for additional and non-formal education of specialists in the field of healthcare, approved by order of the Ministry of Health of the RK dated December 21, 2020 No. QR DSM-303/2020. (Registered with the Ministry of Justice of the Republic of Kazakhstan on December 22, 2020 No. 21847.)",
+        "paragraph2": "The examination is carried out in order to verify the quality and compliance of educational programs with established requirements and existing training needs according to the priorities of healthcare sector development.",
+        "moreLink": "More about EP requirements"
+      },
+      "pricing": {
+        "title": "Service Cost",
+        "description": "Conducting an examination of the educational program (EP) for inclusion of the EP in the Catalog is carried out on the basis of a service agreement concluded with the applicant.",
+        "serviceName": "Name of goods, works, services",
+        "unit": "Unit",
+        "quantity": "Quantity",
+        "priceWithVAT": "Price in tenge<br/>(including VAT)",
+        "service1": "Research work on conducting examination of educational programs of additional education in terms of certification courses",
+        "service2": "Research work on conducting examination of educational programs of additional education in terms of advanced training courses",
+        "serviceUnit": "Service",
+        "free": "Free",
+        "freeNote": "according to the protocol of program approval at UMO RUMS",
+        "currency": "KZT",
+        "note": "* Prices are current for the current year and may be changed in accordance with current tariffs"
+      },
+      "contact": {
+        "title": "Contact Information",
+        "description": "For any questions regarding the procedure for submitting applications for examination and inclusion of certification courses and advanced training programs in the Catalog, please contact:",
+        "department": "Department of Medical Education and Science Development of NSCHD",
+        "workPhone": "Work phone",
+        "mobilePhone": "Mobile phone",
+        "email": "Email address",
+        "contactPerson": "Contact person",
+        "personName": "Yesdaulet Samat Azamatuly"
+      }
     },
     "medicalExpertise": {
-      "title": "Scientific and medical expertise"
+      "title": "Scientific and Medical Expertise",
+      "description1": "Scientific and medical expertise is conducted by highly qualified specialists of the center to assess the scientific validity and clinical effectiveness of medical technologies, methods and practices.",
+      "description2": "The examination process includes analysis of the provided scientific data, research results, methodology and compliance with modern scientific standards. If necessary, consultation with specialized experts may be conducted.",
+      "description3": "Based on the results of the examination, the customer is provided with an official conclusion containing a reasoned assessment, conclusions and recommendations for further application or improvement of the medical technology or method under consideration.",
+      "timeline": {
+        "applicationRegistration": "Application Registration",
+        "applicationRegistrationTime": "1 business day",
+        "expertisePeriod": "Examination Period",
+        "expertisePeriodTime": "15 business days",
+        "conclusionProvision": "Provision of Expert Conclusion",
+        "conclusionProvisionTime": "3 business days"
+      }
     },
     "accreditation": {
       "title": "Accreditation of medical organizations and healthcare organizations",
+      "layoutTitle": "Accreditation of Medical Organizations",
       "applicationRegistration": "Application registration",
-      "serviceDelivery": "Service delivery period"
+      "serviceDelivery": "Service delivery period",
+      "description1": "Accreditation of medical organizations is one of the main tools for managing the quality of medical care, as a key process for assessing the provision and maintenance of high standards of quality and safety of medical services and processes provided in a medical organization.",
+      "procedureTitle": "The accreditation procedure includes:",
+      "procedureItem1": "Self-assessment",
+      "procedureItem2": "External comprehensive assessment for compliance with established accreditation standards",
+      "procedureItem3": "Post-accreditation monitoring",
+      "advantagesTitle": "Competitive advantages and motivation measures for accreditation:",
+      "advantage1": "Confirmed level of quality and safety of medical services provided",
+      "advantage2": "Preferential right in the OSMS and GOBMP system",
+      "advantage3": "Increased efficiency of medical organization management",
+      "advantage4": "Increased staff involvement in the development and maintenance of the high status of the medical organization",
+      "advantage5": "Exemption from preventive control for the next calendar year",
+      "advantage6": "Accounting for accreditation status in the ranking of medical organizations",
+      "description2": "According to the Order of the Committee for Medical and Pharmaceutical Control of the Ministry of Health of the Republic of Kazakhstan No. 99-НҚ dated March 13, 2023, NSCHD is accredited by the authorized body to carry out accreditation of medical organizations for a period of 5 years.",
+      "description3": "NSCHD, a representative of the public sector among accrediting organizations, has high expert and scientific potential, due to the history of formation and experience of the beginning of the introduction of accreditation of medical organizations in Kazakhstan, the development of methodological recommendations, protocols and standards, as well as high transparency of core activities.",
+      "currentDocument": "Current Document",
+      "usefulMaterials": "Useful Materials",
+      "serviceInfo": "Service Information",
+      "faq": {
+        "applicationProcedure": {
+          "title": "Procedure for submitting an application for accreditation",
+          "text1": "To obtain accreditation of a medical organization, the applicant enters into a contract of the established form with RSE \"National Scientific Center for Healthcare Development named after S. Kairbekova\" (hereinafter - NSCHD).",
+          "text2": "Payment for accreditation is made by the applicant in accordance with the price list approved by NSCHD."
+        },
+        "regulatoryActs": {
+          "code": "Code of the Republic of Kazakhstan dated July 7, 2020 No. 360-VI ЗРК \"On Public Health and the Healthcare System\"",
+          "order": "Order of the Minister of Health of the Republic of Kazakhstan dated December 21, 2020 No. ҚР ДСМ-305/2020 \"On approval of the rules for accreditation in the field of healthcare\""
+        }
+      },
+      "contacts": {
+        "title": "Contact Information",
+        "department": "Accreditation Department",
+        "address": "Astana, Mangilik El Street, 20",
+        "phone": "8-7172-648-951, ext: 1143, 1127, 1046, 1064, 1014",
+        "scheduleTitle": "Accrediting Body Schedule:",
+        "workDays": "Monday to Friday from 09:00 to 18:00",
+        "lunchBreak": "lunch break: from 13:00 to 14:00",
+        "weekends": "weekends: Saturday, Sunday",
+        "documentsTitle": "List of Required Documents:",
+        "document1": "for providing access point to RK MOH IS \"SUKMU\"",
+        "document2": "sample application for RK MOH IS user",
+        "document3": "sample non-disclosure obligation"
+      }
     },
     "postAccreditationMonitoring": {
-      "title": "Post-accreditation monitoring"
+      "title": "Post-accreditation monitoring",
+      "layoutTitle": "Post-accreditation Monitoring",
+      "aboutTitle": "About Post-Accreditation Monitoring",
+      "description1": "Post-accreditation monitoring (PAM) is regulated by the orders of the Minister of Health of the Republic of Kazakhstan dated November 30, 2020 No. ҚР ДСМ-227/2020 \"On approval of the rules and terms for conducting post-accreditation monitoring and revocation of accreditation certificate in the field of healthcare\", of the Chairman of the Management Board of RSE \"National Scientific Center for Healthcare Development named after Salidat Kairbekova\" dated October 27, 2023 No. 206-Н \"On approval of the procedure for conducting post-accreditation monitoring of medical organizations\".",
+      "description2": "PAM is conducted in a planned manner once every 3 years, but not earlier than 6 months from the date of receiving the accreditation certificate, in healthcare organizations [paragraph 2, article 25 of the Code of the Republic of Kazakhstan dated July 7, 2020 No. 360-VI \"On Public Health and the Healthcare System\"], which have passed accreditation in the field of healthcare, for compliance with established requirements (subparagraph 2, paragraph 2, chapter 1).",
+      "description3": "Unscheduled post-accreditation monitoring is conducted in cases of receipt by the accrediting body of 2 complaints from individuals/legal entities regarding the activities of the accredited organization within one year from the date of receiving the accreditation certificate, based on the results of consideration of which facts of violation of the rights and freedoms of applicants have been confirmed.",
+      "reportTitle": "Report on the Implementation of Corrective Action Plan",
+      "downloadTemplate": "Download Report Template",
+      "importantInfoTitle": "Important Information",
+      "importantInfo1": "To undergo post-accreditation monitoring, you must fill out the form at the top of the page and attach all necessary documents.",
+      "importantInfo2": "Be sure to attach the approved report on the implementation of the corrective action plan in PDF format. You can download the report template using the button on the left.",
+      "importantInfo3": "After submitting the form, our specialists will contact you to clarify details and coordinate further steps.",
+      "contactTitle": "Contact Information",
+      "department": "Accreditation Department:",
+      "address": "Astana, Mangilik El Street, 20",
+      "phone": "8-7172-648-600, ext: 1014, 1143",
+      "planTitle": "Plan for Conducting Post-Accreditation Monitoring of Medical Organizations",
+      "form": {
+        "title": "Post-Accreditation Monitoring Report",
+        "organizationName": "Full Name of Organization",
+        "address": "Address",
+        "bin": "BIN of Organization",
+        "director": "Chief Executive (Full Name)",
+        "approvalDate": "Report Approval Date",
+        "responsiblePerson": "Responsible Person",
+        "fullName": "Full Name",
+        "attachDocuments": "Attach Documents:",
+        "attachDocumentsHint": "Approved report on the implementation of corrective action plan in PDF format",
+        "uploadFile": "Upload File",
+        "googleDrive": "Google Drive",
+        "consent": "I agree to the processing of personal data",
+        "submitReport": "Submit Report",
+        "successMessage": "Report successfully submitted!",
+        "googleDriveAlert": "Google Drive integration feature is under development"
+      }
     },
     "commonElements": {
       "documents": "Documents",
@@ -385,6 +784,16 @@
       "month": "month",
       "months": "months",
       "notMoreThan": "not more than"
+    },
+    "form": {
+      "title": "Contact Us",
+      "fullName": "Full Name",
+      "organization": "Organization Name",
+      "email": "Email",
+      "phone": "Phone",
+      "message": "Message",
+      "submit": "Submit Application",
+      "successMessage": "Application submitted successfully!"
     }
   },
   "directionsPages": {
@@ -930,6 +1339,112 @@
           "breadcrumbDirections": "Directions",
           "breadcrumbHealthAccounts": "National Health Accounts"
         }
+      },
+      "dashboard": {
+        "overall": {
+          "title": "Total Healthcare Expenditures"
+        },
+        "current": {
+          "title": "Current Healthcare Expenditures (THE)"
+        },
+        "capital": {
+          "title": "Capital Healthcare Expenditures (CHE)"
+        },
+        "charts": {
+          "total": {
+            "current": "Current Expenditures",
+            "capital": "Capital Expenditures"
+          },
+          "current": {
+            "state": "Government Expenditures",
+            "private": "Private Expenditures"
+          }
+        },
+        "cards": {
+          "capitalGdp": "Share of Capital Healthcare Expenditures of GDP",
+          "stateGdp": "Share of Government Expenditures of GDP",
+          "privateGdp": "Share of Private Expenditures of GDP",
+          "directPayments": "Share of Direct Payments of Current Healthcare Expenditures"
+        },
+        "gdpShareTotal": {
+          "title": "Share of Total Healthcare Expenditures of GDP"
+        },
+        "gdpShareCurrent": {
+          "title": "Share of Current Healthcare Expenditures of GDP"
+        },
+        "perCapitaTotal": {
+          "title": "Total Healthcare Expenditures per Capita"
+        },
+        "perCapitaCurrent": {
+          "title": "Current Healthcare Expenditures per Capita"
+        }
+      },
+      "tabs": {
+        "macro": {
+          "chartTitle": "Indicators by Year (thousand tenge)",
+          "chartLabel": "Indicators by Year (thousand tenge)"
+        },
+        "current": {
+          "fsTitle": "Current Healthcare Expenditures (FS, million tenge)",
+          "hcTitle": "Current Healthcare Expenditures (HC, million tenge)",
+          "hfTitle": "Current Healthcare Expenditures (HF, million tenge)",
+          "hpTitle": "Current Healthcare Expenditures (HP, million tenge)",
+          "labels": {
+            "fs": {
+              "socialInsurance": "Social Insurance Contributions",
+              "voluntarySchemes": "Voluntary Schemes",
+              "mandatorySchemes": "Mandatory Schemes",
+              "householdPayments": "Direct Household Payments",
+              "foreignTransfers": "Transfers from Abroad"
+            },
+            "hc": {
+              "administrative": "Administrative Services",
+              "auxiliary": "Auxiliary Services",
+              "longTermCare": "Long-term Care",
+              "prevention": "Prevention",
+              "treatment": "Treatment and Rehabilitation"
+            },
+            "hf": {
+              "governmentSchemes": "Government Schemes",
+              "internationalSchemes": "International Schemes",
+              "voluntaryInsurance": "Voluntary Insurance Schemes",
+              "privateHousehold": "Private Household Expenditures"
+            },
+            "hp": {
+              "hospitals": "Hospitals",
+              "unstableProviders": "Unstable Providers",
+              "primaryCare": "Primary Care Organizations",
+              "specializedCare": "Specialized Care Organizations",
+              "otherProviders": "Other Providers"
+            }
+          }
+        },
+        "government": {
+          "totalTitle": "Gov. Expenditures TOTALS (thousand tenge)",
+          "totalBar": "Gov. Expenditures (thousand tenge)",
+          "totalLine": "Growth (thousand tenge)",
+          "percentTitle": "% of Gov. Expenditures of THE (%)",
+          "percentBar": "% of Gov. Expenditures of THE",
+          "percentLine": "Trend",
+          "hcTitle": "Gov. Expenditures HC 2010-2022 (million tenge)",
+          "hpTitle": "Gov. Expenditures HP 2010-2022 (million tenge)",
+          "labels": {
+            "hc": {
+              "administration": "Administration",
+              "auxiliary": "Auxiliary Services",
+              "longTermCare": "Long-term Medical Care",
+              "preventive": "Preventive Services",
+              "treatment": "Treatment Services"
+            },
+            "hp": {
+              "generalHospitals": "General Hospitals",
+              "primaryCare": "Primary Care Organizations",
+              "specializedCare": "Specialized Care Organizations",
+              "rehabilitation": "Rehabilitation Service Providers",
+              "otherProviders": "Other Providers"
+            }
+          }
+        }
       }
     },
     "medicalStatistics": {
@@ -968,6 +1483,54 @@
         "analytics": {
           "title": "Analytical Materials",
           "description": "Analytical materials and research"
+        }
+      },
+      "chart": {
+        "births": {
+          "title": "Number of Births",
+          "boys": "Boys",
+          "girls": "Girls",
+          "twins": "Twins",
+          "triplets": "Triplets",
+          "pregravidTitle": "Number of Women Who Completed Preconception Preparation",
+          "datePrefix": "Data for"
+        },
+        "discharged": {
+          "title": "Number of Patients Treated in 24-Hour Inpatient Care",
+          "planned": "Planned",
+          "emergency": "Emergency",
+          "dayTitle": "Number of Patients Treated in Day Care",
+          "datePrefix": "Data for"
+        },
+        "operations": {
+          "title": "Number of Patients Operated",
+          "planned": "Planned",
+          "emergency": "Emergency",
+          "heartSurgery": "of which open heart surgeries",
+          "datePrefix": "Data for"
+        },
+        "patients": {
+          "screeningTitle": "Number of Patients Who Completed Screening",
+          "dynamicObservationTitle": "Number of Patients Under Dynamic Observation",
+          "aloTitle": "Number of Patients on ALO",
+          "datePrefix": "Data for"
+        },
+        "visits": {
+          "title": "Number of Visits to Primary Healthcare",
+          "cardiologist": "Cardiologist",
+          "neurologist": "Neurologist",
+          "endocrinologist": "Endocrinologist",
+          "therapist": "Therapist"
+        },
+        "units": {
+          "people": "people",
+          "thousandTenge": "thousand tenge",
+          "millionTenge": "million tenge",
+          "tenge": "tenge",
+          "percent": "%"
+        },
+        "date": {
+          "may2025": "May 2025"
         }
       }
     },
@@ -1397,11 +1960,12 @@
         "legalBasis2": "By order of the Minister of Health dated May 14, 2024 No. 309, changes and additions were made to Order No. 215, regarding the number of members of the FC MH RK, functions of the Working Body and Secretary, namely:",
         "noteText": "We note that the Working Body posts meeting protocols on the KNF internet resource no later than three calendar days from the date of signing.",
         "resultsTitle": "Work Results",
-        "resultsIntro": "From 2021 to 2024, a total of 107 meetings were held:",
+        "resultsIntro": "From 2021 to 2025, a total of 137 meetings were held:",
         "since2021": "since May 2021",
         "year2022": "2022",
         "year2023": "2023",
-        "until2024": "until October 2024",
+        "year2024": "2024",
+        "until2025": "until October 2025",
         "reviewedIntro": "At the meetings, the following projects were reviewed:",
         "ordersTitle": "Orders on the Composition of the Formulary Commission of the MH RK",
         "ordersFolder": "Drug Policy\\Formulary Commission of the MH RK\\Orders on the Composition of the Formulary Commission of the MH RK",
@@ -1979,6 +2543,17 @@
     }
   },
   "components": {
+    "mediaLightbox": {
+      "mediaFiles": "Media Files",
+      "media": "Media",
+      "close": "Close",
+      "previous": "Previous",
+      "next": "Next",
+      "selectMedia": "Select media to view",
+      "video": "Video",
+      "photo": "Photo",
+      "image": "Image"
+    },
     "simpleFileDisplay": {
       "loading": "Loading files...",
       "noDocuments": "No available documents",

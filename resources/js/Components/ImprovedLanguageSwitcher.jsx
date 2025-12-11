@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import translationService from '@/services/TranslationService';
 
-const ImprovedLanguageSwitcher = () => {
+const ImprovedLanguageSwitcher = ({ openUpwards = false }) => {
   const [currentLang, setCurrentLang] = useState('kz');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -97,7 +97,9 @@ const ImprovedLanguageSwitcher = () => {
 
       {/* Выпадающий список */}
       {isDropdownOpen && (
-        <div className="absolute top-full mt-1 right-0 bg-white border border-gray-300 rounded shadow-lg z-50 min-w-[100px]">
+        <div className={`absolute left-0 bg-white border border-gray-300 rounded shadow-lg z-50 min-w-[120px] ${
+          openUpwards ? 'bottom-full mb-1' : 'top-full mt-1'
+        }`}>
           {languages.map((language) => (
             <button
               key={language.code}

@@ -55,6 +55,9 @@ class NewsPublicController extends Controller
             abort(404);
         }
 
+        // Увеличиваем счетчик просмотров
+        $news->increment('views');
+
         // Получаем 3 последние опубликованные новости (кроме текущей)
         $relatedNews = News::published()
             ->ofType($news->type ?? News::TYPE_NEWS)
@@ -229,12 +232,7 @@ class NewsPublicController extends Controller
             'section' => [
                 'type' => $type,
                 'title' => $isMedia ? 'СМИ о нас' : 'Новости',
-                'subtitle' => $isMedia
-                    ? 'Мы собрали публикации и упоминания ННЦРЗ в ведущих СМИ.'
-                    : 'Последние материалы и анонсы Национального научного центра развития здравоохранения.',
-                'description' => $isMedia
-                    ? 'Читайте, что пишут о нас в прессе и профессиональных изданиях.'
-                    : 'Будьте в курсе событий и свежих проектов центра.',
+                // Тексты subtitle и description берутся из системы переводов на фронтенде
             ],
         ]);
     }
