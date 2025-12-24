@@ -27,18 +27,14 @@ export default function Rating() {
   return (
     <>
       <Head title={t('directionsPages.medEducationSubpages.rating.title', 'Рейтинг')} />
-      <br /><br />
-      <section className="text-gray-600 body-font pb-24">
+      <section className="text-gray-600 body-font pt-8 pb-24 bg-gray-50">
         <div className="container px-5 mx-auto">
-          <div className="bg-white p-6 rounded-lg">
-            
-            <SimpleFileDisplay 
-              folder={t('directionsPages.medEducationSubpages.rating.folder')} 
-              title="" 
-              onVideoClick={openVideoModal}
-            />
-
-          </div>
+          <SimpleFileDisplay 
+            folder={t('directionsPages.medEducationSubpages.rating.folder')} 
+            title="" 
+            bgColor="bg-gray-50"
+            onVideoClick={openVideoModal}
+          />
         </div>
       </section>
       

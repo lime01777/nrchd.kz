@@ -131,20 +131,6 @@ export default function AboutCentre() {
       </div>
     </section>
 
-    {/* Секция организационной структуры */}
-{/*     <section className="text-gray-600 body-font">
-      <div className="container px-5 py-16 mx-auto">
-        <div className="flex flex-col text-left w-full mb-12">
-          <h1 className="sm:text-3xl text-2xl font-bold title-font text-gray-900 mb-4">Организационная структура</h1>
-          <p className="text-gray-600 max-w-3xl">
-            Структура центра организована по департаментному принципу для обеспечения 
-            эффективного управления и координации всех направлений деятельности.
-          </p>
-        </div>
-        <OrganizationalStructure departments={departments} />
-      </div>
-    </section> */}
-
     <section className="text-gray-600 body-font">
       <div className="container px-5 pt-12 mx-auto">
         <div className="flex flex-col text-left w-full">

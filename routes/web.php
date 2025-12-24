@@ -508,11 +508,20 @@ Route::prefix('api')->group(function () {
                 ->get()
                 ->map(function (App\Models\News $news) use ($mediaService) {
                     $media = $mediaService->normalizeMediaForFrontend($news->images ?? []);
-                    $imagePaths = collect($media)
-                        ->where('type', 'image')
-                        ->pluck('url')
-                        ->values()
-                        ->all();
+                    // Передаем все медиа (изображения и видео) для правильной обработки
+                    $allMedia = collect($media)->map(function ($item) {
+                        return [
+                            'type' => $item['type'] ?? 'image',
+                            'url' => $item['url'] ?? $item['path'] ?? null,
+                            'path' => $item['path'] ?? null,
+                            'embed_url' => $item['embed_url'] ?? null,
+                            'is_external' => $item['is_external'] ?? false,
+                            'is_embed' => $item['is_embed'] ?? false,
+                            'thumbnail' => $item['thumbnail'] ?? null,
+                        ];
+                    })->filter(function ($item) {
+                        return !empty($item['url']) || !empty($item['path']);
+                    })->values()->all();
 
                     return [
                         'id' => $news->id,
@@ -520,7 +529,7 @@ Route::prefix('api')->group(function () {
                         'slug' => $news->slug,
                         'excerpt' => $news->excerpt,
                         'image' => $news->cover_thumb_url ?? $news->cover_url,
-                        'images' => $imagePaths,
+                        'images' => $allMedia, // Передаем все медиа, включая видео
                         'publish_date' => optional($news->published_at ?? $news->publish_date)->toDateTimeString(),
                         'external_url' => $news->external_url,
                         'type' => $news->type,

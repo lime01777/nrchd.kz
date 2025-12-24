@@ -5,6 +5,7 @@ import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import NormativeDocumentsList from '@/Components/NormativeDocumentsList';
 import FAQ from '@/Components/FAQ';
 import News from '@/Components/News';
+import ClinicalTrialsCharts from '@/Components/ClinicalTrialsCharts';
 import translationService from '@/services/TranslationService';
 
 export default function Clinical() {
@@ -141,6 +142,9 @@ export default function Clinical() {
         </div>
       </div>
       </section>
+
+      {/* Графики клинических испытаний */}
+      <ClinicalTrialsCharts />
 <br />
       <section className="text-gray-600 body-font pb-24 bg-white">
         <div className="container px-5 mx-auto">

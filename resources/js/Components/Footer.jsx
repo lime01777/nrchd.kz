@@ -92,33 +92,47 @@ const FooterLinks = () => {
                     <FooterNav title={t('footer.mainMenu')} links={navLinks1} subMenus={mainMenuSubmenus} />
                     <FooterNav title={t('footer.aboutCenter')} links={navLinks2} />
                     <div className="lg:w-1/4 md:w-1/2 w-full px-4 min-w-[280px] sm:min-w-0">
-                        <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3" data-translate>{t('footer.contacts.title')}</h2>
+                        {/* Заголовок контактов с центрированием на мобильных устройствах */}
+                        <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3 text-center md:text-left" data-translate>{t('footer.contacts.title')}</h2>
 
-                            <div className="flex items-center mb-2 break-words">
+                            {/* Контактная информация с центрированием на мобильных устройствах */}
+                            <div className="flex items-center justify-center md:justify-start mb-2 break-words">
                                 <a href="mailto:office@nrchd.kz" className="hover:text-blue-600 hover:underline break-all">
                                     <span className="font-medium text-sm sm:text-base">office@nrchd.kz</span>
                                 </a>
                             </div>
-                            <div className="flex items-center mt-2 mb-1">
+                            <div className="flex items-center justify-center md:justify-start mt-2 mb-1">
                                 <a href="tel:+77172648951" className="hover:text-blue-600 hover:underline">
                                     <span className="font-medium text-sm sm:text-base">+7 (7172) 648-951</span> <span className="text-gray-500 text-sm"></span>
                                 </a>
                             </div>
-                            <div className="flex items-center">
+                            <div className="flex items-center justify-center md:justify-start">
                                 <a href="tel:+77172648951" className="hover:text-blue-600 hover:underline">
                                     <span className="font-medium text-sm sm:text-base">+7 (7172) 648-951</span> <span className="text-gray-500 text-sm"></span>
                                 </a>
+                            </div>
+                            
+                            {/* Call center по ПЭТ и КТ с центрированием на мобильных устройствах */}
+                            <div className="mt-2 mb-1 text-center md:text-left">
+                                <div className="text-gray-500 text-sm mb-1">{t('footer.contacts.callCenter')}</div>
+                                <div className="flex items-center justify-center md:justify-start">
+                                    <a href="tel:+77172696999" className="hover:text-blue-600 hover:underline">
+                                        <span className="font-medium text-sm sm:text-base">+7 (7172) 696-999</span>
+                                    </a>
+                                </div>
                             </div>
 
                     </div>
                     <div className="lg:w-1/4 md:w-1/2 w-full px-4 min-w-[280px] sm:min-w-0 mt-6 md:mt-0">
-                        <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3">{t('footer.workingHours.title')}</h2>
+                        {/* Заголовок графика работы с центрированием на мобильных устройствах */}
+                        <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3 text-center md:text-left">{t('footer.workingHours.title')}</h2>
 
-                            <div className="flex flex-col space-y-2">
-                                <div className="flex items-center">
+                            {/* График работы с центрированием на мобильных устройствах */}
+                            <div className="flex flex-col space-y-2 text-center md:text-left">
+                                <div className="flex items-center justify-center md:justify-start">
                                     <span className="text-gray-700 text-sm sm:text-base">{t('footer.workingHours.weekdays')} <span className="">{t('footer.workingHours.time')}</span></span>
                                 </div>
-                                <div className="flex items-center">
+                                <div className="flex items-center justify-center md:justify-start">
                                     <span className="text-gray-700 text-sm sm:text-base">{t('footer.workingHours.lunch')} <span className="">{t('footer.workingHours.lunchTime')}</span></span>
                                 </div>
                             </div>

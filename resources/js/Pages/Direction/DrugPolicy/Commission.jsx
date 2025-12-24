@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import ActualFile from '@/Components/ActualFile';
-import VideoModal from '@/Components/VideoModal';
-import { Link } from '@inertiajs/react';
 import translationService from '@/services/TranslationService';
+import axios from 'axios';
 
 export default function Commission() {
   const t = (key, fallback = '') => translationService.t(key, fallback);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('');
+  const [selectedFolder, setSelectedFolder] = useState(''); // Выбранная папка для фильтрации
+  const [availableFolders, setAvailableFolders] = useState([]); // Список доступных папок
+  const [loadingFolders, setLoadingFolders] = useState(true); // Загрузка списка папок
 
   const openVideoModal = (videoUrl, fileName) => {
     setSelectedVideo(videoUrl);
@@ -24,6 +26,96 @@ export default function Commission() {
     setSelectedVideo(null);
     setSelectedFileName('');
   };
+
+  // Функция для получения списка доступных папок (годов)
+  useEffect(() => {
+    const fetchAvailableFolders = async () => {
+      try {
+        setLoadingFolders(true);
+        const baseFolder = t('directionsPages.drugPolicySubpages.commission.ordersFolder');
+        
+        // Проверка на SSR
+        if (typeof window === 'undefined') {
+          setLoadingFolders(false);
+          return;
+        }
+
+        const baseUrl = window.location.origin;
+        
+        // Делаем запрос к API для получения файлов и извлекаем папки из путей
+        const params = new URLSearchParams();
+        if (baseFolder) {
+          const normalizedFolder = baseFolder.replace(/\\/g, '/');
+          params.append('folder', normalizedFolder);
+        }
+
+        // Делаем запрос к /api/files для получения структуры
+        const filesResponse = await axios.get(`${baseUrl}/api/files?${params.toString()}`);
+        
+        // Извлекаем уникальные папки (годы) из путей файлов
+        const folderSet = new Set();
+        
+        if (filesResponse.data && Array.isArray(filesResponse.data)) {
+          filesResponse.data.forEach(section => {
+            const files = section.files || section.documents || [];
+            files.forEach(file => {
+              if (file.url || file.path) {
+                const pathStr = file.url || file.path || '';
+                // Разбиваем путь на части
+                const pathParts = pathStr.split('/').filter(part => part.length > 0);
+                
+                // Ищем папку с годом в пути (4 цифры или формат с датой)
+                pathParts.forEach(part => {
+                  // Точное совпадение года (2021, 2022, и т.д.)
+                  if (/^\d{4}$/.test(part)) {
+                    folderSet.add(part);
+                  }
+                  // Год в начале (2021-01-15, 2021.01.15, 2021_01_15)
+                  else if (/^\d{4}[-._]/.test(part)) {
+                    const yearMatch = part.match(/^(\d{4})/);
+                    if (yearMatch) {
+                      folderSet.add(yearMatch[1]);
+                    }
+                  }
+                  // Год в конце (15.01.2021, 15-01-2021)
+                  else if (/[-._]\d{4}$/.test(part)) {
+                    const yearMatch = part.match(/(\d{4})$/);
+                    if (yearMatch) {
+                      folderSet.add(yearMatch[1]);
+                    }
+                  }
+                });
+              }
+            });
+          });
+        }
+        
+        // Преобразуем Set в массив объектов с папками
+        const folders = Array.from(folderSet)
+          .filter(folderName => /^\d{4}$/.test(folderName)) // Только годы (4 цифры)
+          .map(folderName => ({
+            name: folderName,
+            path: folderName
+          }));
+
+        // Сортируем папки по убыванию (новые годы сначала)
+        folders.sort((a, b) => {
+          const yearA = parseInt(a.name) || 0;
+          const yearB = parseInt(b.name) || 0;
+          return yearB - yearA;
+        });
+        
+        setAvailableFolders(folders);
+        setLoadingFolders(false);
+      } catch (error) {
+        console.error('Ошибка при загрузке списка папок:', error);
+        setLoadingFolders(false);
+        setAvailableFolders([]);
+      }
+    };
+
+    fetchAvailableFolders();
+  }, []); // Запускаем только при монтировании компонента
 
   return (
     <>
@@ -146,9 +238,43 @@ export default function Commission() {
               </div>
             </div>
             
+            {/* Фильтр выбора папки (года) */}
+            <div className="mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {t('directionsPages.drugPolicySubpages.commission.ordersTitle')}
+                </h3>
+                <div className="flex items-center gap-3">
+                  <label htmlFor="folderFilter" className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                    Фильтр по году:
+                  </label>
+                  <select
+                    id="folderFilter"
+                    value={selectedFolder}
+                    onChange={(e) => setSelectedFolder(e.target.value)}
+                    className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent min-w-[150px]"
+                    disabled={loadingFolders}
+                  >
+                    <option value="">Все года</option>
+                    {availableFolders.map((folder) => (
+                      <option key={folder.path} value={folder.path}>
+                        {folder.name}
+                      </option>
+                    ))}
+                  </select>
+                  {loadingFolders && (
+                    <div className="inline-block animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-amber-500"></div>
+                  )}
+                </div>
+              </div>
+            </div>
+            
             <SimpleFileDisplay 
-              folder={t('directionsPages.drugPolicySubpages.commission.ordersFolder')} 
-              title={t('directionsPages.drugPolicySubpages.commission.ordersTitle')} 
+              folder={selectedFolder 
+                ? `${t('directionsPages.drugPolicySubpages.commission.ordersFolder')}/${selectedFolder}`
+                : t('directionsPages.drugPolicySubpages.commission.ordersFolder')
+              } 
+              title="" 
               bgColor="bg-white"
             />
             

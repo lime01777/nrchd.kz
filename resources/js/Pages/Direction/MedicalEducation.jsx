@@ -114,29 +114,29 @@ export default function MedicalEducation() {
         <div className="container pt-8 mx-auto">
             <div className='flex flex-wrap'>
                 <FolderChlank 
-                    color="bg-gray-200"
-                    colorsec="bg-gray-300"
+                    color="bg-green-200"
+                    colorsec="bg-green-300"
                     title={t('directionsPages.medicalEducation.subfolders.rating.title')} 
                     description={t('directionsPages.medicalEducation.subfolders.rating.description')}
                     href={route('direction.medical.education.rating')}
                 />
                 <FolderChlank 
-                    color="bg-gray-200"
-                    colorsec="bg-gray-300"
+                    color="bg-green-200"
+                    colorsec="bg-green-300"
                     title={t('directionsPages.medicalEducation.subfolders.documents.title')} 
                     description={t('directionsPages.medicalEducation.subfolders.documents.description')}
                     href={route('direction.medical.education.documents')}
                 />
                 <FolderChlank 
-                    color="bg-gray-200"
-                    colorsec="bg-gray-300"
+                    color="bg-green-200"
+                    colorsec="bg-green-300"
                     title={t('directionsPages.medicalEducation.subfolders.gosoTup.title')} 
                     description={t('directionsPages.medicalEducation.subfolders.gosoTup.description')}
                     href={route('direction.medical.education.goso_tup')}
                 />
                 <FolderChlank 
-                    color="bg-gray-200"
-                    colorsec="bg-gray-300"
+                    color="bg-green-200"
+                    colorsec="bg-green-300"
                     title={t('directionsPages.medicalEducation.subfolders.recommendations.title')} 
                     description={t('directionsPages.medicalEducation.subfolders.recommendations.description')}
                     href={route('direction.medical.education.recommendations')}

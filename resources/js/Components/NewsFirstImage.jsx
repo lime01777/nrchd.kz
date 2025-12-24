@@ -39,7 +39,7 @@ export default function NewsFirstImage({
       <img
         src={displayImage}
         alt={alt}
-        className="w-full h-full object-cover"
+        className="w-full h-full object-contain"
         onError={(e) => {
           console.error('Ошибка загрузки изображения:', displayImage);
           e.target.onerror = null;

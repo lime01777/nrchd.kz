@@ -148,6 +148,11 @@ function SimpleFileDisplay({
             params.append('title', title);
           }
           
+          // Передаем параметр года в API для фильтрации на сервере
+          if (year) {
+            params.append('year', year);
+          }
+          
           // Формируем строку поиска с учетом всех параметров фильтрации
           let fullSearchTerm = searchTerm || '';
           

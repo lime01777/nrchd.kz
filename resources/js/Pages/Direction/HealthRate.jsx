@@ -115,8 +115,8 @@ export default function HealthRate() {
         <div className="container pt-8 mx-auto">
             <div className='flex flex-wrap'>
                 <FolderChlank 
-                    color="bg-gray-200"
-                    colorsec="bg-gray-300"
+                    color="bg-fuchsia-200"
+                    colorsec="bg-fuchsia-300"
                     title={t('directionsPages.healthRate.subfolders.otzReports.title')} 
                     description={t('directionsPages.healthRate.subfolders.otzReports.description')}
                     href={route('health.rate.otz.reports')}

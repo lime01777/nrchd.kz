@@ -1,5 +1,0 @@
-import{j as e}from"./app-ixJk8rcS.js";import{S as a}from"./SimpleFileDisplay-CHQ28kyr.js";function n({title:l,folder:r,bgColor:t="bg-white",onVideoClick:s,hideDownload:i=!1}){return e.jsx("div",{className:"text-gray-600 body-font py-10",children:e.jsx("div",{className:"container mx-auto px-5",children:e.jsxs("div",{className:`${t} p-4 sm:p-6 rounded-lg flex flex-col md:flex-row flex-wrap md:flex-nowrap`,children:[e.jsx("div",{className:"w-full md:w-2/3 flex items-center justify-center mb-6 md:mb-0 md:order-2",children:e.jsx("h1",{className:"text-xl sm:text-2xl md:text-3xl font-medium title-font text-gray-900 tracking-widest text-center break-words",children:l})}),e.jsx("div",{className:"w-full md:w-1/3 pr-0 md:pr-4 md:order-1",children:e.jsxs("div",{className:"actfile-container",children:[e.jsx("style",{jsx:!0,children:`
-                .actfile-container :global(.grid) {
-                  grid-template-columns: 1fr !important;
-                }
-              `}),e.jsx(a,{folder:r,title:"",bgColor:t,onVideoClick:s,limit:2,singleColumn:!0,hideDownload:i})]})})]})})})}export{n as A};

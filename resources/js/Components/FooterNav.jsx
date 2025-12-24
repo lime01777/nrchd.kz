@@ -20,15 +20,18 @@ const FooterNav = ({ title, links, subMenus = {} }) => {
     
     return (
         <div className="lg:w-1/4 md:w-1/2 w-full px-4">
-            <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3" data-translate>{title}</h2>
-            <nav className="list-none mb-10">
+            {/* Заголовок с центрированием на мобильных устройствах */}
+            <h2 className="font-semibold text-gray-900 md:text-base text-sm mb-3 text-center md:text-left" data-translate>{title}</h2>
+            {/* Навигация с центрированием на мобильных устройствах */}
+            <nav className="list-none mb-10 text-center md:text-left">
                 {links.map((link, index) => (
                 <li key={index} className="mb-2">
                     {subMenus[link.label] ? (
                         <div>
+                            {/* Кнопка с центрированием на мобильных устройствах */}
                             <button 
                                 onClick={() => toggleSubmenu(link.label)}
-                                className="flex items-center text-gray-600 hover:text-gray-800 w-full text-left"
+                                className="flex items-center justify-center md:justify-start text-gray-600 hover:text-gray-800 w-full md:text-left"
                             >
                                 <span {...(link.translate ? {'data-translate': true} : {})}>{link.label}</span>
                                 <svg 
@@ -41,8 +44,9 @@ const FooterNav = ({ title, links, subMenus = {} }) => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
+                            {/* Подменю с центрированием на мобильных устройствах */}
                             {openSubmenu === link.label && (
-                                <ul className="pl-4 mt-2 space-y-1 border-l border-gray-200">
+                                <ul className="pl-4 mt-2 space-y-1 border-l border-gray-200 text-center md:text-left">
                                     {subMenus[link.label].map((subLink, subIndex) => (
                                         <li key={subIndex}>
                                             <Link 

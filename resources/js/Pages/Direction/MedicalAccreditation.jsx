@@ -253,43 +253,43 @@ export default function MedicalAccreditation() {
         <div className="container pt-8 mx-auto">
             <div className='flex flex-wrap'>
                 <FolderChlank 
-                    color="bg-gray-200"
-                    colorsec="bg-gray-300"
+                    color="bg-yellow-200"
+                    colorsec="bg-yellow-300"
                     title={t('directionsPages.medicalAccreditation.subfolders.activeStandards.title')} 
                     description={t('directionsPages.medicalAccreditation.subfolders.activeStandards.description')}
                     href={route('accreditation.standards')}
                 />
                 <FolderChlank 
-                    color="bg-gray-200"
-                    colorsec="bg-gray-300"
+                    color="bg-yellow-200"
+                    colorsec="bg-yellow-300"
                     title={t('directionsPages.medicalAccreditation.subfolders.archive.title')} 
                     description={t('directionsPages.medicalAccreditation.subfolders.archive.description')}
                     href={route('accreditation.archive')}
                 />
                 <FolderChlank 
-                    color="bg-gray-200"
-                    colorsec="bg-gray-300"
+                    color="bg-yellow-200"
+                    colorsec="bg-yellow-300"
                     title={t('directionsPages.medicalAccreditation.subfolders.guides.title')} 
                     description={t('directionsPages.medicalAccreditation.subfolders.guides.description')}
                     href={route('accreditation.guides')}
                 />
                 <FolderChlank 
-                    color="bg-gray-200"
-                    colorsec="bg-gray-300"
+                    color="bg-yellow-200"
+                    colorsec="bg-yellow-300"
                     title={t('directionsPages.medicalAccreditation.subfolders.experts.title')} 
                     description={t('directionsPages.medicalAccreditation.subfolders.experts.description')}
                     href={route('accreditation.experts')}
                 />
                 <FolderChlank 
-                    color="bg-gray-200"
-                    colorsec="bg-gray-300"
+                    color="bg-yellow-200"
+                    colorsec="bg-yellow-300"
                     title={t('directionsPages.medicalAccreditation.subfolders.commission.title')} 
                     description={t('directionsPages.medicalAccreditation.subfolders.commission.description')}
                     href={route('accreditation.commission')}
                 />
                 <FolderChlank 
-                    color="bg-gray-200"
-                    colorsec="bg-gray-300"
+                    color="bg-yellow-200"
+                    colorsec="bg-yellow-300"
                     title={t('directionsPages.medicalAccreditation.subfolders.training.title')} 
                     description={t('directionsPages.medicalAccreditation.subfolders.training.description')}
                     href={route('accreditation.training')}

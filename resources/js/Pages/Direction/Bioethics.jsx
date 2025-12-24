@@ -151,7 +151,7 @@ export default function Bioethics() {
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.december')}</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">5, 19</div>
+                    <div className="text-sm text-gray-600">5, 26</div>
                     <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>

@@ -169,7 +169,8 @@
       "title": "Contact Information",
       "email": "office@nrchd.kz",
       "phone": "+7 (7172) 648-951",
-      "address": "Republic of Kazakhstan, 010000, Astana, Yesil district, Kabanbai Batyr avenue, 32/1"
+      "address": "Republic of Kazakhstan, 010000, Astana, Yesil district, Kabanbai Batyr avenue, 32/1",
+      "callCenter": "PET and CT call center"
     },
     "workingHours": {
       "title": "Working Hours",
@@ -429,12 +430,12 @@
         "about": "First Vice Minister of Health of the Republic of Kazakhstan. Graduated from Kazakh National Medical University, specialty \"Doctor\", internship in \"General Surgery\", master's degree in \"Health System Manager\" at Tulane University, USA under the Bolashak program."
       },
       "member3": {
-        "name": "Bakirov Ilyas Kelesovich",
-        "about": "Director of the Strategic Development Department. Master of Business Administration (MBA), doctor, healthcare organizer of the highest category."
+        "name": "Akhmetniyaz Laurra Mustafievna",
+        "about": "Director of the Strategic Development Department."
       },
       "member4": {
         "name": "Idrisova Saltanat Sadyrovna",
-        "about": "Director of Viva Consulting LLP. MBA \"Financial Management\", PhD \"Healthcare Management\", specialties - economist, lawyer. Certificate of Professional Accountant of the Republic of Kazakhstan. Diploma of Professional Internal Auditor DipPIA, mediator-trainer, coach, Member of the QID Independent Directors Association."
+        "about": "Independent Director of QID Association of Independent Directors, DBA, Executive Director of JSC \"National Geological Service\". PhD \"Healthcare Management\", specialties - economist, lawyer. Certificate of Professional Accountant of the Republic of Kazakhstan. Diploma of Professional Internal Auditor DipPIA, mediator-trainer."
       },
       "member5": {
         "name": "Karibekov Temirlan Sibiryevich",
@@ -1677,29 +1678,29 @@
         "title": "ICD-11",
         "description": "International Classification of Diseases 11th version",
         "h1": "ICD-11",
-        "folder": "Digital Healthcare\\Folder — ICD 11",
-        "parentName": "Digital Healthcare",
+        "folder": "Electronic Healthcare\\Folder — ICD 11",
+        "parentName": "Electronic Healthcare",
         "breadcrumbDirections": "Directions",
-        "breadcrumbElectronicHealth": "Digital Healthcare"
+        "breadcrumbElectronicHealth": "Electronic Healthcare"
       },
       "regulations": {
         "title": "Regulations and Legal Acts",
         "description": "Regulations in digital healthcare",
         "h1": "Regulations and Legal Acts",
-        "folder": "Digital Healthcare/Regulations and Legal Acts",
-        "parentName": "Digital Healthcare",
+        "folder": "Electronic Healthcare/Folder – NPA",
+        "parentName": "Electronic Healthcare",
         "breadcrumbDirections": "Directions",
-        "breadcrumbElectronicHealth": "Digital Healthcare"
+        "breadcrumbElectronicHealth": "Electronic Healthcare"
       },
       "standards": {
         "title": "Standards",
         "description": "Digital healthcare standards",
         "h1": "Standards",
-        "folder": "Digital Healthcare/Folder — Standards",
+        "folder": "Electronic Healthcare/Folder — Standards",
         "displayTitle": "Technical Committee for Standardization No. 83 Digital Healthcare",
-        "parentName": "Digital Healthcare",
+        "parentName": "Electronic Healthcare",
         "breadcrumbDirections": "Directions",
-        "breadcrumbElectronicHealth": "Digital Healthcare"
+        "breadcrumbElectronicHealth": "Electronic Healthcare"
       }
     },
     "bioethicsSubpages": {
@@ -2142,7 +2143,49 @@
         "moreDetails": "More about the course",
         "parentName": "Medical Science",
         "breadcrumbDirections": "Directions",
-        "breadcrumbMedicalScience": "Medical Science"
+        "breadcrumbMedicalScience": "Medical Science",
+        "chartsTitle": "CLINICAL TRIALS IN THE REPUBLIC OF KAZAKHSTAN — 2025",
+        "charts": {
+          "title": "CLINICAL TRIALS IN THE REPUBLIC OF KAZAKHSTAN — 2025",
+          "subtitle": "Data as of November 1",
+          "generalInfo": "In 2025, in the Republic of Kazakhstan, according to the NCELSIMI register, 7 permits were issued for conducting clinical trials",
+          "phases": {
+            "title": "Phases of clinical trials:",
+            "label": "Phases of clinical trials",
+            "bioequivalence": "Bioequivalence study",
+            "phase2": "Phase II",
+            "phase2_3": "Phase II/III",
+            "phase3": "Phase III"
+          },
+          "status": {
+            "title": "Status of clinical trials (2025):",
+            "label": "Number of trials",
+            "ongoing": "Ongoing",
+            "completed": "Completed",
+            "notStarted": "Not started",
+            "unknown": "Unknown",
+            "trials": "trials"
+          },
+          "therapeutic": {
+            "title": "Therapeutic areas:",
+            "label": "Therapeutic areas",
+            "diagnostics": "Diagnostics",
+            "cardiology": "Cardiology",
+            "oncology": "Oncology",
+            "allergology": "Allergology",
+            "infectious": "Infectious diseases"
+          },
+          "sponsors": {
+            "title": "Sponsor structure of clinical trials in 2025 includes both international pharmaceutical companies and local representatives",
+            "label": "Sponsors",
+            "usa": "USA",
+            "germany": "Germany",
+            "kazakhstan": "Kazakhstan",
+            "nurMay": "TOO \"NUR-MAY PHARMACY\"",
+            "vivaPharm": "TOO \"VIVA PHARM\"",
+            "industrialMicrobiology": "TOO \"Industrial Microbiology\""
+          }
+        }
       },
       "tech": {
         "title": "Technologies",
@@ -2181,7 +2224,7 @@
         "description": "Active accreditation standards",
         "h1": "Current Accreditation Standards and Criteria",
         "intro": "This section presents the current regulatory documents governing the standards and criteria for accreditation of medical organizations in the Republic of Kazakhstan. Here you will find the approved requirements that a medical organization must meet to obtain accreditation.",
-        "folder": "Accreditation/Standards",
+        "folder": "Аккредитация медицинских организаций/Папка- Действующие стандарты и критерии аккредитации",
         "accordionTitle": "Current Standards and Criteria",
         "parentName": "Accreditation of Medical Organizations",
         "breadcrumbDirections": "Directions",
@@ -2203,7 +2246,7 @@
         "description": "Accreditation guides",
         "h1": "Accreditation Guidelines",
         "intro": "This section presents guides and methodological materials that will help you prepare for the accreditation process of medical organizations. Here you will find documents containing requirements, recommendations and instructions for accreditation in accordance with the legislation of the Republic of Kazakhstan.",
-        "folder": "Accreditation/Guides",
+        "folder": "Аккредитация медицинских организаций/Папка-Руководства",
         "accordionTitle": "Accreditation Guidelines",
         "parentName": "Accreditation of Medical Organizations",
         "breadcrumbDirections": "Directions",

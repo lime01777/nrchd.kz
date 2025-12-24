@@ -111,22 +111,22 @@ export default function HumanResources() {
         <div className="container pt-8 mx-auto">
             <div className='flex flex-wrap'>
                 <FolderChlank 
-                    color="bg-gray-200"
-                    colorsec="bg-gray-300"
+                    color="bg-red-200"
+                    colorsec="bg-red-300"
                     title={t('directionsPages.humanResources.subfolders.medicalWorkers.title')} 
                     description={t('directionsPages.humanResources.subfolders.medicalWorkers.description')}
                     href={route('human.resources.medical.workers')}
                 />
                 <FolderChlank 
-                    color="bg-gray-200"
-                    colorsec="bg-gray-300"
+                    color="bg-red-200"
+                    colorsec="bg-red-300"
                     title={t('directionsPages.humanResources.subfolders.managers.title')} 
                     description={t('directionsPages.humanResources.subfolders.managers.description')}
                     href={route('human.resources.managers')}
                 />
                 <FolderChlank 
-                    color="bg-gray-200"
-                    colorsec="bg-gray-300"
+                    color="bg-red-200"
+                    colorsec="bg-red-300"
                     title={t('directionsPages.humanResources.subfolders.graduates.title')} 
                     description={t('directionsPages.humanResources.subfolders.graduates.description')}
                     href={route('human.resources.graduates')}

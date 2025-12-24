@@ -24,36 +24,38 @@ ChartJS.register(
 
 const SwitchableChart = ({ t }) => {
 
-    // Статистические данные
+    // Статистические данные за 11 месяцев 2025 года
     const statisticsData = {
         births: {
-            total: `22 812 ${t('directionsPages.medicalStatistics.chart.units.people', 'чел.')}`,
-            boys: '10 722',
-            girls: '12 090',
-            twins: '365',
-            triplets: '29',
-            pregravid: '10',
-            date: `${t('directionsPages.medicalStatistics.chart.births.datePrefix', 'Данные за')} ${t('directionsPages.medicalStatistics.chart.date.may2025', 'май 2025 года')}`
+            total: `295 826 ${t('directionsPages.medicalStatistics.chart.units.people', 'чел.')}`,
+            boys: '152 283',
+            girls: '143 543',
+            twins: '3 119',
+            triplets: '24',
+            pregravid: '10', // Данные для прегравидарной подготовки оставляем без изменений, так как их нет в таблице
+            date: `${t('directionsPages.medicalStatistics.chart.births.datePrefix', 'Данные за')} 11 месяцев 2025 года`
         },
         discharged: {
-            total: `1 406 627 ${t('directionsPages.medicalStatistics.chart.units.people', 'чел.')}`,
-            totalds: `1 632 935 ${t('directionsPages.medicalStatistics.chart.units.people', 'чел.')}`,
-            discharged: '1 393 912',
-            died: '12 715',
-            date: `${t('directionsPages.medicalStatistics.chart.discharged.datePrefix', 'Данные за')} ${t('directionsPages.medicalStatistics.chart.date.may2025', 'май 2025 года')}`
+            total: `3 132 593 ${t('directionsPages.medicalStatistics.chart.units.people', 'чел.')}`,
+            totalds: `1 362 108 ${t('directionsPages.medicalStatistics.chart.units.people', 'чел.')}`,
+            planned: '1 169 101', // Планово (круглосуточный стационар)
+            emergency: '1 963 492', // Экстренно (круглосуточный стационар)
+            date: `${t('directionsPages.medicalStatistics.chart.discharged.datePrefix', 'Данные за')} 11 месяцев 2025 года`
         },
         operations: {
-            total: '1688',
-            planned: '912',
-            emergency: '716',
-            heartSurgery: '675',
-            date: `${t('directionsPages.medicalStatistics.chart.operations.datePrefix', 'Данные за')} ${t('directionsPages.medicalStatistics.chart.date.may2025', 'май 2025 года')}`
+            total: '824 500',
+            planned: '372 458',
+            emergency: '452 042',
+            heartSurgery: '11 800',
+            date: `${t('directionsPages.medicalStatistics.chart.operations.datePrefix', 'Данные за')} 11 месяцев 2025 года`
         },
         patients: {
-            screening: '500',
-            dynamicObservation: '1000',
-            alo: '1000',
-            date: `${t('directionsPages.medicalStatistics.chart.patients.datePrefix', 'Данные за')} ${t('directionsPages.medicalStatistics.chart.date.may2025', 'май 2025 года')}`
+            screening: '500', // Данные для скрининга оставляем без изменений, так как их нет в таблице
+            dynamicObservation: '3 820 266', // Пациенты на динамическом наблюдении (на дату 30.11.2025г.)
+            alo: '1 797 009', // Пациенты на АЛО (за 9 месяцев 2025 года)
+            dynamicObservationDate: 'на дату 30.11.2025г.',
+            aloDate: 'за 9 месяцев 2025 года',
+            date: `${t('directionsPages.medicalStatistics.chart.patients.datePrefix', 'Данные за')} 11 месяцев 2025 года`
         }
     };
     
@@ -172,11 +174,11 @@ const SwitchableChart = ({ t }) => {
                     <div className="grid grid-cols-2 gap-4 mt-6">
                         <div>
                             <p className="text-sm mb-1 text-gray-600">{t('directionsPages.medicalStatistics.chart.discharged.planned', 'Планово')}</p>
-                            <p className="text-2xl font-bold text-gray-900">{statisticsData.discharged.discharged}</p>
+                            <p className="text-2xl font-bold text-gray-900">{statisticsData.discharged.planned}</p>
                         </div>
                         <div>
                             <p className="text-sm mb-1 text-gray-600">{t('directionsPages.medicalStatistics.chart.discharged.emergency', 'Экстренно')}</p>
-                            <p className="text-2xl font-bold text-gray-900">{statisticsData.discharged.died}</p>
+                            <p className="text-2xl font-bold text-gray-900">{statisticsData.discharged.emergency}</p>
                         </div>
                     </div>
                     <br />
@@ -217,15 +219,15 @@ const SwitchableChart = ({ t }) => {
                     <p className="text-xs mb-4 text-gray-500">{statisticsData.patients.date}</p>
                     
                     <div className="mt-4">
-                        <h3 className="text-xl font-bold mb-4 text-purple-800">{t('directionsPages.medicalStatistics.chart.patients.dynamicObservationTitle', 'Число пациентов, взятых на динамическое наблюдение')}</h3>
+                        <h3 className="text-xl font-bold mb-4 text-purple-800">{t('directionsPages.medicalStatistics.chart.patients.dynamicObservationTitle', 'Пациенты на динамическом наблюдении')}</h3>
                         <p className="text-2xl font-bold text-gray-900">{statisticsData.patients.dynamicObservation}</p>
-                        <p className="text-xs text-gray-500">{statisticsData.patients.date}</p>
+                        <p className="text-xs text-gray-500">{statisticsData.patients.dynamicObservationDate}</p>
                     </div>
                     
                     <div className="mt-4">
-                        <h3 className="text-xl font-bold mb-4 text-purple-800">{t('directionsPages.medicalStatistics.chart.patients.aloTitle', 'Число пациентов на АЛО')}</h3>
+                        <h3 className="text-xl font-bold mb-4 text-purple-800">{t('directionsPages.medicalStatistics.chart.patients.aloTitle', 'Пациенты на АЛО')}</h3>
                         <p className="text-2xl font-bold text-gray-900">{statisticsData.patients.alo}</p>
-                        <p className="text-xs text-gray-500">{statisticsData.patients.date}</p>
+                        <p className="text-xs text-gray-500">{statisticsData.patients.aloDate}</p>
                     </div>
                 </div>
             </div>

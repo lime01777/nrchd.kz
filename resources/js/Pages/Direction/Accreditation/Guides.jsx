@@ -14,7 +14,6 @@ export default function Guides() {
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className="flex flex-wrap px-12 text-justify mb-4">
-            <h1 className="text-3xl font-semibold text-gray-900 mb-6 w-full">{t('directionsPages.accreditationSubpages.guides.h1')}</h1>
             <p className="tracking-wide leading-relaxed">
               {t('directionsPages.accreditationSubpages.guides.intro')}
             </p>
@@ -22,7 +21,6 @@ export default function Guides() {
         </div>
       </section>
       
-      <BannerCatalog />
       
       <section className="text-gray-600 body-font">
         <div className="container px-5 pt-12 pb-12 mx-auto rounded-2xl">

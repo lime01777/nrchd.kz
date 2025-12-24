@@ -179,8 +179,8 @@ export default function NewsSliderWithMain({
   if (processedImages.length === 1) {
     return (
       <div 
-        className={`relative overflow-hidden rounded-lg ${className}`} 
-        style={{ height }}
+        className={`relative overflow-hidden ${className}`} 
+        style={height === '100%' ? { height: '100%' } : { height }}
       >
         {/* Индикатор загрузки */}
         {isLoading && (
@@ -192,24 +192,28 @@ export default function NewsSliderWithMain({
         <SafeImage
           src={processedImages[0]}
           alt="Изображение новости"
-          className={`w-full h-full object-cover transition-opacity duration-300 ${
+          className={`w-full h-full object-contain transition-opacity duration-300 ${
             loadedImages.has(0) ? 'opacity-100' : 'opacity-0'
           }`}
           fallbackSrc=""
           onLoad={() => handleImageLoad(0)}
           onError={() => handleImageError(0)}
+          style={{ 
+            position: 'relative',
+            zIndex: 1
+          }}
         />
         
         {/* Показываем счетчик даже для одного изображения */}
         {showCounter && !isLoading && (
-          <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+          <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded z-20">
             1 / 1
           </div>
         )}
         
         {/* Показываем точки даже для одного изображения */}
         {showDots && !isLoading && (
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 z-20">
             <div className="w-2 h-2 bg-white rounded-full opacity-100"></div>
           </div>
         )}
@@ -234,40 +238,24 @@ export default function NewsSliderWithMain({
 
   return (
     <div 
-      className={`relative overflow-hidden rounded-lg ${className}`} 
-      style={{ height }}
+      className={`relative overflow-hidden ${className}`} 
+      style={height === '100%' ? { height: '100%' } : { height }}
     >
-      {/* Основное изображение */}
+      {/* Основное изображение - убираем наложение */}
       <div className="relative w-full h-full bg-gray-200">
-        {/* Показываем предыдущее изображение, пока новое загружается */}
-        {currentIndex > 0 && loadedImages.has(currentIndex - 1) && !errorImages.has(currentIndex - 1) && !loadedImages.has(currentIndex) && (
-          <SafeImage
-            src={processedImages[currentIndex - 1]}
-            alt="Предыдущее изображение"
-            className="absolute inset-0 w-full h-full object-cover opacity-30"
-            fallbackSrc=""
-            style={{ 
-              minHeight: '100%',
-              minWidth: '100%',
-              objectFit: 'cover'
-            }}
-          />
-        )}
-        
         {!errorImages.has(currentIndex) ? (
           <SafeImage
             src={processedImages[currentIndex]}
             alt={`Изображение ${currentIndex + 1}`}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-              loadedImages.has(currentIndex) ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            className={`w-full h-full object-contain transition-opacity duration-500 ${
+              loadedImages.has(currentIndex) ? 'opacity-100' : 'opacity-0'
             }`}
             fallbackSrc=""
             onLoad={() => handleImageLoad(currentIndex)}
             onError={() => handleImageError(currentIndex)}
             style={{ 
-              minHeight: '100%',
-              minWidth: '100%',
-              objectFit: 'cover'
+              position: 'relative',
+              zIndex: 10
             }}
           />
         ) : (
@@ -281,7 +269,7 @@ export default function NewsSliderWithMain({
           </div>
         )}
         
-        {/* Предварительная загрузка остальных изображений */}
+        {/* Предварительная загрузка остальных изображений - скрытые */}
         {processedImages.map((image, index) => 
           index !== currentIndex && (
             <img
@@ -297,7 +285,7 @@ export default function NewsSliderWithMain({
         
         {/* Индикатор загрузки */}
         {!loadedImages.has(currentIndex) && !errorImages.has(currentIndex) && (
-          <div className="absolute inset-0 bg-gray-200 flex items-center justify-center z-10">
+          <div className="absolute inset-0 bg-gray-200 flex items-center justify-center z-30">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
           </div>
         )}
