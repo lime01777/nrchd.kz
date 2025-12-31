@@ -12,7 +12,8 @@ export default function NewsSliderWithMain({
   showDots = true,
   showCounter = false,
   autoPlay = true,
-  interval = 3000
+  interval = 3000,
+  objectFit = 'contain'
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loadedImages, setLoadedImages] = useState(new Set());
@@ -175,6 +176,9 @@ export default function NewsSliderWithMain({
     );
   }
 
+  // Определяем класс для object-fit
+  const objectFitClass = objectFit === 'cover' ? 'object-cover' : 'object-contain';
+
   // Если только одно изображение, показываем его как слайдер с возможностью добавления
   if (processedImages.length === 1) {
     return (
@@ -192,7 +196,7 @@ export default function NewsSliderWithMain({
         <SafeImage
           src={processedImages[0]}
           alt="Изображение новости"
-          className={`w-full h-full object-contain transition-opacity duration-300 ${
+          className={`w-full h-full ${objectFitClass} transition-opacity duration-300 ${
             loadedImages.has(0) ? 'opacity-100' : 'opacity-0'
           }`}
           fallbackSrc=""
@@ -247,7 +251,7 @@ export default function NewsSliderWithMain({
           <SafeImage
             src={processedImages[currentIndex]}
             alt={`Изображение ${currentIndex + 1}`}
-            className={`w-full h-full object-contain transition-opacity duration-500 ${
+            className={`w-full h-full ${objectFitClass} transition-opacity duration-500 ${
               loadedImages.has(currentIndex) ? 'opacity-100' : 'opacity-0'
             }`}
             fallbackSrc=""

@@ -443,6 +443,14 @@ export default function Home() {
     // Определяем слайды для hero секции
     const heroSlides = [
         {
+            id: 1,
+            title: t('home.hero.slide1.title'),
+            subtitle: t('home.hero.slide1.subtitle'),
+            buttonText: t('home.hero.slide1.button'),
+            buttonLink: route('medical.tourism'),
+            image: "/img/HeroImg/medical-tourism.png"
+        },
+        {
             id: 2,
             title: t('home.hero.slide2.title'),
             subtitle: t('home.hero.slide2.subtitle'),
@@ -630,7 +638,7 @@ export default function Home() {
                             >
                                 {/* Заголовок */}
                                 <h1 className={`title-font sm:text-4xl text-3xl mb-8 font-semibold drop-shadow-lg ${
-                                    slide.id === 2 
+                                    slide.id === 1 || slide.id === 2 
                                         ? 'text-black' 
                                         : 'text-white'
                                 }`}>
@@ -643,7 +651,7 @@ export default function Home() {
                                 
                                 {/* Подзаголовок */}
                                 <p className={`text-xl leading-relaxed mb-10 max-w-2xl drop-shadow-lg ${
-                                    slide.id === 2 
+                                    slide.id === 1 || slide.id === 2 
                                         ? 'text-black' 
                                         : 'text-white'
                                 }`}>
@@ -659,9 +667,11 @@ export default function Home() {
                                     <Link 
                                         href={slide.buttonLink} 
                                         className={`inline-flex items-center backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold text-lg hover:scale-105 hover:shadow-xl transition-all duration-500 shadow-lg border-2 cursor-pointer z-[9999] relative pointer-events-auto select-none hover:z-[10000] ${
-                                            slide.id === 2 
-                                                ? 'bg-green-600/80 border-green-500/50 hover:bg-green-600/95 hover:border-green-500/80 hover:shadow-2xl' // Клинические протоколы - зеленый
-                                                : 'bg-purple-700/80 border-purple-600/50 hover:bg-purple-700/95 hover:border-purple-600/80 hover:shadow-2xl' // Национальный доклад - темно-фиолетовый
+                                            slide.id === 1 
+                                                ? 'bg-green-600/80 border-green-500/50 hover:bg-green-600/95 hover:border-green-500/80 hover:shadow-2xl' // Медицинский туризм - зеленый
+                                                : slide.id === 2 
+                                                    ? 'bg-green-600/80 border-green-500/50 hover:bg-green-600/95 hover:border-green-500/80 hover:shadow-2xl' // Клинические протоколы - зеленый
+                                                    : 'bg-purple-700/80 border-purple-600/50 hover:bg-purple-700/95 hover:border-purple-600/80 hover:shadow-2xl' // Национальный доклад - темно-фиолетовый
                                         }`}
                                         style={{ animation: 'fadeIn 0.8s ease-in-out' }}
                                         onClick={(e) => {

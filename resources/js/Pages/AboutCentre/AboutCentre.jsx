@@ -6,6 +6,7 @@ import NameDoctor from '@/Components/NameDoctor';
 import NameDoctorWithPopup from '@/Components/NameDoctorWithPopup';
 import ActualFile from '@/Components/ActualFile';
 import FilesAccord from '@/Components/FilesAccord';
+import ProcurementAccord from '@/Components/ProcurementAccord';
 import MainLeadershipCard from '@/Components/MainLeadershipCard';
 import SimpleLeadershipCard from '@/Components/SimpleLeadershipCard';
 import OrganizationalStructure from '@/Components/OrganizationalStructure';
@@ -75,8 +76,7 @@ export default function AboutCentre() {
             bgColor="bg-fuchsia-100"
             defaultOpen={true}
           />
-          <FilesAccord 
-            folder="О центре/Закупки" 
+          <ProcurementAccord 
             title={t('aboutCentre.procurement')} 
             bgColor="bg-fuchsia-100"
           />

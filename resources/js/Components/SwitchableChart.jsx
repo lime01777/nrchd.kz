@@ -29,28 +29,32 @@ const SwitchableChart = ({ t }) => {
         births: {
             total: `295 826 ${t('directionsPages.medicalStatistics.chart.units.people', 'чел.')}`,
             boys: '152 283',
+            boysPercent: '51%', // Доля мальчиков
             girls: '143 543',
+            girlsPercent: '49%', // Доля девочек
             twins: '3 119',
             triplets: '24',
-            pregravid: '10', // Данные для прегравидарной подготовки оставляем без изменений, так как их нет в таблице
             date: `${t('directionsPages.medicalStatistics.chart.births.datePrefix', 'Данные за')} 11 месяцев 2025 года`
         },
         discharged: {
             total: `3 132 593 ${t('directionsPages.medicalStatistics.chart.units.people', 'чел.')}`,
             totalds: `1 362 108 ${t('directionsPages.medicalStatistics.chart.units.people', 'чел.')}`,
             planned: '1 169 101', // Планово (круглосуточный стационар)
+            plannedPercent: '37%', // Доля плановых
             emergency: '1 963 492', // Экстренно (круглосуточный стационар)
+            emergencyPercent: '63%', // Доля экстренных
             date: `${t('directionsPages.medicalStatistics.chart.discharged.datePrefix', 'Данные за')} 11 месяцев 2025 года`
         },
         operations: {
             total: '824 500',
             planned: '372 458',
+            plannedPercent: '45%', // Доля плановых операций
             emergency: '452 042',
+            emergencyPercent: '55%', // Доля экстренных операций
             heartSurgery: '11 800',
             date: `${t('directionsPages.medicalStatistics.chart.operations.datePrefix', 'Данные за')} 11 месяцев 2025 года`
         },
         patients: {
-            screening: '500', // Данные для скрининга оставляем без изменений, так как их нет в таблице
             dynamicObservation: '3 820 266', // Пациенты на динамическом наблюдении (на дату 30.11.2025г.)
             alo: '1 797 009', // Пациенты на АЛО (за 9 месяцев 2025 года)
             dynamicObservationDate: 'на дату 30.11.2025г.',
@@ -139,11 +143,11 @@ const SwitchableChart = ({ t }) => {
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <p className="text-sm mb-1 text-gray-600">{t('directionsPages.medicalStatistics.chart.births.boys', 'Мальчики')}</p>
-                            <p className="text-2xl font-bold text-gray-900">{statisticsData.births.boys}</p>
+                            <p className="text-2xl font-bold text-gray-900">{statisticsData.births.boys} <span className="text-lg text-gray-500">({statisticsData.births.boysPercent})</span></p>
                         </div>
                         <div>
                             <p className="text-sm mb-1 text-gray-600">{t('directionsPages.medicalStatistics.chart.births.girls', 'Девочки')}</p>
-                            <p className="text-2xl font-bold text-gray-900">{statisticsData.births.girls}</p>
+                            <p className="text-2xl font-bold text-gray-900">{statisticsData.births.girls} <span className="text-lg text-gray-500">({statisticsData.births.girlsPercent})</span></p>
                         </div>
                     </div>
                     
@@ -157,12 +161,6 @@ const SwitchableChart = ({ t }) => {
                             <p className="text-2xl font-bold text-gray-900">{statisticsData.births.triplets}</p>
                         </div>
                     </div>
-                    
-                    <div className="mt-4">
-                        <h3 className="text-xl font-bold text-purple-800">{t('directionsPages.medicalStatistics.chart.births.pregravidTitle', 'Число женщин, прошедших прегравидарную подготовку')}</h3>
-                        <p className="text-2xl font-bold text-gray-900">{statisticsData.births.pregravid}</p>
-                        <p className="text-xs text-gray-500">{statisticsData.births.date}</p>
-                    </div>
                 </div>
                 
                 {/* Блок о выбывших */}
@@ -174,11 +172,11 @@ const SwitchableChart = ({ t }) => {
                     <div className="grid grid-cols-2 gap-4 mt-6">
                         <div>
                             <p className="text-sm mb-1 text-gray-600">{t('directionsPages.medicalStatistics.chart.discharged.planned', 'Планово')}</p>
-                            <p className="text-2xl font-bold text-gray-900">{statisticsData.discharged.planned}</p>
+                            <p className="text-2xl font-bold text-gray-900">{statisticsData.discharged.planned} <span className="text-lg text-gray-500">({statisticsData.discharged.plannedPercent})</span></p>
                         </div>
                         <div>
                             <p className="text-sm mb-1 text-gray-600">{t('directionsPages.medicalStatistics.chart.discharged.emergency', 'Экстренно')}</p>
-                            <p className="text-2xl font-bold text-gray-900">{statisticsData.discharged.emergency}</p>
+                            <p className="text-2xl font-bold text-gray-900">{statisticsData.discharged.emergency} <span className="text-lg text-gray-500">({statisticsData.discharged.emergencyPercent})</span></p>
                         </div>
                     </div>
                     <br />
@@ -198,11 +196,11 @@ const SwitchableChart = ({ t }) => {
                     <div className="grid grid-cols-2 gap-4 mt-6">
                         <div>
                             <p className="text-sm mb-1 text-gray-600">{t('directionsPages.medicalStatistics.chart.operations.planned', 'Планово')}</p>
-                            <p className="text-2xl font-bold text-gray-900">{statisticsData.operations.planned}</p>
+                            <p className="text-2xl font-bold text-gray-900">{statisticsData.operations.planned} <span className="text-lg text-gray-500">({statisticsData.operations.plannedPercent})</span></p>
                         </div>
                         <div>
                             <p className="text-sm mb-1 text-gray-600">{t('directionsPages.medicalStatistics.chart.operations.emergency', 'Экстренно')}</p>
-                            <p className="text-2xl font-bold text-gray-900">{statisticsData.operations.emergency}</p>
+                            <p className="text-2xl font-bold text-gray-900">{statisticsData.operations.emergency} <span className="text-lg text-gray-500">({statisticsData.operations.emergencyPercent})</span></p>
                         </div>
                     </div>
                     
@@ -214,10 +212,6 @@ const SwitchableChart = ({ t }) => {
                 
                 {/* Блок о пациентах */}
                 <div className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-100">
-                    <h3 className="text-xl font-bold mb-4 text-purple-800">{t('directionsPages.medicalStatistics.chart.patients.screeningTitle', 'Число пациентов, прошедших скрининг')}</h3>
-                    <p className="text-3xl font-bold mb-1 text-gray-900">{statisticsData.patients.screening}</p>
-                    <p className="text-xs mb-4 text-gray-500">{statisticsData.patients.date}</p>
-                    
                     <div className="mt-4">
                         <h3 className="text-xl font-bold mb-4 text-purple-800">{t('directionsPages.medicalStatistics.chart.patients.dynamicObservationTitle', 'Пациенты на динамическом наблюдении')}</h3>
                         <p className="text-2xl font-bold text-gray-900">{statisticsData.patients.dynamicObservation}</p>

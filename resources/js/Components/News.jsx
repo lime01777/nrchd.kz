@@ -145,7 +145,7 @@ function News() {
                         dots={true}
                         infinite={true}
                         speed={600}
-                        slidesToShow={Math.min(processedNews.length, 6)} // Показываем до 6 новостей
+                        slidesToShow={Math.min(processedNews.length, 5)} // Показываем до 5 новостей
                         slidesToScroll={1}
                         initialSlide={0}
                         autoplay={true}
@@ -157,7 +157,7 @@ function News() {
                             {
                                 breakpoint: 1920,
                                 settings: {
-                                    slidesToShow: Math.min(processedNews.length, 6),
+                                    slidesToShow: Math.min(processedNews.length, 5),
                                     slidesToScroll: 1,
                                     dots: true,
                                     infinite: true

@@ -49,3 +49,6 @@ Route::prefix('youth-health-centers')->group(function () {
     Route::get('/', [\App\Http\Controllers\Api\YouthHealthCenterApiController::class, 'index']);
     Route::get('/regions', [\App\Http\Controllers\Api\YouthHealthCenterApiController::class, 'regions']);
 });
+
+// API маршрут для получения данных о госзакупках
+Route::get('/procurements', [\App\Http\Controllers\ProcurementController::class, 'getProcurements']);

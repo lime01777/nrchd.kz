@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
 import FilesAccord from '@/Components/FilesAccord';
 import FolderChlank from '@/Components/FolderChlank';
-import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import SwitchableChart from '@/Components/SwitchableChart';
 import DocumentCards from '@/Components/DocumentCards';
 import translationService from '@/services/TranslationService';
+import { route } from '@/ziggy-helper'; // Импорт функции для генерации маршрутов
 
 const t = (key, fallback = '') => {
     return translationService.t(key, fallback);
@@ -95,7 +95,7 @@ export default function MedicalStatistics() {
                     
                     <div className="flex flex-wrap">
                         <div className="w-full px-4">
-                            <SwitchableChart />
+                            <SwitchableChart t={t} />
                         </div>
                     </div>
                 </div>
@@ -109,19 +109,19 @@ export default function MedicalStatistics() {
                 bgColor="bg-purple-100"
                 documents={[
                     {
-                        title: "Приказ Министра здравоохранения Республики Казахстан от 31 июля 2020 года № КР ДСМ-64/2020",
+                        title: "Приказ \"Об утверждении форм учетной документации в области здравоохранения, а также инструкций по их заполнению\" от 30 октября 2020 года № ҚР ДСМ-175/2020",
                         url: "https://adilet.zan.kz/rus/docs/V2000021579"
                     },
                     {
-                        title: "Приказ Министра здравоохранения Республики Казахстан от 21 августа 2020 года № КР ДСМ-96/2020",
+                        title: "Приказ \"Об утверждении форм отчетной документации в области здравоохранения\" от 22 декабря 2020 года № ҚР ДСМ-313/2020",
                         url: "https://adilet.zan.kz/rus/docs/V2000021879"
                     },
                     {
-                        title: "Приказ Министра здравоохранения Республики Казахстан от 14 августа 2020 года № КР ДСМ-92/2020",
+                        title: "Приказ \"Об утверждении инструкции по кодированию заболеваемости и смертности, инструкции по использованию международных классификаторов\" от 11 декабря 2020 года № ҚР ДСМ-250/2020",
                         url: "https://adilet.zan.kz/rus/docs/V2000021769"
                     },
                     {
-                        title: "Приказ Министра здравоохранения Республики Казахстан от 11 августа 2020 года № КР ДСМ-89/2020",
+                        title: "Приказ \"Об утверждении методики формирования (расчета) показателей в области здравоохранения\" от 30 ноября 2020 года № ҚР ДСМ-212/2020",
                         url: "https://adilet.zan.kz/rus/docs/V2000021698"
                     },
                 ]}

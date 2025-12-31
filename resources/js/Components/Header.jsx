@@ -269,17 +269,6 @@ export default function Header({ isBranchPage = false }) {
                     {t('header.news')}
                 </Link>
 
-                {/* Кнопка Медицинский туризм */}
-                <Link 
-                    href={route('medical.tourism')} 
-                    className="mr-8 inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-transparent hover:bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 animate-bg-blink"
-                    style={{
-                        animation: 'bgBlink 2s ease-in-out infinite'
-                    }}
-                >
-                    {t('header.medicalTourism')}
-                </Link>
-
                 <a className="mr-8 hover:text-gray-900"></a>
             </nav>
             <div className='hidden lg:flex flex-wrap items-end justify-end'>
@@ -456,20 +445,6 @@ export default function Header({ isBranchPage = false }) {
                             className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2 min-h-[44px]">
                             <span>{t('header.news')}</span>
                         </button>
-                    </div>
-
-                    {/* Медицинский туризм */}
-                    <div className="w-full">
-                        <Link 
-                            href={route('medical.tourism')}
-                            onClick={() => setMenuOpen(false)}
-                            className="flex items-center justify-between w-full text-gray-800 hover:text-blue-600 mb-2 px-4 py-3 border border-gray-300 rounded-md bg-transparent hover:bg-gray-50/50 transition-all duration-200 min-h-[44px]"
-                            style={{
-                                animation: 'bgBlink 2s ease-in-out infinite'
-                            }}
-                        >
-                            <span>{t('header.medicalTourism')}</span>
-                        </Link>
                     </div>
                 </nav>
                 

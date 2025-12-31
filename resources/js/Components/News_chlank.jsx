@@ -108,7 +108,7 @@ const News_chlank = React.memo(({ date, description, slug, image, images = [], e
   // Содержимое карточки
   const cardContent = (
     <>
-        {/* Отображение медиа (видео или изображения) - уменьшенное */}
+        {/* Отображение медиа (видео или изображения) - увеличенное */}
         <div className="aspect-[4/3] overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 relative group">
           {videoItems.length > 0 ? (
             // Если есть видео, показываем первое видео
@@ -158,10 +158,11 @@ const News_chlank = React.memo(({ date, description, slug, image, images = [], e
                 images={imageOnlyImages}
                 className="w-full h-full"
                 height="100%"
-                showDots={true}
+                showDots={false}
                 showCounter={false}
-                autoPlay={true}
+                autoPlay={false}
                 interval={3000}
+                objectFit="cover"
               />
             </div>
           ) : (
@@ -176,10 +177,10 @@ const News_chlank = React.memo(({ date, description, slug, image, images = [], e
         </div>
         
         {/* Контент карточки - упрощенный, только заголовок */}
-        <div className="flex flex-col p-4 bg-white flex-shrink-0">
+        <div className="flex flex-col p-5 bg-white flex-shrink-0">
             <div className="flex flex-col">
-                {/* Заголовок - только первые три строки */}
-                <h2 className="text-gray-900 text-sm font-semibold line-clamp-3" title={description}>
+                {/* Заголовок - фиксированная высота для трех строк */}
+                <h2 className="text-gray-900 text-base font-semibold line-clamp-3 h-[4.5rem]" title={description}>
                     {description}
                 </h2>
             </div>
@@ -215,7 +216,7 @@ const News_chlank = React.memo(({ date, description, slug, image, images = [], e
           href={newsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col cursor-pointer group overflow-hidden border border-gray-100 hover:border-blue-200 transform hover:-translate-y-1"
+          className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col cursor-pointer group overflow-hidden border border-gray-100 hover:border-blue-200 transform hover:-translate-y-1"
           onClick={handleClick}
         >
           {cardContent}
@@ -226,7 +227,7 @@ const News_chlank = React.memo(({ date, description, slug, image, images = [], e
     return (
       <Link 
         href={newsUrl}
-        className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col group overflow-hidden border border-gray-100 hover:border-blue-200 transform hover:-translate-y-1"
+        className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col group overflow-hidden border border-gray-100 hover:border-blue-200 transform hover:-translate-y-1"
         onClick={handleClick}
         preserveScroll={true}
       >
@@ -236,7 +237,7 @@ const News_chlank = React.memo(({ date, description, slug, image, images = [], e
   }
   
   return (
-    <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col group overflow-hidden border border-gray-100">
+    <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col group overflow-hidden border border-gray-100">
       {cardContent}
     </div>
   )

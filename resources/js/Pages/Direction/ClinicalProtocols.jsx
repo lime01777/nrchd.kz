@@ -1,8 +1,8 @@
-import { Head, usePage } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import React, { useState } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
-import FilesAccord from '@/Components/FilesAccord';
+import ClinicalProtocolsTabs from '@/Components/ClinicalProtocolsTabs';
 import translationService from '@/services/TranslationService';
 
 // Глобальная функция для получения перевода
@@ -82,6 +82,13 @@ export default function ClinicalProtocols() {
                     </svg>
                 </button>
             </div>
+        </div>
+    </section>
+    
+    {/* Блок с вкладками и таблицами */}
+    <section className="text-gray-600 body-font">
+        <div className="container px-5 py-8 mx-auto">
+            <ClinicalProtocolsTabs />
         </div>
     </section>
     
