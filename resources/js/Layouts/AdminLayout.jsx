@@ -146,6 +146,15 @@ export default function AdminLayout({ children, title }) {
             МЦЗ (Карта)
           </Link>
           <Link 
+            href={route('admin.clinics.index')} 
+            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.clinics.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
+          >
+            <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            Клиники Казахстана
+          </Link>
+          <Link 
             href={route('admin.admin.settings')} 
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.admin.settings', 'admin.admin.settings.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
           >

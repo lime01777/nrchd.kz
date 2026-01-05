@@ -31,7 +31,7 @@ class Clinic extends Model
         'equipment_ru', 'equipment_kk', 'equipment_en',
         'map_lat', 'map_lng',
         'logo_path', 'hero_path', 'gallery',
-        'is_published', 'publish_at',
+        'is_published', 'is_medical_tourism', 'publish_at',
         'seo_title_ru', 'seo_title_kk', 'seo_title_en',
         'seo_desc_ru', 'seo_desc_kk', 'seo_desc_en',
     ];
@@ -59,6 +59,7 @@ class Clinic extends Model
         'equipment_en' => 'array',
         'gallery' => 'array',
         'is_published' => 'boolean',
+        'is_medical_tourism' => 'boolean',
         'publish_at' => 'datetime',
         'map_lat' => 'decimal:7',
         'map_lng' => 'decimal:7',
@@ -370,5 +371,13 @@ class Clinic extends Model
               ->orWhere('city_kk', 'like', "%{$search}%")
               ->orWhere('city_en', 'like', "%{$search}%");
         });
+    }
+
+    /**
+     * Scope для клиник медицинского туризма
+     */
+    public function scopeMedicalTourism($query)
+    {
+        return $query->where('is_medical_tourism', true);
     }
 }

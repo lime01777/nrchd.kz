@@ -5,7 +5,7 @@ import FolderChlank from '@/Components/FolderChlank';
 import translationService from '@/services/TranslationService';
 import { route } from '@/ziggy-helper'; // Импорт функции для генерации маршрутов
 
-export default function MedicalTourism() {
+export default function MedicalTourism({ clinics = [] }) {
     const [search, setSearch] = useState('');
     
     // Функция для получения перевода
@@ -31,7 +31,6 @@ export default function MedicalTourism() {
     const [reproductiveMedicineDescription, setReproductiveMedicineDescription] = useState('');
     const [astanaClinicsTitle, setAstanaClinicsTitle] = useState('');
     const [searchPlaceholder, setSearchPlaceholder] = useState('');
-    const [detailsButton, setDetailsButton] = useState('');
     const [noClinicsFound, setNoClinicsFound] = useState('');
     const [h1Title, setH1Title] = useState('');
 
@@ -55,7 +54,6 @@ export default function MedicalTourism() {
             setReproductiveMedicineDescription(t('directionsPages.medicalTourism.reproductiveMedicineDescription'));
             setAstanaClinicsTitle(t('directionsPages.medicalTourism.astanaClinicsTitle'));
             setSearchPlaceholder(t('directionsPages.medicalTourism.searchPlaceholder'));
-            setDetailsButton(t('directionsPages.medicalTourism.detailsButton'));
             setNoClinicsFound(t('directionsPages.medicalTourism.noClinicsFound'));
             setH1Title(t('directionsPages.medicalTourism.title', 'Медицинский туризм'));
         };
@@ -68,82 +66,27 @@ export default function MedicalTourism() {
         };
     }, []);
 
-    // Данные о клиниках Астаны для медицинского туризма
-    const astanaClinics = [
-        {
-            id: 1,
-            name: "Международный онкологический центр томотерапии 'UMIT'",
-            image: "/img/clinics/clinic.jpg",
-            description: "Современный центр для лечения онкологических заболеваний с использованием передовых технологий",
-            specialties: ["Онкология", "Томотерапия"],
-            route: "clinic.umit"
-        },
-        {
-            id: 2,
-            name: "Национальный центр детской реабилитации",
-            image: "/img/clinics/clinic.jpg", 
-            description: "Специализированный центр для реабилитации детей с различными заболеваниями",
-            specialties: ["Детская реабилитация", "Педиатрия"],
-            route: "clinic.child-rehab"
-        },
-        {
-            id: 3,
-            name: "Национальный Научный Медицинский Центр",
-            image: "/img/clinics/clinic.jpg",
-            description: "Ведущий медицинский центр с широким спектром специализированных услуг",
-            specialties: ["Многопрофильная медицина", "Исследования"],
-            route: "clinic.nsmc"
-        },
-        {
-            id: 4,
-            name: "Национальный научный онкологический центр",
-            image: "/img/clinics/clinic.jpg",
-            description: "Центр онкологии с современными методами диагностики и лечения",
-            specialties: ["Онкология", "Химиотерапия"],
-            route: "clinic.oncology"
-        },
-        {
-            id: 5,
-            name: "Национальный центр нейрохирургии",
-            image: "/img/clinics/clinic.jpg",
-            description: "Специализированный центр для лечения заболеваний нервной системы",
-            specialties: ["Нейрохирургия", "Неврология"],
-            route: "clinic.neurosurgery"
-        },
-        {
-            id: 6,
-            name: "Центр сердца UMC",
-            image: "/img/clinics/clinic.jpg",
-            description: "Кардиологический центр с современным оборудованием для лечения сердечно-сосудистых заболеваний",
-            specialties: ["Кардиология", "Кардиохирургия"],
-            route: "clinic.heart-center"
-        },
-        {
-            id: 7,
-            name: "Диагностический центр UMC",
-            image: "/img/clinics/clinic.jpg",
-            description: "Центр диагностики с полным спектром современных методов обследования",
-            specialties: ["Диагностика", "Лабораторные исследования"],
-            route: "clinic.diagnostic"
-        },
-        {
-            id: 8,
-            name: "Центр Материнства и Детства UMC",
-            image: "/img/clinics/clinic.jpg",
-            description: "Специализированный центр для женщин и детей с высоким уровнем медицинской помощи",
-            specialties: ["Акушерство", "Гинекология", "Педиатрия"],
-            route: "clinic.maternity"
-        }
-    ];
+    // Данные о клиниках Казахстана для медицинского туризма (получаем с сервера)
+    const kazakhstanClinics = clinics.map(clinic => ({
+        id: clinic.id,
+        name: clinic.name,
+        image: clinic.image || clinic.hero_url || clinic.logo_url || '/img/clinics/clinic.jpg',
+        description: clinic.short_desc || '',
+        specialties: clinic.specialties || [],
+        address: clinic.address || '',
+        phone: clinic.phone || '',
+        website: clinic.website || '',
+        slug: clinic.slug,
+    }));
 
-  // Фильтрация клиник по названию
-  const filteredClinics = useMemo(() => {
-    const q = (search || '').toLowerCase().trim();
-    if (!q) return astanaClinics;
-    return astanaClinics.filter(c => c.name.toLowerCase().includes(q));
-  }, [search]);
+    // Фильтрация клиник по названию
+    const filteredClinics = useMemo(() => {
+        const q = (search || '').toLowerCase().trim();
+        if (!q) return kazakhstanClinics;
+        return kazakhstanClinics.filter(c => c.name.toLowerCase().includes(q));
+    }, [search, kazakhstanClinics]);
 
-  return (
+    return (
     <>
       <Head title={pageTitle} />
       <section className="text-gray-600 body-font pb-8">
@@ -214,7 +157,7 @@ export default function MedicalTourism() {
         </div>
       </section>
 
-      {/* Клиники Астаны */}
+      {/* Клиники Казахстана */}
       <section className="text-gray-600 body-font py-12">
         <div className="container px-5 mx-auto">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
@@ -232,8 +175,8 @@ export default function MedicalTourism() {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredClinics.map((clinic) => (
-              <div key={clinic.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                <div className="h-48 bg-gray-200 overflow-hidden">
+              <div key={clinic.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+                <div className="h-48 bg-gray-200 overflow-hidden flex-shrink-0">
                   <img 
                     src={clinic.image} 
                     alt={clinic.name}
@@ -243,7 +186,7 @@ export default function MedicalTourism() {
                     }}
                   />
                 </div>
-                <div className="p-4">
+                <div className="p-4 flex flex-col flex-1">
                   <h4 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
                     {clinic.name}
                   </h4>
@@ -260,15 +203,26 @@ export default function MedicalTourism() {
                       </span>
                     ))}
                   </div>
-                  <button 
-                    className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium"
-                    onClick={() => {
-                      // Переход на страницу клиники
-                      router.visit(route('clinics.show.by.route', { route: clinic.route }));
-                    }}
-                  >
-                    {detailsButton}
-                  </button>
+                  {clinic.address && (
+                    <p className="text-gray-500 text-xs mb-2">
+                      📍 {clinic.address}
+                    </p>
+                  )}
+                  {clinic.phone && (
+                    <p className="text-gray-500 text-xs mb-3">
+                      📞 {clinic.phone}
+                    </p>
+                  )}
+                  {clinic.website && (
+                    <a
+                      href={clinic.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium mt-auto text-center"
+                    >
+                      Сайт
+                    </a>
+                  )}
                 </div>
               </div>
             ))}

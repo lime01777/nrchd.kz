@@ -5606,7 +5606,32 @@ Route::get('/tech', function () {
 
 // Маршруты для медицинского туризма
 Route::get('/medical-tourism', function () {
-    return Inertia::render('Direction/MedicalTourism');
+    // Показываем все клиники с флагом is_medical_tourism=true
+    // Фильтруем только по is_medical_tourism, без проверки is_published и publish_at
+    // чтобы все добавленные через админку "Клиники Казахстана" отображались
+    $clinics = \App\Models\Clinic::where('is_medical_tourism', true)
+        ->orderBy('name_ru')
+        ->get()
+        ->map(function ($clinic) {
+            return [
+                'id' => $clinic->id,
+                'slug' => $clinic->slug,
+                'name' => $clinic->name,
+                'short_desc' => $clinic->short_desc,
+                'address' => $clinic->address,
+                'phone' => $clinic->phone,
+                'website' => $clinic->website,
+                'specialties' => $clinic->specialties ?: [],
+                'logo_url' => $clinic->logo_url,
+                'hero_url' => $clinic->hero_url,
+                // Для карточек используем hero_url (главное изображение), если есть, иначе logo_url, иначе дефолтное
+                'image' => $clinic->hero_url ?: ($clinic->logo_url ?: '/img/clinics/clinic.jpg'),
+            ];
+        });
+    
+    return Inertia::render('Direction/MedicalTourism', [
+        'clinics' => $clinics,
+    ]);
 })->name('medical.tourism');
 
 Route::get('/medical-tourism/directions', function () {
@@ -6018,6 +6043,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::post('/clinics/{clinic}/images', [\App\Http\Controllers\Admin\ClinicController::class, 'uploadImages'])->name('admin.clinics.upload-images');
     Route::delete('/clinics/{clinic}/images', [\App\Http\Controllers\Admin\ClinicController::class, 'deleteImage'])->name('admin.clinics.delete-image');
     Route::put('/clinics/{clinic}/gallery/reorder', [\App\Http\Controllers\Admin\ClinicController::class, 'reorderGallery'])->name('admin.clinics.reorder-gallery');
+    Route::patch('/clinics/{clinic}/toggle-published', [\App\Http\Controllers\Admin\ClinicController::class, 'togglePublished'])->name('admin.clinics.toggle-published');
     
     // Управление молодежными центрами здоровья (МЦЗ)
     Route::resource('youth-health-centers', \App\Http\Controllers\Admin\YouthHealthCenterController::class, ['names' => 'admin.youth-health-centers']);

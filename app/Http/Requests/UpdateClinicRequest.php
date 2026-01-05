@@ -12,7 +12,7 @@ class UpdateClinicRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->can('manage-content');
+        return auth()->check();
     }
 
     /**

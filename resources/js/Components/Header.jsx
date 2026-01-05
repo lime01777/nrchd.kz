@@ -269,7 +269,15 @@ export default function Header({ isBranchPage = false }) {
                     {t('header.news')}
                 </Link>
 
-                <a className="mr-8 hover:text-gray-900"></a>
+                {/* Кнопка Медицинский туризм с мигающей анимацией */}
+                <Link 
+                    href={route('medical.tourism')} 
+                    className="mr-8 flex items-center cursor-pointer"
+                >
+                    <span className="animate-pulse bg-green-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition-colors shadow-lg">
+                        {t('header.medicalTourism', 'Медицинский туризм')}
+                    </span>
+                </Link>
             </nav>
             <div className='hidden lg:flex flex-wrap items-end justify-end'>
                 {auth?.user && (

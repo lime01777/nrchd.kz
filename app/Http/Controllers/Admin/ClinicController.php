@@ -7,6 +7,7 @@ use App\Models\Clinic;
 use App\Models\ClinicDoctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use App\Http\Requests\StoreClinicRequest;
@@ -46,10 +47,35 @@ class ClinicController extends Controller
         // Обработка JSON полей
         $validated = $this->processJsonFields($validated);
 
-        // Обработка изображений
-        $validated = $this->processImages($validated, null);
+        // Устанавливаем флаг is_medical_tourism = true для всех клиник, созданных через админку "Клиники Казахстана"
+        // чтобы они автоматически отображались на странице медицинского туризма
+        if (!isset($validated['is_medical_tourism'])) {
+            $validated['is_medical_tourism'] = true;
+        }
 
+        // Сохраняем файлы изображений до создания клиники
+        $heroFile = $validated['hero'] ?? null;
+        $galleryFiles = $validated['gallery_files'] ?? null;
+        
+        // Удаляем файлы из validated, чтобы они не мешали созданию
+        unset($validated['hero'], $validated['gallery_files']);
+
+        // Создаем клинику (slug будет сгенерирован автоматически в модели)
         $clinic = Clinic::create($validated);
+        
+        // Теперь обрабатываем изображения с известным slug
+        $validatedImages = [];
+        if ($heroFile) {
+            $validatedImages['hero'] = $heroFile;
+        }
+        if ($galleryFiles) {
+            $validatedImages['gallery_files'] = $galleryFiles;
+        }
+        
+        if (!empty($validatedImages)) {
+            $imageData = $this->processImages($validatedImages, $clinic);
+            $clinic->update($imageData);
+        }
 
         return redirect()->route('admin.clinics.index')
             ->with('success', 'Клиника успешно создана');
@@ -110,6 +136,21 @@ class ClinicController extends Controller
 
         return redirect()->route('admin.clinics.index')
             ->with('success', 'Клиника успешно удалена');
+    }
+
+    /**
+     * Переключение статуса публикации клиники
+     */
+    public function togglePublished(Request $request, Clinic $clinic)
+    {
+        $clinic->update([
+            'is_published' => !$clinic->is_published
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'is_published' => $clinic->is_published
+        ]);
     }
 
     /**
@@ -219,20 +260,22 @@ class ClinicController extends Controller
      */
     private function processImages($data, $clinic = null)
     {
-        $clinicPath = $clinic ? "public/img/clinics/{$clinic->slug}" : null;
+        if (!$clinic) {
+            return $data;
+        }
 
-        // Обработка логотипа
-        if (isset($data['logo']) && $data['logo'] instanceof \Illuminate\Http\UploadedFile) {
-            $logoFilename = 'logo_' . time() . '.' . $data['logo']->getClientOriginalExtension();
-            $data['logo']->storeAs($clinicPath, $logoFilename);
-            $data['logo_path'] = $logoFilename;
-            unset($data['logo']);
+        // Сохраняем файлы напрямую в public/img/clinics/{slug}/
+        $publicPath = public_path("img/clinics/{$clinic->slug}");
+        
+        // Создаем директорию, если она не существует
+        if (!\Illuminate\Support\Facades\File::exists($publicPath)) {
+            \Illuminate\Support\Facades\File::makeDirectory($publicPath, 0755, true);
         }
 
         // Обработка главного изображения
         if (isset($data['hero']) && $data['hero'] instanceof \Illuminate\Http\UploadedFile) {
             $heroFilename = 'hero_' . time() . '.' . $data['hero']->getClientOriginalExtension();
-            $data['hero']->storeAs($clinicPath, $heroFilename);
+            $data['hero']->move($publicPath, $heroFilename);
             $data['hero_path'] = $heroFilename;
             unset($data['hero']);
         }
@@ -243,13 +286,13 @@ class ClinicController extends Controller
             foreach ($data['gallery_files'] as $image) {
                 if ($image instanceof \Illuminate\Http\UploadedFile) {
                     $filename = 'gallery_' . time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-                    $image->storeAs($clinicPath, $filename);
+                    $image->move($publicPath, $filename);
                     $uploadedImages[] = $filename;
                 }
             }
 
             // Объединяем с существующей галереей
-            $currentGallery = $clinic ? ($clinic->gallery ?: []) : [];
+            $currentGallery = $clinic->gallery ?: [];
             $data['gallery'] = array_merge($currentGallery, $uploadedImages);
             unset($data['gallery_files']);
         }
@@ -262,9 +305,9 @@ class ClinicController extends Controller
      */
     private function deleteClinicImages($clinic)
     {
-        $clinicPath = "public/img/clinics/{$clinic->slug}";
-        if (Storage::exists($clinicPath)) {
-            Storage::deleteDirectory($clinicPath);
+        $publicPath = public_path("img/clinics/{$clinic->slug}");
+        if (\Illuminate\Support\Facades\File::exists($publicPath)) {
+            \Illuminate\Support\Facades\File::deleteDirectory($publicPath);
         }
     }
 }
