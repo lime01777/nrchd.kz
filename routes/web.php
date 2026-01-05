@@ -5613,6 +5613,14 @@ Route::get('/medical-tourism', function () {
         ->orderBy('name_ru')
         ->get()
         ->map(function ($clinic) {
+            try {
+                $heroUrl = $clinic->hero_url;
+                $logoUrl = $clinic->logo_url;
+            } catch (\Exception $e) {
+                $heroUrl = null;
+                $logoUrl = null;
+            }
+            
             return [
                 'id' => $clinic->id,
                 'slug' => $clinic->slug,
@@ -5622,10 +5630,10 @@ Route::get('/medical-tourism', function () {
                 'phone' => $clinic->phone,
                 'website' => $clinic->website,
                 'specialties' => $clinic->specialties ?: [],
-                'logo_url' => $clinic->logo_url,
-                'hero_url' => $clinic->hero_url,
+                'logo_url' => $logoUrl,
+                'hero_url' => $heroUrl,
                 // Для карточек используем hero_url (главное изображение), если есть, иначе logo_url, иначе дефолтное
-                'image' => $clinic->hero_url ?: ($clinic->logo_url ?: '/img/clinics/clinic.jpg'),
+                'image' => $heroUrl ?: ($logoUrl ?: '/img/clinics/clinic.jpg'),
             ];
         });
     

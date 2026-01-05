@@ -120,39 +120,7 @@ export default function MedicalTourismServices() {
               </div>
             </div>
             
-            <div className="bg-blue-50 p-6 rounded-lg">
-              <h3 className="text-xl font-semibold text-blue-800 mb-4">Как получить медицинскую помощь:</h3>
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <div className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1">1</div>
-                  <div>
-                    <h4 className="font-semibold text-blue-800">Консультация</h4>
-                    <p className="text-gray-700">Свяжитесь с нами для получения консультации по интересующим вас услугам</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1">2</div>
-                  <div>
-                    <h4 className="font-semibold text-blue-800">Выбор клиники</h4>
-                    <p className="text-gray-700">Мы поможем выбрать подходящую клинику и специалиста</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1">3</div>
-                  <div>
-                    <h4 className="font-semibold text-blue-800">Организация поездки</h4>
-                    <p className="text-gray-700">Поможем организовать поездку, включая трансфер и проживание</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1">4</div>
-                  <div>
-                    <h4 className="font-semibold text-blue-800">Лечение</h4>
-                    <p className="text-gray-700">Получение качественной медицинской помощи в выбранной клинике</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+
           </div>
         </div>
       </section>

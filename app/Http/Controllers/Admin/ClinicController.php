@@ -268,8 +268,8 @@ class ClinicController extends Controller
         $publicPath = public_path("img/clinics/{$clinic->slug}");
         
         // Создаем директорию, если она не существует
-        if (!\Illuminate\Support\Facades\File::exists($publicPath)) {
-            \Illuminate\Support\Facades\File::makeDirectory($publicPath, 0755, true);
+        if (!File::exists($publicPath)) {
+            File::makeDirectory($publicPath, 0755, true);
         }
 
         // Обработка главного изображения
@@ -306,8 +306,8 @@ class ClinicController extends Controller
     private function deleteClinicImages($clinic)
     {
         $publicPath = public_path("img/clinics/{$clinic->slug}");
-        if (\Illuminate\Support\Facades\File::exists($publicPath)) {
-            \Illuminate\Support\Facades\File::deleteDirectory($publicPath);
+        if (File::exists($publicPath)) {
+            File::deleteDirectory($publicPath);
         }
     }
 }

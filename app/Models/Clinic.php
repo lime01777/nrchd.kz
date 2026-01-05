@@ -246,7 +246,7 @@ class Clinic extends Model
      */
     public function getLogoUrlAttribute()
     {
-        if (empty($this->logo_path)) {
+        if (empty($this->logo_path) || empty($this->slug)) {
             return null;
         }
         
@@ -262,7 +262,7 @@ class Clinic extends Model
      */
     public function getHeroUrlAttribute()
     {
-        if (empty($this->hero_path)) {
+        if (empty($this->hero_path) || empty($this->slug)) {
             return null;
         }
         

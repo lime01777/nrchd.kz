@@ -102,10 +102,8 @@ export default function MedicalTourism({ clinics = [] }) {
       <section className="text-gray-600 body-font">
         <div className="container px-5 pt-8 mx-auto">
           <div className='flex md:flex-row flex-wrap'>
-            <FolderChlank h1={folder1} color="bg-green-100" colorsec="bg-green-200" href={route('medical.tourism.directions')} />
             <FolderChlank h1={folder2} color="bg-green-100" colorsec="bg-green-200" href={route('medical.tourism.services')} />
             <FolderChlank h1={folder3} color="bg-green-100" colorsec="bg-green-200" href={route('medical.tourism.documents')} />
-            <FolderChlank h1={folder4} color="bg-green-100" colorsec="bg-green-200" href={route('medical.tourism.contacts')} />
           </div>
         </div>
       </section>
