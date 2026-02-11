@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from '@inertiajs/react'
-import translationService from '@/services/TranslationService'
+import translationService from '@/Services/TranslationService'
 
 function ServicesChlank({title, bgcolor, url}) {
   const t = (key, fallback = '') => translationService.t(key, fallback);

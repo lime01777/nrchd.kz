@@ -1,7 +1,7 @@
 import React from 'react';
 import BranchTemplate from './BranchTemplate';
 import { Head } from '@inertiajs/react';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function East() {
     const title = translationService.t('branchesPages.east.title', 'Филиал Восточно-Казахстанской области');

@@ -3,11 +3,11 @@ import React from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
 import FolderChlank from '@/Components/FolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return translationService.t(key, fallback);
+  return translationService.t(key, fallback);
 };
 
 
@@ -23,41 +23,41 @@ export default function Bioethics() {
             <h2 className="text-2xl font-bold text-gray-800 mb-6 w-full">
               {t('directionsPages.bioethics.mainTitle')}
             </h2>
-            
+
             <p className="tracking-wide leading-relaxed mb-4">
               {t('directionsPages.bioethics.intro1')}
             </p>
-            
+
             <p className="tracking-wide leading-relaxed mb-4">
               {t('directionsPages.bioethics.intro2')}
             </p>
-            
+
             <p className="tracking-wide leading-relaxed mb-4">
               {t('directionsPages.bioethics.intro3')}
             </p>
-            
+
             <p className="tracking-wide leading-relaxed mb-4">
               <strong>{t('directionsPages.bioethics.chairman')}</strong> - {t('directionsPages.bioethics.chairmanInfo')}
             </p>
-            
+
             <p className="tracking-wide leading-relaxed mb-4">
               {t('directionsPages.bioethics.orderPrefix')}<a href={route('bioethics.composition')} className="text-blue-600 hover:text-blue-800 underline">{t('directionsPages.bioethics.compositionLink')}</a>).
             </p>
-            
-                         <p className="tracking-wide leading-relaxed mb-4">
-               <strong>{t('directionsPages.bioethics.workingBody')}</strong> {t('directionsPages.bioethics.workingBodyInfo')}
-             </p>
-             
-             <p className="tracking-wide leading-relaxed mb-4">
-               <a 
-                 href="https://adilet.zan.kz/rus/docs/V2000021512" 
-                 target="_blank" 
-                 rel="noopener noreferrer"
-                 className="text-blue-600 hover:text-blue-800 underline"
-               >
-                 {t('directionsPages.bioethics.regulationLink')}
-               </a> {t('directionsPages.bioethics.regulationInfo')}
-             </p>
+
+            <p className="tracking-wide leading-relaxed mb-4">
+              <strong>{t('directionsPages.bioethics.workingBody')}</strong> {t('directionsPages.bioethics.workingBodyInfo')}
+            </p>
+
+            <p className="tracking-wide leading-relaxed mb-4">
+              <a
+                href="https://adilet.zan.kz/rus/docs/V2000021512"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                {t('directionsPages.bioethics.regulationLink')}
+              </a> {t('directionsPages.bioethics.regulationInfo')}
+            </p>
           </div>
           <div className='flex flex-wrap px-12 justify-center mb-4'>
           </div>
@@ -74,84 +74,84 @@ export default function Bioethics() {
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.january')}</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">24, 31</div>
+                    <div className="text-sm text-gray-600">16, 30</div>
                     <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.february')}</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">7, 21</div>
+                    <div className="text-sm text-gray-600">13, 27</div>
                     <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.march')}</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">7, 20</div>
+                    <div className="text-sm text-gray-600">13, 27</div>
                     <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.april')}</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">11, 25</div>
+                    <div className="text-sm text-gray-600">10, 24</div>
                     <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.may')}</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">9, 23</div>
+                    <div className="text-sm text-gray-600">15, 29</div>
                     <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.june')}</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">6, 20</div>
+                    <div className="text-sm text-gray-600">12, 26</div>
                     <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.july')}</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">4, 18</div>
+                    <div className="text-sm text-gray-600"></div>
                     <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.august')}</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">1, 15, 29</div>
+                    <div className="text-sm text-gray-600">14, 28</div>
                     <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.september')}</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">12, 26</div>
+                    <div className="text-sm text-gray-600">11, 25</div>
                     <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.october')}</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">10, 24</div>
+                    <div className="text-sm text-gray-600">16, 30</div>
                     <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.november')}</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">7, 21</div>
+                    <div className="text-sm text-gray-600">13, 27</div>
                     <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h4 className="font-semibold text-gray-800 mb-2 text-center">{t('directionsPages.bioethics.months.december')}</h4>
                   <div className="text-center">
-                    <div className="text-sm text-gray-600">5, 26</div>
+                    <div className="text-sm text-gray-600">11, 25</div>
                     <div className="text-xs text-gray-500">{t('directionsPages.bioethics.months.friday')}</div>
                   </div>
                 </div>
@@ -167,55 +167,55 @@ export default function Bioethics() {
         <div className="container px-5 mx-auto">
           <div className="flex flex-wrap px-12">
 
-            
-              <FolderChlank 
-                color="bg-gray-200"
-                colorsec="bg-gray-300"
-                title={t('directionsPages.bioethics.subfolders.sop.title')} 
-                description={t('directionsPages.bioethics.subfolders.sop.description')}
-                href={route('bioethics.expertise')}
-              />
-              
-              <FolderChlank 
-                color="bg-gray-200"
-                colorsec="bg-gray-300"
-                title={t('directionsPages.bioethics.subfolders.certification.title')} 
-                description={t('directionsPages.bioethics.subfolders.certification.description')}
-                href={route('bioethics.certification')}
-              />
-              
-              <FolderChlank 
-                color="bg-gray-200"
-                colorsec="bg-gray-300"
-                title={t('directionsPages.bioethics.subfolders.localCommissions.title')} 
-                description={t('directionsPages.bioethics.subfolders.localCommissions.description')}
-                href={route('bioethics.local_commissions')}
-              />
-              
-              <FolderChlank 
-                color="bg-gray-200"
-                colorsec="bg-gray-300"
-                title={t('directionsPages.bioethics.subfolders.biobanks.title')} 
-                description={t('directionsPages.bioethics.subfolders.biobanks.description')}
-                href={route('bioethics.biobanks')}
-              />
-              
-              <FolderChlank 
-                color="bg-gray-200"
-                colorsec="bg-gray-300"
-                title={t('directionsPages.bioethics.subfolders.npa.title')} 
-                description={t('directionsPages.bioethics.subfolders.npa.description')}
-                href={route('bioethics.npa')}
-              />
-              
-              <FolderChlank 
-                color="bg-gray-200"
-                colorsec="bg-gray-300"
-                title={t('directionsPages.bioethics.subfolders.documents.title')} 
-                description={t('directionsPages.bioethics.subfolders.documents.description')}
-                href={route('bioethics.documents')}
-              />
-            
+
+            <FolderChlank
+              color="bg-gray-200"
+              colorsec="bg-gray-300"
+              title={t('directionsPages.bioethics.subfolders.sop.title')}
+              description={t('directionsPages.bioethics.subfolders.sop.description')}
+              href={route('bioethics.expertise')}
+            />
+
+            <FolderChlank
+              color="bg-gray-200"
+              colorsec="bg-gray-300"
+              title={t('directionsPages.bioethics.subfolders.certification.title')}
+              description={t('directionsPages.bioethics.subfolders.certification.description')}
+              href={route('bioethics.certification')}
+            />
+
+            <FolderChlank
+              color="bg-gray-200"
+              colorsec="bg-gray-300"
+              title={t('directionsPages.bioethics.subfolders.localCommissions.title')}
+              description={t('directionsPages.bioethics.subfolders.localCommissions.description')}
+              href={route('bioethics.local_commissions')}
+            />
+
+            <FolderChlank
+              color="bg-gray-200"
+              colorsec="bg-gray-300"
+              title={t('directionsPages.bioethics.subfolders.biobanks.title')}
+              description={t('directionsPages.bioethics.subfolders.biobanks.description')}
+              href={route('bioethics.biobanks')}
+            />
+
+            <FolderChlank
+              color="bg-gray-200"
+              colorsec="bg-gray-300"
+              title={t('directionsPages.bioethics.subfolders.npa.title')}
+              description={t('directionsPages.bioethics.subfolders.npa.description')}
+              href={route('bioethics.npa')}
+            />
+
+            <FolderChlank
+              color="bg-gray-200"
+              colorsec="bg-gray-300"
+              title={t('directionsPages.bioethics.subfolders.documents.title')}
+              description={t('directionsPages.bioethics.subfolders.documents.description')}
+              href={route('bioethics.documents')}
+            />
+
           </div>
         </div>
       </section>

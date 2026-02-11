@@ -4,7 +4,7 @@ import LayoutDirection from '@/Layouts/LayoutDirection';
 import FilesAccord from '@/Components/FilesAccord';
 import FolderChlank from '@/Components/FolderChlank';
 import FAQ from '@/Components/FAQ';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {

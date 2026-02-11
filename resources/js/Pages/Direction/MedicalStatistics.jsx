@@ -5,7 +5,7 @@ import FilesAccord from '@/Components/FilesAccord';
 import FolderChlank from '@/Components/FolderChlank';
 import SwitchableChart from '@/Components/SwitchableChart';
 import DocumentCards from '@/Components/DocumentCards';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 import { route } from '@/ziggy-helper'; // Импорт функции для генерации маршрутов
 
 const t = (key, fallback = '') => {

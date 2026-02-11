@@ -2,7 +2,7 @@ import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 import FilesAccord from '@/Components/FilesAccord';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function EducationPrograms() {
     // Функция для получения перевода

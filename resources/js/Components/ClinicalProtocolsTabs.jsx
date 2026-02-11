@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 import Table from '@/Components/UI/Table';
 
 // Функция для получения перевода
@@ -297,12 +297,11 @@ export default function ClinicalProtocolsTabs() {
                                 {currentTab.columns.map((column, index) => (
                                     <Table.Cell
                                         key={index}
-                                        className={`px-6 py-5 text-left text-sm font-bold text-gray-800 uppercase tracking-wide bg-gradient-to-r from-blue-50 to-gray-50 border-b-2 border-blue-200 ${
-                                            index === 0 ? 'w-20' : 
-                                            index === 1 ? 'w-1/4' : 
-                                            index === 2 ? 'w-2/4' : 
-                                            'w-1/4'
-                                        }`}
+                                        className={`px-6 py-5 text-left text-sm font-bold text-gray-800 uppercase tracking-wide bg-gradient-to-r from-blue-50 to-gray-50 border-b-2 border-blue-200 ${index === 0 ? 'w-20' :
+                                                index === 1 ? 'w-1/4' :
+                                                    index === 2 ? 'w-2/4' :
+                                                        'w-1/4'
+                                            }`}
                                     >
                                         {column}
                                     </Table.Cell>
@@ -315,7 +314,7 @@ export default function ClinicalProtocolsTabs() {
                                     // Определяем порядок полей в зависимости от вкладки
                                     // Все вкладки используют одинаковую структуру: number, profile, name, type
                                     const fieldOrder = ['number', 'profile', 'name', 'type'];
-                                    
+
                                     return (
                                         <Table.Row
                                             key={rowIndex}
@@ -324,15 +323,14 @@ export default function ClinicalProtocolsTabs() {
                                             {fieldOrder.map((field, cellIndex) => (
                                                 <Table.Cell
                                                     key={cellIndex}
-                                                    className={`px-6 py-5 text-base text-gray-800 leading-relaxed align-top ${
-                                                        cellIndex === 0 
-                                                            ? 'text-center font-bold w-20 text-blue-600' 
+                                                    className={`px-6 py-5 text-base text-gray-800 leading-relaxed align-top ${cellIndex === 0
+                                                            ? 'text-center font-bold w-20 text-blue-600'
                                                             : cellIndex === 1
-                                                            ? 'w-1/4 font-semibold text-gray-700'
-                                                            : cellIndex === 2
-                                                            ? 'w-2/4 text-gray-900'
-                                                            : 'w-1/4 text-center'
-                                                    }`}
+                                                                ? 'w-1/4 font-semibold text-gray-700'
+                                                                : cellIndex === 2
+                                                                    ? 'w-2/4 text-gray-900'
+                                                                    : 'w-1/4 text-center'
+                                                        }`}
                                                     style={{
                                                         wordBreak: 'break-word',
                                                         overflowWrap: 'break-word',
@@ -345,7 +343,7 @@ export default function ClinicalProtocolsTabs() {
                                                     }}
                                                 >
                                                     {cellIndex === 2 ? (
-                                                        <div 
+                                                        <div
                                                             style={{
                                                                 wordBreak: 'break-word',
                                                                 overflowWrap: 'break-word',
@@ -357,11 +355,10 @@ export default function ClinicalProtocolsTabs() {
                                                             {row[field] || ''}
                                                         </div>
                                                     ) : cellIndex === 3 && row[field] ? (
-                                                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                                                            row[field].includes('новый') 
-                                                                ? 'bg-green-100 text-green-800' 
+                                                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${row[field].includes('новый')
+                                                                ? 'bg-green-100 text-green-800'
                                                                 : 'bg-blue-100 text-blue-800'
-                                                        }`}>
+                                                            }`}>
                                                             {row[field]}
                                                         </span>
                                                     ) : (
@@ -373,19 +370,19 @@ export default function ClinicalProtocolsTabs() {
                                     );
                                 })
                             ) : (
-                                        <Table.Row>
-                                            <Table.Cell
-                                                colSpan={currentTab.columns.length}
-                                                className="px-6 py-8 text-center text-gray-500"
-                                            >
-                                                {t('directionsPages.clinicalProtocols.tabs.noData', 'Нет данных для отображения')}
-                                            </Table.Cell>
-                                        </Table.Row>
-                                    )}
-                                </Table.Body>
-                            </Table>
-                        </div>
-                    </div>
+                                <Table.Row>
+                                    <Table.Cell
+                                        colSpan={currentTab.columns.length}
+                                        className="px-6 py-8 text-center text-gray-500"
+                                    >
+                                        {t('directionsPages.clinicalProtocols.tabs.noData', 'Нет данных для отображения')}
+                                    </Table.Cell>
+                                </Table.Row>
+                            )}
+                        </Table.Body>
+                    </Table>
+                </div>
+            </div>
         </div>
     );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import BranchTemplate from './BranchTemplate';
 import { Head } from '@inertiajs/react';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function Turkestan() {
     const title = translationService.t('branchesPages.turkestan.title', 'Филиал области Туркестан');

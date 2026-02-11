@@ -11,7 +11,7 @@ import MainLeadershipCard from '@/Components/MainLeadershipCard';
 import SimpleLeadershipCard from '@/Components/SimpleLeadershipCard';
 import OrganizationalStructure from '@/Components/OrganizationalStructure';
 import { leadershipData, organizationalStructureData } from '@/data/organizationalStructure';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function AboutCentre() {
     // Функция для получения перевода

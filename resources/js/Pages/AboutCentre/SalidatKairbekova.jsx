@@ -1,7 +1,7 @@
 import { Head, usePage } from '@inertiajs/react'
 import LayoutDirection from '@/Layouts/LayoutDirection'
 import React from 'react'
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function SalidatKairbekova() {
     // Функция для получения перевода

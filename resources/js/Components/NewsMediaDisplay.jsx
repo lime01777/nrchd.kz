@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import MediaSlider from './MediaSlider';
+import MediaSlider from '@/Components/MediaSlider';
 
 /**
  * Компонент для отображения медиа в новости

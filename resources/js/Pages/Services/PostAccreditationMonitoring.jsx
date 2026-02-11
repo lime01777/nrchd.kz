@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 import FilesAccord from '@/Components/FilesAccord';
 import VideoModal from '@/Components/VideoModal';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {

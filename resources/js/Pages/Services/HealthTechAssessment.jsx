@@ -2,7 +2,7 @@ import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import ServicesPageLayout from '@/Layouts/ServicesPageLayout';
 import ServiceTimeline from '@/Components/ServiceTimeline';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {

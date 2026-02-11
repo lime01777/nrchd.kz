@@ -1,5 +1,5 @@
 import React from 'react';
-import FileAccordChlank from './FileAccordChlank';
+import FileAccordChlank from '@/Components/FileAccordChlank';
 
 function ImportantDoc({ bgcolor, title, description, filetype, img }) {
   return (

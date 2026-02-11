@@ -1,7 +1,8 @@
 import React from 'react';
-import Header from '@/Components/Header';
-import HeroNews from '@/Components/HeroNews';
-import Footer from '@/Components/Footer';
+import Header from '@/Components/Sections/Header';
+import HeroNews from '@/Components/Sections/HeroNews';
+import Footer from '@/Components/Sections/Footer';
+import ScrollToTop from '@/Components/ScrollToTop';
 
 /**
  * Общий лейаут для публичных страниц новостей.
@@ -25,6 +26,7 @@ export default function LayoutNews({ children, img = null, h1, renderCustomHero 
             </section>
 
             <Footer />
+            <ScrollToTop />
         </>
     );
 }

@@ -1,10 +1,10 @@
 import React from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
-import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
-import InputError from '@/Components/InputError';
-import PrimaryButton from '@/Components/PrimaryButton';
+import InputLabel from '@/Components/Forms/InputLabel';
+import TextInput from '@/Components/Forms/TextInput';
+import InputError from '@/Components/Forms/InputError';
+import PrimaryButton from '@/Components/UI/PrimaryButton';
 
 export default function DocumentForm({ document = null }) {
     const { data, setData, post, put, processing, errors } = useForm({

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import InputLabel from '@/Components/InputLabel';
-import InputError from '@/Components/InputError';
+import InputLabel from '@/Components/Forms/InputLabel';
+import InputError from '@/Components/Forms/InputError';
 
 export default function CategorySelector({ 
   selectedCategories = [], 

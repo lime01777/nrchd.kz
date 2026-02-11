@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from '@inertiajs/react';
-import NewsFirstImage from './NewsFirstImage';
-import { isValidVideoUrl } from '../Utils/mediaUtils';
+import NewsFirstImage from '@/Components/NewsFirstImage';
+import { isValidVideoUrl } from '@/Utils/mediaUtils';
 
 function News_chlank_simple({ date, description, slug, image, images = [] }) {
   // Фильтруем только изображения для карточек (видео показываем только на странице новости)

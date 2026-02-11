@@ -4,9 +4,9 @@ import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import NormativeDocumentsList from '@/Components/NormativeDocumentsList';
 import FAQ from '@/Components/FAQ';
-import News from '@/Components/News';
+import News from '@/Components/Sections/News';
 import ClinicalTrialsCharts from '@/Components/ClinicalTrialsCharts';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function Clinical() {
   const t = (key, fallback = '') => translationService.t(key, fallback);

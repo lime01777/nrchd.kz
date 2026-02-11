@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 function BannerCatalog() {
   const [currentLang, setCurrentLang] = useState(translationService.getLanguage());

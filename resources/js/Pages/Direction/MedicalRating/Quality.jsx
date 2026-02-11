@@ -2,7 +2,7 @@ import { Head } from '@inertiajs/react';
 import React from 'react';
 import { Link } from '@inertiajs/react';
 import FolderChlank from '@/Components/FolderChlank';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function Quality() {
   const t = (key, fallback = '') => translationService.t(key, fallback);

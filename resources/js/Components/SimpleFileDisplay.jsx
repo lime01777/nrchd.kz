@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import axios from 'axios';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 // Константы для конфигурации
 const INITIAL_BATCH = 60;

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import PageAccordions from '@/Components/PageAccordions';
 import BannerCatalog from '@/Components/BannerCatalog';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function Outpatient() {
   const t = (key, fallback = '') => translationService.t(key, fallback);

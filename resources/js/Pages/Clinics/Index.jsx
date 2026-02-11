@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import ClinicCard from '@/Components/ClinicCard';
-import SearchInput from '@/Components/SearchInput';
-import Select from '@/Components/Select';
-import Pagination from '@/Components/Pagination';
+import SearchInput from '@/Components/Forms/SearchInput';
+import Select from '@/Components/Forms/Select';
+import Pagination from '@/Components/UI/Pagination';
 
 export default function ClinicsIndex({ clinics, filters, filterOptions, pagination }) {
     const { translations } = usePage().props;

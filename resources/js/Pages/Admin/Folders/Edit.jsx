@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
-import Checkbox from '@/Components/Checkbox';
-import PrimaryButton from '@/Components/PrimaryButton';
+import InputError from '@/Components/Forms/InputError';
+import InputLabel from '@/Components/Forms/InputLabel';
+import TextInput from '@/Components/Forms/TextInput';
+import Checkbox from '@/Components/Forms/Checkbox';
+import PrimaryButton from '@/Components/UI/PrimaryButton';
 
 export default function Edit({ folder }) {
   const { data, setData, post, processing, errors } = useForm({

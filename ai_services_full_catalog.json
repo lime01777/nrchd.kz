@@ -8,21 +8,11 @@
       "company": "ООО \"АЙРА Лабс\"",
       "status": "active",
       "mosmed_ai": true,
-      "pathology": ["компрессионный перелом тел позвонков (остеопороз)"],
+      "pathology": [
+        "компрессионный перелом тел позвонков (остеопороз)"
+      ],
       "pathology_count": 14,
       "modality": "КТ",
-      "area": "органы грудной клетки"
-    },
-    {
-      "id": 2,
-      "slug": "tretemnenierentgenogrammyi",
-      "name": "Третье мнение РГ",
-      "company": "ООО \"Платформа Третье Мнение\"",
-      "status": "active",
-      "mosmed_ai": true,
-      "pathology": ["очаг затемнения"],
-      "pathology_count": 11,
-      "modality": "РГ",
       "area": "органы грудной клетки"
     },
     {
@@ -32,7 +22,9 @@
       "company": "ООО «Медицинские скрининг системы»",
       "status": "active",
       "mosmed_ai": true,
-      "pathology": ["рак молочной железы"],
+      "pathology": [
+        "рак молочной железы"
+      ],
       "pathology_count": 0,
       "modality": "ММГ",
       "area": "молочная железа"
@@ -44,7 +36,9 @@
       "company": "ООО «Медицинские скрининг системы»",
       "status": "active",
       "mosmed_ai": true,
-      "pathology": ["различные патологии легких"],
+      "pathology": [
+        "различные патологии легких"
+      ],
       "pathology_count": 0,
       "modality": "ФЛГ",
       "area": "органы грудной клетки"
@@ -56,7 +50,9 @@
       "company": "АО «МТЛ»",
       "status": "active",
       "mosmed_ai": true,
-      "pathology": ["рак молочной железы"],
+      "pathology": [
+        "рак молочной железы"
+      ],
       "pathology_count": 0,
       "modality": "ММГ",
       "area": "молочная железа"
@@ -68,7 +64,9 @@
       "company": "ООО «КэреМенторЭйАй»",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["различные патологии легких"],
+      "pathology": [
+        "различные патологии легких"
+      ],
       "pathology_count": 0,
       "modality": "РГ",
       "area": "органы грудной клетки"
@@ -80,7 +78,9 @@
       "company": "ООО «КэреМенторЭйАй»",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["COVID-19"],
+      "pathology": [
+        "COVID-19"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "органы грудной клетки"
@@ -92,7 +92,9 @@
       "company": "АНО ВО «Университет Иннополис»",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["различные патологии легких"],
+      "pathology": [
+        "различные патологии легких"
+      ],
       "pathology_count": 0,
       "modality": "РГ",
       "area": "органы грудной клетки"
@@ -104,7 +106,9 @@
       "company": "ООО \"Радлоджикс Рус\"",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["злокачественные новообразования легких"],
+      "pathology": [
+        "злокачественные новообразования легких"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "органы грудной клетки"
@@ -116,7 +120,9 @@
       "company": "ООО «МИП \"Биномикс-Рэй\"»",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["компрессионный перелом тел позвонков (остеопороз)"],
+      "pathology": [
+        "компрессионный перелом тел позвонков (остеопороз)"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "органы грудной клетки"
@@ -128,7 +134,9 @@
       "company": "ООО «АЙРИМ»",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["рак молочной железы"],
+      "pathology": [
+        "рак молочной железы"
+      ],
       "pathology_count": 0,
       "modality": "ММГ",
       "area": "молочная железа"
@@ -140,7 +148,9 @@
       "company": "ООО «Гаммамед-Софт»",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["COVID-19"],
+      "pathology": [
+        "COVID-19"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "органы грудной клетки"
@@ -152,7 +162,9 @@
       "company": "ООО «Интеллоджик»",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["злокачественные новообразования легких"],
+      "pathology": [
+        "злокачественные новообразования легких"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "органы грудной клетки"
@@ -164,7 +176,9 @@
       "company": "ООО «Интеллоджик»",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["COVID-19"],
+      "pathology": [
+        "COVID-19"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "органы грудной клетки"
@@ -176,7 +190,9 @@
       "company": "ООО «ФтизисБиоМед»",
       "status": "active",
       "mosmed_ai": true,
-      "pathology": ["различные патологии легких"],
+      "pathology": [
+        "различные патологии легких"
+      ],
       "pathology_count": 0,
       "modality": "ФЛГ",
       "area": "органы грудной клетки"
@@ -188,7 +204,9 @@
       "company": "ООО \"ФтизисБиоМед\"",
       "status": "active",
       "mosmed_ai": true,
-      "pathology": ["различные патологии легких"],
+      "pathology": [
+        "различные патологии легких"
+      ],
       "pathology_count": 0,
       "modality": "РГ",
       "area": "органы грудной клетки"
@@ -200,7 +218,9 @@
       "company": "ООО «Медицинские скрининг системы»",
       "status": "active",
       "mosmed_ai": true,
-      "pathology": ["очаг затемнения"],
+      "pathology": [
+        "очаг затемнения"
+      ],
       "pathology_count": 10,
       "modality": "РГ",
       "area": "органы грудной клетки"
@@ -212,7 +232,9 @@
       "company": "ООО \"ИМВИЖН\"",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["рассеянный склероз"],
+      "pathology": [
+        "рассеянный склероз"
+      ],
       "pathology_count": 0,
       "modality": "МРТ",
       "area": "головной мозг"
@@ -224,7 +246,9 @@
       "company": "ООО \"Платформа Третье Мнение\"",
       "status": "active",
       "mosmed_ai": true,
-      "pathology": ["различные патологии легких"],
+      "pathology": [
+        "различные патологии легких"
+      ],
       "pathology_count": 0,
       "modality": "ФЛГ",
       "area": "органы грудной клетки"
@@ -236,7 +260,9 @@
       "company": "ООО \"КэреМенторЭйАй\"",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["артроз коленного сустава"],
+      "pathology": [
+        "артроз коленного сустава"
+      ],
       "pathology_count": 0,
       "modality": "РГ",
       "area": "опорно-двигательный аппарат"
@@ -248,7 +274,9 @@
       "company": "ООО Честная Медицина (Россия)",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["различные патологии легких"],
+      "pathology": [
+        "различные патологии легких"
+      ],
       "pathology_count": 0,
       "modality": "РГ",
       "area": "органы грудной клетки"
@@ -260,7 +288,9 @@
       "company": "ООО \"Медицинские скрининг системы\"",
       "status": "active",
       "mosmed_ai": true,
-      "pathology": ["компрессионный перелом тел позвонков (остеопороз)"],
+      "pathology": [
+        "компрессионный перелом тел позвонков (остеопороз)"
+      ],
       "pathology_count": 9,
       "modality": "КТ",
       "area": "органы грудной клетки"
@@ -272,7 +302,9 @@
       "company": "ООО \"Интел Диагностик\"",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["протрузии и грыжи межпозвоночных дисков, стеноз позвоночного канала"],
+      "pathology": [
+        "протрузии и грыжи межпозвоночных дисков, стеноз позвоночного канала"
+      ],
       "pathology_count": 0,
       "modality": "МРТ",
       "area": "пояснично-крестцовый отдел позвоночника"
@@ -284,7 +316,9 @@
       "company": "ООО СиВижинЛаб",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["артроз коленного сустава"],
+      "pathology": [
+        "артроз коленного сустава"
+      ],
       "pathology_count": 0,
       "modality": "РГ",
       "area": "опорно-двигательный аппарат"
@@ -296,7 +330,9 @@
       "company": "Общество с ограниченной ответственностью «Гаммамед-Софт»",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["внутричерепное кровоизлияние"],
+      "pathology": [
+        "внутричерепное кровоизлияние"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "головной мозг"
@@ -308,7 +344,9 @@
       "company": "ООО \"АртВижн\"",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["различные патологии легких"],
+      "pathology": [
+        "различные патологии легких"
+      ],
       "pathology_count": 0,
       "modality": "РГ",
       "area": "органы грудной клетки"
@@ -320,7 +358,9 @@
       "company": "ООО «КэреМенторЭйАй»",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["артроз коленного сустава"],
+      "pathology": [
+        "артроз коленного сустава"
+      ],
       "pathology_count": 0,
       "modality": "РГ",
       "area": "опорно-двигательный аппарат"
@@ -332,7 +372,9 @@
       "company": "ООО «КэреМенторЭйАй»",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["рак молочной железы"],
+      "pathology": [
+        "рак молочной железы"
+      ],
       "pathology_count": 0,
       "modality": "ММГ",
       "area": "молочная железа"
@@ -344,7 +386,9 @@
       "company": "ООО «КэреМенторЭйАй»",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["различные патологии легких"],
+      "pathology": [
+        "различные патологии легких"
+      ],
       "pathology_count": 0,
       "modality": "ФЛГ",
       "area": "органы грудной клетки"
@@ -356,7 +400,9 @@
       "company": "АНО ВО «Университет Иннополис»",
       "status": "pending",
       "mosmed_ai": false,
-      "pathology": ["различные патологии легких"],
+      "pathology": [
+        "различные патологии легких"
+      ],
       "pathology_count": 0,
       "modality": "ФЛГ",
       "area": "органы грудной клетки"
@@ -368,7 +414,9 @@
       "company": "ООО «Синапс Тех»",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["сколиоз"],
+      "pathology": [
+        "сколиоз"
+      ],
       "pathology_count": 0,
       "modality": "РГ",
       "area": "опорно-двигательный аппарат"
@@ -380,7 +428,9 @@
       "company": "ООО \"Оксиджен Технолоджиес Рус\"",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["сколиоз"],
+      "pathology": [
+        "сколиоз"
+      ],
       "pathology_count": 0,
       "modality": "РГ",
       "area": "позвоночник"
@@ -392,7 +442,9 @@
       "company": "Общество с ограниченной ответственностью Платформа Третье Мнение",
       "status": "active",
       "mosmed_ai": true,
-      "pathology": ["рак молочной железы"],
+      "pathology": [
+        "рак молочной железы"
+      ],
       "pathology_count": 0,
       "modality": "ММГ",
       "area": "молочная железа"
@@ -404,7 +456,9 @@
       "company": "ООО \"ИМВИЖН\"",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["интракраниальные новообразования"],
+      "pathology": [
+        "интракраниальные новообразования"
+      ],
       "pathology_count": 0,
       "modality": "МРТ",
       "area": "головной мозг"
@@ -416,7 +470,9 @@
       "company": "ООО \"Интеллоджик\"",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["внутричерепное кровоизлияние"],
+      "pathology": [
+        "внутричерепное кровоизлияние"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "головной мозг"
@@ -428,7 +484,9 @@
       "company": "АНО ВО «Университет Иннополис»",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["синусит"],
+      "pathology": [
+        "синусит"
+      ],
       "pathology_count": 0,
       "modality": "РГ",
       "area": "голова"
@@ -440,7 +498,9 @@
       "company": "ООО \"Сайберия\"",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["внутричерепное кровоизлияние"],
+      "pathology": [
+        "внутричерепное кровоизлияние"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "головной мозг"
@@ -452,7 +512,9 @@
       "company": "ООО \"Медицинские скрининг системы\"",
       "status": "active",
       "mosmed_ai": true,
-      "pathology": ["ишемический инсульт"],
+      "pathology": [
+        "ишемический инсульт"
+      ],
       "pathology_count": 2,
       "modality": "КТ",
       "area": "головной мозг"
@@ -464,7 +526,9 @@
       "company": "ООО СиВижинЛаб",
       "status": "active",
       "mosmed_ai": true,
-      "pathology": ["свободная жидкость (выпот) в плевральных полостях (гидроторакс)"],
+      "pathology": [
+        "свободная жидкость (выпот) в плевральных полостях (гидроторакс)"
+      ],
       "pathology_count": 7,
       "modality": "КТ",
       "area": "органы грудной клетки"
@@ -476,7 +540,9 @@
       "company": "Общество с ограниченной ответственностью Платформа Третье Мнение",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["внутричерепное кровоизлияние"],
+      "pathology": [
+        "внутричерепное кровоизлияние"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "головной мозг"
@@ -488,7 +554,9 @@
       "company": "ООО \"СберМедИИ\"",
       "status": "pending",
       "mosmed_ai": false,
-      "pathology": ["ишемический инсульт"],
+      "pathology": [
+        "ишемический инсульт"
+      ],
       "pathology_count": 2,
       "modality": "КТ",
       "area": "головной мозг"
@@ -500,7 +568,9 @@
       "company": "ООО \"Эспер\"",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["сколиоз"],
+      "pathology": [
+        "сколиоз"
+      ],
       "pathology_count": 0,
       "modality": "РГ",
       "area": "позвоночник"
@@ -512,7 +582,9 @@
       "company": "ООО \"ПТМ\"",
       "status": "active",
       "mosmed_ai": true,
-      "pathology": ["компрессионный перелом тел позвонков (остеопороз)"],
+      "pathology": [
+        "компрессионный перелом тел позвонков (остеопороз)"
+      ],
       "pathology_count": 10,
       "modality": "КТ",
       "area": "органы грудной клетки"
@@ -524,7 +596,9 @@
       "company": "ООО \"АЙРА Лабс\"",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["образования надпочечников"],
+      "pathology": [
+        "образования надпочечников"
+      ],
       "pathology_count": 7,
       "modality": "КТ",
       "area": "органы брюшной полости"
@@ -536,7 +610,9 @@
       "company": "ООО \"Интел диагностик\"",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["компрессионный перелом тел позвонков (остеопороз)"],
+      "pathology": [
+        "компрессионный перелом тел позвонков (остеопороз)"
+      ],
       "pathology_count": 9,
       "modality": "КТ",
       "area": "органы грудной клетки"
@@ -548,7 +624,9 @@
       "company": "ООО \"ИМВИЖН\"",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["протрузии и грыжи межпозвоночных дисков, стеноз позвоночного канала"],
+      "pathology": [
+        "протрузии и грыжи межпозвоночных дисков, стеноз позвоночного канала"
+      ],
       "pathology_count": 0,
       "modality": "МРТ",
       "area": "пояснично-крестцовый отдел позвоночника"
@@ -560,7 +638,9 @@
       "company": "ООО \"ИМВИЖН\"",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["протрузии и грыжи межпозвоночных дисков, стеноз позвоночного канала"],
+      "pathology": [
+        "протрузии и грыжи межпозвоночных дисков, стеноз позвоночного канала"
+      ],
       "pathology_count": 0,
       "modality": "МРТ",
       "area": "шейный отдел позвоночника"
@@ -572,7 +652,9 @@
       "company": "ООО ИМВИЖН",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["рутинные измерения предстательной железы"],
+      "pathology": [
+        "рутинные измерения предстательной железы"
+      ],
       "pathology_count": 0,
       "modality": "МРТ",
       "area": "органы малого таза"
@@ -584,7 +666,9 @@
       "company": "ООО \"Интел диагностик\"",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["внутричерепное кровоизлияние"],
+      "pathology": [
+        "внутричерепное кровоизлияние"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "головной мозг"
@@ -596,7 +680,9 @@
       "company": "ООО \"Интел диагностик\"",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["морфометрия"],
+      "pathology": [
+        "морфометрия"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "головной мозг"
@@ -608,7 +694,9 @@
       "company": "ООО \"Интел диагностик\"",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["мочекаменная болезнь"],
+      "pathology": [
+        "мочекаменная болезнь"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "органы брюшной полости"
@@ -620,7 +708,9 @@
       "company": "ООО \"Айрим\"",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["рассеянный склероз"],
+      "pathology": [
+        "рассеянный склероз"
+      ],
       "pathology_count": 0,
       "modality": "МРТ",
       "area": "головной мозг"
@@ -632,7 +722,9 @@
       "company": "ООО \"Айрим\"",
       "status": "active",
       "mosmed_ai": true,
-      "pathology": ["ишемический инсульт"],
+      "pathology": [
+        "ишемический инсульт"
+      ],
       "pathology_count": 2,
       "modality": "КТ",
       "area": "головной мозг"
@@ -644,7 +736,9 @@
       "company": "ООО \"Айрим\"",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["морфометрия"],
+      "pathology": [
+        "морфометрия"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "головной мозг"
@@ -656,7 +750,9 @@
       "company": "ООО «ВижнЛабс»",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["образования почек"],
+      "pathology": [
+        "образования почек"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "органы брюшной полости"
@@ -668,7 +764,9 @@
       "company": "ООО \"Интел диагностик\"",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["образования почек"],
+      "pathology": [
+        "образования почек"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "органы брюшной полости"
@@ -680,7 +778,9 @@
       "company": "ООО \"Интел диагностик\"",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["образования надпочечников"],
+      "pathology": [
+        "образования надпочечников"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "органы брюшной полости"
@@ -692,7 +792,9 @@
       "company": "ООО \"Интел диагностик\"",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["аневризма брюшного отдела аорты с определением диаметра брюшной аорты"],
+      "pathology": [
+        "аневризма брюшного отдела аорты с определением диаметра брюшной аорты"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "органы брюшной полости"
@@ -704,7 +806,9 @@
       "company": "ООО \"Интел диагностик\"",
       "status": "inactive",
       "mosmed_ai": false,
-      "pathology": ["компрессионный перелом тел позвонков (остеопороз)"],
+      "pathology": [
+        "компрессионный перелом тел позвонков (остеопороз)"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "органы брюшной полости"
@@ -716,7 +820,9 @@
       "company": "ООО \"Интел диагностик\"",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["интракраниальные новообразования"],
+      "pathology": [
+        "интракраниальные новообразования"
+      ],
       "pathology_count": 0,
       "modality": "МРТ",
       "area": "головной мозг"
@@ -728,7 +834,9 @@
       "company": "ООО  \"Платформа Третье Мнение\"",
       "status": "active",
       "mosmed_ai": true,
-      "pathology": ["ишемический инсульт"],
+      "pathology": [
+        "ишемический инсульт"
+      ],
       "pathology_count": 2,
       "modality": "КТ",
       "area": "головной мозг"
@@ -740,7 +848,9 @@
       "company": "ООО \"АртВижн\"",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["синусит"],
+      "pathology": [
+        "синусит"
+      ],
       "pathology_count": 0,
       "modality": "РГ",
       "area": "голова"
@@ -752,7 +862,9 @@
       "company": "Общество с ограниченной ответственностью \"Платформа Третье Мнение\"",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["морфометрия"],
+      "pathology": [
+        "морфометрия"
+      ],
       "pathology_count": 0,
       "modality": "КТ",
       "area": "головной мозг"
@@ -764,7 +876,9 @@
       "company": "ООО \"ФтизисБиоМед\"",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["плоскостопие поперечное"],
+      "pathology": [
+        "плоскостопие поперечное"
+      ],
       "pathology_count": 0,
       "modality": "РГ",
       "area": "стопа"
@@ -776,227 +890,12 @@
       "company": "ООО \"Оксиджен Технолоджиес Рус\"",
       "status": "active",
       "mosmed_ai": false,
-      "pathology": ["спондилолистез"],
+      "pathology": [
+        "спондилолистез"
+      ],
       "pathology_count": 0,
       "modality": "РГ",
       "area": "позвоночник"
-    },
-    {
-      "id": 66,
-      "slug": "prosvet-kt-obp-avtomatizatsiya-rutinnih-izmerenii-pochki",
-      "name": "Просвет. КТ ОБП. Автоматизация рутинных измерений. Почки",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "pending",
-      "mosmed_ai": false,
-      "pathology": ["рутинные измерения почки"],
-      "pathology_count": 0,
-      "modality": "КТ",
-      "area": "органы брюшной полости"
-    },
-    {
-      "id": 67,
-      "slug": "prosvet-kt-obp-avtomatizatsiya-rutinnih-izmerenii-podzheludochnaya-zheleza-i-selezenka",
-      "name": "Просвет. КТ ОБП. Автоматизация рутинных измерений. Поджелудочная железа и селезенка",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "pending",
-      "mosmed_ai": false,
-      "pathology": ["рутинные измерения поджелудочной железы и селезенки"],
-      "pathology_count": 0,
-      "modality": "КТ",
-      "area": "органы брюшной полости"
-    },
-    {
-      "id": 68,
-      "slug": "prosvet-kt-obp-avtomatizatsiya-rutinnih-izmerenii-pechen",
-      "name": "Просвет. КТ ОБП. Автоматизация рутинных измерений.  Печень",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "pending",
-      "mosmed_ai": false,
-      "pathology": ["рутинные измерения печени"],
-      "pathology_count": 0,
-      "modality": "КТ",
-      "area": "органы брюшной полости"
-    },
-    {
-      "id": 69,
-      "slug": "prosvet-kt-obp-kompleks",
-      "name": "Просвет. КТ ОБП. Комплекс",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "pending",
-      "mosmed_ai": false,
-      "pathology": ["образования надпочечников"],
-      "pathology_count": 6,
-      "modality": "КТ",
-      "area": "органы брюшной полости"
-    },
-    {
-      "id": 70,
-      "slug": "prosvet-rg-golenostopnogo-sustava-perelom",
-      "name": "Просвет. РГ голеностопного сустава. Перелом",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "pending",
-      "mosmed_ai": false,
-      "pathology": ["перелом голеностопного сустава"],
-      "pathology_count": 0,
-      "modality": "РГ",
-      "area": "голеностопный сустав"
-    },
-    {
-      "id": 71,
-      "slug": "prosvet-rg-kistei-kostnii-vozrast",
-      "name": "Просвет. РГ кистей.  Костный возраст",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "pending",
-      "mosmed_ai": false,
-      "pathology": ["определение костного возраста"],
-      "pathology_count": 0,
-      "modality": "РГ",
-      "area": "кисть"
-    },
-    {
-      "id": 72,
-      "slug": "prosvet-rg-kolennogo-sustava",
-      "name": "Просвет. РГ коленного сустава",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "active",
-      "mosmed_ai": false,
-      "pathology": ["артроз коленного сустава"],
-      "pathology_count": 0,
-      "modality": "РГ",
-      "area": "коленный сустав"
-    },
-    {
-      "id": 73,
-      "slug": "prosvet-rg-litsevogo-cherepa-sinusit",
-      "name": "Просвет. РГ лицевого черепа. Синусит",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "active",
-      "mosmed_ai": false,
-      "pathology": ["синусит"],
-      "pathology_count": 0,
-      "modality": "РГ",
-      "area": "голова"
-    },
-    {
-      "id": 74,
-      "slug": "prosvet-rg-luchezapyastnogo-sustava",
-      "name": "Просвет. РГ лучезапястного сустава",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "pending",
-      "mosmed_ai": false,
-      "pathology": ["перелом лучезапястного сустава"],
-      "pathology_count": 0,
-      "modality": "РГ",
-      "area": "лучезапястный сустав"
-    },
-    {
-      "id": 75,
-      "slug": "prosvet-rg-ogk",
-      "name": "Просвет. РГ ОГК",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "pending",
-      "mosmed_ai": false,
-      "pathology": ["туберкулез легких"],
-      "pathology_count": 10,
-      "modality": "РГ",
-      "area": "органы грудной клетки"
-    },
-    {
-      "id": 76,
-      "slug": "prosvet-rg-plechevogo-sustava",
-      "name": "Просвет. РГ плечевого сустава",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "active",
-      "mosmed_ai": false,
-      "pathology": ["перелом плечевого сустава"],
-      "pathology_count": 0,
-      "modality": "РГ",
-      "area": "плечевой сустав"
-    },
-    {
-      "id": 77,
-      "slug": "prosvet-rg-pozvonochnika-kompressionnie-perelomi",
-      "name": "Просвет. РГ позвоночника.  Компрессионные переломы",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "active",
-      "mosmed_ai": false,
-      "pathology": ["компрессионный перелом тел позвонков (остеопороз)"],
-      "pathology_count": 0,
-      "modality": "РГ",
-      "area": "позвоночник"
-    },
-    {
-      "id": 78,
-      "slug": "prosvet-rg-stop-ploskostopie-kompleks",
-      "name": "Просвет. РГ Стоп. Плоскостопие комплекс",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "pending",
-      "mosmed_ai": false,
-      "pathology": ["плоскостопие поперечное"],
-      "pathology_count": 2,
-      "modality": "РГ",
-      "area": "стопа"
-    },
-    {
-      "id": 79,
-      "slug": "prosvet-rg-tazobedrennogo-sustava-perelom",
-      "name": "Просвет. РГ тазобедренного сустава. Перелом",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "active",
-      "mosmed_ai": false,
-      "pathology": ["перелом тазобедренного сустава"],
-      "pathology_count": 0,
-      "modality": "РГ",
-      "area": "тазобедренный сустав"
-    },
-    {
-      "id": 80,
-      "slug": "prosvet-rg-tazobedrennogo-sustava",
-      "name": "Просвет. РГ тазобедренного сустава",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "pending",
-      "mosmed_ai": false,
-      "pathology": ["артроз тазобедренного сустава"],
-      "pathology_count": 0,
-      "modality": "РГ",
-      "area": "тазобедренный сустав"
-    },
-    {
-      "id": 81,
-      "slug": "prosvet-flg-ogk",
-      "name": "Просвет. ФЛГ ОГК",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "pending",
-      "mosmed_ai": false,
-      "pathology": ["туберкулез легких"],
-      "pathology_count": 10,
-      "modality": "ФЛГ",
-      "area": "органы грудной клетки"
-    },
-    {
-      "id": 82,
-      "slug": "prosvet-rg-tazobedrennogo-sustava-koksometriya",
-      "name": "Просвет. РГ тазобедренного сустава. Коксометрия",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "pending",
-      "mosmed_ai": false,
-      "pathology": ["коксометрия"],
-      "pathology_count": 0,
-      "modality": "РГ",
-      "area": "тазобедренный сустав"
-    },
-    {
-      "id": 83,
-      "slug": "prosvet-kt-obp-zhelchnokamennaya-bolezn",
-      "name": "Просвет. КТ ОБП. Желчнокаменная болезнь",
-      "company": "ООО \"Оксиджен Технолоджиес Рус\"",
-      "status": "pending",
-      "mosmed_ai": false,
-      "pathology": ["желчнокаменная болезнь (калькулезная форма)"],
-      "pathology_count": 0,
-      "modality": "КТ",
-      "area": "органы брюшной полости"
     }
   ]
 }
-

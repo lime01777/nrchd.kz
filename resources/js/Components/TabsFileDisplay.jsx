@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SimpleFileDisplay from './SimpleFileDisplay';
+import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 
 /*
  * Универсальный компонент вкладок над SimpleFileDisplay

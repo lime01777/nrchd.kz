@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 const ImprovedLanguageSwitcher = ({ openUpwards = false }) => {
   const [currentLang, setCurrentLang] = useState('kz');

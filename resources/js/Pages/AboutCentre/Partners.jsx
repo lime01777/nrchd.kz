@@ -1,8 +1,8 @@
 import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
-import Sponsors from '@/Components/Sponsors';
-import translationService from '@/services/TranslationService';
+import Sponsors from '@/Components/Sections/Sponsors';
+import translationService from '@/Services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {

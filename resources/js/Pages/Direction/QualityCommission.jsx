@@ -5,7 +5,7 @@ import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import FilesAccord from '@/Components/FilesAccord';
 import PageAccordions from "@/Components/PageAccordions";
 import axios from 'axios';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function QualityCommission() {
   const t = (key, fallback = '') => translationService.t(key, fallback);

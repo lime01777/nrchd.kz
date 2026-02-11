@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
 import React from 'react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function MedicalTourismServices() {
   const t = (key, fallback = '') => translationService.t(key, fallback);

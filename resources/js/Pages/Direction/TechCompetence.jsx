@@ -4,7 +4,7 @@ import LayoutDirection from '@/Layouts/LayoutDirection';
 import VideoModal from '@/Components/VideoModal';
 import FilesAccord from '@/Components/FilesAccord';
 import MedTechPlatform from '@/Components/MedTech/MedTechPlatform';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {

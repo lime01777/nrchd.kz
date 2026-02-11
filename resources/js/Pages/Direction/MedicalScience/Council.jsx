@@ -5,7 +5,7 @@ import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import FilesAccord from '@/Components/FilesAccord';
 import NameDoctor from '@/Components/NameDoctor';
 import VideoModal from '@/Components/VideoModal';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function Council() {
   const t = (key, fallback = '') => translationService.t(key, fallback);

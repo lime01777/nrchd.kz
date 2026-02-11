@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Modal from '@/Components/Modal';
+import Modal from '@/Components/UI/Modal';
 import axios from 'axios';
 
 /**

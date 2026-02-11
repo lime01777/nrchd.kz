@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import Overview from './Overview';
-import NormativeBase from './NormativeBase';
-import Algorithm from './Algorithm';
-import Registry from './Registry';
-import PilotSites from './PilotSites';
-import SubmissionForm from './SubmissionForm';
+import Overview from '@/Components/MedTech/Overview';
+import NormativeBase from '@/Components/MedTech/NormativeBase';
+import Algorithm from '@/Components/MedTech/Algorithm';
+import Registry from '@/Components/MedTech/Registry';
+import PilotSites from '@/Components/MedTech/PilotSites';
+import SubmissionForm from '@/Components/MedTech/SubmissionForm';
 
 /**
  * Основной компонент технологической платформы MedTech

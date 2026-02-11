@@ -4,7 +4,7 @@ import LayoutNews from '@/Layouts/LayoutNews';
 import NewsImageSlider from '@/Components/NewsImageSlider';
 import MediaCard from '@/Components/MediaCard';
 import { isValidVideoUrl } from '@/Utils/mediaUtils';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 /**
  * Локальная обертка над сервисом переводов c безопасным фолбэком

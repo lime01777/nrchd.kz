@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link } from '@inertiajs/react';
-import ModernMediaUploader from '@/Components/ModernMediaUploader';
+import ModernMediaUploader from '@/Components/Forms/ModernMediaUploader';
 
 export default function TestImageUpload() {
   const [media, setMedia] = useState([]);

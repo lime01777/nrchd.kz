@@ -7,10 +7,10 @@ import CategoryCheckboxes from '@/Components/Admin/News/CategoryCheckboxes';
 import TagSelector from '@/Components/Admin/News/TagSelector';
 import StatusSelector from '@/Components/Admin/News/StatusSelector';
 import DateTimePicker from '@/Components/Admin/News/DateTimePicker';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
-import PrimaryButton from '@/Components/PrimaryButton';
+import InputError from '@/Components/Forms/InputError';
+import InputLabel from '@/Components/Forms/InputLabel';
+import TextInput from '@/Components/Forms/TextInput';
+import PrimaryButton from '@/Components/UI/PrimaryButton';
 
 export default function NewsEditNew({ news, availableCategories = [] }) {
   const [media, setMedia] = useState(news.images || []);

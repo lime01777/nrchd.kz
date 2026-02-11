@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import SafeImage from './SafeImage';
+import SafeImage from '@/Components/SafeImage';
 
 /**
  * Слайдер новостей для отображения изображений

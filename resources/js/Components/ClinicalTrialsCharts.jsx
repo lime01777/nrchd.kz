@@ -10,7 +10,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 // Регистрируем необходимые компоненты Chart.js
 ChartJS.register(

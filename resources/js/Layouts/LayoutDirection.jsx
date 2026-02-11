@@ -1,7 +1,8 @@
 import React from 'react';
-import Header from '@/Components/Header';
-import Hero from '@/Components/Hero';
-import Footer from '@/Components/Footer';
+import Header from '@/Components/Sections/Header';
+import Hero from '@/Components/Sections/Hero';
+import Footer from '@/Components/Sections/Footer';
+import ScrollToTop from '@/Components/ScrollToTop';
 
 export default function LayoutDirection({ 
   children, 
@@ -26,10 +27,11 @@ export default function LayoutDirection({
         videoFormat={videoFormat}
         overlay={overlay} 
       />
-      <section className="text-gray-600 body-font">
+      <section className="text-gray-600 body-font pt-[50vh] md:pt-0">
         {children}
       </section>
       <Footer />
+      <ScrollToTop />
     </>
   )
 }

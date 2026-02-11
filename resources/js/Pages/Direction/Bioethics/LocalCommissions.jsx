@@ -1,7 +1,7 @@
 import { Head } from "@inertiajs/react";
 import React from 'react';
 import LayoutFolderChlank from "@/Layouts/LayoutFolderChlank";
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function BioethicsLocalCommissions() {
   const t = (key, fallback = '') => translationService.t(key, fallback);
@@ -17,75 +17,124 @@ export default function BioethicsLocalCommissions() {
     {
       id: 2,
       name: "Международный казахско-турецкий университет",
-      certification: "№XII",
-      validity: "14.12.2022-14.12.2025",
+      certification: "№XXV–R",
+      validity: "5.12.2025-5.12.2028",
       link: "https://ayu.edu.kz/ru/"
+    },
+    {
+      id: 3,
+      name: "Медицинский университет Караганды",
+      certification: "№XXII-R",
+      validity: "5.12.2025-5.12.2028",
+      link: "https://qmu.edu.kz/ru/nauka/lokalnaya-komissiya-po-bioetike/"
+    },
+    {
+      id: 4,
+      name: "Медицинский университет Семей",
+      certification: "№XXVIII-R",
+      validity: "26.12.2025-26.12.2026",
+      link: "https://smu.edu.kz/ru/org-struktura/kollegialnye-organy/lokalnaya-eticheskaya-komissiya/"
+    },
+    {
+      id: 5,
+      name: "Казахский национальный медицинский университет имени С.Д. Асфендиярова",
+      certification: "№XXIII",
+      validity: "5.12.2025-5.12.2026",
+      link: "https://kaznmu.edu.kz/ru/%d0%bb%d0%be%d0%ba%d0%b0%d0%bb%d1%8c%d0%bd%d0%b0%d1%8f-%d0%ba%d0%be%d0%bc%d0%b8%d1%81%d1%81%d0%b8%d1%8f-%d0%bf%d0%be-%d0%b1%d0%b8%d0%be%d1%8d%d1%82%d0%b8%d0%ba%d0%b5/"
+    },
+    {
+      id: 6,
+      name: "Южно-Казахстанская медицинская академия",
+      certification: "№XXIV-R",
+      validity: "5.12.2025-5.12.2026",
+      link: "https://skma.edu.kz/ru/pages/lokalnaya-komissiya-po-bioetike"
     }
   ];
 
   const researchInstitutes = [
     {
-      id: 3,
+      id: 7,
       name: "Академия питания и Ассоциация профилактической медицины",
       certification: "№XIII-R",
       validity: "14.12.2023-14.12.2026",
       link: "https://academypm.org/language/ru/o-nas/lokalnaya-komissiya-po-bioetike/"
     },
     {
-      id: 4,
+      id: 8,
       name: "Казахский научно-исследовательский институт онкологии и радиологии",
-      certification: "№Х",
-      validity: "09.11.2022-09.11.2025",
-      link: "https://onco.kz/"
+      certification: "№XXVI-R",
+      validity: "5.12.2025-5.12.2026",
+      link: "https://onco.kz/lokalnaya-komissiya-po-bioetike-lkb/"
     },
     {
-      id: 5,
+      id: 9,
       name: "Научно-производственный центр трансфузиологии",
       certification: "№XV-R",
       validity: "05.06.2025-05.06.2028",
       link: "https://spct.kz/about/%d0%b8%d0%bd%d1%84%d0%be%d1%80%d0%bc%d0%b0%d1%86%d0%b8%d1%8f-%d0%be-%d0%bb%d1%8d%d0%ba/?lang=ru"
     },
     {
-      id: 6,
+      id: 10,
       name: "ТОО «Национальный научный онкологический центр»",
       certification: "№XVI-R",
       validity: "20.06.2025-20.06.2026",
       link: "https://cancercenter.edu.kz/ru/lokalnaya-komissiya-po-bioetike"
     },
     {
-      id: 7,
+      id: 11,
       name: "КФ «University Medical Center»",
       certification: "№XVII",
       validity: "20.06.2025-20.06.2028",
       link: "https://umc.org.kz/?ethics-commission=post"
     },
     {
-      id: 8,
+      id: 12,
       name: "Больница управления делами Президента",
       certification: "№XVIII",
       validity: "20.06.2025-20.06.2026",
       link: "https://bmcudp.kz/ru/activities/localkomissiya/"
     },
     {
-      id: 9,
+      id: 13,
       name: "Научно-исследовательский институт кардиологии и внутренних болезней",
       certification: "№XIX",
       validity: "25.07.2025-25.07.2028",
       link: "https://ncvb.kz/ru/lokalnaya-komissiya-po-bioetike/"
     },
     {
-      id: 10,
+      id: 14,
       name: "Казахский научно-исследовательский центр инфекционных заболеваний и дерматовенерологии",
       certification: "№XX-R",
       validity: "25.07.2025-25.07.2026",
       link: "https://kncdiz.kz/ru/nauka/lokalnyy_eticheskiy_komitet/"
     },
     {
-      id: 11,
+      id: 15,
       name: "Национальный центр хирургии имени Сызганова",
       certification: "№XXI-R",
       validity: "25.07.2025-25.07.2026",
       link: "https://nnch.kz/lokalnaya-eticheskaya-komissiya/"
+    },
+    {
+      id: 16,
+      name: "Национальный центр нейрохирургии",
+      certification: "№XXIX",
+      validity: "26.12.2025-26.12.2026",
+      link: "https://www.neuroclinic.kz/"
+    },
+    {
+      id: 17,
+      name: "Национальный центр общественного здравоохранения",
+      certification: "№XXX",
+      validity: "26.12.2025-26.12.2026",
+      link: "https://hls.kz/ru/%d0%be-%d1%86%d0%b5%d0%bd%d1%82%d1%80%d0%b5/%d0%bb%d0%be%d0%ba%d0%b0%d0%bb%d1%8c%d0%bd%d0%b0%d1%8f-%d1%8d%d1%82%d0%b8%d1%87%d0%b5%d1%81%d0%ba%d0%b0%d1%8f-%d0%ba%d0%be%d0%bc%d0%b8%d1%81%d1%81%d0%b8%d1%8f-%d0%bf%d0%be-%d0%b1%d0%b8%d0%be%d1%8d"
+    },
+    {
+      id: 18,
+      name: "Национальный научный центр фтизиопульмонологии",
+      certification: "№XXVII-R",
+      validity: "5.12.2025-5.12.2028",
+      link: "https://www.nncf.kz/lokalnyj-eticheskij-komitet"
     }
   ];
 
@@ -124,14 +173,14 @@ export default function BioethicsLocalCommissions() {
   return (
     <>
       <Head title={t('directionsPages.bioethicsSubpages.localCommissions.title', 'Перечень ЛКБ')} />
-      
+
       <section className="text-gray-600 body-font pb-8">
         <div className="container px-5 py-12 mx-auto">
           <div className='flex flex-wrap px-12 text-justify mb-8'>
             <h2 className="text-2xl font-bold text-gray-800 mb-6 w-full">
               {t('directionsPages.bioethicsSubpages.localCommissions.mainTitle')}
             </h2>
-            
+
             <p className="tracking-wide leading-relaxed mb-4">
               {t('directionsPages.bioethicsSubpages.localCommissions.intro')}
             </p>
@@ -145,7 +194,7 @@ export default function BioethicsLocalCommissions() {
               </svg>
               {t('directionsPages.bioethicsSubpages.localCommissions.medicalUniversitiesTitle')}
             </h3>
-            
+
             <div className="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -186,7 +235,7 @@ export default function BioethicsLocalCommissions() {
               </svg>
               {t('directionsPages.bioethicsSubpages.localCommissions.researchInstitutesTitle')}
             </h3>
-            
+
             <div className="bg-white shadow-sm rounded-lg overflow-hidden border border-gray-200">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -224,7 +273,7 @@ export default function BioethicsLocalCommissions() {
   )
 }
 
-BioethicsLocalCommissions.layout = page => <LayoutFolderChlank 
+BioethicsLocalCommissions.layout = page => <LayoutFolderChlank
   h1={translationService.t('directionsPages.bioethicsSubpages.localCommissions.h1')}
   title="Перечень ЛКБ"
   parentRoute={route('bioethics')}

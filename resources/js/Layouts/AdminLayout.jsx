@@ -13,12 +13,12 @@ export default function AdminLayout({ children, title }) {
   const sectionType = page.props?.section?.type || page.props?.section || page.props?.type;
   const pageSectionType = sectionType === 'media' ? 'media' : 'news';
   const isNewsRoute = route().current('admin.news.*');
-  
+
   // Дополнительная проверка по URL для надежности
   const currentUrl = typeof window !== 'undefined' ? window.location.pathname : '';
-  const isMediaSection = (currentUrl.includes('/admin/news/media') || 
-                         currentUrl.includes('/admin/news/create/media') || 
-                         pageSectionType === 'media');
+  const isMediaSection = (currentUrl.includes('/admin/news/media') ||
+    currentUrl.includes('/admin/news/create/media') ||
+    pageSectionType === 'media');
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -46,8 +46,8 @@ export default function AdminLayout({ children, title }) {
           <h2 className="text-xl font-semibold">Админ ННЦРЗ</h2>
         </div>
         <nav className="mt-5 px-2">
-          <Link 
-            href={route('admin.dashboard')} 
+          <Link
+            href={route('admin.dashboard')}
             className={`group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.dashboard') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
           >
             <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -55,34 +55,73 @@ export default function AdminLayout({ children, title }) {
             </svg>
             Главная
           </Link>
-          <Link 
+
+
+          {/* AI Assistant Link */}
+          <Link
+            href={route('admin.assistant.index')}
+            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.assistant.index') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
+          >
+            <svg className="mr-4 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            AI Аналитик
+          </Link>
+
+          {/* New Registry Links */}
+          <Link
+            href={route('admin.registry.dashboard')}
+            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.registry.dashboard') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
+          >
+            <svg className="mr-4 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            KPI (ПТЗ)
+          </Link>
+          <Link
+            href={route('admin.registry.index')}
+            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.registry.index') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
+          >
+            <svg className="mr-4 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            Перечень (ПТЗ)
+          </Link>
+          <Link
+            href={route('admin.ai-protocols.index')}
+            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.ai-protocols.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
+          >
+            <svg className="mr-4 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2-2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+            Клин. протоколы ИИ
+          </Link>
+          <Link
             href={route('admin.news.index')}
-            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${
-              isNewsRoute && !isMediaSection
-                ? 'text-white bg-blue-500'
-                : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'
-            }`}
+            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isNewsRoute && !isMediaSection
+              ? 'text-white bg-blue-500'
+              : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'
+              }`}
           >
             <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
             </svg>
             Новости
           </Link>
-          <Link 
+          <Link
             href={route('admin.news.index', 'media')}
-            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${
-              isNewsRoute && isMediaSection
-                ? 'text-white bg-blue-500'
-                : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'
-            }`}
+            className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isNewsRoute && isMediaSection
+              ? 'text-white bg-blue-500'
+              : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'
+              }`}
           >
             <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
             </svg>
             СМИ о нас
           </Link>
-          <Link 
-            href={route('admin.admin.documents')} 
+          <Link
+            href={route('admin.admin.documents')}
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.admin.documents', 'admin.admin.documents.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
           >
             <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -90,17 +129,17 @@ export default function AdminLayout({ children, title }) {
             </svg>
             Документы
           </Link>
-          <Link 
-            href={route('admin.admin.otz-applications.index')} 
+          <Link
+            href={route('admin.admin.otz-applications.index')}
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.admin.otz-applications.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
           >
             <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Заявки ОТЗ
+            Заявки РТЗ
           </Link>
-          <Link 
-            href={route('admin.medtech.index')} 
+          <Link
+            href={route('admin.medtech.index')}
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.medtech.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
           >
             <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -108,8 +147,8 @@ export default function AdminLayout({ children, title }) {
             </svg>
             Платформа MedTech
           </Link>
-          <Link 
-            href={route('vacancies.index')} 
+          <Link
+            href={route('vacancies.index')}
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${route().current('vacancies.index') || route().current('vacancies.create') || route().current('vacancies.edit') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
           >
             <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -117,8 +156,8 @@ export default function AdminLayout({ children, title }) {
             </svg>
             Вакансии
           </Link>
-          <Link 
-            href={route('admin.vacancy-applications.index')} 
+          <Link
+            href={route('admin.vacancy-applications.index')}
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.vacancy-applications.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
           >
             <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -126,8 +165,8 @@ export default function AdminLayout({ children, title }) {
             </svg>
             Заявки на вакансии
           </Link>
-          <Link 
-            href={route('admin.contact-applications.index')} 
+          <Link
+            href={route('admin.contact-applications.index')}
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.contact-applications.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
           >
             <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -135,8 +174,8 @@ export default function AdminLayout({ children, title }) {
             </svg>
             Заявки обратной связи
           </Link>
-          <Link 
-            href={route('admin.youth-health-centers.index')} 
+          <Link
+            href={route('admin.youth-health-centers.index')}
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.youth-health-centers.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
           >
             <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -145,8 +184,8 @@ export default function AdminLayout({ children, title }) {
             </svg>
             МЦЗ (Карта)
           </Link>
-          <Link 
-            href={route('admin.clinics.index')} 
+          <Link
+            href={route('admin.clinics.index')}
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.clinics.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
           >
             <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -154,8 +193,8 @@ export default function AdminLayout({ children, title }) {
             </svg>
             Клиники Казахстана
           </Link>
-          <Link 
-            href={route('admin.admin.settings')} 
+          <Link
+            href={route('admin.admin.settings')}
             className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.admin.settings', 'admin.admin.settings.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
           >
             <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -177,9 +216,9 @@ export default function AdminLayout({ children, title }) {
                 <p className="text-sm font-medium text-gray-700">
                   {auth?.user?.name || 'Администратор'}
                 </p>
-                <Link 
-                  href={route('logout')} 
-                  method="post" 
+                <Link
+                  href={route('logout')}
+                  method="post"
                   as="button"
                   className="text-xs font-medium text-gray-500 hover:text-gray-700"
                 >

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, usePage } from '@inertiajs/react';
+import ScrollToTop from '@/Components/ScrollToTop';
 
 /**
  * Макет для страниц конференции
@@ -79,6 +80,7 @@ export default function ConferenceLayout({ children, title }) {
           </div>
         </div>
       </footer>
+      <ScrollToTop />
     </div>
   );
 }

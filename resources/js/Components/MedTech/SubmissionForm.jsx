@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useForm } from '@inertiajs/react';
-import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
-import InputError from '@/Components/InputError';
-import PrimaryButton from '@/Components/PrimaryButton';
+import InputLabel from '@/Components/Forms/InputLabel';
+import TextInput from '@/Components/Forms/TextInput';
+import InputError from '@/Components/Forms/InputError';
+import PrimaryButton from '@/Components/UI/PrimaryButton';
 
 /**
  * Компонент блока "Как подать технологию"

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import SafeImage from './SafeImage';
+import SafeImage from '@/Components/SafeImage';
 
 /**
  * Компонент карточки для материалов СМИ

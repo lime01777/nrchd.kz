@@ -7,7 +7,7 @@ import ServiceTimeline from '@/Components/ServiceTimeline';
 import ActualFile from '@/Components/ActualFile';
 import FilesAccord from '@/Components/FilesAccord';
 import FAQ from '@/Components/FAQ';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 // Компонент формы аккредитации для отображения в шапке (уменьшенная версия)
 const AccreditationForm = () => {

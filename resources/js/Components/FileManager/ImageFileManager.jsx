@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ImagePreview from './ImagePreview';
+import ImagePreview from '@/Components/FileManager/ImagePreview';
 
 /**
  * Улучшенный файловый менеджер для изображений с предварительным просмотром

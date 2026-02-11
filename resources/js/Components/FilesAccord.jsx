@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import FileAccordTitle from './FileAccordTitle';
-import FileAccordChlank from './FileAccordChlank';
+import FileAccordTitle from '@/Components/FileAccordTitle';
+import FileAccordChlank from '@/Components/FileAccordChlank';
 import axios from 'axios';
 
 export default function FilesAccord({ sections: propSections, bgColor = 'bg-green-100', folder = '', title = '', name = '', onVideoClick, defaultOpen = false }) {

@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
 import ActualFile from '@/Components/ActualFile';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 import axios from 'axios';
 
 export default function Commission() {

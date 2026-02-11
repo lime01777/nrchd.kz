@@ -1,7 +1,7 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 import DocumentsDashboard from '@/Components/DocumentsDashboard';
 
 // Универсальная функция перевода с запасным текстом

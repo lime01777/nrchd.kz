@@ -78,7 +78,7 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE','kk'),
+    'locale' => env('APP_LOCALE','kz'),
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE','kk'),
 

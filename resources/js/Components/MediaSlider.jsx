@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import SafeImage from './SafeImage';
-import SafeVideo from './SafeVideo';
-import MediaLightbox from './MediaLightbox';
+import SafeImage from '@/Components/SafeImage';
+import SafeVideo from '@/Components/SafeVideo';
+import MediaLightbox from '@/Components/MediaLightbox';
 
 /**
  * Слайдер для изображений и видео

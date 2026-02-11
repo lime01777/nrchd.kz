@@ -3,7 +3,7 @@ import React from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 import HealthAccountsDashboard from './HealthAccounts/HealthAccountsDashboard';
 import HealthAccountsTabs from './HealthAccounts/HealthAccountsTabs';
 import HealthAccountsRegions from './HealthAccounts/HealthAccountsRegions';

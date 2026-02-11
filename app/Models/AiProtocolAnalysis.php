@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class AiProtocolAnalysis extends Model
+{
+    protected $fillable = [
+        'name',
+        'indication',
+        'status',
+        'result_path',
+        'log',
+        'user_id'
+    ];
+}

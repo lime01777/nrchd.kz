@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import Header from '@/Components/Header';
-import Footer from '@/Components/Footer';
+import Header from '@/Components/Sections/Header';
+import Footer from '@/Components/Sections/Footer';
+import ScrollToTop from '@/Components/ScrollToTop';
 import { Link } from '@inertiajs/react';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function ServicesPageLayout({ children, title, img, bgColor = "bg-blue-100", customForm, hideForm = false }) {
   const t = (key, fallback = '') => {
@@ -180,6 +181,7 @@ export default function ServicesPageLayout({ children, title, img, bgColor = "bg
       </section>
       
       <Footer />
+      <ScrollToTop />
     </>
   );
 }

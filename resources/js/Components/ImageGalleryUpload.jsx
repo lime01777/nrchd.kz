@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import ImageLibrary from './ImageLibrary';
-import NewsSliderWithMain from './NewsSliderWithMain';
+import ImageLibrary from '@/Components/ImageLibrary';
+import NewsSliderWithMain from '@/Components/NewsSliderWithMain';
 
 export default function ImageGalleryUpload({ images, setImages, mainImage, setMainImage, max = 18 }) {
   const inputRef = useRef();

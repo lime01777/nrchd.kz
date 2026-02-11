@@ -3,7 +3,7 @@ import React from 'react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import TabDocuments from '@/Components/TabDocuments';
 import SliderImportantFile from '@/Components/SliderImportantFile';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function Initiatives() {
   const t = (key, fallback = '') => translationService.t(key, fallback);

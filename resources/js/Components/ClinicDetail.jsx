@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { usePage } from '@inertiajs/react';
-import MediaGallery from './MediaGallery';
-import ContactModal from './ContactModal';
-import KeyValue from './KeyValue';
+import MediaGallery from '@/Components/MediaGallery';
+import ContactModal from '@/Components/ContactModal';
+import KeyValue from '@/Components/KeyValue';
 
 export default function ClinicDetail({ clinic }) {
     const { translations } = usePage().props;

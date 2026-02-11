@@ -1,9 +1,9 @@
 import { Head, Link } from '@inertiajs/react';
 import React, { useState } from 'react';
 import Layout from '@/Layouts/Layout';
-import Header from '@/Components/Header';
-import Footer from '@/Components/Footer';
-import translationService from '@/services/TranslationService';
+import Header from '@/Components/Sections/Header';
+import Footer from '@/Components/Sections/Footer';
+import translationService from '@/Services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
@@ -14,7 +14,9 @@ const t = (key, fallback = '') => {
  * Детальная страница ИИ сервиса
  */
 export default function AIServiceDetail({ service, slug }) {
-  const [activeTab, setActiveTab] = useState('brief'); // brief, purpose, validation, warnings
+  const [activeTab, setActiveTab] = useState('brief'); // brief, purpose, validation, warnings, documentation
+  const [selectedDocument, setSelectedDocument] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Если сервис не найден (для будущей интеграции с API)
   if (!service) {
@@ -28,7 +30,7 @@ export default function AIServiceDetail({ service, slug }) {
               href={route('electronic.health')}
               className="text-blue-600 hover:text-blue-800 underline"
             >
-              Вернуться к каталогу
+              Вернуться к перечню
             </Link>
           </div>
         </div>
@@ -67,121 +69,234 @@ export default function AIServiceDetail({ service, slug }) {
   const modalityArray = Array.isArray(service.modality) ? service.modality : (service.modality ? [service.modality] : []);
   const areaArray = Array.isArray(service.area) ? service.area : (service.area ? [service.area] : []);
 
+  // Генерируем краткое описание для hero блока
+  const getShortDescription = () => {
+    if (service.description) {
+      return service.description;
+    }
+    
+    const parts = [];
+    if (modalityArray.length > 0) {
+      parts.push(`Сервис для анализа ${modalityArray.join(', ')}`);
+    }
+    if (areaArray.length > 0) {
+      parts.push(`области ${areaArray.join(', ')}`);
+    }
+    if (pathologyArray.length > 0 && pathologyArray.length <= 2) {
+      parts.push(`для выявления ${pathologyArray.join(', ')}`);
+    }
+    
+    return parts.length > 0 ? parts.join(' ') : 'ИИ сервис для медицинской диагностики';
+  };
+
+  // Получаем документы сервиса
+  const documents = service.documents || [];
+
+  // Функция для получения расширения файла
+  const getFileExtension = (fileName) => {
+    return fileName ? fileName.split('.').pop().toLowerCase() : '';
+  };
+
+  // Функция для определения типа файла
+  const getFileType = (fileName) => {
+    const ext = getFileExtension(fileName);
+    const imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+    const pdfTypes = ['pdf'];
+    const docTypes = ['doc', 'docx'];
+    const excelTypes = ['xls', 'xlsx'];
+    
+    if (imageTypes.includes(ext)) return 'image';
+    if (pdfTypes.includes(ext)) return 'pdf';
+    if (docTypes.includes(ext)) return 'document';
+    if (excelTypes.includes(ext)) return 'spreadsheet';
+    return 'other';
+  };
+
+  // Функция для открытия документа в модальном окне
+  const handleViewDocument = (document) => {
+    setSelectedDocument(document);
+    setIsModalOpen(true);
+  };
+
+  // Функция для скачивания документа
+  const handleDownloadDocument = (doc) => {
+    const url = doc.url || doc.file_path || doc.path;
+    if (!url) return;
+    
+    // Если это полный URL, используем его напрямую
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      window.open(url, '_blank');
+      return;
+    }
+    
+    // Иначе формируем URL для скачивания
+    const downloadUrl = url.startsWith('/') ? url : `/storage/${url}`;
+    const link = window.document.createElement('a');
+    link.href = downloadUrl;
+    link.download = doc.name || doc.file_name || 'document';
+    window.document.body.appendChild(link);
+    link.click();
+    window.document.body.removeChild(link);
+  };
+
+  // Функция для закрытия модального окна
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedDocument(null);
+  };
+
+  // Функция для рендеринга содержимого документа в модальном окне
+  const renderDocumentContent = () => {
+    if (!selectedDocument) return null;
+    
+    const url = selectedDocument.url || selectedDocument.file_path || selectedDocument.path;
+    const fullUrl = url?.startsWith('http') ? url : (url?.startsWith('/') ? url : `/storage/${url}`);
+    const fileType = getFileType(selectedDocument.name || selectedDocument.file_name || '');
+    
+    switch (fileType) {
+      case 'image':
+        return (
+          <img 
+            src={fullUrl} 
+            alt={selectedDocument.name || selectedDocument.file_name || 'Документ'}
+            className="max-w-full max-h-[80vh] mx-auto"
+          />
+        );
+      case 'pdf':
+        return (
+          <iframe
+            src={fullUrl}
+            className="w-full h-full min-h-[80vh]"
+            title={selectedDocument.name || selectedDocument.file_name || 'PDF документ'}
+          />
+        );
+      default:
+        return (
+          <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+            <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+            <p className="text-lg mb-2">Предпросмотр недоступен для данного типа файла</p>
+            <p className="text-sm">Пожалуйста, скачайте файл для просмотра</p>
+            <button
+              onClick={() => handleDownloadDocument(selectedDocument)}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Скачать документ
+            </button>
+          </div>
+        );
+    }
+  };
+
   return (
     <Layout>
       <Head title={`${service.name || 'ИИ Сервис'} - ${t('directions.electronic_health', 'Цифровое здравоохранение')}`} />
       
-      <div className="container mx-auto px-5 py-8 pt-24">
+      {/* Hero блок с изображением на фоне и информационным блоком слева */}
+      <div className="relative w-full min-h-[500px] mb-8" style={{ marginTop: '96px' }}>
+        {/* Фоновое изображение */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: service.image ? `url(${service.image})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        >
+          {/* Затемнение для лучшей читаемости */}
+          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        </div>
 
-        {/* Изображение сервиса (если есть) */}
-        {service.image && (
-          <div className="bg-white rounded-lg shadow-sm mb-6 overflow-hidden border border-gray-200">
-            <div className="w-full h-96 bg-gray-100 overflow-hidden">
-              <img 
-                src={service.image} 
-                alt={service.name || 'Изображение сервиса'} 
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'flex';
-                }}
-              />
-              <div className="w-full h-full bg-gray-200 flex items-center justify-center" style={{ display: 'none' }}>
-                <svg className="w-24 h-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-            </div>
-            
-            {/* Блок под фото */}
-            <div className="px-6 py-4 bg-blue-50 border-t border-blue-100">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-sm text-blue-600 font-medium mb-1">
-                    ИИ Сервис для медицинской диагностики
+        {/* Контент hero блока */}
+        <div className="relative z-10 container mx-auto px-5 py-12">
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
+            {/* Информационный блок слева - 40% */}
+            <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-lg shadow-xl p-6 md:p-8 w-full lg:w-[40%]">
+              {/* Название сервиса и статус */}
+              <div className="flex items-center gap-3 mb-6 flex-wrap">
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+                  {service.name || 'Без названия'}
+                </h1>
+                {/* Статус рядом с названием */}
+                <div className="flex items-center gap-2">
+                  <div className={`${status === 'active' ? 'text-green-600' : 'text-yellow-600'}`}>
+                    {config.icon}
                   </div>
-                  <div className="text-xs text-blue-500">
-                    {service.name || 'Сервис искусственного интеллекта'}
-                  </div>
+                  <span className={`text-sm font-medium ${status === 'active' ? 'text-green-700' : 'text-yellow-700'}`}>
+                    {config.text}
+                  </span>
                 </div>
-                {service.company && (
-                  <div className="text-right">
-                    <div className="text-xs text-gray-500 mb-1">Разработчик</div>
-                    <div className="text-sm text-gray-700 font-medium">{service.company}</div>
-                  </div>
-                )}
               </div>
-            </div>
-          </div>
-        )}
 
-        {/* Заголовок и статус */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200">
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
-            <div className="flex-1 mb-4 md:mb-0">
-              <h1 className="text-3xl font-bold text-gray-800 mb-4">{service.name || 'Без названия'}</h1>
-              
-              {/* Метаинформация - как отдельные блоки */}
-              <div className="flex flex-wrap gap-4 mb-4">
+              {/* Метаинформация */}
+              <div className="space-y-3">
                 {/* Патологии */}
                 {pathologyArray.length > 0 && (
-                  <div className="flex flex-wrap gap-2 items-center">
-                    {pathologyArray.map((path, idx) => (
-                      <span
-                        key={idx}
-                        className="inline-block bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded"
-                      >
-                        {String(path)}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* Модальность */}
-                {modalityArray.length > 0 && (
-                  <div className="flex flex-wrap gap-2 items-center">
-                    {modalityArray.map((mod, idx) => (
-                      <span
-                        key={idx}
-                        className="inline-block bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded"
-                      >
-                        {String(mod)}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* Область */}
-                {areaArray.length > 0 && (
-                  <div className="flex flex-wrap gap-2 items-center">
-                    {areaArray.map((ar, idx) => (
-                      <span
-                        key={idx}
-                        className="inline-block bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded"
-                      >
-                        {String(ar)}
-                      </span>
-                    ))}
+                  <div>
+                    <div className="text-xs text-gray-500 mb-1 uppercase tracking-wide">Патология</div>
+                    <div className="flex flex-wrap gap-2">
+                      {pathologyArray.map((path, idx) => (
+                        <span
+                          key={idx}
+                          className="inline-block bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded"
+                        >
+                          {String(path)}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Статус и компания справа */}
-            <div className="flex flex-col items-start md:items-end gap-4">
-              <div className={`${config.bgColor} ${config.textColor} px-4 py-2 rounded-lg flex items-center gap-2`}>
-                {config.icon}
-                <span className="font-medium">{config.text}</span>
-              </div>
-              
-              {service.company && (
-                <div className="text-left md:text-right">
-                  <div className="text-sm text-gray-600 mb-1">{service.company}</div>
+            {/* Блок с видео/изображением справа - 60% */}
+            <div className="w-full lg:w-[60%]">
+              <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-lg shadow-xl overflow-hidden">
+                {/* Блок видео или изображения - на весь блок */}
+                <div className="w-full aspect-video bg-gray-100 overflow-hidden relative">
+                  {service.videoUrl ? (
+                    <iframe
+                      className="w-full h-full"
+                      src={service.videoUrl}
+                      allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                      allowFullScreen
+                      frameBorder="0"
+                      title="Видео сервиса"
+                    ></iframe>
+                  ) : service.image ? (
+                    <>
+                      <img 
+                        src={service.image} 
+                        alt={service.name || 'Изображение сервиса'} 
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          const placeholder = e.target.parentElement.querySelector('.image-placeholder');
+                          if (placeholder) placeholder.style.display = 'flex';
+                        }}
+                      />
+                      <div className="image-placeholder w-full h-full bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center" style={{ display: 'none' }}>
+                        <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
+                      <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="container mx-auto px-5 pb-8">
 
         {/* Вкладки */}
         <div className="bg-white rounded-lg shadow-md mb-6">
@@ -239,6 +354,16 @@ export default function AIServiceDetail({ service, slug }) {
                   Публикации
                 </button>
               )}
+              <button
+                onClick={() => setActiveTab('documentation')}
+                className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${
+                  activeTab === 'documentation'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Документация
+              </button>
             </nav>
           </div>
 
@@ -595,6 +720,89 @@ export default function AIServiceDetail({ service, slug }) {
                 </div>
               </div>
             )}
+
+            {/* Документация */}
+            {activeTab === 'documentation' && (
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold mb-3 text-gray-800">Документация</h3>
+                {documents.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border border-gray-300">
+                            Название документа
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border border-gray-300">
+                            Тип файла
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border border-gray-300">
+                            Размер
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border border-gray-300">
+                            Действия
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {documents.map((doc, idx) => {
+                          const fileName = doc.name || doc.file_name || 'Документ';
+                          const fileType = getFileType(fileName);
+                          const fileExtension = getFileExtension(fileName).toUpperCase();
+                          const fileSize = doc.size || doc.file_size || '-';
+                          
+                          return (
+                            <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                              <td className="px-4 py-3 text-sm text-gray-900 border border-gray-300">
+                                {fileName}
+                              </td>
+                              <td className="px-4 py-3 text-sm text-gray-700 border border-gray-300">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                  {fileExtension || 'ФАЙЛ'}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-sm text-gray-700 border border-gray-300">
+                                {fileSize}
+                              </td>
+                              <td className="px-4 py-3 text-sm border border-gray-300">
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => handleViewDocument(doc)}
+                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                  >
+                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    Просмотр
+                                  </button>
+                                  <button
+                                    onClick={() => handleDownloadDocument(doc)}
+                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                  >
+                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
+                                    Скачать
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <p>Документация будет добавлена позже.</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -619,19 +827,66 @@ export default function AIServiceDetail({ service, slug }) {
           </div>
         )}
 
-        {/* Кнопка возврата */}
-        <div className="mt-6">
-          <Link
-            href={route('electronic.health')}
-            className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
-          >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Вернуться к каталогу
-          </Link>
-        </div>
       </div>
+
+      {/* Модальное окно для просмотра документа */}
+      {isModalOpen && selectedDocument && (
+        <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            {/* Фон модального окна */}
+            <div 
+              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+              onClick={handleCloseModal}
+            ></div>
+
+            {/* Центрирование модального окна */}
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            {/* Модальное окно */}
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-6xl sm:w-full">
+              {/* Заголовок модального окна */}
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                    {selectedDocument.name || selectedDocument.file_name || 'Документ'}
+                  </h3>
+                  <button
+                    onClick={handleCloseModal}
+                    className="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500"
+                  >
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Содержимое модального окна */}
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 max-h-[80vh] overflow-y-auto">
+                {renderDocumentContent()}
+              </div>
+
+              {/* Футер модального окна */}
+              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => handleDownloadDocument(selectedDocument)}
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Скачать
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Закрыть
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }

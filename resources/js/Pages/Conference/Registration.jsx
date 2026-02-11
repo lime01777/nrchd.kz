@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import { Tab } from '@headlessui/react';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import Checkbox from '@/Components/Checkbox';
+import InputError from '@/Components/Forms/InputError';
+import InputLabel from '@/Components/Forms/InputLabel';
+import PrimaryButton from '@/Components/UI/PrimaryButton';
+import TextInput from '@/Components/Forms/TextInput';
+import Checkbox from '@/Components/Forms/Checkbox';
 import ConferenceLayout from '@/Layouts/ConferenceLayout';
 import { RiUserLine, RiMicLine, RiTeamLine, RiBuilding4Line } from 'react-icons/ri';
 

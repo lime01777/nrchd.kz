@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import FileAccordTitle from './FileAccordTitle';
-import ProcurementCard from './ProcurementCard';
+import FileAccordTitle from '@/Components/FileAccordTitle';
+import ProcurementCard from '@/Components/ProcurementCard';
 import axios from 'axios';
 
 /**

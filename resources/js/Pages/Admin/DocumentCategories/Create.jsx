@@ -1,11 +1,11 @@
 import React from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
-import Checkbox from '@/Components/Checkbox';
-import PrimaryButton from '@/Components/PrimaryButton';
+import InputError from '@/Components/Forms/InputError';
+import InputLabel from '@/Components/Forms/InputLabel';
+import TextInput from '@/Components/Forms/TextInput';
+import Checkbox from '@/Components/Forms/Checkbox';
+import PrimaryButton from '@/Components/UI/PrimaryButton';
 
 export default function Create({ auth }) {
   const { data, setData, post, processing, errors } = useForm({

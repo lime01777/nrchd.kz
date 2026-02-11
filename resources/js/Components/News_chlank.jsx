@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react'
 import { Link } from '@inertiajs/react';
-import NewsSliderWithMain from './NewsSliderWithMain';
-import SafeVideo from './SafeVideo';
-import { isValidVideoUrl } from '../Utils/mediaUtils';
-import translationService from '@/services/TranslationService';
+import NewsSliderWithMain from '@/Components/NewsSliderWithMain';
+import SafeVideo from '@/Components/SafeVideo';
+import { isValidVideoUrl } from '@/Utils/mediaUtils';
+import translationService from '@/Services/TranslationService';
 
 const News_chlank = React.memo(({ date, description, slug, image, images = [], external_url, type }) => {
   const t = (key, fallback = '') => translationService.t(key, fallback);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import DirectionsChlank from './DirectionsChlank';
+import DirectionsChlank from '@/Components/DirectionsChlank';
 import { router } from '@inertiajs/react';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 const Directions = () => {
     const [currentLang, setCurrentLang] = useState(translationService.getLanguage());

@@ -6,7 +6,7 @@ import PageAccordions from "@/Components/PageAccordions";
 import FilesAccord from "@/Components/FilesAccord";
 import FolderChlank from "@/Components/FolderChlank";
 
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {

@@ -6,11 +6,11 @@ import TagSelector from '@/Components/Admin/News/TagSelector';
 import CategorySelector from '@/Components/Admin/News/CategorySelector';
 import StatusSelector from '@/Components/Admin/News/StatusSelector';
 import DateTimePicker from '@/Components/Admin/News/DateTimePicker';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
-import Textarea from '@/Components/Textarea';
-import PrimaryButton from '@/Components/PrimaryButton';
+import InputError from '@/Components/Forms/InputError';
+import InputLabel from '@/Components/Forms/InputLabel';
+import TextInput from '@/Components/Forms/TextInput';
+import Textarea from '@/Components/Forms/Textarea';
+import PrimaryButton from '@/Components/UI/PrimaryButton';
 
 // Предустановленные категории и теги
 const DEFAULT_CATEGORIES = [

@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import SafeImage from './SafeImage';
-import SafeVideo from './SafeVideo';
-import translationService from '@/services/TranslationService';
+import SafeImage from '@/Components/SafeImage';
+import SafeVideo from '@/Components/SafeVideo';
+import translationService from '@/Services/TranslationService';
 
 /**
  * Полноэкранное модальное окно для просмотра медиа.

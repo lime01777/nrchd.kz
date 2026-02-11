@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm, router } from '@inertiajs/react';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import TextInput from '@/Components/TextInput';
-import PrimaryButton from '@/Components/PrimaryButton';
+import InputError from '@/Components/Forms/InputError';
+import InputLabel from '@/Components/Forms/InputLabel';
+import TextInput from '@/Components/Forms/TextInput';
+import PrimaryButton from '@/Components/UI/PrimaryButton';
 import ModernMediaUploader from '@/Components/Admin/News/ModernMediaUploader';
 import CategorySelector from '@/Components/Admin/News/CategorySelector';
 import UrlParser from '@/Components/Admin/News/UrlParser';

@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function BioethicsDocuments() {
   const t = (key, fallback = '') => translationService.t(key, fallback);

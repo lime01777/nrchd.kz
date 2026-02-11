@@ -1,6 +1,6 @@
 import React from 'react';
-import ChartChlank from './ChartChlank';
-import translationService from '@/services/TranslationService';
+import ChartChlank from '@/Components/ChartChlank';
+import translationService from '@/Services/TranslationService';
 
 // Компонент для простых графиков (травмы и аккредитации)
 const SimpleChart = ({ chartType }) => {

@@ -5,7 +5,7 @@ import ServiceTimeline from '@/Components/ServiceTimeline';
 import PriceList from '@/Components/PriceList';
 import FilesAccord from '@/Components/FilesAccord';
 import FAQ from '@/Components/FAQ';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {

@@ -2,7 +2,7 @@ import { Head, usePage } from '@inertiajs/react';
 import React from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 // Функция для получения перевода
 const t = (key, fallback = '') => {

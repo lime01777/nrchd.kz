@@ -3,7 +3,7 @@ import React from 'react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import FilesAccord from '@/Components/FilesAccord';
 import BannerCatalog from '@/Components/BannerCatalog';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function TrainingMaterials() {
   const t = (key, fallback = '') => translationService.t(key, fallback);

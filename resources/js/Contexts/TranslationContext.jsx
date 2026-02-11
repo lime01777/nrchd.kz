@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import translationService from '../services/TranslationService';
+import translationService from '../Services/TranslationService';
 
 // Создаем контекст для переводов
 const TranslationContext = createContext();

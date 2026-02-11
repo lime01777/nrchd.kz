@@ -6,7 +6,7 @@ import FileAccordTitle from '@/Components/FileAccordTitle';
 import FileAccordChlank from '@/Components/FileAccordChlank';
 import FilesAccord from '@/Components/FilesAccord';
 import PageAccordions from "@/Components/PageAccordions";
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function MedicalOrganizationsRating() {
     // Функция для получения перевода

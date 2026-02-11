@@ -2,7 +2,7 @@
 // Импортируем полные данные из отдельного файла
 
 import { fullOrganizationalStructureData } from './fullOrganizationalStructure';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export const organizationalStructureData = fullOrganizationalStructureData;
 

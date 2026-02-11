@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import Footer from '@/Components/Footer';
-import Header from '@/Components/Header';
-import HeroFolder from '@/Components/HeroFolder';
+import Footer from '@/Components/Sections/Footer';
+import Header from '@/Components/Sections/Header';
+import HeroFolder from '@/Components/Sections/HeroFolder';
+import ScrollToTop from '@/Components/ScrollToTop';
 
 export default function LayoutFolderChlank({ 
   children, 
@@ -32,6 +33,7 @@ export default function LayoutFolderChlank({
       </main>
 
       <Footer />
+      <ScrollToTop />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React from 'react';
-import InputLabel from '@/Components/InputLabel';
-import InputError from '@/Components/InputError';
+import InputLabel from '@/Components/Forms/InputLabel';
+import InputError from '@/Components/Forms/InputError';
 
 export default function StatusSelector({ value, onChange, error, className = '' }) {
   const statusOptions = [

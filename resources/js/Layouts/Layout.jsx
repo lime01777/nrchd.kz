@@ -1,7 +1,8 @@
 import React from 'react';
-import Header from '@/Components/Header';
-import Footer from '@/Components/Footer';
-import HeroNews from '@/Components/HeroNews';
+import Header from '@/Components/Sections/Header';
+import Footer from '@/Components/Sections/Footer';
+import HeroNews from '@/Components/Sections/HeroNews';
+import ScrollToTop from '@/Components/ScrollToTop';
 
 /**
  * Базовый публичный лейаут с хедером, опциональным героем и футером.
@@ -28,6 +29,9 @@ export default function Layout({ children, heroImage = null, heroTitle = null })
 
             {/* Подвал */}
             <Footer />
+
+            {/* Кнопка "Наверх" */}
+            <ScrollToTop />
         </>
     );
 }

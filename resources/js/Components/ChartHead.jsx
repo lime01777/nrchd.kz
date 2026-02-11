@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import ChartChlank from './ChartChlank';
-import translationService from '@/services/TranslationService';
+import ChartChlank from '@/Components/ChartChlank';
+import translationService from '@/Services/TranslationService';
 
 const Dashboard = ({ chartType = 'default' }) => {
     const [currentLang, setCurrentLang] = useState(translationService.getLanguage());

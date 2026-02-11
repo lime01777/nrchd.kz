@@ -14,7 +14,7 @@ import {
     Filler,
 } from 'chart.js';
 import SimpleFileDisplay from '@/Components/SimpleFileDisplay';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 // Регистрируем компоненты Chart.js
 ChartJS.register(

@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import TabDocuments from '@/Components/TabDocuments';
 import PageAccordions from '@/Components/PageAccordions';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 
 export default function Research() {
     const t = (key, fallback = '') => translationService.t(key, fallback);

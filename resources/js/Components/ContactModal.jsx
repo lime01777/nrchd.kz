@@ -1,6 +1,6 @@
 import React from 'react';
 import { usePage } from '@inertiajs/react';
-import KeyValue from './KeyValue';
+import KeyValue from '@/Components/KeyValue';
 
 export default function ContactModal({ isOpen, onClose, clinic }) {
     const { translations } = usePage().props;

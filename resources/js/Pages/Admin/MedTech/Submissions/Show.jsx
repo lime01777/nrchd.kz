@@ -1,8 +1,8 @@
 import React from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm, router } from '@inertiajs/react';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
+import InputLabel from '@/Components/Forms/InputLabel';
+import PrimaryButton from '@/Components/UI/PrimaryButton';
 
 export default function SubmissionShow({ submission }) {
     const { data, setData, patch, processing } = useForm({

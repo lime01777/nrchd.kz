@@ -1,7 +1,8 @@
 import React from 'react';
-import Header from '@/Components/Header';
-import Hero from '@/Components/Hero';
-import Footer from '@/Components/Footer';
+import Header from '@/Components/Sections/Header';
+import Hero from '@/Components/Sections/Hero';
+import Footer from '@/Components/Sections/Footer';
+import ScrollToTop from '@/Components/ScrollToTop';
 
 export default function LayoutBranch({ 
   children, 
@@ -26,6 +27,7 @@ export default function LayoutBranch({
         {children}
       </section>
       <Footer />
+      <ScrollToTop />
     </>
   )
 }

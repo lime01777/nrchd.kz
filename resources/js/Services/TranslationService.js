@@ -1,7 +1,7 @@
 // Простой и быстрый сервис переводов на основе JSON файлов
-import kzTranslations from '../locales/kz.json';
-import ruTranslations from '../locales/ru.json';
-import enTranslations from '../locales/en.json';
+import kzTranslations from '../Locales/kz.json';
+import ruTranslations from '../Locales/ru.json';
+import enTranslations from '../Locales/en.json';
 
 class TranslationService {
   constructor() {

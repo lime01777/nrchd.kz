@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-import FileManager from './FileManager';
+import FileManager from '@/Components/FileManager';
 
 /**
  * Компактная галерея изображений для админки

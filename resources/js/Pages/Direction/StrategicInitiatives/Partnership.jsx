@@ -2,8 +2,8 @@ import React from 'react';
 import { Head } from '@inertiajs/react';
 import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import PageAccordions from '@/Components/PageAccordions';
-import Sponsors from '@/Components/Sponsors';
-import translationService from '@/services/TranslationService';
+import Sponsors from '@/Components/Sections/Sponsors';
+import translationService from '@/Services/TranslationService';
 
 export default function Partnership() {
   const t = (key, fallback = '') => translationService.t(key, fallback);

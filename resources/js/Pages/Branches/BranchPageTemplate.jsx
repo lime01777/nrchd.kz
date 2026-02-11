@@ -1,7 +1,7 @@
 import { Head } from "@inertiajs/react";
 import React from 'react';
 import LayoutBranch from "@/Layouts/LayoutBranch";
-import News from "@/Components/News";
+import News from "@/Components/Sections/News";
 import FilesAccord from "@/Components/FilesAccord";
 
 export default function BranchPageTemplate({ branchName, branchFolder = "" }) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import LayoutBranch from '@/Layouts/LayoutBranch';
 import { Head } from '@inertiajs/react';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 import BranchContactInfo from '@/Components/BranchContactInfo';
 
 // Определение переменных вне компонента, чтобы они были доступны и в layout

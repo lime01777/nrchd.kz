@@ -2,7 +2,7 @@ import { Head, usePage, router } from '@inertiajs/react';
 import React, { useMemo, useState, useEffect } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
-import translationService from '@/services/TranslationService';
+import translationService from '@/Services/TranslationService';
 import { route } from '@/ziggy-helper'; // Импорт функции для генерации маршрутов
 
 export default function MedicalTourism({ clinics = [] }) {
