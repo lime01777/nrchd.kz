@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, useForm, router, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 
@@ -10,6 +10,17 @@ export default function Index({ analyses }) {
     });
 
     const [isAnalyzing, setIsAnalyzing] = useState(null);
+
+    // Auto-refresh if any analysis is processing
+    useEffect(() => {
+        const hasProcessing = analyses.some(a => a.status === 'processing');
+        if (hasProcessing) {
+            const interval = setInterval(() => {
+                router.reload({ only: ['analyses'] });
+            }, 3000);
+            return () => clearInterval(interval);
+        }
+    }, [analyses]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -109,14 +120,27 @@ export default function Index({ analyses }) {
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{analysis.name}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{analysis.indication}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                        ${analysis.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                                            analysis.status === 'processing' ? 'bg-yellow-100 text-yellow-800' :
-                                                                analysis.status === 'error' ? 'bg-red-100 text-red-800' :
-                                                                    'bg-gray-100 text-gray-800'}`}>
-                                                        {analysis.status}
-                                                    </span>
-                                                    {analysis.status === 'processing' && <span className="ml-2 text-xs text-gray-400 animate-pulse">Running...</span>}
+                                                    <div className="flex flex-col">
+                                                        <div>
+                                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                                ${analysis.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                                                    analysis.status === 'processing' ? 'bg-yellow-100 text-yellow-800' :
+                                                                        analysis.status === 'error' ? 'bg-red-100 text-red-800' :
+                                                                            'bg-gray-100 text-gray-800'}`}>
+                                                                {analysis.status}
+                                                            </span>
+                                                            {analysis.status === 'processing' && <span className="ml-2 text-xs text-gray-400 animate-pulse">Running...</span>}
+                                                        </div>
+                                                        {analysis.status === 'processing' && (
+                                                            <div className="w-full bg-gray-200 rounded-full h-1.5 mt-2 max-w-[140px]">
+                                                                <div
+                                                                    className="bg-blue-600 h-1.5 rounded-full transition-all duration-500"
+                                                                    style={{ width: `${analysis.progress || 0}%` }}
+                                                                ></div>
+                                                                <span className="text-xs text-gray-500 mt-1 block">{analysis.progress || 0}%</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                                                     {analysis.status === 'pending' && (

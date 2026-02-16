@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\OtzApplication;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -59,6 +60,7 @@ class OtzApplicationController extends Controller
         return Inertia::render('Admin/OtzApplications/Create', [
             'categories' => OtzApplication::getCategories(),
             'stages' => OtzApplication::getStages(),
+            'users' => User::orderBy('name')->get(['id', 'name', 'email']),
         ]);
     }
 
@@ -132,6 +134,7 @@ class OtzApplicationController extends Controller
             'application' => $otzApplication,
             'categories' => OtzApplication::getCategories(),
             'stages' => OtzApplication::getStages(),
+            'users' => User::orderBy('name')->get(['id', 'name', 'email']),
         ]);
     }
 

@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use App\Jobs\RunAiProtocolAnalysis;
 
 class AiProtocolAnalysisController extends Controller
 {
@@ -58,72 +59,18 @@ class AiProtocolAnalysisController extends Controller
     public function analyze($id)
     {
         $analysis = AiProtocolAnalysis::findOrFail($id);
-        $analysis->update(['status' => 'processing', 'log' => 'Starting analysis...']);
-
-        // Define paths
-        // Try to find a valid python executable
-        $python = 'python3'; // Default system python
-        // Check if venv exists and is valid for linux
-        $venvPython = base_path('resources/v0.96/.venv_linux/bin/python');
-        if (file_exists($venvPython)) {
-            $python = $venvPython;
-        } else {
-            // Fallback but log warning
-             \Log::warning("Venv python not found at $venvPython");
-        }
-
-        $scriptPath = base_path('resources/v0.96/main.py');
-        // We need to find where the file was stored. In store() we did not save the path to DB! 
-        // Wait, I should have saved the path.
-        // I'll fix store() to save the path or re-use the name.
         
-        $inputPath = storage_path('app/public/ai_protocols/' . $analysis->name);
-        $outputXlsx = storage_path('app/public/ai_protocols_output/report_' . $analysis->id . '.xlsx');
+        // Mark as queued/processing
+        $analysis->update([
+            'status' => 'processing', 
+            'progress' => 0, 
+            'log' => 'Queued for analysis...'
+        ]);
 
-        // Command: python main.py -i <input> -o <output> --indication <indication>
-        // Use Process to run it
-        
-        try {
-            // Ensure .env exists for the script
-             if (!file_exists(base_path('resources/v0.96/.env'))) {
-                throw new \Exception('.env file not found in resources/v0.96');
-            }
+        // Dispatch job to run in background
+        RunAiProtocolAnalysis::dispatch($analysis->id);
 
-            $command = [
-                $python,
-                $scriptPath,
-                '-i', $inputPath,
-                '-o', $outputXlsx,
-                '--indication', $analysis->indication,
-                '--lang', 'ru'
-            ];
-            
-            // Set working directory to resources/v0.96 so it finds modules and .env
-            $process = new Process($command, base_path('resources/v0.96'));
-            $process->setTimeout(600); // 10 minutes
-            $process->run();
-
-            if (!$process->isSuccessful()) {
-                throw new ProcessFailedException($process);
-            }
-
-            $output = $process->getOutput();
-            $analysis->update([
-                'status' => 'completed',
-                'result_path' => 'ai_protocols_output/report_' . $analysis->id . '.xlsx',
-                'log' => $output
-            ]);
-
-            return redirect()->back()->with('success', 'Analysis completed.');
-
-        } catch (\Exception $e) {
-            $analysis->update([
-                'status' => 'error',
-                'log' => $e->getMessage() . "\n" . ($process->getErrorOutput() ?? '')
-            ]);
-            
-            return redirect()->back()->with('error', 'Analysis failed: ' . $e->getMessage());
-        }
+        return redirect()->back()->with('success', 'Analysis started in background. Screen will update automatically.');
     }
 
     public function download($id, $type)

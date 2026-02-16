@@ -134,6 +134,7 @@ Examples:
         # Шаг 1: Инициализация всех движков и парсеров
         # - Настройка NER (Gemini) и движка верификации
         # - Индексация локальных PDF-формуляров
+        print("PROGRESS: 5", flush=True)
         log.info("")
         log.info("ШАГ 1: Инициализация компонентов системы")
         log.info("-" * 80)
@@ -205,6 +206,7 @@ Examples:
             log.warning("⚠ ПРЕДУПРЕЖДЕНИЕ: Извлеченный текст пуст. Обработка невозможна.")
             return
         log.info(f"✓ Успешно извлечено {len(protocol_text)} символов текста из протокола")
+        print("PROGRESS: 10", flush=True)
 
         # Шаг 3: Извлечение сущностей с помощью Gemini NER
         # Из протокола извлекаются препараты и атрибуты (дозы, путь, режим)
@@ -222,6 +224,7 @@ Examples:
             return
         
         log.info(f"✓ Успешно извлечено {len(extracted_entities)} назначений препаратов за {ner_duration:.1f}s")
+        print("PROGRESS: 20", flush=True)
         for idx, entity in enumerate(extracted_entities[:5], 1):  # Показать первые 5
             log.debug(f"  Препарат {idx}: {entity.get('drug_name', 'N/A')} | "
                      f"Дозировка: {entity.get('dosage', 'N/A')} | "
@@ -413,6 +416,8 @@ Examples:
             with ThreadPoolExecutor(max_workers=effective_workers) as executor:
                 # Submit all tasks
                 future_to_drug = {executor.submit(verify_function, drug): drug for drug in extracted_entities}
+                total_drugs_count = len(extracted_entities)
+                processed_drugs_count = 0
                 
                 # Process completed tasks with progress bar
                 for future in tqdm(as_completed(future_to_drug), total=len(future_to_drug), 
@@ -420,6 +425,11 @@ Examples:
                                   ncols=100, leave=False,
                                   bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]'):
                     result = future.result()
+                    processed_drugs_count += 1
+                    # Calculate progress from 20% to 80%
+                    progress_percent = 20 + int((processed_drugs_count / total_drugs_count) * 60)
+                    print(f"PROGRESS: {progress_percent}", flush=True)
+                    
                     if result:
                         verified_data.append(result)
         
@@ -600,6 +610,7 @@ Examples:
         
         log.info(f"✓ Резюме протокола сгенерировано за {summary_duration:.1f}s")
         log.debug(f"Длина резюме: {len(protocol_summary)} символов")
+        print("PROGRESS: 95", flush=True)
 
         # Шаг 7: Генерация финального Excel отчета
         # Главная таблица, лист резюме, лист исследований PubMed
@@ -688,6 +699,7 @@ Examples:
         word_duration = time.time() - word_start_time
         
         log.info(f"✓ Word отчет успешно сохранен за {word_duration:.1f}s")
+        print("PROGRESS: 100", flush=True)
 
         # Итоговая статистика
         total_duration = time.time() - start_time

@@ -61,6 +61,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
         type: currentType,
         section: currentType,
         category: initialCategories,
+        locale: news?.locale || 'ru',
     });
 
     const [media, setMedia] = useState(initialMedia);
@@ -211,7 +212,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                 media_count: media.length,
                 type: payload.type
             });
-            
+
             router.post(route('admin.news.store'), payload, {
                 forceFormData: true,
                 onFinish,
@@ -222,9 +223,9 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                         Object.keys(errors).forEach(key => {
                             console.error(`Ошибка в поле ${key}:`, errors[key]);
                         });
-                        
+
                         // Если ошибка 419 (CSRF токен истек), обновляем страницу
-                        if (errors.error && errors.error.includes('419') || 
+                        if (errors.error && errors.error.includes('419') ||
                             (typeof errors === 'object' && errors.status === 419)) {
                             alert('Сессия истекла. Страница будет обновлена.');
                             window.location.reload();
@@ -439,7 +440,55 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                                 </>
                             )}
 
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <div>
+                                    <InputLabel value="Язык версии / Тіл нұсқасы" className="mb-2" />
+                                    <div className="space-y-3 bg-gray-50 p-3 rounded-md border border-gray-200">
+                                        <div className="flex items-center">
+                                            <input
+                                                id="locale_ru"
+                                                name="locale"
+                                                type="radio"
+                                                value="ru"
+                                                checked={data.locale === 'ru'}
+                                                onChange={(e) => setData('locale', e.target.value)}
+                                                className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                                            />
+                                            <label htmlFor="locale_ru" className="ml-2 block text-sm font-medium text-gray-700 cursor-pointer">
+                                                Русская версия
+                                            </label>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <input
+                                                id="locale_kz"
+                                                name="locale"
+                                                type="radio"
+                                                value="kz"
+                                                checked={data.locale === 'kz'}
+                                                onChange={(e) => setData('locale', e.target.value)}
+                                                className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                                            />
+                                            <label htmlFor="locale_kz" className="ml-2 block text-sm font-medium text-gray-700 cursor-pointer">
+                                                Қазақша нұсқасы
+                                            </label>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <input
+                                                id="locale_en"
+                                                name="locale"
+                                                type="radio"
+                                                value="en"
+                                                checked={data.locale === 'en'}
+                                                onChange={(e) => setData('locale', e.target.value)}
+                                                className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                                            />
+                                            <label htmlFor="locale_en" className="ml-2 block text-sm font-medium text-gray-700 cursor-pointer">
+                                                English (отображается везде)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <InputError message={errors.locale} className="mt-2" />
+                                </div>
                                 <div>
                                     <InputLabel htmlFor="status" value={currentType === 'media' ? 'Статус' : 'Статус *'} />
                                     <select
@@ -468,46 +517,46 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                             </div>
                         </div>
 
-                    {/* Категории и медиа только для обычных новостей */}
-                    {currentType !== 'media' && (
-                        <>
-                            <div className="bg-white shadow rounded-lg p-6">
-                                <h2 className="text-lg font-medium text-gray-900 mb-4">Категории</h2>
-                                {availableCategories.length === 0 ? (
-                                    <p className="text-sm text-gray-500">
-                                        Список категорий пуст. Обратитесь к администратору для настройки.
-                                    </p>
-                                ) : (
-                                    <CategorySelector
-                                        selectedCategories={data.category}
-                                        onCategoriesChange={(categories) => setData('category', categories)}
-                                        availableCategories={availableCategories}
-                                        maxCategories={5}
-                                    />
-                                )}
-                                <InputError message={errors.category} className="mt-2" />
-                            </div>
-
-                            <div className="bg-white shadow rounded-lg p-6">
-                                <div className="flex items-center justify-between mb-4">
-                                    <div>
-                                        <h2 className="text-lg font-medium text-gray-900">Галерея</h2>
-                                        <p className="text-sm text-gray-500 mt-1">
-                                            Загрузите дополнительные изображения или видео (поддерживаются форматы jpg, png, webp, mp4 и др.).
+                        {/* Категории и медиа только для обычных новостей */}
+                        {currentType !== 'media' && (
+                            <>
+                                <div className="bg-white shadow rounded-lg p-6">
+                                    <h2 className="text-lg font-medium text-gray-900 mb-4">Категории</h2>
+                                    {availableCategories.length === 0 ? (
+                                        <p className="text-sm text-gray-500">
+                                            Список категорий пуст. Обратитесь к администратору для настройки.
                                         </p>
-                                    </div>
-                                    <span className="text-sm text-gray-400">Файлов: {media.length}</span>
+                                    ) : (
+                                        <CategorySelector
+                                            selectedCategories={data.category}
+                                            onCategoriesChange={(categories) => setData('category', categories)}
+                                            availableCategories={availableCategories}
+                                            maxCategories={5}
+                                        />
+                                    )}
+                                    <InputError message={errors.category} className="mt-2" />
                                 </div>
-                                <ModernMediaUploader
-                                    existingMedia={media}
-                                    onMediaUploaded={handleMediaUploaded}
-                                    onMediaRemoved={handleMediaRemoved}
-                                    maxFiles={30}
-                                />
-                                <InputError message={errors.media} className="mt-2" />
-                            </div>
-                        </>
-                    )}
+
+                                <div className="bg-white shadow rounded-lg p-6">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div>
+                                            <h2 className="text-lg font-medium text-gray-900">Галерея</h2>
+                                            <p className="text-sm text-gray-500 mt-1">
+                                                Загрузите дополнительные изображения или видео (поддерживаются форматы jpg, png, webp, mp4 и др.).
+                                            </p>
+                                        </div>
+                                        <span className="text-sm text-gray-400">Файлов: {media.length}</span>
+                                    </div>
+                                    <ModernMediaUploader
+                                        existingMedia={media}
+                                        onMediaUploaded={handleMediaUploaded}
+                                        onMediaRemoved={handleMediaRemoved}
+                                        maxFiles={30}
+                                    />
+                                    <InputError message={errors.media} className="mt-2" />
+                                </div>
+                            </>
+                        )}
 
                         <div className="flex flex-wrap justify-end gap-4">
                             <Link

@@ -84,6 +84,7 @@ class NewsController extends Controller
                 'title' => $item->title,
                 'slug' => $item->slug,
                 'status' => $item->status,
+                'locale' => $item->locale,
                 'cover_thumb_url' => $item->cover_thumb_url,
                 'cover_image_alt' => $item->cover_image_alt,
                 'published_at' => $item->published_at?->format('Y-m-d H:i:s'),
@@ -269,6 +270,7 @@ class NewsController extends Controller
             $news->seo_title = $validated['seo_title'] ?? null;
             $news->seo_description = $validated['seo_description'] ?? null;
             $news->external_url = $validated['external_url'] ?? null;
+            $news->locale = $validated['locale'] ?? 'ru';
             // $type уже определен выше
 
             $news->status = $validated['status'];
@@ -418,6 +420,7 @@ class NewsController extends Controller
                 'seo_title' => $news->seo_title,
                 'seo_description' => $news->seo_description,
                 'external_url' => $news->external_url,
+                'locale' => $news->locale,
                 'status' => $news->status,
                 'published_at' => $news->published_at?->format('Y-m-d\TH:i'),
                 'media' => $this->mediaService->normalizeMediaForFrontend($news->images ?? []),
@@ -459,6 +462,7 @@ class NewsController extends Controller
             $news->seo_title = $validated['seo_title'] ?? null;
             $news->seo_description = $validated['seo_description'] ?? null;
             $news->external_url = $validated['external_url'] ?? null;
+            $news->locale = $validated['locale'] ?? $news->locale;
             $news->status = $validated['status'];
             $newsType = $this->resolveType($request->input('type', $news->type));
             $news->type = $newsType;

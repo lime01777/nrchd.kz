@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Head, useForm, Link } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 
-export default function Edit({ application, categories, stages }) {
+export default function Edit({ application, categories, stages, users }) {
   const { data, setData, put, processing, errors } = useForm({
     title: application.title || '',
     category: application.category || '',
@@ -47,7 +47,7 @@ export default function Edit({ application, categories, stages }) {
                 {/* Основная информация */}
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="text-lg font-medium text-gray-900 mb-4">Основная информация</h3>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -57,9 +57,8 @@ export default function Edit({ application, categories, stages }) {
                         type="text"
                         value={data.title}
                         onChange={(e) => setData('title', e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${
-                          errors.title ? 'border-red-500' : 'border-gray-300'
-                        }`}
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${errors.title ? 'border-red-500' : 'border-gray-300'
+                          }`}
                         placeholder="Введите название проекта"
                       />
                       {errors.title && (
@@ -74,9 +73,8 @@ export default function Edit({ application, categories, stages }) {
                       <select
                         value={data.category}
                         onChange={(e) => setData('category', e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${
-                          errors.category ? 'border-red-500' : 'border-gray-300'
-                        }`}
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${errors.category ? 'border-red-500' : 'border-gray-300'
+                          }`}
                       >
                         <option value="">Выберите категорию</option>
                         {categories.map((category) => (
@@ -95,9 +93,8 @@ export default function Edit({ application, categories, stages }) {
                       <select
                         value={data.current_stage}
                         onChange={(e) => setData('current_stage', e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${
-                          errors.current_stage ? 'border-red-500' : 'border-gray-300'
-                        }`}
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${errors.current_stage ? 'border-red-500' : 'border-gray-300'
+                          }`}
                       >
                         <option value="">Выберите этап</option>
                         {stages.map((stage) => (
@@ -133,9 +130,8 @@ export default function Edit({ application, categories, stages }) {
                       value={data.description}
                       onChange={(e) => setData('description', e.target.value)}
                       rows={4}
-                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${
-                        errors.description ? 'border-red-500' : 'border-gray-300'
-                      }`}
+                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${errors.description ? 'border-red-500' : 'border-gray-300'
+                        }`}
                       placeholder="Введите описание проекта"
                     />
                     {errors.description && (
@@ -147,21 +143,33 @@ export default function Edit({ application, categories, stages }) {
                 {/* Контактная информация */}
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="text-lg font-medium text-gray-900 mb-4">Контактная информация</h3>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Ответственное лицо
                       </label>
-                      <input
-                        type="text"
+                      <select
                         value={data.responsible_person}
-                        onChange={(e) => setData('responsible_person', e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${
-                          errors.responsible_person ? 'border-red-500' : 'border-gray-300'
-                        }`}
-                        placeholder="ФИО ответственного лица"
-                      />
+                        onChange={(e) => {
+                          const selectedUser = users.find(u => u.name === e.target.value);
+                          setData(currentData => ({
+                            ...currentData,
+                            responsible_person: e.target.value,
+                            email: selectedUser ? selectedUser.email : currentData.email
+                          }));
+                        }}
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${errors.responsible_person ? 'border-red-500' : 'border-gray-300'
+                          }`}
+                      >
+                        <option value="">Выберите ответственного</option>
+                        {users.map((user) => (
+                          <option key={user.id} value={user.name}>{user.name}</option>
+                        ))}
+                        {data.responsible_person && !users.find(u => u.name === data.responsible_person) && (
+                          <option value={data.responsible_person}>{data.responsible_person}</option>
+                        )}
+                      </select>
                       {errors.responsible_person && (
                         <p className="mt-1 text-sm text-red-600">{errors.responsible_person}</p>
                       )}
@@ -175,9 +183,8 @@ export default function Edit({ application, categories, stages }) {
                         type="tel"
                         value={data.phone}
                         onChange={(e) => setData('phone', e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${
-                          errors.phone ? 'border-red-500' : 'border-gray-300'
-                        }`}
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${errors.phone ? 'border-red-500' : 'border-gray-300'
+                          }`}
                         placeholder="+7 (XXX) XXX-XX-XX"
                       />
                       {errors.phone && (
@@ -193,9 +200,8 @@ export default function Edit({ application, categories, stages }) {
                         type="email"
                         value={data.email}
                         onChange={(e) => setData('email', e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${
-                          errors.email ? 'border-red-500' : 'border-gray-300'
-                        }`}
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${errors.email ? 'border-red-500' : 'border-gray-300'
+                          }`}
                         placeholder="example@email.com"
                       />
                       {errors.email && (
@@ -208,7 +214,7 @@ export default function Edit({ application, categories, stages }) {
                 {/* Сроки этапа */}
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="text-lg font-medium text-gray-900 mb-4">Сроки текущего этапа</h3>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -218,9 +224,8 @@ export default function Edit({ application, categories, stages }) {
                         type="date"
                         value={data.stage_start_date}
                         onChange={(e) => setData('stage_start_date', e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${
-                          errors.stage_start_date ? 'border-red-500' : 'border-gray-300'
-                        }`}
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${errors.stage_start_date ? 'border-red-500' : 'border-gray-300'
+                          }`}
                       />
                       {errors.stage_start_date && (
                         <p className="mt-1 text-sm text-red-600">{errors.stage_start_date}</p>
@@ -235,9 +240,8 @@ export default function Edit({ application, categories, stages }) {
                         type="date"
                         value={data.stage_end_date}
                         onChange={(e) => setData('stage_end_date', e.target.value)}
-                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${
-                          errors.stage_end_date ? 'border-red-500' : 'border-gray-300'
-                        }`}
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-500 ${errors.stage_end_date ? 'border-red-500' : 'border-gray-300'
+                          }`}
                       />
                       {errors.stage_end_date && (
                         <p className="mt-1 text-sm text-red-600">{errors.stage_end_date}</p>

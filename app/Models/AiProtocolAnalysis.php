@@ -12,6 +12,7 @@ class AiProtocolAnalysis extends Model
         'status',
         'result_path',
         'log',
+        'progress',
         'user_id'
     ];
 }

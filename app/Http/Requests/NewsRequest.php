@@ -59,6 +59,9 @@ class NewsRequest extends FormRequest
             'published_at' => 'nullable|date',
             'media' => 'nullable',
             'section' => 'nullable|string|in:news,media',
+            'media' => 'nullable',
+            'section' => 'nullable|string|in:news,media',
+            'locale' => 'nullable|string|in:ru,kz,en',
         ];
 
         $allowedCategories = config('news.categories', []);

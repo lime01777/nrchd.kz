@@ -40,6 +40,11 @@ Route::middleware([LanguageMiddleware::class])->group(function () {
             'locale' => app()->getLocale(),
         ]);
     })->name('home');
+
+    // Публичные маршруты для новостей
+    Route::get('/news', [App\Http\Controllers\NewsPublicController::class, 'index'])->name('news.index');
+    Route::get('/news/media', [App\Http\Controllers\NewsPublicController::class, 'media'])->name('news.media');
+    Route::get('/news/{news:slug}', [App\Http\Controllers\NewsPublicController::class, 'show'])->name('news.show');
 }); // Конец мидлвара языка
 
 Route::get('/medical-education', function () {
@@ -424,10 +429,7 @@ Route::get('/medical-tourism/contacts', function () {
 
 // Маршруты для Центральной комиссии по биоэтике перенесены в localized.php
 
-// Публичные маршруты для новостей
-Route::get('/news', [App\Http\Controllers\NewsPublicController::class, 'index'])->name('news.index');
-Route::get('/news/media', [App\Http\Controllers\NewsPublicController::class, 'media'])->name('news.media');
-Route::get('/news/{news:slug}', [App\Http\Controllers\NewsPublicController::class, 'show'])->name('news.show');
+
 
 // Маршруты для клиник
 Route::get('/clinics', [App\Http\Controllers\ClinicController::class, 'index'])->name('clinics');
@@ -449,73 +451,7 @@ Route::get('/news-slider-demo', function () {
 })->name('news.slider.demo');
 
 // API маршруты
-Route::prefix('api')->group(function () {
-    Route::get('/news/{slug}', function ($slug) {
-        $news = App\Models\News::where('slug', $slug)->first();
-        if (!$news) {
-            return response()->json(['error' => 'Новость не найдена'], 404);
-        }
-        
-        // Увеличиваем счетчик просмотров
-        $news->views = ($news->views ?? 0) + 1;
-        $news->save();
-        
-        return response()->json($news);
-    });
-    
-    // Получение последних новостей
-    Route::get('/latest-news', function (Request $request) {
-        try {
-            $limit = (int) $request->get('limit', 10);
-            $limit = $limit > 0 && $limit <= 50 ? $limit : 10;
 
-            $mediaService = app(App\Services\MediaService::class);
-
-            $latestNews = App\Models\News::query()
-                ->whereIn('status', ['published', 'Опубликовано'])
-                ->orderByDesc('published_at')
-                ->limit($limit)
-                ->get()
-                ->map(function (App\Models\News $news) use ($mediaService) {
-                    $media = $mediaService->normalizeMediaForFrontend($news->images ?? []);
-                    // Передаем все медиа (изображения и видео) для правильной обработки
-                    $allMedia = collect($media)->map(function ($item) {
-                        return [
-                            'type' => $item['type'] ?? 'image',
-                            'url' => $item['url'] ?? $item['path'] ?? null,
-                            'path' => $item['path'] ?? null,
-                            'embed_url' => $item['embed_url'] ?? null,
-                            'is_external' => $item['is_external'] ?? false,
-                            'is_embed' => $item['is_embed'] ?? false,
-                            'thumbnail' => $item['thumbnail'] ?? null,
-                        ];
-                    })->filter(function ($item) {
-                        return !empty($item['url']) || !empty($item['path']);
-                    })->values()->all();
-
-                    return [
-                        'id' => $news->id,
-                        'title' => $news->title,
-                        'slug' => $news->slug,
-                        'excerpt' => $news->excerpt,
-                        'image' => $news->cover_thumb_url ?? $news->cover_url,
-                        'images' => $allMedia, // Передаем все медиа, включая видео
-                        'publish_date' => optional($news->published_at ?? $news->publish_date)->toDateTimeString(),
-                        'external_url' => $news->external_url,
-                        'type' => $news->type,
-                    ];
-                });
-
-            return response()->json($latestNews);
-        } catch (\Throwable $e) {
-            Log::error('Ошибка в API latest-news', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return response()->json(['error' => 'Ошибка сервера'], 500);
-        }
-    });
-});
 
 // Маршруты для админ-панели
 

@@ -59,7 +59,9 @@ class NewsPublicController extends Controller
         $news->increment('views');
 
         // Получаем 3 последние опубликованные новости (кроме текущей)
+        $currentLocale = app()->getLocale();
         $relatedNews = News::published()
+            ->when($currentLocale !== 'en', fn($q) => $q->where('locale', $currentLocale))
             ->ofType($news->type ?? News::TYPE_NEWS)
             ->where('id', '!=', $news->id)
             ->orderByDesc('published_at')
@@ -163,6 +165,12 @@ class NewsPublicController extends Controller
     {
         $query = News::published()->ofType($type);
 
+        // Фильтрация по языку: для английской версии показываем все новости, для остальных - только соответствующие языку
+        $currentLocale = app()->getLocale();
+        if ($currentLocale !== 'en') {
+            $query->where('locale', $currentLocale);
+        }
+
         if ($request->filled('search')) {
             $query->search($request->input('search'));
         }
@@ -242,8 +250,10 @@ class NewsPublicController extends Controller
      */
     private function collectAvailableTags(string $type): array
     {
+        $currentLocale = app()->getLocale();
         $tags = News::published()
             ->ofType($type)
+            ->when($currentLocale !== 'en', fn($q) => $q->where('locale', $currentLocale))
             ->pluck('tags')
             ->flatMap(function ($item) {
                 if (empty($item)) {
@@ -271,5 +281,83 @@ class NewsPublicController extends Controller
             ->values();
 
         return $tags->all();
+    }
+
+    /**
+     * API: Получение одной новости по слагу в формате JSON.
+     * 
+     * @param string $slug
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showJson(string $slug)
+    {
+        $news = News::where('slug', $slug)->first();
+
+        if (!$news) {
+            return response()->json(['error' => 'Новость не найдена'], 404);
+        }
+
+        // Увеличиваем счетчик просмотров
+        $news->increment('views');
+
+        return response()->json($news);
+    }
+
+    /**
+     * API: Получение последних новостей в формате JSON.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function latestNews(Request $request)
+    {
+        try {
+            $limit = (int) $request->get('limit', 10);
+            $limit = $limit > 0 && $limit <= 50 ? $limit : 10;
+
+            $latestNews = News::query()
+                ->whereIn('status', ['published', 'Опубликовано'])
+                ->orderByDesc('published_at')
+                ->limit($limit)
+                ->get()
+                ->map(function (News $news) {
+                    $media = $this->mediaService->normalizeMediaForFrontend($news->images ?? []);
+                    
+                    // Передаем все медиа (изображения и видео) для правильной обработки
+                    $allMedia = collect($media)->map(function ($item) {
+                        return [
+                            'type' => $item['type'] ?? 'image',
+                            'url' => $item['url'] ?? $item['path'] ?? null,
+                            'path' => $item['path'] ?? null,
+                            'embed_url' => $item['embed_url'] ?? null,
+                            'is_external' => $item['is_external'] ?? false,
+                            'is_embed' => $item['is_embed'] ?? false,
+                            'thumbnail' => $item['thumbnail'] ?? null,
+                        ];
+                    })->filter(function ($item) {
+                        return !empty($item['url']) || !empty($item['path']);
+                    })->values()->all();
+
+                    return [
+                        'id' => $news->id,
+                        'title' => $news->title,
+                        'slug' => $news->slug,
+                        'excerpt' => $news->excerpt,
+                        'image' => $news->cover_thumb_url ?? $news->cover_url,
+                        'images' => $allMedia, // Передаем все медиа, включая видео
+                        'publish_date' => optional($news->published_at ?? $news->publish_date)->toDateTimeString(),
+                        'external_url' => $news->external_url,
+                        'type' => $news->type,
+                    ];
+                });
+
+            return response()->json($latestNews);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Ошибка в API latest-news', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'Ошибка сервера'], 500);
+        }
     }
 }

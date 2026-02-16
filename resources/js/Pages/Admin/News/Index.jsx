@@ -160,117 +160,119 @@ export default function Index({ news, filters, section = 'news', sectionMeta = n
                             const hasImages = imageSources.length > 0;
 
                             return (
-                            <article
-                                key={item.id}
-                                className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-                            >
-                                <div className="relative h-44 w-full overflow-hidden bg-gray-100">
-                                    {firstVideo ? (
-                                        firstVideo.is_external && firstVideo.is_embed && (firstVideo.embed_url || firstVideo.url || firstVideo.path) ? (
-                                            <iframe
-                                                src={firstVideo.embed_url || firstVideo.url || firstVideo.path}
-                                                title={item.title}
-                                                className="h-full w-full"
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                                allowFullScreen
-                                            />
-                                        ) : (
-                                            <video
-                                                src={firstVideo.url || firstVideo.path}
-                                                poster={firstVideo.thumbnail || undefined}
-                                                controls
-                                                muted
-                                                className="h-full w-full object-cover"
-                                            >
-                                                Ваш браузер не поддерживает воспроизведение видео.
-                                            </video>
-                                        )
-                                    ) : hasImages ? (
-                                        imageSources.length > 1 ? (
-                                            <NewsImageSlider
-                                                images={imageSources}
-                                                className="h-44"
-                                                height="176px"
-                                                showDots={false}
-                                                showCounter
-                                            />
-                                        ) : (
+                                <article
+                                    key={item.id}
+                                    className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                                >
+                                    <div className="relative h-44 w-full overflow-hidden bg-gray-100">
+                                        {firstVideo ? (
+                                            firstVideo.is_external && firstVideo.is_embed && (firstVideo.embed_url || firstVideo.url || firstVideo.path) ? (
+                                                <iframe
+                                                    src={firstVideo.embed_url || firstVideo.url || firstVideo.path}
+                                                    title={item.title}
+                                                    className="h-full w-full"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                    allowFullScreen
+                                                />
+                                            ) : (
+                                                <video
+                                                    src={firstVideo.url || firstVideo.path}
+                                                    poster={firstVideo.thumbnail || undefined}
+                                                    controls
+                                                    muted
+                                                    className="h-full w-full object-cover"
+                                                >
+                                                    Ваш браузер не поддерживает воспроизведение видео.
+                                                </video>
+                                            )
+                                        ) : hasImages ? (
+                                            imageSources.length > 1 ? (
+                                                <NewsImageSlider
+                                                    images={imageSources}
+                                                    className="h-44"
+                                                    height="176px"
+                                                    showDots={false}
+                                                    showCounter
+                                                />
+                                            ) : (
+                                                <img
+                                                    src={imageSources[0]}
+                                                    alt={item.title}
+                                                    className="h-full w-full object-cover"
+                                                />
+                                            )
+                                        ) : item.cover_thumb_url ? (
                                             <img
-                                                src={imageSources[0]}
-                                                alt={item.title}
+                                                src={item.cover_thumb_url}
+                                                alt={item.cover_image_alt || item.title}
                                                 className="h-full w-full object-cover"
                                             />
-                                        )
-                                    ) : item.cover_thumb_url ? (
-                                        <img
-                                            src={item.cover_thumb_url}
-                                            alt={item.cover_image_alt || item.title}
-                                            className="h-full w-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="flex h-full w-full items-center justify-center text-gray-300">
-                                            <svg className="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                        </div>
-                                    )}
-                                    <span
-                                        className={`absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
-                                            item.status === 'published'
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-gray-100 text-gray-700'
-                                        }`}
-                                    >
-                                        {item.status === 'published' ? 'Опубликовано' : 'Черновик'}
-                                    </span>
-                                </div>
-
-                                <div className="flex flex-1 flex-col gap-4 p-5">
-                                    <div className="flex flex-col gap-2">
-                                        <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">{item.title}</h3>
-                                        <span className="text-xs font-medium uppercase tracking-wide text-gray-400">{item.slug}</span>
+                                        ) : (
+                                            <div className="flex h-full w-full items-center justify-center text-gray-300">
+                                                <svg className="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                            </div>
+                                        )}
+                                        <span
+                                            className={`absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${item.status === 'published'
+                                                    ? 'bg-green-100 text-green-800'
+                                                    : 'bg-gray-100 text-gray-700'
+                                                }`}
+                                        >
+                                            {item.status === 'published' ? 'Опубликовано' : 'Черновик'}
+                                        </span>
+                                        <span className="absolute right-4 top-4 rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-blue-800">
+                                            {item.locale === 'ru' ? 'RU' : item.locale === 'kz' ? 'KZ' : item.locale === 'en' ? 'EN' : 'RU'}
+                                        </span>
                                     </div>
 
-                                    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                                        <div className="flex items-center gap-1">
-                                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5A2 2 0 003 7v12a2 2 0 002 2z" />
-                                            </svg>
-                                            {item.published_at_formatted || '—'}
+                                    <div className="flex flex-1 flex-col gap-4 p-5">
+                                        <div className="flex flex-col gap-2">
+                                            <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">{item.title}</h3>
+                                            <span className="text-xs font-medium uppercase tracking-wide text-gray-400">{item.slug}</span>
                                         </div>
-                                        <div className="flex items-center gap-1 text-gray-600">
-                                            <svg className="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                            <span className="font-semibold text-gray-800">{item.views ?? 0}</span>
-                                        </div>
-                                    </div>
 
-                                    <div className="mt-auto flex flex-wrap gap-2">
-                                        <Link
-                                            href={route('admin.news.edit', { news: item.id })}
-                                            className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-100"
-                                        >
-                                            Редактировать
-                                        </Link>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleToggleStatus(item)}
-                                            className="inline-flex items-center rounded-lg bg-yellow-50 px-3 py-2 text-sm font-semibold text-yellow-700 transition hover:bg-yellow-100"
-                                        >
-                                            {item.status === 'published' ? 'В черновик' : 'Опубликовать'}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleDelete(item)}
-                                            className="inline-flex items-center rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100"
-                                        >
-                                            Удалить
-                                        </button>
+                                        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                                            <div className="flex items-center gap-1">
+                                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5A2 2 0 003 7v12a2 2 0 002 2z" />
+                                                </svg>
+                                                {item.published_at_formatted || '—'}
+                                            </div>
+                                            <div className="flex items-center gap-1 text-gray-600">
+                                                <svg className="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                <span className="font-semibold text-gray-800">{item.views ?? 0}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-auto flex flex-wrap gap-2">
+                                            <Link
+                                                href={route('admin.news.edit', { news: item.id })}
+                                                className="inline-flex items-center rounded-lg bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-100"
+                                            >
+                                                Редактировать
+                                            </Link>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleToggleStatus(item)}
+                                                className="inline-flex items-center rounded-lg bg-yellow-50 px-3 py-2 text-sm font-semibold text-yellow-700 transition hover:bg-yellow-100"
+                                            >
+                                                {item.status === 'published' ? 'В черновик' : 'Опубликовать'}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleDelete(item)}
+                                                className="inline-flex items-center rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100"
+                                            >
+                                                Удалить
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            </article>
+                                </article>
                             );
                         })}
                     </div>
@@ -311,11 +313,10 @@ export default function Index({ news, filters, section = 'news', sectionMeta = n
                                                 <Link
                                                     key={index}
                                                     href={link.url || '#'}
-                                                    className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                                                        link.active
+                                                    className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${link.active
                                                             ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
                                                             : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                                                    } ${!link.url ? 'cursor-not-allowed opacity-50' : ''}`}
+                                                        } ${!link.url ? 'cursor-not-allowed opacity-50' : ''}`}
                                                     dangerouslySetInnerHTML={{ __html: link.label }}
                                                 />
                                             ))}

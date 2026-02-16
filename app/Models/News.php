@@ -76,6 +76,7 @@ class News extends Model
         'external_url',
         'published_at',
         'created_by',
+        'locale',
         // Старые поля для обратной совместимости
         'content',
         'category',
