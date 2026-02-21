@@ -54,7 +54,7 @@ class RemoveOldRoutesFromWeb extends Command
             "Route::get('/accreditation', function () {\n    return Inertia::render('Services/Accreditation');\n})->name('services.accreditation');",
             "Route::get('/post-accreditation-monitoring', function () {\n    return Inertia::render('Services/PostAccreditationMonitoring');\n})->name('services.postAccreditationMonitoring');",
             
-            // Филиалы
+            // Территориальные департаменты
             "Route::get('/astana', function () {\n    return Inertia::render('Branches/Astana');\n})->name('branches.astana');",
             "Route::get('/almaty', function () {\n    return Inertia::render('Branches/Almaty');\n})->name('branches.almaty');",
             "Route::get('/abay', function () {\n    return Inertia::render('Branches/Abay');\n})->name('branches.abay');",

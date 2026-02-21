@@ -8,7 +8,7 @@ function Hero({
   useVideo = false, // Новый параметр для видео
   overlay = true, 
   videoFormat = 'mp4', // Формат видео (по умолчанию mp4)
-  branchFolder = null, // Папка филиала для использования изображений из BranchImg
+  branchFolder = null, // Папка территориального департамента для использования изображений из BranchImg
   overlayColor = 'black' // Цвет overlay: 'black' или 'purple'
 }) {
   // Создаем ref для доступа к видео-элементу
@@ -154,10 +154,10 @@ function Hero({
           )}
           
           {/* Опциональный полупрозрачный оверлей для лучшей читаемости текста */}
-          {/* Фиолетовый overlay для филиалов, черный для видео/GIF */}
+          {/* Фиолетовый overlay для территориальных департаментов, черный для видео/GIF */}
           {overlay && (
             branchFolder ? (
-              // Фиолетовый overlay для филиалов
+              // Фиолетовый overlay для территориальных департаментов
               <div className="absolute inset-0 bg-purple-900 bg-opacity-40 z-0"></div>
             ) : (useGif || useVideo) ? (
               // Черный overlay для видео/GIF

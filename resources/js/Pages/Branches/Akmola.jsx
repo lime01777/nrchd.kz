@@ -4,8 +4,8 @@ import { Head } from '@inertiajs/react';
 import translationService from '@/Services/TranslationService';
 
 export default function Akmola() {
-    const title = translationService.t('branchesPages.akmola.title', 'Филиал области Акмола');
-    const description = translationService.t('branchesPages.akmola.description', 'Акмолинский филиал Национального научного центра развития здравоохранения имени Салидат Каирбековой осуществляет научно-методическое сопровождение медицинских организаций Акмолинской области, проводит мониторинг и оценку качества медицинских услуг, участвует в разработке и внедрении инновационных методов организации медицинской помощи населению.');
+    const title = translationService.t('branchesPages.akmola.title', 'Территориальный департамент области Акмола');
+    const description = translationService.t('branchesPages.akmola.description', 'Акмолинский территориальный департамент Национального научного центра развития здравоохранения имени Салидат Каирбековой осуществляет научно-методическое сопровождение медицинских организаций Акмолинской области, проводит мониторинг и оценку качества медицинских услуг, участвует в разработке и внедрении инновационных методов организации медицинской помощи населению.');
     
     return (
         <BranchTemplate 

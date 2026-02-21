@@ -26,12 +26,14 @@ Route::get('/', function () {
 
 // Route for switching languages (POST with JSON response for API)
 Route::post('locale/{locale}', function ($locale) {
-    if (!in_array($locale, ['ru', 'kk', 'en'])) {
+    if (!in_array($locale, ['ru', 'kz', 'en'])) {
         $locale = config('i18n.default_locale', 'ru');
     }
     
     // Сохраняем в сессии
     session(['locale' => $locale]);
+    // Also set 'language' key for compatibility with LanguageMiddleware
+    session(['language' => $locale]);
     
     // Устанавливаем локаль приложения
     app()->setLocale($locale);
@@ -51,14 +53,16 @@ Route::post('locale/{locale}', function ($locale) {
 
 // Старый маршрут для совместимости (GET)
 Route::get('change-language/{locale}', function ($locale) {
-    if (!in_array($locale, ['ru', 'kk', 'en'])) {
+    if (!in_array($locale, ['ru', 'kz', 'en'])) {
         $locale = config('i18n.default_locale', 'ru');
     }
     
     session(['locale' => $locale]);
+    session(['language' => $locale]);
     
     return redirect()->back();
 })->name('change.language');
+
 
 // Example routes - переводы обрабатываются на фронтенде через систему i18n
 Route::get('/medical-education', function () {
@@ -121,5 +125,22 @@ Route::get('/bioethics/documents', function () {
         'locale' => app()->getLocale(),
     ]);
 })->name('bioethics.documents');
+
+// Center Prevention Routes
+Route::get('/direction/center-prevention', function () {
+    return Inertia::render('Direction/CenterPrevention');
+})->name('direction.center_prevention');
+
+Route::get('/direction/center-prevention/prevention-programs', function () {
+    return Inertia::render('Direction/CenterPrevention/PreventionPrograms');
+})->name('direction.center_prevention.prevention_programs');
+
+Route::get('/direction/center-prevention/healthy-lifestyle', function () {
+    return Inertia::render('Direction/CenterPrevention/HealthyLifestyle');
+})->name('direction.center_prevention.healthy_lifestyle');
+
+Route::get('/direction/center-prevention/communications', function () {
+    return Inertia::render('Direction/CenterPrevention/Communications');
+})->name('direction.center_prevention.communications');
 
 // Add other routes here with the same translation pattern

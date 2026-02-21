@@ -5,8 +5,8 @@ import translationService from '@/Services/TranslationService';
 import BranchContactInfo from '@/Components/BranchContactInfo';
 
 // Определение переменных вне компонента, чтобы они были доступны и в layout
-const title = translationService.t('branchesPages.karaganda.title', 'Филиал области Караганда');
-const description = translationService.t('branchesPages.karaganda.description', 'Карагандинский филиал Национального научного центра развития здравоохранения имени Салидат Каирбековой координирует работу медицинских организаций Карагандинской области. Филиал осуществляет научно-методическое сопровождение, проводит мониторинг качества медицинских услуг и реализует образовательные программы для медицинских работников региона.');
+const title = translationService.t('branchesPages.karaganda.title', 'Территориальный департамент области Караганда');
+const description = translationService.t('branchesPages.karaganda.description', 'Карагандинский территориальный департамент Национального научного центра развития здравоохранения имени Салидат Каирбековой координирует работу медицинских организаций Карагандинской области. Территориальный департамент осуществляет научно-методическое сопровождение, проводит мониторинг качества медицинских услуг и реализует образовательные программы для медицинских работников региона.');
 
 export default function Karaganda() {
     return (

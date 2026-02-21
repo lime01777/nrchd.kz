@@ -14,7 +14,7 @@ return array (
   'allowed_formats' => 'Рұқсат етілген форматтар',
   'apply' => 'Қолдану',
   'back' => 'Артқа',
-  'branches' => 'Филиалдар',
+  'branches' => 'Аумақтық департаменттер',
   'browse' => 'Шолу',
   'browser_not_support_video' => 'Сіздің браузеріңіз бейнені қолдамайды.',
   'cancel' => 'Болдырмау',

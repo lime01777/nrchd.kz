@@ -391,8 +391,8 @@ const HomeCharts = () => {
                                                         <li key={report.id} className="py-2">
                                                             <button
                                                                 className={`w-full text-left px-6 py-2 rounded-md transition ${isSelected
-                                                                        ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
-                                                                        : 'hover:bg-gray-50'
+                                                                    ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-500'
+                                                                    : 'hover:bg-gray-50'
                                                                     }`}
                                                                 onClick={() => selectReport(report.id)}
                                                             >
@@ -473,6 +473,14 @@ export default function Home() {
             buttonText: t('home.hero.slide4.button', 'Перейти'),
             buttonLink: route('electronic.health') + '#ai-services-list',
             image: "/img/HeroImg/electronichealth.png"
+        },
+        {
+            id: 5,
+            title: t('home.hero.slide5.title', 'Инициативы ВОЗ'),
+            subtitle: t('home.hero.slide5.subtitle', 'Глобальное партнерство во имя здоровья'),
+            buttonText: t('home.hero.slide5.button', 'Присоединиться к инициативам'),
+            buttonLink: route('center.prevention') + '#who-initiatives',
+            image: "/img/HeroImg/who-initiatives.png" // Placeholder, user can replace
         }
     ];
 
@@ -638,14 +646,14 @@ export default function Home() {
                                 <div
                                     key={slide.id}
                                     className={`transition-all duration-1000 ease-in-out w-full flex flex-col items-start ${index === currentSlide
-                                            ? 'opacity-100 transform translate-x-0 relative pointer-events-auto'
-                                            : 'opacity-0 transform translate-x-8 absolute inset-0 pointer-events-none'
+                                        ? 'opacity-100 transform translate-x-0 relative pointer-events-auto'
+                                        : 'opacity-0 transform translate-x-8 absolute inset-0 pointer-events-none'
                                         }`}
                                 >
                                     {/* Заголовок */}
                                     <h1 className={`title-font sm:text-4xl text-3xl mb-8 font-semibold drop-shadow-lg ${slide.id === 1 || slide.id === 2
-                                            ? 'text-black'
-                                            : 'text-white'
+                                        ? 'text-black'
+                                        : 'text-white'
                                         }`}>
                                         <TypewriterText
                                             text={slide.title}
@@ -656,8 +664,8 @@ export default function Home() {
 
                                     {/* Подзаголовок */}
                                     <p className={`text-xl leading-relaxed mb-10 max-w-2xl drop-shadow-lg ${slide.id === 1 || slide.id === 2
-                                            ? 'text-black'
-                                            : 'text-white'
+                                        ? 'text-black'
+                                        : 'text-white'
                                         }`}>
                                         <TypewriterText
                                             text={slide.subtitle}
@@ -671,12 +679,12 @@ export default function Home() {
                                         <Link
                                             href={slide.buttonLink}
                                             className={`inline-flex items-center backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold text-lg hover:scale-105 hover:shadow-xl transition-all duration-500 shadow-lg border-2 cursor-pointer z-[9999] relative pointer-events-auto select-none hover:z-[10000] ${slide.id === 1
-                                                    ? 'bg-green-600/80 border-green-500/50 hover:bg-green-600/95 hover:border-green-500/80 hover:shadow-2xl' // Медицинский туризм - зеленый
-                                                    : slide.id === 2
-                                                        ? 'bg-green-600/80 border-green-500/50 hover:bg-green-600/95 hover:border-green-500/80 hover:shadow-2xl' // Клинические протоколы - зеленый
-                                                        : slide.id === 4
-                                                            ? 'bg-blue-600/80 border-blue-500/50 hover:bg-blue-600/95 hover:border-blue-500/80 hover:shadow-2xl' // Цифровое здравоохранение - синий
-                                                            : 'bg-purple-700/80 border-purple-600/50 hover:bg-purple-700/95 hover:border-purple-600/80 hover:shadow-2xl' // Национальный доклад - темно-фиолетовый
+                                                ? 'bg-green-600/80 border-green-500/50 hover:bg-green-600/95 hover:border-green-500/80 hover:shadow-2xl' // Медицинский туризм - зеленый
+                                                : slide.id === 2
+                                                    ? 'bg-green-600/80 border-green-500/50 hover:bg-green-600/95 hover:border-green-500/80 hover:shadow-2xl' // Клинические протоколы - зеленый
+                                                    : slide.id === 4
+                                                        ? 'bg-blue-600/80 border-blue-500/50 hover:bg-blue-600/95 hover:border-blue-500/80 hover:shadow-2xl' // Цифровое здравоохранение - синий
+                                                        : 'bg-purple-700/80 border-purple-600/50 hover:bg-purple-700/95 hover:border-purple-600/80 hover:shadow-2xl' // Национальный доклад - темно-фиолетовый
                                                 }`}
                                             style={{ animation: 'fadeIn 0.8s ease-in-out' }}
                                             onClick={(e) => {

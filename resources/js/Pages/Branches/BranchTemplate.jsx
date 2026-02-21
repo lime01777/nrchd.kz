@@ -18,13 +18,13 @@ export default function BranchTemplate({ title, description, branchFolder, addre
         <>
             <Head title={title} />
             <LayoutBranch img="branch" h1={title} className="text-white" branchFolder={branchFolder}>
-                {/* 1. Блок с текстовой информацией о филиале */}
+                {/* 1. Блок с текстовой информацией о территориальном департаменте */}
                 <section className="text-gray-600 body-font pb-8">
                     <div className="container px-5 py-12 mx-auto">
                         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                            <h2 className="text-2xl font-bold text-gray-800 mb-6" data-translate>О филиале</h2>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-6" data-translate>О территориальном департаменте</h2>
                             <p className="text-gray-700 mb-4 leading-relaxed" data-translate>
-                                {description || "Филиал Национального научного центра развития здравоохранения имени Салидат Каирбековой является ведущим учреждением в регионе, осуществляющим научно-исследовательскую, образовательную и консультативную деятельность в сфере здравоохранения."}
+                                {description || "Территориальный департамент Национального научного центра развития здравоохранения имени Салидат Каирбековой является ведущим учреждением в регионе, осуществляющим научно-исследовательскую, образовательную и консультативную деятельность в сфере здравоохранения."}
                             </p>
                             
                             <div className="mb-6">

@@ -8,18 +8,18 @@ export default function BranchPageTemplate({ branchName, branchFolder = "" }) {
 
   return (
     <>
-      <Head title={branchName || "Филиал ННЦРЗ"} />
+      <Head title={branchName || "Территориальный департамент ННЦРЗ"} />
       <LayoutBranch
         img="/storage/images/branches/branch-hero.jpg"
-        h1={branchName || "Филиал ННЦРЗ"}
+        h1={branchName || "Территориальный департамент ННЦРЗ"}
       >
-        {/* Блок с информацией о филиале */}
+        {/* Блок с информацией о территориальном департаменте */}
         <section className="text-gray-600 body-font pb-8">
           <div className="container px-5 py-12 mx-auto">
             <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">О филиале</h2>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">О территориальном департаменте</h2>
               <p className="text-gray-700 mb-4 leading-relaxed">
-                Филиал Национального научного центра развития здравоохранения имени Салидат Каирбековой является ведущим учреждением в регионе, осуществляющим научно-исследовательскую, образовательную и консультативную деятельность в сфере здравоохранения.
+                Территориальный департамент Национального научного центра развития здравоохранения имени Салидат Каирбековой является ведущим учреждением в регионе, осуществляющим научно-исследовательскую, образовательную и консультативную деятельность в сфере здравоохранения.
               </p>
               
               <div className="mb-6">
@@ -47,9 +47,9 @@ export default function BranchPageTemplate({ branchName, branchFolder = "" }) {
               </div>
               
               <div className="mb-6">
-                <h3 className="text-xl font-semibold text-gray-700 mb-3">История филиала</h3>
+                <h3 className="text-xl font-semibold text-gray-700 mb-3">История территориального департамента</h3>
                 <p className="text-gray-700 mb-4 leading-relaxed">
-                  Филиал был основан в 2010 году как региональное подразделение Национального научного центра развития здравоохранения. За годы работы филиал достиг значительных успехов в реализации проектов, направленных на повышение качества и доступности медицинской помощи.
+                  Территориальный департамент был основан в 2010 году как региональное подразделение Национального научного центра развития здравоохранения. За годы работы территориальный департамент достиг значительных успехов в реализации проектов, направленных на повышение качества и доступности медицинской помощи.
                 </p>
               </div>
             </div>
@@ -95,7 +95,7 @@ export default function BranchPageTemplate({ branchName, branchFolder = "" }) {
               </h3>
               
               <div className="pl-4 border-l-4 border-blue-300 mt-5 mb-5">
-                <p className="font-medium text-gray-700 mb-1">Филиал ННЦРЗ</p>
+                <p className="font-medium text-gray-700 mb-1">Территориальный департамент ННЦРЗ</p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
                   <div className="flex items-start">

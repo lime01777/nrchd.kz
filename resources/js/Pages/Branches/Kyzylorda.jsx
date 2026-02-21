@@ -4,8 +4,8 @@ import { Head } from '@inertiajs/react';
 import translationService from '@/Services/TranslationService';
 
 export default function Kyzylorda() {
-    const title = translationService.t('branchesPages.kyzylorda.title', 'Филиал области Кызылорда');
-    const description = translationService.t('branchesPages.kyzylorda.description', 'Кызылординский филиал Национального научного центра развития здравоохранения имени Салидат Каирбековой осуществляет координацию и методическое сопровождение медицинских организаций Кызылординской области. Филиал проводит мониторинг качества медицинских услуг, реализует образовательные программы и участвует в реализации государственных программ в области здравоохранения.');
+    const title = translationService.t('branchesPages.kyzylorda.title', 'Территориальный департамент области Кызылорда');
+    const description = translationService.t('branchesPages.kyzylorda.description', 'Кызылординский территориальный департамент Национального научного центра развития здравоохранения имени Салидат Каирбековой осуществляет координацию и методическое сопровождение медицинских организаций Кызылординской области. Территориальный департамент проводит мониторинг качества медицинских услуг, реализует образовательные программы и участвует в реализации государственных программ в области здравоохранения.');
     
     return (
         <BranchTemplate 

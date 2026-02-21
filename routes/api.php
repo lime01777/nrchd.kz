@@ -52,7 +52,3 @@ Route::prefix('youth-health-centers')->group(function () {
 
 // API маршрут для получения данных о госзакупках
 Route::get('/procurements', [\App\Http\Controllers\ProcurementController::class, 'getProcurements']);
-
-// Публичные API маршруты для новостей
-Route::get('/news/{slug}', [App\Http\Controllers\NewsPublicController::class, 'showJson']);
-Route::get('/latest-news', [App\Http\Controllers\NewsPublicController::class, 'latestNews']);

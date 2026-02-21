@@ -14,7 +14,7 @@ class AddHeaderTranslations extends Command
     {
         $this->info('🔧 Adding missing Header translations...');
         
-        // Переводы для филиалов
+        // Переводы для территориальных департаментов
         $branchesTranslations = [
             'kz' => [
                 'branchesSubLinks.astana' => 'г. Астана',
@@ -156,7 +156,7 @@ class AddHeaderTranslations extends Command
             
             $translations = include $langFile;
             
-            // Добавляем переводы филиалов
+            // Добавляем переводы территориальных департаментов
             foreach ($branchesTranslations[$lang] as $key => $value) {
                 $translations[$key] = $value;
             }

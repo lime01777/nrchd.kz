@@ -76,7 +76,7 @@ class CreateRussianLanguageFile extends Command
             'directions' => 'Направления',
             'services' => 'Услуги',
             'about_center' => 'О центре',
-            'branches' => 'Филиалы',
+            'branches' => 'Территориальные департаменты',
             'center_name' => 'Национальный научный центр охраны здоровья имени Салидат Каирбековой',
             'medical_education' => 'Медицинское образование',
             'medical_science' => 'Медицинская наука',

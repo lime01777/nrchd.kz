@@ -54,7 +54,7 @@ const FooterLinks = () => {
             { title: "Аккредитация медицинских организаций", url: "services.accreditation", translate: true },
             { title: "Постаккредитационный мониторинг", url: "services.postAccreditationMonitoring", translate: true },
         ],
-        'Филиалы': [
+        'Территориальные департаменты': [
             { title: "г. Астана", url: "branches.astana", translate: true },
             { title: "г. Алматы", url: "branches.almaty", translate: true },
             { title: "Абайская область", url: "branches.abay", translate: true },

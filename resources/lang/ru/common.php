@@ -14,7 +14,7 @@ return array (
   'allowed_formats' => 'Разрешенные форматы',
   'apply' => 'Применить',
   'back' => 'Назад',
-  'branches' => 'Филиалы',
+  'branches' => 'Территориальные департаменты',
   'browse' => 'Обзор',
   'browser_not_support_video' => 'Ваш браузер не поддерживает тег видео.',
   'cancel' => 'Отмена',

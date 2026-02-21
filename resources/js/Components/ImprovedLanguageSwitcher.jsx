@@ -34,7 +34,7 @@ const ImprovedLanguageSwitcher = ({ openUpwards = false }) => {
   }, []);
 
   // Быстрое переключение языка
-  const handleLanguageChange = (langCode) => {
+  const handleLanguageChange = async (langCode) => {
     if (langCode === currentLang) return;
 
     setIsDropdownOpen(false);
@@ -45,7 +45,25 @@ const ImprovedLanguageSwitcher = ({ openUpwards = false }) => {
 
       if (success) {
         setCurrentLang(langCode);
-        
+
+        // Отправляем запрос на сервер для обновления сессии
+        try {
+          // Используем fetch для отправки POST запроса
+          const response = await fetch(route('locale.set', langCode), {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+            }
+          });
+
+          if (!response.ok) {
+            console.warn('Сервер не подтвердил смену языка');
+          }
+        } catch (serverError) {
+          console.error('Ошибка синхронизации языка с сервером:', serverError);
+        }
+
         // Перезагружаем страницу для применения нового языка
         setTimeout(() => {
           window.location.reload();
@@ -85,10 +103,10 @@ const ImprovedLanguageSwitcher = ({ openUpwards = false }) => {
         title="Переключить язык"
       >
         <span className="font-medium">{currentLanguage?.code.toUpperCase()}</span>
-        <svg 
+        <svg
           className={`w-3 h-3 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
-          fill="none" 
-          stroke="currentColor" 
+          fill="none"
+          stroke="currentColor"
           viewBox="0 0 24 24"
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -97,22 +115,18 @@ const ImprovedLanguageSwitcher = ({ openUpwards = false }) => {
 
       {/* Выпадающий список */}
       {isDropdownOpen && (
-        <div className={`absolute left-0 bg-white border border-gray-300 rounded shadow-lg z-50 min-w-[120px] ${
-          openUpwards ? 'bottom-full mb-1' : 'top-full mt-1'
-        }`}>
+        <div className={`absolute left-0 bg-white border border-gray-300 rounded shadow-lg z-50 min-w-[120px] ${openUpwards ? 'bottom-full mb-1' : 'top-full mt-1'
+          }`}>
           {languages.map((language) => (
             <button
               key={language.code}
               onClick={() => handleLanguageChange(language.code)}
-              className={`w-full flex items-center justify-between px-3 py-2 text-xs hover:bg-gray-100 transition-colors duration-150 ${
-                language.code === currentLang 
-                  ? 'bg-gray-100 font-medium' 
+              className={`w-full flex items-center justify-between px-3 py-2 text-xs hover:bg-gray-100 transition-colors duration-150 ${language.code === currentLang
+                  ? 'bg-gray-100 font-medium'
                   : 'text-gray-700'
-              } ${
-                language.code === languages[0].code ? 'rounded-t' : ''
-              } ${
-                language.code === languages[languages.length - 1].code ? 'rounded-b' : ''
-              }`}
+                } ${language.code === languages[0].code ? 'rounded-t' : ''
+                } ${language.code === languages[languages.length - 1].code ? 'rounded-b' : ''
+                }`}
             >
               <span className="font-medium">{language.code.toUpperCase()}</span>
               {language.code === currentLang && (

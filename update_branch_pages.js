@@ -1,10 +1,10 @@
-// Скрипт для обновления страниц филиалов
+// Скрипт для обновления страниц территориальных департаментов
 const fs = require('fs');
 const path = require('path');
 
 const branchesDir = path.join(__dirname, 'resources', 'js', 'Pages', 'Branches');
 
-// Получаем список всех файлов филиалов
+// Получаем список всех файлов территориальных департаментов
 const branchFiles = fs.readdirSync(branchesDir)
   .filter(file => file.endsWith('.jsx') && file !== 'BranchTemplate.jsx' && file !== 'BranchPageTemplate.jsx');
 
@@ -64,4 +64,4 @@ ${componentName}.layout = (page) => <LayoutBranch
   console.log(`Обновлен файл: ${file}`);
 });
 
-console.log('Завершено обновление страниц филиалов');
+console.log('Завершено обновление страниц территориальных департаментов');

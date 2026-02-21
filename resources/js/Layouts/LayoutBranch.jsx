@@ -10,7 +10,7 @@ export default function LayoutBranch({
   h1, 
   useGif = false, // Параметр для использования GIF
   overlay = true,  // Параметр для управления полупрозрачным оверлеем
-  branchFolder = null // Папка филиала для использования изображений из BranchImg
+  branchFolder = null // Папка территориального департамента для использования изображений из BranchImg
 }) {
   return (
     <>

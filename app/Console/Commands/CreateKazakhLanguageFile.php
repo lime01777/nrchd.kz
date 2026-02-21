@@ -76,7 +76,7 @@ class CreateKazakhLanguageFile extends Command
             'directions' => 'Бағыттар',
             'services' => 'Қызметтер',
             'about_center' => 'Орталық туралы',
-            'branches' => 'Филиалдар',
+            'branches' => 'Территориальный департаментдар',
             'center_name' => 'Салидат Каирбекова атындағы Ұлттық денсаулық сақтаудың ұлттық ғылыми орталығы',
             'medical_education' => 'Медициналық білім беру',
             'medical_science' => 'Медициналық ғылым',

@@ -53,7 +53,7 @@ class FixRouteLocaleParameters extends Command
         'services.accreditation',
         'services.postAccreditationMonitoring',
         
-        // Филиалы
+        // Территориальные департаменты
         'branches.astana',
         'branches.almaty',
         'branches.abay',

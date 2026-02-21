@@ -2,9 +2,9 @@ import React from 'react';
 import { getBranchContacts } from '@/data/branchesContacts';
 
 /**
- * Компонент для отображения контактной информации филиала
- * @param {string} branchFolder - Код папки филиала
- * @param {string} title - Название филиала
+ * Компонент для отображения контактной информации территориального департамента
+ * @param {string} branchFolder - Код папки территориального департамента
+ * @param {string} title - Название территориального департамента
  * @param {string} address - Адрес (опционально, если не передан, берется из данных)
  * @param {string} phone - Телефон (опционально)
  * @param {string} email - Email (опционально)
