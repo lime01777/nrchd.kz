@@ -1598,6 +1598,10 @@
       "tab2Folder": "HLS/Podcasts",
       "tab3Label": "Tools",
       "tab3Folder": "HLS/Tools",
+      "infographicsTitle": "Infographics",
+      "videosTitle": "Videos",
+      "youthCentersResultsTitle": "YHC Activity Results",
+      "youthCentersMapSubtitle": "Interactive map of youth health centers by region.",
       "youthCentersTitle": "Youth Health Centers",
       "youthCentersDescription": "Interactive map of youth health centers throughout the Republic of Kazakhstan",
       "youthCentersMap": {
@@ -2617,6 +2621,92 @@
       "fileType": "File type",
       "link": "Link",
       "file": "File"
+    }
+  },
+  "sections": {
+    "youthHealth": {
+      "title": "Youth Health Center Statistics",
+      "subtitle": "Click on the chart area to select another report from the data library.",
+      "changeReport": "Select another report",
+      "categories": {
+        "staffing": "Staff & Training",
+        "audience": "Audience & Visits",
+        "media": "Media & Communications"
+      },
+      "reports": {
+        "training": "Specialist Training Level",
+        "staffingNormative": "Staff Shortage vs Normative",
+        "specialistStructure": "Request Structure (Psychologists)",
+        "genderAccess": "Gender Distribution",
+        "targetReach": "Reach by Event Formats",
+        "mediaActivity": "Activity in TV/Radio/Press",
+        "videoRotation": "Video Rotation & Internet",
+        "iomDistribution": "Distribution of Printed Materials"
+      },
+      "modal": {
+        "title": "Report Library",
+        "subtitle": "Select a metric to display on the dashboard",
+        "searchPlaceholder": "Find metric..."
+      },
+      "charts": {
+        "training": "Trained Specialists (%)",
+        "average": "Average",
+        "fact": "Fact",
+        "normative": "Normative",
+        "gender": {
+          "female": "Female",
+          "male": "Male"
+        },
+        "visits": "Number of Visits (thousand)",
+        "media": "Quantity",
+        "rotation": "Rotations / Publications",
+        "total": "Total",
+        "reach": "Reach (people)"
+      }
+    },
+    "volunteerForm": {
+      "title": "Become a Part of the",
+      "subtitle": "Healthy Lifestyle Volunteer Team",
+      "description": "We are looking for active and motivated people ready to help promote a healthy lifestyle. Together we can make our society healthier and more conscious.",
+      "benefits": {
+        "training": {
+          "title": "Training and Development",
+          "description": "Free health-related trainings and seminars"
+        },
+        "networking": {
+          "title": "New connections",
+          "description": "Community of like-minded people from all over the country"
+        }
+      },
+      "form": {
+        "fullName": {
+          "label": "Full Name",
+          "placeholder": "Alexander Ivanov"
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "example@mail.com"
+        },
+        "phone": {
+          "label": "Phone",
+          "placeholder": "+7 (___) ___-__-__"
+        },
+        "city": {
+          "label": "City",
+          "placeholder": "Your city"
+        },
+        "motivation": {
+          "label": "Why do you want to become a volunteer?",
+          "placeholder": "Tell us a bit about yourself and your goals..."
+        },
+        "submit": "Submit Application",
+        "submitting": "Submitting...",
+        "disclaimer": "By clicking the button, you agree to the processing of personal data"
+      },
+      "success": {
+        "title": "Application Sent!",
+        "description": "We will contact you shortly to clarify the details."
+      }
     }
   }
 }

@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'permissions',
     ];
 
     /**
@@ -44,6 +45,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'permissions' => 'array',
         ];
     }
 
@@ -76,6 +78,23 @@ class User extends Authenticatable
      */
     public function hasAdminAccess(): bool
     {
-        return $this->isAdmin() || $this->isEditor() || $this->isDocumentManager();
+        return $this->isAdmin() || $this->isEditor() || $this->isDocumentManager() || !empty($this->permissions);
+    }
+
+    /**
+     * Проверяет наличие конкретного права доступа
+     */
+    public function hasPermission(string $permission): bool
+    {
+        // Админ имеет доступ ко всему
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if (empty($this->permissions)) {
+            return false;
+        }
+
+        return in_array($permission, $this->permissions, true);
     }
 }

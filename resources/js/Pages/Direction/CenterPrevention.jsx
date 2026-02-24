@@ -54,6 +54,7 @@ export default function CenterPrevention() {
   const [youthCentersTitle, setYouthCentersTitle] = useState('');
   const [youthCentersDescription, setYouthCentersDescription] = useState('');
   const [h1Title, setH1Title] = useState('');
+  const [currentLanguage, setCurrentLanguage] = useState(translationService.getCurrentLanguage()); // Added as per edit
 
   // Обновление переводов при смене языка
   useEffect(() => {
@@ -93,10 +94,14 @@ export default function CenterPrevention() {
     };
 
     updateTranslations();
-    window.addEventListener('languageChanged', updateTranslations);
+    const handleLanguageChange = (e) => { // Modified as per edit
+      setCurrentLanguage(e.detail.language);
+      updateTranslations(); // Ensure other states are also updated
+    };
+    window.addEventListener('languageChanged', handleLanguageChange);
 
     return () => {
-      window.removeEventListener('languageChanged', updateTranslations);
+      window.removeEventListener('languageChanged', handleLanguageChange);
     };
   }, []);
 
@@ -128,77 +133,138 @@ export default function CenterPrevention() {
   };
 
   return (
-    <>
-      <Head title={pageTitle} />
+    <Layout>
+      <Head title={t('directionsPages.centerPrevention.title', 'Центр профилактики')} />
 
-      {/* Hero и краткое описание */}
-      <section className="text-gray-600 body-font pb-8">
-        <div className="container px-5 py-12 mx-auto">
-          <div className="flex flex-wrap px-12 text-justify">
-            <p className="tracking-wide leading-relaxed mb-4">
-              {intro}
-            </p>
-          </div>
-        </div>
-      </section>
+      <HeroSection
+        title={t('directionsPages.centerPrevention.title', 'Центр профилактики и укрепления здоровья')}
+        subtitle={t('directionsPages.centerPrevention.subtitle', 'Формирование здорового образа жизни')}
+        description={t('directionsPages.centerPrevention.intro', 'Центр профилактики и укрепления здоровья ННЦРЗ занимается разработкой и внедрением программ, направленных на раннее выявление заболеваний и формирование здоровых привычек у населения.')}
+        image="/images/sections/prevention-hero.jpg"
+        breadcrumbs={[
+          { label: t('header.directions', 'Направления'), link: '/directions' },
+          { label: t('directionsPages.centerPrevention.title', 'Центр профилактики') }
+        ]}
+      />
 
-      {/* Три папки с направлениями работы */}
-      <section className="text-gray-600 body-font">
-        <div className="container pt-8 mx-auto">
-          <div className='flex flex-wrap'>
-            <FolderChlank
-              title="Профилактические программы"
-              href={route('direction.center_prevention.prevention_programs')}
-              color="bg-blue-200"
-              colorsec="bg-blue-300"
-            />
-            <FolderChlank
-              title="Формирование ЗОЖ"
-              href={route('direction.center_prevention.healthy_lifestyle')}
-              color="bg-green-200"
-              colorsec="bg-green-300"
-            />
-            <FolderChlank
-              title="Коммуникации"
-              href={route('direction.center_prevention.communications')}
-              color="bg-purple-200"
-              colorsec="bg-purple-300"
-            />
-            <FolderChlank
-              title="Инфографики"
-              href={route('direction.center_prevention.communications')}
-              color="bg-purple-200"
-              colorsec="bg-purple-300"
-            />
-            <FolderChlank
-              title="Видеоролики"
-              href={route('direction.center_prevention.communications')}
-              color="bg-purple-200"
-              colorsec="bg-purple-300"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Интерактивная карта показателей */}
-      <section className="text-gray-600 body-font py-12 bg-white">
+      <section className="py-20 bg-white">
         <div className="container px-5 mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Результаты деятельности МЦЗ</h2>
-            <p className="text-gray-500 max-w-2xl mx-auto">
-              Интерактивная карта молодежных центров здоровья в разрезе регионов.
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {/* Колонка 1 */}
+            <div className="space-y-6">
+              <h3 className="text-2xl font-bold text-gray-900 border-l-4 border-blue-600 pl-4">
+                {t('directionsPages.centerPrevention.column1Title', 'Профилактические программы')}
+              </h3>
+              <ul className="space-y-4 text-gray-600">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
+                  {t('directionsPages.centerPrevention.column1Item1', 'Профилактические медицинские осмотры')}
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
+                  {t('directionsPages.centerPrevention.column1Item2', 'Скрининги целевых групп населения')}
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
+                  {t('directionsPages.centerPrevention.column1Item3', 'Профилактика НИЗ')}
+                </li>
+              </ul>
+            </div>
+
+            {/* Колонка 2 */}
+            <div className="space-y-6">
+              <h3 className="text-2xl font-bold text-gray-900 border-l-4 border-emerald-600 pl-4">
+                {t('directionsPages.centerPrevention.column2Title', 'Формирование ЗОЖ')}
+              </h3>
+              <ul className="space-y-4 text-gray-600">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span>
+                  {t('directionsPages.centerPrevention.column2Item1', 'Национальные программы здорового образа жизни')}
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span>
+                  {t('directionsPages.centerPrevention.column2Item2', 'Молодежные центры здоровья')}
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span>
+                  {t('directionsPages.centerPrevention.column2Item3', 'Культура здорового и рационального питания')}
+                </li>
+              </ul>
+            </div>
+
+            {/* Колонка 3 */}
+            <div className="space-y-6">
+              <h3 className="text-2xl font-bold text-gray-900 border-l-4 border-purple-600 pl-4">
+                {t('directionsPages.centerPrevention.column3Title', 'Коммуникации')}
+              </h3>
+              <ul className="space-y-4 text-gray-600">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-purple-600 rounded-full"></span>
+                  {t('directionsPages.centerPrevention.column3Item1', 'Мероприятия')}
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-purple-600 rounded-full"></span>
+                  {t('directionsPages.centerPrevention.column3Item2', 'Видеоролики')}
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-purple-600 rounded-full"></span>
+                  {t('directionsPages.centerPrevention.column3Item3', 'Информационно-разъяснительная работа')}
+                </li>
+              </ul>
+            </div>
           </div>
-          <KazakhstanInteractiveMap />
-
-          {/* Дашборд с отчетами */}
-          <YouthHealthDashboard />
-
-          {/* Форма для волонтеров */}
-          <VolunteerForm />
         </div>
       </section>
-    </>
+
+      <div className="bg-gray-50 py-20">
+        <div className="container px-5 mx-auto">
+          <FolderBlank
+            tab1Label={t('directionsPages.centerPrevention.tab1Label', 'Законодательство')}
+            tab1Folder={t('directionsPages.centerPrevention.tab1Folder', 'ЗОЖ/Законадательство')}
+            tab2Label={t('directionsPages.centerPrevention.tab2Label', 'Подкасты')}
+            tab2Folder={t('directionsPages.centerPrevention.tab2Folder', 'ЗОЖ/Подкасты')}
+            tab3Label={t('directionsPages.centerPrevention.tab3Label', 'Инструменты')}
+            tab3Folder={t('directionsPages.centerPrevention.tab3Folder', 'ЗОЖ/Инструменты')}
+          />
+
+          <div className="mt-12">
+            <FolderTabsDetailed
+              title={infographicsTitle}
+              folderPath="ЗОЖ/Инфографики"
+            />
+          </div>
+
+          <div className="mt-12">
+            <FolderVideosDetailed
+              title={videosTitle}
+              folderPath="ЗОЖ/Видеоролики"
+            />
+          </div>
+        </div>
+      </div>
+
+      <section className="py-20 bg-white">
+        <div className="container px-5 mx-auto">
+          <div className="mb-12">
+            <h2 className="text-4xl font-extrabold text-gray-900 mb-4">{t('directionsPages.centerPrevention.youthCentersTitle', 'Молодежные центры здоровья')}</h2>
+            <p className="text-xl text-gray-600">
+              {t('directionsPages.centerPrevention.youthCentersMapSubtitle', 'Интерактивная карта молодежных центров здоровья в разрезе регионов.')}
+            </p>
+          </div>
+
+          <div className="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-gray-100">
+            <KazakhstanMap variant="youth" />
+          </div>
+
+          <div className="mt-20">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">{t('directionsPages.centerPrevention.youthCentersResultsTitle', 'Результаты деятельности МЦЗ')}</h2>
+            <YouthHealthDashboard />
+          </div>
+        </div>
+      </section>
+
+      <VolunteerForm />
+    </Layout>
   );
 }
 

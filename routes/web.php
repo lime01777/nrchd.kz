@@ -48,6 +48,10 @@ Route::middleware([LanguageMiddleware::class])->group(function () {
     Route::get('/news', [App\Http\Controllers\NewsPublicController::class, 'index'])->name('news.index');
     Route::get('/news/media', [App\Http\Controllers\NewsPublicController::class, 'media'])->name('news.media');
     Route::get('/news/{news:slug}', [App\Http\Controllers\NewsPublicController::class, 'show'])->name('news.show');
+
+    // Публичные маршруты для комментариев
+    Route::get('/comments/captcha', [App\Http\Controllers\CommentController::class, 'getCaptcha'])->name('comments.captcha');
+    Route::post('/news/{news:slug}/comment', [App\Http\Controllers\CommentController::class, 'store'])->name('comments.store');
 // Конец мидлвара языка (был здесь, перенесен вниз)
 
 Route::get('/medical-education', function () {

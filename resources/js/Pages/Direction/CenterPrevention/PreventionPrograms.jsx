@@ -1,57 +1,47 @@
 import { Head } from '@inertiajs/react';
 import React, { useState, useEffect } from 'react';
-import LayoutDirection from '@/Layouts/LayoutDirection';
+import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import translationService from '@/Services/TranslationService';
 
 export default function PreventionPrograms() {
-    const [pageTitle, setPageTitle] = useState('');
-    const [title, setTitle] = useState('');
-    const [item1, setItem1] = useState('');
-    const [item2, setItem2] = useState('');
-    const [item3, setItem3] = useState('');
+    const t = (key, fallback = '') => translationService.t(key, fallback);
 
-    // Глобальная функция для получения перевода
-    const t = (key, fallback = '') => {
-        return translationService.t(key, fallback);
-    };
-
-    useEffect(() => {
-        const updateTranslations = () => {
-            setPageTitle(t('directionsPages.centerPrevention.column1Title', 'Профилактические программы'));
-            setTitle(t('directionsPages.centerPrevention.column1Title', 'Профилактические программы'));
-            setItem1(t('directionsPages.centerPrevention.column1Item1', 'Профилактические медицинские осмотры'));
-            setItem2(t('directionsPages.centerPrevention.column1Item2', 'Скрининг целевых групп населения'));
-            setItem3(t('directionsPages.centerPrevention.column1Item3', 'Профилактика НИЗ'));
-        };
-
-        updateTranslations();
-        window.addEventListener('languageChanged', updateTranslations);
-
-        return () => {
-            window.removeEventListener('languageChanged', updateTranslations);
-        };
-    }, []);
+    const title = t('directionsPages.centerPrevention.column1Title', 'Профилактические программы');
+    const item1 = t('directionsPages.centerPrevention.column1Item1', 'Профилактические медицинские осмотры');
+    const item2 = t('directionsPages.centerPrevention.column1Item2', 'Скрининг целевых групп населения');
+    const item3 = t('directionsPages.centerPrevention.column1Item3', 'Профилактика НИЗ');
 
     return (
         <>
-            <Head title={pageTitle} />
+            <Head title={title} />
 
-            <section className="text-gray-600 body-font py-12">
+            <section className="text-gray-600 body-font py-20 bg-white">
                 <div className="container px-5 mx-auto">
-                    <div className="flex flex-col items-center">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-8">{title}</h2>
-
-                        <div className="w-full md:w-2/3 lg:w-1/2 mb-10 text-center">
-                            <div className="aspect-square mx-auto rounded-lg border-4 border-blue-200 overflow-hidden flex items-center justify-center bg-white shadow-lg max-w-sm">
-                                <img src="/img/CenterPrevention/col1.png" alt={title} className="object-cover w-full h-full" />
-                            </div>
+                    <div className="max-w-4xl mx-auto">
+                        <div className="bg-white p-2 rounded-[2rem] shadow-xl border border-blue-50 overflow-hidden mb-12 transform hover:scale-[1.01] transition-transform duration-500">
+                            <img src="/img/CenterPrevention/col1.png" alt={title} className="w-full h-[400px] object-cover rounded-[1.8rem]" />
                         </div>
 
-                        <div className="w-full md:w-2/3 lg:w-1/2">
-                            <ul className="list-disc list-inside space-y-4 text-lg text-gray-700 bg-gray-50 p-8 rounded-xl shadow-inner">
-                                {item1 && <li className="pl-2">{item1}</li>}
-                                {item2 && <li className="pl-2">{item2}</li>}
-                                {item3 && <li className="pl-2">{item3}</li>}
+                        <div className="prose prose-lg max-w-none text-gray-700">
+                            <ul className="space-y-6">
+                                {item1 && (
+                                    <li className="flex items-start gap-4 p-6 bg-blue-50 rounded-2xl border-l-8 border-blue-400 shadow-sm hover:shadow-md transition-shadow">
+                                        <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex-shrink-0 flex items-center justify-center font-bold">1</div>
+                                        <span className="text-xl font-medium">{item1}</span>
+                                    </li>
+                                )}
+                                {item2 && (
+                                    <li className="flex items-start gap-4 p-6 bg-blue-50 rounded-2xl border-l-8 border-blue-400 shadow-sm hover:shadow-md transition-shadow">
+                                        <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex-shrink-0 flex items-center justify-center font-bold">2</div>
+                                        <span className="text-xl font-medium">{item2}</span>
+                                    </li>
+                                )}
+                                {item3 && (
+                                    <li className="flex items-start gap-4 p-6 bg-blue-50 rounded-2xl border-l-8 border-blue-400 shadow-sm hover:shadow-md transition-shadow">
+                                        <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex-shrink-0 flex items-center justify-center font-bold">3</div>
+                                        <span className="text-xl font-medium">{item3}</span>
+                                    </li>
+                                )}
                             </ul>
                         </div>
                     </div>
@@ -62,6 +52,19 @@ export default function PreventionPrograms() {
 }
 
 PreventionPrograms.layout = (page) => {
-    const h1 = translationService.t('directions.center_prevention', 'Центр профилактики и укрепления здоровья');
-    return <LayoutDirection img="zozh" h1={h1}>{page}</LayoutDirection>;
+    return (
+        <LayoutFolderChlank
+            h1={translationService.t('directionsPages.centerPrevention.column1Title', 'Профилактические программы')}
+            parentRoute={route('direction.center_prevention')}
+            parentName={translationService.t('directions.center_prevention', 'Центр профилактики')}
+            heroBgColor="bg-blue-200"
+            heroColorSec="bg-blue-300"
+            buttonBgColor="bg-blue-100"
+            buttonHoverBgColor="hover:bg-blue-200"
+            buttonBorderColor="border-blue-300"
+            bgColor="bg-white"
+        >
+            {page}
+        </LayoutFolderChlank>
+    );
 };

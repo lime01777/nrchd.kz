@@ -1,5 +1,5 @@
-import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import React, { useState, useEffect } from 'react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import MediaSlider from '@/Components/MediaSlider';
 import LayoutNews from '@/Layouts/LayoutNews';
 
@@ -230,9 +230,36 @@ export default function Show({ news, relatedNews, seo }) {
 
             {/* Основной текст */}
             <article
-                className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:leading-relaxed prose-a:text-blue-600"
+                className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:leading-relaxed prose-a:text-blue-600 mb-16"
                 dangerouslySetInnerHTML={{ __html: news.body }}
             />
+
+            {/* Блок комментариев */}
+            <section className="mt-16 border-t pt-10">
+                <h2 className="mb-8 text-2xl font-bold text-gray-900">Комментарии ({news.comments?.length || 0})</h2>
+
+                <div className="space-y-8 mb-12">
+                    {news.comments && news.comments.length > 0 ? news.comments.map((comment) => (
+                        <div key={comment.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="font-bold text-gray-900">{comment.name}</div>
+                                <div className="text-sm text-gray-500">{comment.created_at}</div>
+                            </div>
+                            <div className="text-gray-700 leading-relaxed italic">
+                                "{comment.content}"
+                            </div>
+                        </div>
+                    )) : (
+                        <p className="text-gray-500 italic">Комментариев пока нет. Будьте первыми!</p>
+                    )}
+                </div>
+
+                {/* Форма комментария */}
+                <div className="bg-blue-50/50 p-8 rounded-2xl border border-blue-100">
+                    <h3 className="text-xl font-bold text-gray-900 mb-6">Оставить комментарий</h3>
+                    <CommentForm newsSlug={news.slug} />
+                </div>
+            </section>
 
             {/* Блок рекомендаций */}
             {relatedNews && relatedNews.length > 0 && (
@@ -306,5 +333,115 @@ export default function Show({ news, relatedNews, seo }) {
                 </section>
             )}
         </LayoutNews>
+    );
+}
+
+function CommentForm({ newsSlug }) {
+    const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
+        name: '',
+        email: '',
+        content: '',
+        captcha: '',
+    });
+
+    const [captchaQuestion, setCaptchaQuestion] = useState('Загрузка...');
+    const [isSuccess, setIsSuccess] = useState(false);
+
+    const fetchCaptcha = async () => {
+        try {
+            const response = await fetch(route('comments.captcha'));
+            const result = await response.json();
+            setCaptchaQuestion(result.question);
+        } catch (error) {
+            console.error('Failed to fetch captcha:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchCaptcha();
+    }, []);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        post(route('comments.store', newsSlug), {
+            onSuccess: () => {
+                reset();
+                setIsSuccess(true);
+                fetchCaptcha();
+                setTimeout(() => setIsSuccess(false), 5000);
+            },
+            onError: () => {
+                fetchCaptcha();
+                setData('captcha', '');
+            }
+        });
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-4">
+            {isSuccess && (
+                <div className="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-100 border border-green-200">
+                    Спасибо! Ваш комментарий отправлен на модерацию.
+                </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Ваше имя</label>
+                    <input
+                        type="text"
+                        value={data.name}
+                        onChange={e => setData('name', e.target.value)}
+                        className={`w-full px-4 py-2 rounded-lg border ${errors.name ? 'border-red-500' : 'border-gray-200'} focus:ring-2 focus:ring-blue-500 outline-none`}
+                        placeholder="Иван Иванов"
+                    />
+                    {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input
+                        type="email"
+                        value={data.email}
+                        onChange={e => setData('email', e.target.value)}
+                        className={`w-full px-4 py-2 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-200'} focus:ring-2 focus:ring-blue-500 outline-none`}
+                        placeholder="example@mail.ru"
+                    />
+                    {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                </div>
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ваш комментарий</label>
+                <textarea
+                    rows="4"
+                    value={data.content}
+                    onChange={e => setData('content', e.target.value)}
+                    className={`w-full px-4 py-2 rounded-lg border ${errors.content ? 'border-red-500' : 'border-gray-200'} focus:ring-2 focus:ring-blue-500 outline-none`}
+                    placeholder="Напишите ваш комментарий здесь..."
+                ></textarea>
+                {errors.content && <p className="text-red-500 text-xs mt-1">{errors.content}</p>}
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+                <div className="w-32">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Каптча: {captchaQuestion}</label>
+                    <input
+                        type="text"
+                        value={data.captcha}
+                        onChange={e => setData('captcha', e.target.value)}
+                        className={`w-full px-4 py-2 rounded-lg border ${errors.captcha ? 'border-red-500' : 'border-gray-200'} focus:ring-2 focus:ring-blue-500 outline-none`}
+                        placeholder="?"
+                    />
+                </div>
+                <button
+                    type="submit"
+                    disabled={processing}
+                    className="px-8 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+                >
+                    {processing ? 'Отправка...' : 'Отправить'}
+                </button>
+            </div>
+            {errors.captcha && <p className="text-red-500 text-xs mt-1">{errors.captcha}</p>}
+        </form>
     );
 }

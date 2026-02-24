@@ -168,6 +168,16 @@ class News extends Model
     }
 
     /**
+     * Связь с комментариями
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
      * Аксессор: URL обложки (оригинал)
      * Поддерживает как новое поле cover_image_path, так и старые поля для обратной совместимости
      *

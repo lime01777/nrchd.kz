@@ -25,16 +25,24 @@ use App\Http\Controllers\Admin\YouthHealthCenterController;
 Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
+    // Управление комментариями
+    Route::middleware('permission:comments')->group(function () {
+        Route::get('/comments', [App\Http\Controllers\Admin\CommentController::class, 'index'])->name('comments.index');
+        Route::post('/comments/{comment}/approve', [App\Http\Controllers\Admin\CommentController::class, 'approve'])->name('comments.approve');
+        Route::post('/comments/{comment}/unapprove', [App\Http\Controllers\Admin\CommentController::class, 'unapprove'])->name('comments.unapprove');
+        Route::delete('/comments/{comment}', [App\Http\Controllers\Admin\CommentController::class, 'destroy'])->name('comments.destroy');
+    });
+
     // AI Ассистент
-    Route::get('/assistant', function () {
-        $technologies = \App\Models\HealthTechnology::select('id', 'name', 'registry_code', 'documents')->get();
-        return Inertia::render('Admin/Assistant/Index', [
-            'technologies' => $technologies
-        ]);
-    })->name('assistant.index');
+    Route::middleware('permission:assistant')->group(function () {
+        Route::get('/assistant', [App\Http\Controllers\Admin\AssistantController::class, 'index'])->name('assistant.index');
+        Route::post('/assistant/chat', [App\Http\Controllers\Admin\AssistantController::class, 'chat'])->name('assistant.chat');
+        Route::post('/assistant/delete-doc/{techId}', [App\Http\Controllers\Admin\AssistantController::class, 'deleteDocument'])->name('assistant.delete-doc');
+        Route::post('/assistant/upload-doc/{techId}', [App\Http\Controllers\Admin\AssistantController::class, 'uploadDocument'])->name('assistant.upload-doc');
+    });
 
     // Реестр технологий здравоохранения (РТЗ)
-    Route::prefix('registry')->name('registry.')->group(function () {
+    Route::prefix('registry')->name('registry.')->middleware('permission:registry')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Admin\HealthTechnologyRecordController::class, 'dashboard'])->name('dashboard');
 
         Route::get('/', [\App\Http\Controllers\Admin\HealthTechnologyRecordController::class, 'index'])->name('index');
@@ -45,29 +53,33 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
     });
 
     // Клинические протокола ИИ
-    Route::get('/ai-protocols', [App\Http\Controllers\Admin\AiProtocolAnalysisController::class, 'index'])->name('ai-protocols.index');
-    Route::post('/ai-protocols', [App\Http\Controllers\Admin\AiProtocolAnalysisController::class, 'store'])->name('ai-protocols.store');
-    Route::post('/ai-protocols/{id}/analyze', [App\Http\Controllers\Admin\AiProtocolAnalysisController::class, 'analyze'])->name('ai-protocols.analyze');
-    Route::get('/ai-protocols/{id}/download/{type}', [App\Http\Controllers\Admin\AiProtocolAnalysisController::class, 'download'])->name('ai-protocols.download');
-    Route::delete('/ai-protocols/{id}', [App\Http\Controllers\Admin\AiProtocolAnalysisController::class, 'destroy'])->name('ai-protocols.destroy');
+    Route::middleware('permission:ai_protocols')->group(function () {
+        Route::get('/ai-protocols', [App\Http\Controllers\Admin\AiProtocolAnalysisController::class, 'index'])->name('ai-protocols.index');
+        Route::post('/ai-protocols', [App\Http\Controllers\Admin\AiProtocolAnalysisController::class, 'store'])->name('ai-protocols.store');
+        Route::post('/ai-protocols/{id}/analyze', [App\Http\Controllers\Admin\AiProtocolAnalysisController::class, 'analyze'])->name('ai-protocols.analyze');
+        Route::get('/ai-protocols/{id}/download/{type}', [App\Http\Controllers\Admin\AiProtocolAnalysisController::class, 'download'])->name('ai-protocols.download');
+        Route::delete('/ai-protocols/{id}', [App\Http\Controllers\Admin\AiProtocolAnalysisController::class, 'destroy'])->name('ai-protocols.destroy');
+    });
     
     // Управление новостями (с политикой доступа)
-    Route::get('/news/{type?}', [App\Http\Controllers\Admin\NewsController::class, 'index'])
-        ->where('type', implode('|', News::TYPES))
-        ->name('news.index');
-    Route::get('news/create/{section?}', [App\Http\Controllers\Admin\NewsController::class, 'create'])
-        ->whereIn('section', ['news', 'media'])
-        ->can('create', News::class)
-        ->name('news.create');
-    Route::post('/news', [App\Http\Controllers\Admin\NewsController::class, 'store'])
-        ->can('create', News::class)
-        ->name('news.store');
-    Route::get('/news/export-views', [App\Http\Controllers\Admin\NewsController::class, 'exportViews'])
-        ->name('news.export-views');
-    Route::get('/news/{news}/edit', [App\Http\Controllers\Admin\NewsController::class, 'edit'])->name('news.edit');
-    Route::put('/news/{news}', [App\Http\Controllers\Admin\NewsController::class, 'update'])->name('news.update');
-    Route::delete('/news/{news}', [App\Http\Controllers\Admin\NewsController::class, 'destroy'])->name('news.destroy');
-    Route::patch('/news/{news}/toggle-status', [App\Http\Controllers\Admin\NewsController::class, 'toggleStatus'])->name('news.toggle');
+    Route::middleware('permission:news')->group(function () {
+        Route::get('/news/{type?}', [App\Http\Controllers\Admin\NewsController::class, 'index'])
+            ->where('type', implode('|', News::TYPES))
+            ->name('news.index');
+        Route::get('news/create/{section?}', [App\Http\Controllers\Admin\NewsController::class, 'create'])
+            ->whereIn('section', ['news', 'media'])
+            ->can('create', News::class)
+            ->name('news.create');
+        Route::post('/news', [App\Http\Controllers\Admin\NewsController::class, 'store'])
+            ->can('create', News::class)
+            ->name('news.store');
+        Route::get('/news/export-views', [App\Http\Controllers\Admin\NewsController::class, 'exportViews'])
+            ->name('news.export-views');
+        Route::get('/news/{news}/edit', [App\Http\Controllers\Admin\NewsController::class, 'edit'])->name('news.edit');
+        Route::put('/news/{news}', [App\Http\Controllers\Admin\NewsController::class, 'update'])->name('news.update');
+        Route::delete('/news/{news}', [App\Http\Controllers\Admin\NewsController::class, 'destroy'])->name('news.destroy');
+        Route::patch('/news/{news}/toggle-status', [App\Http\Controllers\Admin\NewsController::class, 'toggleStatus'])->name('news.toggle');
+    });
     
     // Управление медиа новостей
     Route::post('/news/upload-media', [App\Http\Controllers\Admin\NewsController::class, 'uploadMediaFiles'])->name('admin.news.upload-media');
@@ -78,36 +90,44 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
     Route::delete('/news/media/temp', [App\Http\Controllers\Admin\NewsController::class, 'deleteTemporaryMedia'])->name('admin.news.media.temp-delete');
 
     // Управление заявками ОТЗ
-    Route::resource('otz-applications', App\Http\Controllers\Admin\OtzApplicationController::class, [
-        'names' => 'admin.otz-applications'
-    ]);
-    Route::post('/otz-applications/{otzApplication}/upload-documents', [App\Http\Controllers\Admin\OtzApplicationController::class, 'uploadDocuments'])->name('admin.otz-applications.upload-documents');
-    Route::delete('/otz-applications/{otzApplication}/delete-document', [App\Http\Controllers\Admin\OtzApplicationController::class, 'deleteDocument'])->name('admin.otz-applications.delete-document');
+    Route::middleware('permission:otz_applications')->group(function () {
+        Route::resource('otz-applications', App\Http\Controllers\Admin\OtzApplicationController::class, [
+            'names' => 'admin.otz-applications'
+        ]);
+        Route::post('/otz-applications/{otzApplication}/upload-documents', [App\Http\Controllers\Admin\OtzApplicationController::class, 'uploadDocuments'])->name('admin.otz-applications.upload-documents');
+        Route::delete('/otz-applications/{otzApplication}/delete-document', [App\Http\Controllers\Admin\OtzApplicationController::class, 'deleteDocument'])->name('admin.otz-applications.delete-document');
+    });
 
     // Управление документами
-    Route::get('/documents', [App\Http\Controllers\Admin\DocumentController::class, 'index'])->name('admin.documents');
-    Route::get('/documents/create', [App\Http\Controllers\Admin\DocumentController::class, 'create'])->name('admin.documents.create');
-    Route::post('/documents', [App\Http\Controllers\Admin\DocumentController::class, 'store'])->name('admin.documents.store');
-    Route::get('/documents/{id}/edit', [App\Http\Controllers\Admin\DocumentController::class, 'edit'])->name('admin.documents.edit');
-    Route::put('/documents/{id}', [App\Http\Controllers\Admin\DocumentController::class, 'update'])->name('admin.documents.update');
-    Route::delete('/documents/{id}', [App\Http\Controllers\Admin\DocumentController::class, 'destroy'])->name('admin.documents.destroy');
+    Route::middleware('permission:documents')->group(function () {
+        Route::get('/documents', [App\Http\Controllers\Admin\DocumentController::class, 'index'])->name('admin.documents');
+        Route::get('/documents/create', [App\Http\Controllers\Admin\DocumentController::class, 'create'])->name('admin.documents.create');
+        Route::post('/documents', [App\Http\Controllers\Admin\DocumentController::class, 'store'])->name('admin.documents.store');
+        Route::get('/documents/{id}/edit', [App\Http\Controllers\Admin\DocumentController::class, 'edit'])->name('admin.documents.edit');
+        Route::put('/documents/{id}', [App\Http\Controllers\Admin\DocumentController::class, 'update'])->name('admin.documents.update');
+        Route::delete('/documents/{id}', [App\Http\Controllers\Admin\DocumentController::class, 'destroy'])->name('admin.documents.destroy');
+    });
 
     // Управление пользователями
-    Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users');
-    Route::get('/users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.users.create');
-    Route::post('/users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store');
-    Route::get('/users/{id}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('admin.users.edit');
-    Route::put('/users/{id}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.users.update');
-    Route::patch('/users/{user}/role', [App\Http\Controllers\Admin\UserController::class, 'updateRole'])->name('admin.users.update-role');
-    Route::delete('/users/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy');
+    Route::middleware('permission:users')->group(function () {
+        Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users');
+        Route::get('/users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.users.create');
+        Route::post('/users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store');
+        Route::get('/users/{id}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('admin.users.edit');
+        Route::put('/users/{id}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.users.update');
+        Route::patch('/users/{user}/role', [App\Http\Controllers\Admin\UserController::class, 'updateRole'])->name('admin.users.update-role');
+        Route::delete('/users/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy');
+    });
 
     // Настройки
-    Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings');
-    Route::put('/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
-    Route::post('/settings/backup', [App\Http\Controllers\Admin\SettingController::class, 'createBackup'])->name('admin.settings.backup');
+    Route::middleware('permission:settings')->group(function () {
+        Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings');
+        Route::put('/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
+        Route::post('/settings/backup', [App\Http\Controllers\Admin\SettingController::class, 'createBackup'])->name('admin.settings.backup');
+    });
     
     // Платформа MedTech
-    Route::prefix('medtech')->name('medtech.')->group(function () {
+    Route::prefix('medtech')->name('medtech.')->middleware('permission:medtech')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\MedTechController::class, 'index'])->name('index');
         
         // Документы
@@ -212,33 +232,43 @@ Route::post('admin/news/test-form', function (Request $request) {
 })->middleware(['auth']);
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
-    Route::resource('vacancies', AdminVacancyController::class);
+    Route::middleware('permission:vacancies')->group(function () {
+        Route::resource('vacancies', AdminVacancyController::class);
+    });
     
     // Заявки на вакансии
-    Route::get('/vacancy-applications', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'index'])->name('admin.vacancy-applications.index');
-    Route::get('/vacancy-applications/{id}', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'show'])->name('admin.vacancy-applications.show');
-    Route::patch('/vacancy-applications/{id}/status', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'updateStatus'])->name('admin.vacancy-applications.update-status');
-    Route::patch('/vacancy-applications/{id}/notes', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'updateNotes'])->name('admin.vacancy-applications.update-notes');
-    Route::delete('/vacancy-applications/{id}', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'destroy'])->name('admin.vacancy-applications.destroy');
+    Route::middleware('permission:vacancy_applications')->group(function () {
+        Route::get('/vacancy-applications', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'index'])->name('admin.vacancy-applications.index');
+        Route::get('/vacancy-applications/{id}', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'show'])->name('admin.vacancy-applications.show');
+        Route::patch('/vacancy-applications/{id}/status', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'updateStatus'])->name('admin.vacancy-applications.update-status');
+        Route::patch('/vacancy-applications/{id}/notes', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'updateNotes'])->name('admin.vacancy-applications.update-notes');
+        Route::delete('/vacancy-applications/{id}', [\App\Http\Controllers\Admin\VacancyApplicationController::class, 'destroy'])->name('admin.vacancy-applications.destroy');
+    });
     
     // Заявки обратной связи
-    Route::get('/contact-applications', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'index'])->name('admin.contact-applications.index');
-    Route::get('/contact-applications/{id}', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'show'])->name('admin.contact-applications.show');
-    Route::patch('/contact-applications/{id}/status', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'updateStatus'])->name('admin.contact-applications.update-status');
-    Route::patch('/contact-applications/{id}/notes', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'updateNotes'])->name('admin.contact-applications.update-notes');
-    Route::patch('/contact-applications/{id}/assign', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'assign'])->name('admin.contact-applications.assign');
-    Route::delete('/contact-applications/{id}', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'destroy'])->name('admin.contact-applications.destroy');
+    Route::middleware('permission:contact_applications')->group(function () {
+        Route::get('/contact-applications', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'index'])->name('admin.contact-applications.index');
+        Route::get('/contact-applications/{id}', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'show'])->name('admin.contact-applications.show');
+        Route::patch('/contact-applications/{id}/status', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'updateStatus'])->name('admin.contact-applications.update-status');
+        Route::patch('/contact-applications/{id}/notes', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'updateNotes'])->name('admin.contact-applications.update-notes');
+        Route::patch('/contact-applications/{id}/assign', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'assign'])->name('admin.contact-applications.assign');
+        Route::delete('/contact-applications/{id}', [\App\Http\Controllers\Admin\ContactApplicationController::class, 'destroy'])->name('admin.contact-applications.destroy');
+    });
     
     // Управление клиниками
-    Route::resource('clinics', \App\Http\Controllers\Admin\ClinicController::class, ['names' => 'admin.clinics']);
-    Route::post('/clinics/{clinic}/images', [\App\Http\Controllers\Admin\ClinicController::class, 'uploadImages'])->name('admin.clinics.upload-images');
-    Route::delete('/clinics/{clinic}/images', [\App\Http\Controllers\Admin\ClinicController::class, 'deleteImage'])->name('admin.clinics.delete-image');
-    Route::put('/clinics/{clinic}/gallery/reorder', [\App\Http\Controllers\Admin\ClinicController::class, 'reorderGallery'])->name('admin.clinics.reorder-gallery');
-    Route::patch('/clinics/{clinic}/toggle-published', [\App\Http\Controllers\Admin\ClinicController::class, 'togglePublished'])->name('admin.clinics.toggle-published');
+    Route::middleware('permission:clinics')->group(function () {
+        Route::resource('clinics', \App\Http\Controllers\Admin\ClinicController::class, ['names' => 'admin.clinics']);
+        Route::post('/clinics/{clinic}/images', [\App\Http\Controllers\Admin\ClinicController::class, 'uploadImages'])->name('admin.clinics.upload-images');
+        Route::delete('/clinics/{clinic}/images', [\App\Http\Controllers\Admin\ClinicController::class, 'deleteImage'])->name('admin.clinics.delete-image');
+        Route::put('/clinics/{clinic}/gallery/reorder', [\App\Http\Controllers\Admin\ClinicController::class, 'reorderGallery'])->name('admin.clinics.reorder-gallery');
+        Route::patch('/clinics/{clinic}/toggle-published', [\App\Http\Controllers\Admin\ClinicController::class, 'togglePublished'])->name('admin.clinics.toggle-published');
+    });
     
     // Управление молодежными центрами здоровья (МЦЗ)
-    Route::resource('youth-health-centers', \App\Http\Controllers\Admin\YouthHealthCenterController::class, ['names' => 'admin.youth-health-centers']);
-    Route::post('/youth-health-centers/bulk-destroy', [\App\Http\Controllers\Admin\YouthHealthCenterController::class, 'bulkDestroy'])->name('admin.youth-health-centers.bulk-destroy');
-    Route::post('/youth-health-centers/{youthHealthCenter}/toggle-active', [\App\Http\Controllers\Admin\YouthHealthCenterController::class, 'toggleActive'])->name('admin.youth-health-centers.toggle-active');
+    Route::middleware('permission:youth_health_centers')->group(function () {
+        Route::resource('youth-health-centers', \App\Http\Controllers\Admin\YouthHealthCenterController::class, ['names' => 'admin.youth-health-centers']);
+        Route::post('/youth-health-centers/bulk-destroy', [\App\Http\Controllers\Admin\YouthHealthCenterController::class, 'bulkDestroy'])->name('admin.youth-health-centers.bulk-destroy');
+        Route::post('/youth-health-centers/{youthHealthCenter}/toggle-active', [\App\Http\Controllers\Admin\YouthHealthCenterController::class, 'toggleActive'])->name('admin.youth-health-centers.toggle-active');
+    });
 });
 

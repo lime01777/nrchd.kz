@@ -2,7 +2,7 @@ import React from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
 
-export default function UserEdit({ user = null, availableRoles = {} }) {
+export default function UserEdit({ user = null, availableRoles = {}, availablePermissions = {} }) {
   const isEditing = !!user;
 
   const { data, setData, post, put, processing, errors } = useForm({
@@ -11,6 +11,7 @@ export default function UserEdit({ user = null, availableRoles = {} }) {
     role: user?.role || 'user',
     password: '',
     password_confirmation: '',
+    permissions: user?.permissions || [],
   });
 
   const handleSubmit = (e) => {
@@ -150,6 +151,42 @@ export default function UserEdit({ user = null, availableRoles = {} }) {
                 </div>
                 {errors.password_confirmation && (
                   <p className="mt-2 text-sm text-red-600">{errors.password_confirmation}</p>
+                )}
+              </div>
+
+              {/* Права доступа (чекбоксы) */}
+              <div className="sm:col-span-6">
+                <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Права доступа к разделам</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {Object.entries(availablePermissions).map(([value, label]) => (
+                    <div key={value} className="relative flex items-start">
+                      <div className="flex h-5 items-center">
+                        <input
+                          id={`permission-${value}`}
+                          name="permissions[]"
+                          type="checkbox"
+                          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          checked={data.permissions.includes(value)}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            if (checked) {
+                              setData('permissions', [...data.permissions, value]);
+                            } else {
+                              setData('permissions', data.permissions.filter(p => p !== value));
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="ml-3 text-sm">
+                        <label htmlFor={`permission-${value}`} className="font-medium text-gray-700">
+                          {label}
+                        </label>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {errors.permissions && (
+                  <p className="mt-2 text-sm text-red-600">{errors.permissions}</p>
                 )}
               </div>
             </div>

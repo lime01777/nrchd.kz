@@ -18,7 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        //
+        $middleware->alias([
+            'permission' => \App\Http\Middleware\CheckPermission::class,
+            'document.manager' => \App\Http\Middleware\DocumentManagerAccess::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

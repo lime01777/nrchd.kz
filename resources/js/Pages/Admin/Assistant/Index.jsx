@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 
 export default function AssistantIndex({ technologies = [] }) {
     const [selectedTech, setSelectedTech] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
 
-    // State unique to each technology (mock storage)
+    // State unique to each technology
     const [chats, setChats] = useState({});
     const [docs, setDocs] = useState({});
 
     const [input, setInput] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
 
-    // Initialize mock data or load from props if available
+    // Initialize data when selectedTech changes
     useEffect(() => {
         if (selectedTech) {
-            // If no chat history exists for this tech, init one
-            if (!chats[selectedTech.id]) {
+            // Find the full tech object from technologies list to get latest docs
+            const techData = technologies.find(t => t.id === selectedTech.id);
+
+            if (techData && !chats[selectedTech.id]) {
                 setChats(prev => ({
                     ...prev,
                     [selectedTech.id]: [
@@ -25,10 +27,10 @@ export default function AssistantIndex({ technologies = [] }) {
                     ]
                 }));
             }
-            // If no docs exist, init from tech data
-            if (!docs[selectedTech.id]) {
-                const initialDocs = Array.isArray(selectedTech.documents)
-                    ? selectedTech.documents.map((d, i) => ({ id: i, name: d.name || 'Документ', date: new Date().toLocaleDateString() }))
+
+            if (techData) {
+                const initialDocs = Array.isArray(techData.documents)
+                    ? techData.documents.map((d, i) => ({ id: i, name: d.name || 'Документ', date: d.date || new Date().toLocaleDateString(), url: d.url }))
                     : [];
                 setDocs(prev => ({
                     ...prev,
@@ -36,45 +38,122 @@ export default function AssistantIndex({ technologies = [] }) {
                 }));
             }
         }
-    }, [selectedTech]);
+    }, [selectedTech, technologies]);
 
-    const handleSendMessage = (e) => {
+    const handleSendMessage = async (e) => {
         e.preventDefault();
-        if (!input.trim() || !selectedTech) return;
+        if (!input.trim() || !selectedTech || isProcessing) return;
 
         const techId = selectedTech.id;
-        const newMsg = { id: Date.now(), type: 'user', text: input };
+        const userMsg = { id: Date.now(), type: 'user', text: input };
+        const history = chats[techId] || [];
 
         setChats(prev => ({
             ...prev,
-            [techId]: [...(prev[techId] || []), newMsg]
+            [techId]: [...history, userMsg]
         }));
 
         setInput('');
         setIsProcessing(true);
 
-        setTimeout(() => {
+        try {
+            const response = await fetch('/admin/assistant/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                },
+                body: JSON.stringify({
+                    message: input,
+                    tech_id: techId,
+                    history: history.slice(-10)
+                })
+            });
+
+            const data = await response.json();
+
             setChats(prev => ({
                 ...prev,
                 [techId]: [...(prev[techId] || []), {
                     id: Date.now() + 1,
                     type: 'bot',
-                    text: `Ответ по контексту "${selectedTech.name}": Это демонстрация. В реальной системе здесь будет ответ RAG-модели на основе загруженных документов.`
+                    text: data.reply
                 }]
             }));
+        } catch (error) {
+            console.error('Chat error:', error);
+            setChats(prev => ({
+                ...prev,
+                [techId]: [...(prev[techId] || []), {
+                    id: Date.now() + 1,
+                    type: 'bot',
+                    text: 'Произошла ошибка при связи с AI.'
+                }]
+            }));
+        } finally {
             setIsProcessing(false);
-        }, 1200);
+        }
     };
 
-    const handleFileUpload = (e) => {
+    const handleFileUpload = async (e) => {
         const file = e.target.files[0];
         if (file && selectedTech) {
-            const techId = selectedTech.id;
-            setDocs(prev => ({
-                ...prev,
-                [techId]: [...(prev[techId] || []), { id: Date.now(), name: file.name, date: new Date().toLocaleDateString() }]
-            }));
-            alert(`Файл "${file.name}" добавлен в базу знаний проекта "${selectedTech.name}".`);
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                setIsProcessing(true);
+                const response = await fetch(`/admin/assistant/upload-doc/${selectedTech.id}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    setDocs(prev => ({
+                        ...prev,
+                        [selectedTech.id]: [...(prev[selectedTech.id] || []), data.document]
+                    }));
+                    router.reload();
+                } else {
+                    alert('Ошибка при загрузке: ' + (data.message || 'неизвестная ошибка'));
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('Произошла ошибка при загрузке файла');
+            } finally {
+                setIsProcessing(false);
+            }
+        }
+    };
+
+    const handleDeleteDoc = async (docName) => {
+        if (!selectedTech || !confirm(`Удалить документ "${docName}" из базы знаний?`)) return;
+
+        try {
+            const response = await fetch(`/admin/assistant/delete-doc/${selectedTech.id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                },
+                body: JSON.stringify({ doc_name: docName })
+            });
+
+            if (response.ok) {
+                // Update local state and trigger reload
+                setDocs(prev => ({
+                    ...prev,
+                    [selectedTech.id]: prev[selectedTech.id].filter(d => d.name !== docName)
+                }));
+                router.reload();
+            }
+        } catch (error) {
+            console.error('Delete error:', error);
+            alert('Ошибка при удалении документа');
         }
     };
 
@@ -87,37 +166,46 @@ export default function AssistantIndex({ technologies = [] }) {
     const activeDocs = selectedTech ? (docs[selectedTech.id] || []) : [];
 
     return (
-        <div className="flex h-[calc(100vh-100px)] gap-4">
-            <Head title="AI Ассистент / База знаний" />
+        <div className="flex h-[calc(100vh-120px)] gap-6 p-2">
+            <Head title="AI Аналитик — База знаний" />
 
             {/* Sidebar: Technology List */}
-            <div className="w-80 flex-shrink-0 flex flex-col bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="p-4 border-b border-gray-100 bg-gray-50">
-                    <h2 className="font-bold text-gray-800 text-sm uppercase">Выберите технологию</h2>
-                    <input
-                        type="text"
-                        placeholder="Поиск..."
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                        className="mt-2 w-full text-sm border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                    />
+            <div className="w-80 flex-shrink-0 flex flex-col bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-gray-100 overflow-hidden transition-all duration-300">
+                <div className="p-5 border-b border-gray-100 bg-gradient-to-br from-gray-50 to-white">
+                    <h2 className="font-bold text-gray-800 text-xs uppercase tracking-widest mb-3">Технологии Здравоохранения</h2>
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="Поиск по названию или коду..."
+                            value={searchQuery}
+                            onChange={e => setSearchQuery(e.target.value)}
+                            className="w-full pl-9 pr-4 py-2.5 text-sm bg-white border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
+                        />
+                        <svg className="w-4 h-4 absolute left-3 top-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
                 </div>
-                <div className="flex-grow overflow-y-auto">
+                <div className="flex-grow overflow-y-auto custom-scrollbar">
                     {filteredTechnologies.length > 0 ? (
-                        <ul className="divide-y divide-gray-100">
+                        <div className="p-2 space-y-1">
                             {filteredTechnologies.map(tech => (
-                                <li
+                                <div
                                     key={tech.id}
                                     onClick={() => setSelectedTech(tech)}
-                                    className={`p-3 cursor-pointer hover:bg-blue-50 transition-colors ${selectedTech?.id === tech.id ? 'bg-blue-50 border-l-4 border-blue-500' : ''}`}
+                                    className={`p-4 rounded-xl cursor-pointer transition-all duration-200 group ${selectedTech?.id === tech.id
+                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+                                        : 'hover:bg-blue-50 text-gray-700'}`}
                                 >
-                                    <div className="text-sm font-medium text-gray-900 truncate">{tech.name}</div>
-                                    <div className="text-xs text-gray-500">{tech.registry_code || 'Без кода'}</div>
-                                </li>
+                                    <div className={`text-sm font-bold truncate ${selectedTech?.id === tech.id ? 'text-white' : 'text-gray-900'}`}>
+                                        {tech.name}
+                                    </div>
+                                    <div className={`text-[10px] mt-1 font-mono uppercase tracking-tighter ${selectedTech?.id === tech.id ? 'text-blue-100' : 'text-gray-400'}`}>
+                                        {tech.registry_code || 'БЕЗ КОДА'}
+                                    </div>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     ) : (
-                        <div className="p-4 text-sm text-gray-500 text-center">Нет технологий</div>
+                        <div className="p-8 text-sm text-gray-400 text-center italic">Ничего не найдено</div>
                     )}
                 </div>
             </div>
@@ -126,51 +214,45 @@ export default function AssistantIndex({ technologies = [] }) {
             {selectedTech ? (
                 <>
                     {/* Center: Chat */}
-                    <div className="flex-grow flex flex-col bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                        <div className="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                    <div className="flex-grow flex flex-col bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        {/* Chat Header */}
+                        <div className="p-4 border-b border-gray-100 bg-white flex justify-between items-center bg-gradient-to-r from-white to-gray-50">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                                    <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
                                 </div>
                                 <div>
-                                    <h2 className="font-bold text-gray-800 truncate max-w-xs">{selectedTech.name}</h2>
-                                    <p className="text-xs text-green-600 flex items-center gap-1">
-                                        <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                                        Онлайн
-                                    </p>
+                                    <h2 className="font-extrabold text-gray-900 text-lg leading-tight truncate max-w-md">{selectedTech.name}</h2>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <span className="relative flex h-2 w-2">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                        </span>
+                                        <span className="text-[10px] font-bold text-green-600 uppercase tracking-widest">Аналитик Онлайн</span>
+                                    </div>
                                 </div>
                             </div>
-
-                            <a
-                                href="https://notebooklm.google.com/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-xs font-medium text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 hover:bg-blue-100 transition-colors"
-                            >
-                                <span>NotebookLM</span>
-                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                            </a>
                         </div>
 
                         {/* Chat Messages */}
-                        <div className="flex-grow overflow-y-auto p-4 space-y-4 bg-gray-50/30">
+                        <div className="flex-grow overflow-y-auto p-6 space-y-6 bg-slate-50/50 custom-scrollbar">
                             {activeChat.map(msg => (
-                                <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`max-w-[80%] rounded-2xl px-4 py-3 shadow-sm ${msg.type === 'user'
-                                            ? 'bg-blue-600 text-white rounded-br-sm'
-                                            : 'bg-white border border-gray-200 text-gray-800 rounded-bl-sm'
+                                <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2`}>
+                                    <div className={`max-w-[85%] rounded-3xl px-5 py-3.5 shadow-sm text-sm ${msg.type === 'user'
+                                        ? 'bg-blue-600 text-white rounded-br-none font-medium'
+                                        : 'bg-white border border-gray-100 text-gray-800 rounded-bl-none leading-relaxed'
                                         }`}>
-                                        {msg.text}
+                                        {msg.text.split('\n').map((line, i) => <p key={i} className={i > 0 ? 'mt-2' : ''}>{line}</p>)}
                                     </div>
                                 </div>
                             ))}
                             {isProcessing && (
                                 <div className="flex justify-start">
-                                    <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
-                                        <div className="flex space-x-1">
-                                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-75"></div>
-                                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150"></div>
+                                    <div className="bg-white border border-gray-100 rounded-3xl rounded-bl-none px-6 py-4 shadow-sm">
+                                        <div className="flex space-x-2">
+                                            <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                                            <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -178,75 +260,117 @@ export default function AssistantIndex({ technologies = [] }) {
                         </div>
 
                         {/* Input Area */}
-                        <form onSubmit={handleSendMessage} className="p-4 bg-white border-t border-gray-100">
-                            <div className="flex gap-2 relative">
+                        <div className="p-6 bg-white border-t border-gray-100">
+                            <form onSubmit={handleSendMessage} className="relative group">
                                 <input
                                     type="text"
                                     value={input}
                                     onChange={e => setInput(e.target.value)}
-                                    placeholder={`Вопрос по контексту "${selectedTech.name}"...`}
-                                    className="w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all shadow-sm outline-none"
+                                    placeholder={`Запитайте про "${selectedTech.name.substring(0, 30)}..."`}
+                                    className="w-full pl-6 pr-14 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-500 transition-all shadow-inner outline-none text-sm placeholder:text-gray-400"
                                 />
                                 <button
                                     type="submit"
                                     disabled={!input.trim() || isProcessing}
-                                    className="absolute right-2 top-2 bottom-2 bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:hover:bg-blue-600 transition-colors"
+                                    className="absolute right-2.5 top-2.5 bottom-2.5 aspect-square bg-blue-600 text-white flex items-center justify-center rounded-xl hover:bg-blue-700 disabled:opacity-30 disabled:hover:bg-blue-600 transition-all shadow-lg active:scale-95"
                                 >
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                                 </button>
-                            </div>
-                        </form>
+                            </form>
+                            <p className="text-[10px] text-gray-400 text-center mt-3 uppercase tracking-widest font-bold">
+                                ИИ может ошибаться. Всегда проверяйте важные медицинские данные.
+                            </p>
+                        </div>
                     </div>
 
                     {/* Right Panel: Documents */}
-                    <div className="w-72 flex-shrink-0 flex flex-col bg-white rounded-xl shadow-sm border border-gray-200">
-                        <div className="p-4 border-b border-gray-100 bg-gray-50">
-                            <h3 className="font-bold text-gray-700 text-sm uppercase tracking-wide">База знаний</h3>
+                    <div className="w-80 flex-shrink-0 flex flex-col bg-white rounded-2xl shadow-xl border border-gray-100 animate-in slide-in-from-right-4 duration-500 delay-150">
+                        <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
+                            <h3 className="font-extrabold text-gray-900 text-xs uppercase tracking-widest">База знаний</h3>
+                            <span className="bg-blue-100 text-blue-700 text-[10px] px-2 py-1 rounded-full font-bold">
+                                {activeDocs.length} ФАЙЛОВ
+                            </span>
                         </div>
 
-                        <div className="p-4 border-b border-gray-100">
-                            <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors group">
-                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                    <svg className="w-6 h-6 mb-2 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                                    <p className="text-xs text-gray-500 uppercase font-semibold text-center px-1">Загрузить для <br />{selectedTech.name.substring(0, 15)}...</p>
+                        {/* Upload Zone */}
+                        <div className="p-4">
+                            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-200 border-dashed rounded-2xl cursor-pointer bg-gray-50/50 hover:bg-blue-50/50 hover:border-blue-300 transition-all group overflow-hidden relative">
+                                <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
+                                    <div className="p-3 bg-white rounded-xl shadow-sm mb-2 group-hover:scale-110 transition-transform">
+                                        <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                    </div>
+                                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">Загрузить документ</p>
+                                    <p className="text-[9px] text-gray-400 mt-1">PDF, DOCX, TXT</p>
                                 </div>
-                                <input type="file" className="hidden" accept=".pdf,.doc,.docx,.txt" onChange={handleFileUpload} />
+                                <input type="file" className="hidden" accept=".pdf,.docx,.txt" onChange={handleFileUpload} />
                             </label>
                         </div>
 
-                        <div className="flex-grow overflow-y-auto p-2">
+                        {/* File List */}
+                        <div className="flex-grow overflow-y-auto p-4 space-y-2 custom-scrollbar">
                             {activeDocs.length > 0 ? (
-                                <ul className="space-y-1">
+                                <div className="space-y-2">
                                     {activeDocs.map(doc => (
-                                        <li key={doc.id} className="group flex items-center justify-between p-2 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors">
-                                            <div className="flex items-center gap-3 overflow-hidden">
-                                                <div className="bg-red-100 text-red-600 p-1.5 rounded shrink-0">
+                                        <div key={doc.id} className="group flex flex-col p-3.5 bg-white border border-gray-100 rounded-xl hover:border-blue-200 hover:shadow-md transition-all relative">
+                                            <div className="flex items-start gap-3 mb-2">
+                                                <div className="bg-red-50 text-red-500 p-2 rounded-lg shrink-0 group-hover:bg-red-500 group-hover:text-white transition-colors">
                                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                                 </div>
-                                                <div className="min-w-0">
-                                                    <p className="text-sm font-medium text-gray-700 truncate group-hover:text-blue-700">{doc.name}</p>
-                                                    <p className="text-xs text-gray-400">{doc.date}</p>
+                                                <div className="min-w-0 flex-grow">
+                                                    <p className="text-xs font-bold text-gray-800 break-words group-hover:text-blue-700">{doc.name}</p>
+                                                    <p className="text-[10px] text-gray-400 mt-1 font-mono uppercase italic">{doc.date}</p>
                                                 </div>
                                             </div>
-                                        </li>
+
+                                            <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-50">
+                                                <a
+                                                    href={doc.url}
+                                                    target="_blank"
+                                                    className="text-[10px] font-bold text-blue-600 hover:text-blue-800 underline uppercase tracking-widest"
+                                                >
+                                                    Просмотр
+                                                </a>
+                                                <button
+                                                    onClick={() => handleDeleteDoc(doc.name)}
+                                                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-all active:scale-90"
+                                                    title="Удалить из базы знаний"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                </button>
+                                            </div>
+                                        </div>
                                     ))}
-                                </ul>
+                                </div>
                             ) : (
-                                <div className="text-center text-gray-400 text-xs mt-4">Нет документов</div>
+                                <div className="h-full flex flex-col items-center justify-center opacity-40">
+                                    <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2">Пусто</p>
+                                </div>
                             )}
                         </div>
                     </div>
                 </>
             ) : (
-                <div className="flex-grow flex items-center justify-center bg-white rounded-xl shadow-sm border border-gray-200 p-10 text-center">
-                    <div>
-                        <div className="w-20 h-20 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                <div className="flex-grow flex items-center justify-center bg-white/60 backdrop-blur-sm rounded-3xl shadow-2xl border border-white p-20 text-center animate-in zoom-in-95 duration-500">
+                    <div className="max-w-md">
+                        <div className="w-24 h-24 bg-gradient-to-tr from-blue-600/20 to-indigo-500/20 text-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 animate-bounce transition-all duration-1000">
+                            <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-800 mb-2">Выберите технологию</h2>
-                        <p className="text-gray-500 max-w-md mx-auto">
-                            Выберите проект из списка слева, чтобы начать работу с AI-ассистентом. Вы получите доступ к изолированному чату и базе знаний выбранной технологии.
+                        <h2 className="text-3xl font-black text-gray-900 mb-4 tracking-tight leading-tight">Интеллектуальный Анализ <br /><span className="text-blue-600">HealthTech</span></h2>
+                        <p className="text-gray-500 text-sm leading-relaxed font-medium">
+                            Выберите технологию из списка слева для глубокого анализа <br /> с использованием ИИ на основе ваших документов.
                         </p>
+
+                        <div className="grid grid-cols-2 gap-4 mt-10">
+                            <div className="p-4 bg-white/50 border border-gray-100 rounded-2xl shadow-sm">
+                                <div className="text-blue-600 font-black text-xl mb-1">RAG</div>
+                                <div className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Анализ файлов</div>
+                            </div>
+                            <div className="p-4 bg-white/50 border border-gray-100 rounded-2xl shadow-sm">
+                                <div className="text-indigo-600 font-black text-xl mb-1">Gemini</div>
+                                <div className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Flash 1.5</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
@@ -254,4 +378,4 @@ export default function AssistantIndex({ technologies = [] }) {
     );
 }
 
-AssistantIndex.layout = page => <AdminLayout title="AI Ассистент">{page}</AdminLayout>;
+AssistantIndex.layout = page => <AdminLayout title="AI Аналитик">{page}</AdminLayout>;

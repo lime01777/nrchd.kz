@@ -311,35 +311,41 @@ function ServiceCard({ service }) {
     return parts.length > 0 ? parts.join(' ') : 'ИИ сервис для медицинской диагностики';
   };
 
+  // Функция для получения тематического изображения, если основное отсутствует
+  const getThematicImage = () => {
+    if (service.image) return service.image;
+
+    const name = (service.name || '').toLowerCase();
+    const desc = (service.description || '').toLowerCase();
+    const text = `${name} ${desc}`;
+
+    if (text.includes('кт') || text.includes('ct')) return '/img/ai/ct_scan.png';
+    if (text.includes('мрт') || text.includes('mri')) return '/img/ai/mri_brain.png';
+    if (text.includes('ммг') || text.includes('маммограф')) return '/img/ai/mammography.png';
+    if (text.includes('рг') || text.includes('рентген') || text.includes('x-ray')) return '/img/ai/xray.png';
+
+    return '/img/ai/general.png';
+  };
+
+  const displayImage = getThematicImage();
+  const isPlaceholder = !service.image;
+
   return (
     <Link href={detailUrl} className="block">
       <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-200 overflow-hidden cursor-pointer h-full flex flex-col">
         {/* Блок изображения - всегда отображается */}
-        <div className="w-full h-48 bg-gray-100 overflow-hidden relative flex items-center justify-center p-2">
-          {service.image ? (
-            <>
-              <img
-                src={service.image}
-                alt={service.name || 'Изображение сервиса'}
-                className="w-full h-full object-contain"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  const placeholder = e.target.parentElement.querySelector('.image-placeholder');
-                  if (placeholder) placeholder.style.display = 'flex';
-                }}
-              />
-              <div className="image-placeholder w-full h-full bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center" style={{ display: 'none' }}>
-                <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-            </>
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
-              <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
+        <div className="w-full h-48 bg-gray-100 overflow-hidden relative flex items-center justify-center">
+          <img
+            src={displayImage}
+            alt={service.name || 'Изображение сервиса'}
+            className={`w-full h-full ${isPlaceholder ? 'object-cover' : 'object-contain p-4'}`}
+            onError={(e) => {
+              e.target.src = '/img/ai/general.png';
+              e.target.className = 'w-full h-full object-cover';
+            }}
+          />
+          {isPlaceholder && (
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
           )}
         </div>
 

@@ -143,4 +143,10 @@ Route::get('/direction/center-prevention/communications', function () {
     return Inertia::render('Direction/CenterPrevention/Communications');
 })->name('direction.center_prevention.communications');
 
-// Add other routes here with the same translation pattern
+Route::get('/direction/center-prevention/infographics', function () {
+    return Inertia::render('Direction/CenterPrevention/Infographics');
+})->name('direction.center_prevention.infographics');
+
+Route::get('/direction/center-prevention/videos', function () {
+    return Inertia::render('Direction/CenterPrevention/Videos');
+})->name('direction.center_prevention.videos');

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     YouthTrainingChart,
     YouthStaffingNormativeChart,
@@ -10,49 +10,44 @@ import {
     YouthTargetReachChart
 } from '@/Components/YouthHealthCharts';
 import translationService from '@/Services/TranslationService';
+import Modal from '@/Components/UI/Modal';
 
 export default function YouthHealthDashboard() {
+    const [currentLanguage, setCurrentLanguage] = useState(translationService.currentLanguage);
     const t = (key, fallback = '') => translationService.t(key, fallback);
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedChart, setSelectedChart] = useState('training');
+    useEffect(() => {
+        const handleLanguageChange = (e) => {
+            setCurrentLanguage(e.detail.language);
+        };
+        window.addEventListener('languageChanged', handleLanguageChange);
+        return () => window.removeEventListener('languageChanged', handleLanguageChange);
+    }, []);
 
-    const chartCategories = [
-        {
-            id: 'staffing',
-            name: 'Кадры и Обучение',
-            reports: [
-                { id: 'training', name: 'Уровень обучения специалистов', type: 'chart' },
-                { id: 'staffingNormative', name: 'Дефицит штата vs Норматив', type: 'chart' },
-            ]
-        },
-        {
-            id: 'audience',
-            name: 'Аудитория и Обращаемость',
-            reports: [
-                { id: 'specialistStructure', name: 'Структура обращений (Психологи)', type: 'chart' },
-                { id: 'genderAccess', name: 'Распределение по полу', type: 'chart' },
-                { id: 'targetReach', name: 'Охват по форматам мероприятий', type: 'chart' },
-            ]
-        },
-        {
-            id: 'media',
-            name: 'СМИ и Коммуникации',
-            reports: [
-                { id: 'mediaActivity', name: 'Активность в ТВ/Радио/Пресса', type: 'chart' },
-                { id: 'videoRotation', name: 'Ротация роликов и Интернет', type: 'chart' },
-                { id: 'iomDistribution', name: 'Распределение печатных ИОМ', type: 'chart' },
-            ]
-        }
+    const categories = [
+        { id: 'staffing', title: t('sections.youthHealth.categories.staffing', 'Кадры и Обучение'), icon: '👥' },
+        { id: 'audience', title: t('sections.youthHealth.categories.audience', 'Аудитория и Обращаемость'), icon: '📈' },
+        { id: 'media', title: t('sections.youthHealth.categories.media', 'СМИ и Коммуникации'), icon: '📱' }
     ];
 
-    const filteredCategories = chartCategories.map(category => ({
-        ...category,
-        reports: category.reports.filter(report =>
-            report.name.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-    })).filter(category => category.reports.length > 0);
+    const reports = [
+        { id: 'training', category: 'staffing', title: t('sections.youthHealth.reports.training', 'Уровень обучения специалистов') },
+        { id: 'staffingNormative', category: 'staffing', title: t('sections.youthHealth.reports.staffingNormative', 'Дефицит штата vs Норматив') },
+        { id: 'specialistStructure', category: 'audience', title: t('sections.youthHealth.reports.specialistStructure', 'Структура обращений (Психологи)') },
+        { id: 'genderAccess', category: 'audience', title: t('sections.youthHealth.reports.genderAccess', 'Распределение по полу') },
+        { id: 'targetReach', category: 'audience', title: t('sections.youthHealth.reports.targetReach', 'Охват по форматам мероприятий') },
+        { id: 'mediaActivity', category: 'media', title: t('sections.youthHealth.reports.mediaActivity', 'Активность в ТВ/Радио/Пресса') },
+        { id: 'videoRotation', category: 'media', title: t('sections.youthHealth.reports.videoRotation', 'Ротация роликов и Интернет') },
+        { id: 'iomDistribution', category: 'media', title: t('sections.youthHealth.reports.iomDistribution', 'Распределение печатных ИОМ') }
+    ];
+
+    const [activeReport, setActiveReport] = useState(reports[0]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+
+    const filteredReports = reports.filter(report =>
+        report.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const renderChart = (chartId) => {
         const wrapper = (component) => <div className="h-[500px] w-full">{component}</div>;
@@ -69,122 +64,119 @@ export default function YouthHealthDashboard() {
         }
     };
 
-    const getSelectedReportName = () => {
-        for (const cat of chartCategories) {
-            const report = cat.reports.find(r => r.id === selectedChart);
-            if (report) return report.name;
-        }
-        return '';
-    };
-
     return (
         <section className="text-gray-600 body-font py-12 bg-gray-50 rounded-[3rem] overflow-hidden shadow-inner mt-12 border border-blue-50">
             <div className="container px-5 mx-auto">
                 <div className="flex flex-col text-center w-full mb-10">
-                    <h2 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">Статистика и аналитика МЦЗ</h2>
-                    <p className="lg:w-2/3 mx-auto leading-relaxed text-lg text-gray-500">
-                        Нажмите на область графика, чтобы выбрать другой отчет из библиотеки данных.
+                    <h2 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">{t('sections.youthHealth.title', 'Статистика и аналитика МЦЗ')}</h2>
+                    <p className="lg:w-2/3 mx-auto leading-relaxed text-base text-gray-500 font-medium italic">
+                        {t('sections.youthHealth.subtitle', 'Нажмите на область графика, чтобы выбрать другой отчет из библиотеки данных.')}
                     </p>
                 </div>
 
-                <div className="w-full max-w-6xl mx-auto">
-                    <div
-                        className="bg-white p-10 rounded-[2.5rem] shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 cursor-pointer border border-gray-100 group relative"
-                        onClick={() => setIsModalOpen(true)}
-                    >
-                        {/* Бейдж выбранного отчета */}
-                        <div className="absolute top-8 left-10 flex items-center gap-3">
-                            <div className="w-2 h-8 bg-blue-600 rounded-full animate-pulse"></div>
-                            <h3 className="text-xl font-extrabold text-gray-800 tracking-tight">
-                                {getSelectedReportName()}
-                            </h3>
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-gray-100 relative group min-h-[500px] flex flex-col">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-gray-50">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-bold text-gray-900 leading-tight">
+                                    {activeReport.title}
+                                </h3>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
+                                        {categories.find(c => c.id === activeReport.category)?.title}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
 
-                        {/* Индикатор смены графика */}
-                        <div className="absolute top-8 right-10 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-2xl shadow-lg">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16m-7 6h7"></path>
+                        <button
+                            onClick={() => setIsLibraryOpen(true)}
+                            className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-2xl hover:bg-blue-600 transition-all duration-300 shadow-lg hover:shadow-blue-200 active:scale-95 group"
+                        >
+                            <span className="font-bold">{t('sections.youthHealth.changeReport', 'Выбрать другой отчет')}</span>
+                            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                             </svg>
-                            <span className="text-xs font-bold uppercase tracking-wider">Выбрать другой отчет</span>
-                        </div>
+                        </button>
+                    </div>
 
-                        <div className="mt-12">
-                            {renderChart(selectedChart)}
+                    <div className="flex-grow flex items-center justify-center relative cursor-pointer" onClick={() => setIsLibraryOpen(true)}>
+                        <div className="w-full">
+                            {renderChart(activeReport.id)}
                         </div>
                     </div>
                 </div>
-
-                {/* Модальное окно (Библиотека отчетов) */}
-                {isModalOpen && (
-                    <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-xl z-[100] flex justify-center items-center p-4 animate-in fade-in duration-300">
-                        <div className="bg-white rounded-[3rem] shadow-2xl w-full max-w-4xl max-h-[85vh] overflow-hidden flex flex-col border border-white/20">
-                            <div className="p-8 md:p-10 border-b border-gray-100 bg-gray-50/50">
-                                <div className="flex justify-between items-center mb-8">
-                                    <div>
-                                        <h2 className="text-3xl font-black text-gray-900 tracking-tight">Библиотека отчетов</h2>
-                                        <p className="text-gray-400 mt-1 font-semibold">Выберите показатель для отображения на дашборде</p>
-                                    </div>
-                                    <button
-                                        onClick={() => setIsModalOpen(false)}
-                                        className="p-4 hover:bg-white hover:shadow-xl rounded-2xl transition-all text-gray-300 hover:text-gray-600"
-                                    >
-                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12"></path>
-                                        </svg>
-                                    </button>
-                                </div>
-                                <div className="relative">
-                                    <input
-                                        type="text"
-                                        placeholder="Найти нужный показатель..."
-                                        className="w-full pl-14 pr-6 py-5 bg-white border-2 border-gray-100 rounded-[1.5rem] focus:border-blue-500 focus:ring-0 outline-none transition-all text-gray-700 shadow-sm"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
-                                    <svg className="w-6 h-6 text-gray-300 absolute left-6 top-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <div className="overflow-y-auto flex-grow p-8 md:p-10 bg-white">
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                    {filteredCategories.map((category) => (
-                                        <div key={category.id} className="space-y-6">
-                                            <h3 className="text-xs font-black text-blue-500 uppercase tracking-[0.2em] px-2 flex items-center gap-2">
-                                                <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
-                                                {category.name}
-                                            </h3>
-                                            <div className="flex flex-col gap-2">
-                                                {category.reports.map((report) => (
-                                                    <button
-                                                        key={report.id}
-                                                        className={`flex items-center justify-between p-4 rounded-2xl transition-all duration-300 text-left group ${selectedChart === report.id
-                                                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 ring-4 ring-blue-50'
-                                                            : 'bg-gray-50 text-gray-600 hover:bg-blue-50 hover:text-blue-700'
-                                                            }`}
-                                                        onClick={() => {
-                                                            setSelectedChart(report.id);
-                                                            setIsModalOpen(false);
-                                                        }}
-                                                    >
-                                                        <span className="font-bold text-sm leading-tight">{report.name}</span>
-                                                        <div className={`p-1.5 rounded-lg transition-colors ${selectedChart === report.id ? 'bg-blue-500 text-white' : 'bg-white text-gray-200 group-hover:text-blue-400'}`}>
-                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7"></path>
-                                                            </svg>
-                                                        </div>
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
             </div>
+
+            <Modal show={isLibraryOpen} onClose={() => setIsLibraryOpen(false)} maxWidth="4xl">
+                <div className="p-8">
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 className="text-2xl font-black text-gray-900">{t('sections.youthHealth.modal.title', 'Библиотека отчетов')}</h2>
+                            <p className="text-gray-500 mt-1">{t('sections.youthHealth.modal.subtitle', 'Выберите показатель для отображения на дашборде')}</p>
+                        </div>
+                        <button onClick={() => setIsLibraryOpen(false)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+                            <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div className="relative mb-8">
+                        <input
+                            type="text"
+                            placeholder={t('sections.youthHealth.modal.searchPlaceholder', 'Найти нужный показатель...')}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full pl-12 pr-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+                        />
+                        <svg className="w-6 h-6 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {categories.map(category => {
+                            const categoryReports = filteredReports.filter(r => r.category === category.id);
+                            if (categoryReports.length === 0) return null;
+
+                            return (
+                                <div key={category.id} className="space-y-4">
+                                    <div className="flex items-center gap-2 px-1">
+                                        <span className="text-xl">{category.icon}</span>
+                                        <h4 className="font-bold text-gray-900 uppercase tracking-wider text-xs">{category.title}</h4>
+                                    </div>
+                                    <div className="space-y-2">
+                                        {categoryReports.map(report => (
+                                            <button
+                                                key={report.id}
+                                                onClick={() => {
+                                                    setActiveReport(report);
+                                                    setIsLibraryOpen(false);
+                                                }}
+                                                className={`w-full text-left p-4 rounded-2xl transition-all duration-200 border-2 ${activeReport.id === report.id
+                                                        ? 'bg-blue-50 border-blue-500 translate-x-1 outline-none'
+                                                        : 'bg-white border-transparent hover:bg-gray-50 hover:border-gray-100'
+                                                    }`}
+                                            >
+                                                <span className={`text-sm font-bold leading-tight block ${activeReport.id === report.id ? 'text-blue-700' : 'text-gray-700'
+                                                    }`}>
+                                                    {report.title}
+                                                </span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </Modal>
         </section>
     );
 }

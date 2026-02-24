@@ -1,100 +1,70 @@
 import { Head } from '@inertiajs/react';
 import React, { useState, useEffect } from 'react';
-import LayoutDirection from '@/Layouts/LayoutDirection';
+import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import translationService from '@/Services/TranslationService';
 import YouthHealthCentersMap from '@/Components/YouthHealthCentersMap';
 
 export default function HealthyLifestyle() {
-    const [pageTitle, setPageTitle] = useState('');
-    const [title, setTitle] = useState('');
-    const [item1, setItem1] = useState('');
-    const [item2, setItem2] = useState('');
-    const [item3, setItem3] = useState('');
-    const [item4, setItem4] = useState('');
-    const [projectsTitle, setProjectsTitle] = useState('');
-    const [project1, setProject1] = useState('');
-    const [project2, setProject2] = useState('');
-    const [project3, setProject3] = useState('');
-    const [project4, setProject4] = useState('');
-    const [youthCentersTitle, setYouthCentersTitle] = useState('');
-    const [youthCentersDescription, setYouthCentersDescription] = useState('');
+    const t = (key, fallback = '') => translationService.t(key, fallback);
 
-    // Глобальная функция для получения перевода
-    const t = (key, fallback = '') => {
-        return translationService.t(key, fallback);
-    };
+    const title = t('directionsPages.centerPrevention.column2Title', 'Формирование здорового образа жизни');
+    const items = [
+        t('directionsPages.centerPrevention.column2Item1', 'Национальные программы по ЗОЖ'),
+        t('directionsPages.centerPrevention.column2Item2', 'Молодежные центры здоровья'),
+        t('directionsPages.centerPrevention.column2Item3', 'Культура здорового и рационального питания'),
+        t('directionsPages.centerPrevention.column2Item4', 'Меры по сокращению табакокурения и алкоголя')
+    ];
 
-    useEffect(() => {
-        const updateTranslations = () => {
-            setPageTitle(t('directionsPages.centerPrevention.column2Title', 'Формирование здорового образа жизни'));
-            setTitle(t('directionsPages.centerPrevention.column2Title', 'Формирование здорового образа жизни'));
-            setItem1(t('directionsPages.centerPrevention.column2Item1', 'Национальные программы по ЗОЖ'));
-            setItem2(t('directionsPages.centerPrevention.column2Item2', 'Молодежные центры здоровья'));
-            setItem3(t('directionsPages.centerPrevention.column2Item3', 'Культура здорового и рационального питания'));
-            setItem4(t('directionsPages.centerPrevention.column2Item4', 'Меры по сокращению табакокурения и алкоголя'));
-
-            setProjectsTitle(t('directionsPages.centerPrevention.column2ProjectsTitle', 'Проекты:'));
-            setProject1(t('directionsPages.centerPrevention.column2Project1', '«Здоровые города и регионы»'));
-            setProject2(t('directionsPages.centerPrevention.column2Project2', '«Саламатты мектеп/Школы, способствующие укреплению здоровья»'));
-            setProject3(t('directionsPages.centerPrevention.column2Project3', '«Здоровье университеты»'));
-            setProject4(t('directionsPages.centerPrevention.column2Project4', '«Здоровье рабочие места»'));
-
-            setYouthCentersTitle(t('directionsPages.centerPrevention.youthCentersTitle', 'Молодежные центры здоровья'));
-            setYouthCentersDescription(t('directionsPages.centerPrevention.youthCentersDescription', 'Интерактивная карта молодежных центров здоровья по всей Республике Казахстан'));
-        };
-
-        updateTranslations();
-        window.addEventListener('languageChanged', updateTranslations);
-
-        return () => {
-            window.removeEventListener('languageChanged', updateTranslations);
-        };
-    }, []);
+    const projects = [
+        t('directionsPages.centerPrevention.column2Project1', '«Здоровые города и регионы»'),
+        t('directionsPages.centerPrevention.column2Project2', '«Саламатты мектеп/Школы, способствующие укреплению здоровья»'),
+        t('directionsPages.centerPrevention.column2Project3', '«Здоровье университеты»'),
+        t('directionsPages.centerPrevention.column2Project4', '«Здоровье рабочие места»')
+    ];
 
     return (
         <>
-            <Head title={pageTitle} />
+            <Head title={title} />
 
-            <section className="text-gray-600 body-font py-12">
+            <section className="text-gray-600 body-font py-20 bg-white">
                 <div className="container px-5 mx-auto">
-                    <div className="flex flex-col items-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-8">{title}</h2>
+                    <div className="max-w-4xl mx-auto">
+                        <div className="bg-white p-2 rounded-[2rem] shadow-xl border border-green-50 overflow-hidden mb-12 transform hover:scale-[1.01] transition-transform duration-500">
+                            <img src="/img/CenterPrevention/col2.png" alt={title} className="w-full h-[400px] object-cover rounded-[1.8rem]" />
+                        </div>
 
-                        <div className="w-full md:w-2/3 lg:w-1/2 mb-10 text-center">
-                            <div className="aspect-square mx-auto rounded-lg border-4 border-blue-200 overflow-hidden flex items-center justify-center bg-white shadow-lg max-w-sm">
-                                <img src="/img/CenterPrevention/col2.png" alt={title} className="object-cover w-full h-full" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                            <div className="bg-green-50 p-8 rounded-[2rem] border-t-8 border-green-400">
+                                <h3 className="text-2xl font-black text-green-800 mb-6 flex items-center gap-3">
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    Направления
+                                </h3>
+                                <ul className="space-y-4">
+                                    {items.map((item, idx) => (
+                                        <li key={idx} className="flex items-center gap-3 text-lg font-medium text-gray-700">
+                                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div className="bg-blue-50 p-8 rounded-[2rem] border-t-8 border-blue-400">
+                                <h3 className="text-2xl font-black text-blue-800 mb-6 flex items-center gap-3">
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                    Проекты
+                                </h3>
+                                <ul className="space-y-4">
+                                    {projects.map((project, idx) => (
+                                        <li key={idx} className="flex items-center gap-3 text-lg font-medium text-blue-700 hover:text-blue-900 cursor-pointer transition-colors">
+                                            <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                                            {project}
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
                         </div>
 
-                        <div className="w-full md:w-2/3 lg:w-1/2">
-                            <ul className="list-disc list-inside space-y-4 text-lg text-gray-700 bg-gray-50 p-8 rounded-xl shadow-inner mb-8">
-                                {item1 && <li className="pl-2">{item1}</li>}
-                                {item2 && <li className="pl-2">{item2}</li>}
-                                {item3 && <li className="pl-2">{item3}</li>}
-                                {item4 && <li className="pl-2">{item4}</li>}
-
-                                {projectsTitle && (
-                                    <li className="pt-4 list-none border-t border-gray-200 mt-4">
-                                        <span className="font-semibold block mb-2">{projectsTitle}</span>
-                                        <ul className="list-none space-y-2 ml-4">
-                                            {project1 && <li className="text-blue-600 hover:text-blue-800 transition-colors"><a href="#">{project1}</a></li>}
-                                            {project2 && <li className="text-blue-600 hover:text-blue-800 transition-colors"><a href="#">{project2}</a></li>}
-                                            {project3 && <li className="text-blue-600 hover:text-blue-800 transition-colors"><a href="#">{project3}</a></li>}
-                                            {project4 && <li className="text-blue-600 hover:text-blue-800 transition-colors"><a href="#">{project4}</a></li>}
-                                        </ul>
-                                    </li>
-                                )}
-                            </ul>
-                        </div>
-                    </div>
-
-                    {/* Map Section */}
-                    <div className="text-center mb-8 border-t border-gray-200 pt-12">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-4">{youthCentersTitle}</h2>
-                        <p className="text-gray-600 max-w-2xl mx-auto mb-8">
-                            {youthCentersDescription}
-                        </p>
-                        <YouthHealthCentersMap />
                     </div>
                 </div>
             </section>
@@ -103,6 +73,19 @@ export default function HealthyLifestyle() {
 }
 
 HealthyLifestyle.layout = (page) => {
-    const h1 = translationService.t('directions.center_prevention', 'Центр профилактики и укрепления здоровья');
-    return <LayoutDirection img="zozh" h1={h1}>{page}</LayoutDirection>;
+    return (
+        <LayoutFolderChlank
+            h1={translationService.t('directionsPages.centerPrevention.column2Title', 'Формирование здорового образа жизни')}
+            parentRoute={route('direction.center_prevention')}
+            parentName={translationService.t('directions.center_prevention', 'Центр профилактики')}
+            heroBgColor="bg-green-200"
+            heroColorSec="bg-green-300"
+            buttonBgColor="bg-green-100"
+            buttonHoverBgColor="hover:bg-green-200"
+            buttonBorderColor="border-green-300"
+            bgColor="bg-white"
+        >
+            {page}
+        </LayoutFolderChlank>
+    );
 };

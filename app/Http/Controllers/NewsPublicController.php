@@ -143,6 +143,18 @@ class NewsPublicController extends Controller
                 'social_facebook' => $news->social_facebook ?? null,
                 'social_youtube' => $news->social_youtube ?? null,
                 'social_telegram' => $news->social_telegram ?? null,
+                'comments' => $news->comments()
+                    ->where('is_approved', true)
+                    ->orderBy('created_at', 'desc')
+                    ->get()
+                    ->map(function($c) {
+                        return [
+                            'id' => $c->id,
+                            'name' => $c->name,
+                            'content' => $c->content,
+                            'created_at' => $c->created_at->format('d.m.Y H:i'),
+                        ];
+                    }),
             ],
             'relatedNews' => $relatedNews,
             'seo' => [

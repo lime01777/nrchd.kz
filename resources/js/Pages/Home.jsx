@@ -465,22 +465,6 @@ export default function Home() {
             buttonText: t('home.hero.slide3.button'),
             buttonLink: route('medical.statistics'),
             image: "/img/HeroImg/home-hero.png"
-        },
-        {
-            id: 4,
-            title: t('home.hero.slide4.title', 'Цифровое здравоохранение'),
-            subtitle: t('home.hero.slide4.subtitle', 'Перечень ИИ сервисов'),
-            buttonText: t('home.hero.slide4.button', 'Перейти'),
-            buttonLink: route('electronic.health') + '#ai-services-list',
-            image: "/img/HeroImg/electronichealth.png"
-        },
-        {
-            id: 5,
-            title: t('home.hero.slide5.title', 'Инициативы ВОЗ'),
-            subtitle: t('home.hero.slide5.subtitle', 'Глобальное партнерство во имя здоровья'),
-            buttonText: t('home.hero.slide5.button', 'Присоединиться к инициативам'),
-            buttonLink: route('center.prevention') + '#who-initiatives',
-            image: "/img/HeroImg/who-initiatives.png" // Placeholder, user can replace
         }
     ];
 
@@ -641,13 +625,13 @@ export default function Home() {
                 {/* Контент с анимацией */}
                 <div className="absolute inset-0 flex items-center justify-start z-20">
                     <div className="container mx-auto px-5 flex items-center justify-start w-full">
-                        <div className="lg:w-1/2 lg:pl-24 md:pl-16 flex flex-col items-start text-left bg-transparent px-4">
+                        <div className="lg:w-1/2 lg:pl-24 md:pl-16 flex flex-col items-start text-left bg-transparent px-4 relative min-h-[400px]">
                             {heroSlides.map((slide, index) => (
                                 <div
                                     key={slide.id}
                                     className={`transition-all duration-1000 ease-in-out w-full flex flex-col items-start ${index === currentSlide
-                                        ? 'opacity-100 transform translate-x-0 relative pointer-events-auto'
-                                        : 'opacity-0 transform translate-x-8 absolute inset-0 pointer-events-none'
+                                        ? 'opacity-100 transform translate-x-0 relative z-10 pointer-events-auto'
+                                        : 'opacity-0 transform -translate-x-4 absolute inset-0 z-0 pointer-events-none'
                                         }`}
                                 >
                                     {/* Заголовок */}
@@ -682,9 +666,7 @@ export default function Home() {
                                                 ? 'bg-green-600/80 border-green-500/50 hover:bg-green-600/95 hover:border-green-500/80 hover:shadow-2xl' // Медицинский туризм - зеленый
                                                 : slide.id === 2
                                                     ? 'bg-green-600/80 border-green-500/50 hover:bg-green-600/95 hover:border-green-500/80 hover:shadow-2xl' // Клинические протоколы - зеленый
-                                                    : slide.id === 4
-                                                        ? 'bg-blue-600/80 border-blue-500/50 hover:bg-blue-600/95 hover:border-blue-500/80 hover:shadow-2xl' // Цифровое здравоохранение - синий
-                                                        : 'bg-purple-700/80 border-purple-600/50 hover:bg-purple-700/95 hover:border-purple-600/80 hover:shadow-2xl' // Национальный доклад - темно-фиолетовый
+                                                    : 'bg-purple-700/80 border-purple-600/50 hover:bg-purple-700/95 hover:border-purple-600/80 hover:shadow-2xl' // Национальный доклад - темно-фиолетовый
                                                 }`}
                                             style={{ animation: 'fadeIn 0.8s ease-in-out' }}
                                             onClick={(e) => {

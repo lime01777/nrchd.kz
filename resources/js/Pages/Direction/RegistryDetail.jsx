@@ -47,6 +47,42 @@ const dictAutonomy = {
     high: 'Высокая автономность'
 };
 
+const dictCodeA = {
+    A0: 'AO (без ИИ)',
+    A1: 'A1 (с применением ИИ)',
+    A2: 'A2 (автономное ИИ)'
+};
+
+const dictCodeB = {
+    B1: 'B1 (профилактика/скрининг)',
+    'B1.1': 'B1.1 (диагностика)',
+    'B1.2': 'B1.2 (мониторинг)',
+    'B1.3': 'B1.3 (лечение)',
+    'B1.4': 'B1.4 (реабилитация)'
+};
+
+const dictCodeC = {
+    C1: 'C1',
+    C2: 'C2',
+    C3: 'C3',
+    C4: 'C4',
+    C5: 'C5'
+};
+
+const dictCodeD = {
+    D1: 'D1 (самостоятельное ПО (SaMD))',
+    D2: 'D2 (модуль МИС)',
+    D3: 'D3 (облачные сервисы)',
+    D4: 'D4 (встроенные в оборудование)',
+    D5: 'D5 (мобильные приложения)'
+};
+
+const dictCodeE = {
+    E1: 'E1 (статические модели)',
+    E2: 'E2 (адаптивные модели)',
+    E3: 'E3 (самообучающиеся модели)'
+};
+
 /**
  * Детальная страница технологии из реестра (RTZ)
  */
@@ -88,9 +124,19 @@ export default function RegistryDetail({ item }) {
 
     // Detail Row Component
     const DetailRow = ({ label, value }) => (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-gray-100 py-3 last:border-0 hover:bg-gray-50 transition-colors px-2">
-            <div className="font-semibold text-gray-700 md:col-span-1">{label}</div>
-            <div className="text-gray-900 md:col-span-2 break-words">{value || <span className="text-gray-400 italic">Не указано</span>}</div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-gray-100 py-4 last:border-0 hover:bg-gray-50/50 transition-colors px-6">
+            <div className="text-[13px] font-bold text-gray-800 md:col-span-1">{label}</div>
+            <div className="text-[13px] text-gray-500 md:col-span-2 font-medium break-words leading-relaxed">{value || <span className="text-gray-300 italic font-normal">Не указано</span>}</div>
+        </div>
+    );
+
+    // Classification Card Component
+    const ClassificationCard = ({ label, value }) => (
+        <div className="bg-gray-50/50 p-4 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="text-[11px] text-gray-400 font-bold uppercase mb-1 tracking-wider">{label}</div>
+            <div className="text-[14px] font-extrabold text-gray-800 leading-snug">
+                {value || <span className="text-gray-300 font-normal italic">Не указано</span>}
+            </div>
         </div>
     );
 
@@ -155,7 +201,7 @@ export default function RegistryDetail({ item }) {
                             : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                             }`}
                     >
-                        Общая информация
+                        Краткая информация
                     </button>
                     <button
                         onClick={() => setActiveTab('details')}
@@ -189,50 +235,162 @@ export default function RegistryDetail({ item }) {
                 {/* Content */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
 
-                    {/* Tab: General */}
+                    {/* Tab: General (Краткая информация) */}
                     {activeTab === 'general' && (
-                        <div className="space-y-8">
-                            <div>
-                                <h3 className="text-xl font-bold text-gray-800 mb-4 border-l-4 border-blue-500 pl-3">Описание технологии</h3>
-                                <div className="prose max-w-none text-gray-700 leading-relaxed bg-gray-50 p-6 rounded-lg border border-gray-100">
-                                    {item.description || 'Описание отсутствует.'}
-                                </div>
-                            </div>
+                        <div className="flex flex-col lg:flex-row gap-8">
+                            {/* Main Content (Left Column) */}
+                            <div className="w-full lg:w-2/3 space-y-8">
+                                {/* Блок: Паспорт и описание */}
+                                <div className="space-y-6">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="w-1 h-8 bg-[#6344D1] rounded-full"></div>
+                                        <h3 className="text-xl font-bold text-gray-800">Паспорт и описание</h3>
+                                    </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div>
-                                    <h3 className="text-lg font-bold text-gray-800 mb-4">Жизненный цикл</h3>
-                                    <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden">
+                                    <div className="bg-white rounded-lg border border-gray-100 overflow-hidden shadow-sm">
                                         <DetailRow label="ID записи" value={item.id} />
-                                        <DetailRow label="Реестровый код" value={item.registry_code} />
-                                        <DetailRow label="Дата валидации" value={formatDate(item.validation_date)} />
-                                        <DetailRow label="Дата ревалидации" value={formatDate(item.revalidation_date)} />
-                                        <DetailRow label="Дата пилотирования" value={formatDate(item.piloting_date)} />
-                                        <DetailRow label="Дата изменения статуса" value={formatDate(item.status_date)} />
+                                        <DetailRow label="Реестровый код" value={
+                                            <span className="text-[#6344D1] font-mono font-bold bg-[#EFECFF] px-2 py-0.5 rounded text-xs border border-[#6344D1] border-opacity-20">
+                                                {item.registry_code}
+                                            </span>
+                                        } />
+                                        <DetailRow label="Дата валидации" value={formatDate(item.validation_date) || <span className="text-gray-300 italic">Не указано</span>} />
+                                        <DetailRow label="Дата пилотирования" value={formatDate(item.piloting_date) || <span className="text-gray-300 italic">Не указано</span>} />
+                                        <DetailRow label="Статус" value={
+                                            <span className={`px-3 py-1 rounded text-xs font-bold uppercase ${statusConfig.color}`}>
+                                                {statusConfig.label}
+                                            </span>
+                                        } />
+                                        <DetailRow label="Направление" value={directions.length > 0 ? directions.map(d => dictDirections[d] || d).join(', ') : <span className="text-gray-300 italic">Не указано</span>} />
+                                    </div>
+
+                                    <div className="mt-6">
+                                        <h4 className="font-bold text-gray-800 mb-3 text-sm">Краткое описание технологии</h4>
+                                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 text-gray-700 text-sm leading-relaxed min-h-[100px]">
+                                            {item.description}
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-4 border-t border-gray-100">
+                                        <div>
+                                            <h4 className="font-bold text-gray-800 mb-2 text-sm uppercase tracking-wide">Тип технологии</h4>
+                                            <div className="text-gray-900 font-medium">
+                                                {dictTypes[item.type] || item.type}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-gray-800 mb-2 text-sm uppercase tracking-wide">Уровень риска / TRL</h4>
+                                            <div className="flex flex-wrap gap-2">
+                                                <span className="px-3 py-1 bg-green-100 text-green-700 rounded text-xs font-bold uppercase">
+                                                    {item.risk_level || 'Низкий/Средний'}
+                                                </span>
+                                                <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded text-xs font-bold uppercase border border-gray-200">
+                                                    TRL {item.trl || '7'}
+                                                </span>
+                                            </div>
+                                            <div className="mt-2">
+                                                <span className="px-3 py-1 bg-[#EFECFF] text-[#6344D1] rounded text-xs font-bold uppercase border border-[#6344D1] border-opacity-30">
+                                                    {dictAutonomy[item.autonomy_level] || item.autonomy_level || 'Низкая автономность'}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <h3 className="text-lg font-bold text-gray-800 mb-4">Участники и Локация</h3>
-                                    <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden">
-                                        <DetailRow label="Организация пилотирования" value={item.pilot_org} />
-                                        <DetailRow label="Организации внедрения" value={appOrgs.join(', ')} />
-                                        <DetailRow label="Регион" value={item.region} />
+
+                                {/* Блок: Участники и применение */}
+                                <div className="space-y-6 pt-8 border-t border-gray-100">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-1 h-8 bg-[#6344D1] rounded-full"></div>
+                                        <h3 className="text-xl font-bold text-gray-800">Участники и применение</h3>
+                                    </div>
+
+                                    <div className="bg-white rounded-lg border border-gray-100 overflow-hidden shadow-sm">
+                                        <DetailRow label="Инициатор" value={item.initiator} />
+                                        <DetailRow label="Разработчик" value={item.developer} />
+                                        <DetailRow label="Пилотируемая организация" value={item.pilot_org} />
+                                        <DetailRow label="Организации применения" value={
+                                            appOrgs.length > 0 ? (
+                                                <ul className="list-disc list-inside space-y-1">
+                                                    {appOrgs.map((org, idx) => <li key={idx}>{org}</li>)}
+                                                </ul>
+                                            ) : (
+                                                <div className="flex items-center gap-2 text-gray-500 italic">
+                                                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+                                                    Нет данных
+                                                </div>
+                                            )
+                                        } />
                                     </div>
                                 </div>
                             </div>
 
-                            {directions.length > 0 && (
-                                <div>
-                                    <h3 className="text-lg font-bold text-gray-800 mb-3">Направления применения</h3>
-                                    <div className="flex flex-wrap gap-2">
-                                        {directions.map(d => (
-                                            <span key={d} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium border border-blue-100">
-                                                {dictDirections[d] || d}
-                                            </span>
-                                        ))}
+                            {/* Sidebar (Right Column) */}
+                            <div className="w-full lg:w-1/3 space-y-8">
+                                {/* Блок: Классификация */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="w-1 h-8 bg-[#22C55E] rounded-full"></div>
+                                        <h3 className="text-xl font-bold text-gray-800">Классификация</h3>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <ClassificationCard label="Класс А (ИИ)" value={dictCodeA[item.code_a] || item.code_a} />
+                                        <ClassificationCard label="Класс B (Функционал)" value={dictCodeB[item.code_b] || item.code_b} />
+                                        <ClassificationCard label="Класс C (Контур)" value={dictCodeC[item.code_c] || item.code_c} />
+                                        <ClassificationCard label="Класс D (Внедрение)" value={dictCodeD[item.code_d] || item.code_d} />
+                                        <ClassificationCard label="Класс E (Обучаемость)" value={dictCodeE[item.code_e] || item.code_e} />
                                     </div>
                                 </div>
-                            )}
+
+                                {/* Блок: Жизненный цикл */}
+                                <div className="space-y-4 pt-4">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="w-1 h-8 bg-[#FFB020] rounded-full"></div>
+                                        <h3 className="text-xl font-bold text-gray-800">Жизненный цикл</h3>
+                                    </div>
+
+                                    <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm space-y-4">
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="font-bold text-gray-700">План. ревалидация</span>
+                                            <span className="text-gray-400 italic font-medium">{formatDate(item.revalidation_date) || 'Не указано'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Блок: Документы */}
+                                <div className="space-y-4 pt-4">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="w-1 h-8 bg-gray-400 rounded-full"></div>
+                                        <h3 className="text-xl font-bold text-gray-800">Документы</h3>
+                                    </div>
+
+                                    <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
+                                        {documents.length > 0 ? (
+                                            <ul className="space-y-2">
+                                                {documents.map((doc, idx) => (
+                                                    <li key={idx} className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                                        <a href={doc.url ? (doc.url.startsWith('/') ? doc.url : `/storage/${doc.url}`) : '#'} target="_blank" rel="noopener noreferrer">
+                                                            {doc.name || `Документ ${idx + 1}`}
+                                                        </a>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            <p className="text-gray-400 italic text-sm">Нет документов</p>
+                                        )}
+
+                                        <div className="flex flex-wrap gap-2 mt-6">
+                                            <button className="px-4 py-2 bg-white border border-gray-300 rounded text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                                                Печать карточки
+                                            </button>
+                                            <button className="px-4 py-2 bg-white border border-gray-300 rounded text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                                                История
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     )}
 

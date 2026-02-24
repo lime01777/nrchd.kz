@@ -1,173 +1,65 @@
 import { Head } from '@inertiajs/react';
 import React, { useState, useEffect } from 'react';
-import LayoutDirection from '@/Layouts/LayoutDirection';
+import LayoutFolderChlank from '@/Layouts/LayoutFolderChlank';
 import translationService from '@/Services/TranslationService';
 import FileAccordTitle from '@/Components/FileAccordTitle';
 import Modal from '@/Components/UI/Modal';
 
 export default function Communications() {
-    const [pageTitle, setPageTitle] = useState('');
-    const [title, setTitle] = useState('');
-    const [item1, setItem1] = useState('');
-    const [item2, setItem2] = useState('');
-    const [item3, setItem3] = useState('');
-    const [item4, setItem4] = useState('');
-    const [infographicsTitle, setInfographicsTitle] = useState('');
-    const [videosTitle, setVideosTitle] = useState('');
-    const [openInfographics, setOpenInfographics] = useState(false);
-    const [openVideos, setOpenVideos] = useState(false);
-    const [modalOpen, setModalOpen] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null);
+    const t = (key, fallback = '') => translationService.t(key, fallback);
 
-    // Глобальная функция для получения перевода
-    const t = (key, fallback = '') => {
-        return translationService.t(key, fallback);
-    };
-
-    useEffect(() => {
-        const updateTranslations = () => {
-            setPageTitle(t('directionsPages.centerPrevention.column3Title', 'Коммуникации и просвещение'));
-            setTitle(t('directionsPages.centerPrevention.column3Title', 'Коммуникации и просвещение'));
-            setItem1(t('directionsPages.centerPrevention.column3Item1', 'Мероприятия'));
-            setItem2(t('directionsPages.centerPrevention.column3Item2', 'Видеоролики'));
-            setItem3(t('directionsPages.centerPrevention.column3Item3', 'Информационно-разъяснительная работа'));
-            setItem4(t('directionsPages.centerPrevention.column3Item4', 'Инфографика, публикации, подкасты'));
-
-            setInfographicsTitle(t('directionsPages.centerPrevention.infographicsTitle', 'Инфографики'));
-            setVideosTitle(t('directionsPages.centerPrevention.videosTitle', 'Видеоролики'));
-        };
-
-        updateTranslations();
-        window.addEventListener('languageChanged', updateTranslations);
-
-        return () => {
-            window.removeEventListener('languageChanged', updateTranslations);
-        };
-    }, []);
-
-    const openModal = (item) => {
-        setSelectedItem(item);
-        setModalOpen(true);
-    };
-
-    const closeModal = () => {
-        setModalOpen(false);
-        setSelectedItem(null);
-    };
-
-    const downloadFile = (url, name) => {
-        if (!url) return;
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = name || 'download';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
+    const title = t('directionsPages.centerPrevention.column3Title', 'Коммуникации и просвещение');
+    const items = [
+        t('directionsPages.centerPrevention.column3Item1', 'Мероприятия'),
+        t('directionsPages.centerPrevention.column3Item2', 'Видеоролики'),
+        t('directionsPages.centerPrevention.column3Item3', 'Информационно-разъяснительная работа'),
+        t('directionsPages.centerPrevention.column3Item4', 'Инфографика, публикации, подкасты')
+    ];
 
     return (
         <>
-            <Head title={pageTitle} />
+            <Head title={title} />
 
-            <section className="text-gray-600 body-font py-12">
+            <section className="text-gray-600 body-font py-20 bg-white">
                 <div className="container px-5 mx-auto">
-                    <div className="flex flex-col items-center">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-8">{title}</h2>
-
-                        <div className="w-full md:w-2/3 lg:w-1/2 mb-10 text-center">
-                            <div className="aspect-square mx-auto rounded-lg border-4 border-blue-200 overflow-hidden flex items-center justify-center bg-white shadow-lg max-w-sm">
-                                <img src="/img/CenterPrevention/col3.png" alt={title} className="object-cover w-full h-full" />
-                            </div>
+                    <div className="max-w-4xl mx-auto">
+                        <div className="bg-white p-2 rounded-[2rem] shadow-xl border border-purple-50 overflow-hidden mb-12 transform hover:scale-[1.01] transition-transform duration-500">
+                            <img src="/img/CenterPrevention/col3.png" alt={title} className="w-full h-[400px] object-cover rounded-[1.8rem]" />
                         </div>
 
-                        <div className="w-full md:w-2/3 lg:w-1/2 mb-12">
-                            <ul className="list-disc list-inside space-y-4 text-lg text-gray-700 bg-gray-50 p-8 rounded-xl shadow-inner">
-                                {item1 && <li className="pl-2">{item1}</li>}
-                                {item2 && <li className="pl-2">{item2}</li>}
-                                {item3 && <li className="pl-2">{item3}</li>}
-                                {item4 && <li className="pl-2">{item4}</li>}
-                            </ul>
-
-                            {/* Аккордеон Инфографики */}
-                            <div className="mt-8 bg-blue-50 rounded-lg overflow-hidden">
-                                <FileAccordTitle
-                                    title={infographicsTitle}
-                                    isOpen={openInfographics}
-                                    toggleOpen={() => setOpenInfographics(!openInfographics)}
-                                />
-                                {openInfographics && (
-                                    <div className="p-4">
-                                        <ul className="space-y-2">
-                                            <li>
-                                                <button
-                                                    onClick={() => openModal({
-                                                        type: 'infographic',
-                                                        title: 'Инфографика 1',
-                                                        // ... data ...
-                                                    })}
-                                                    className="text-blue-600 hover:text-blue-800 underline text-left"
-                                                >
-                                                    Инфографика 1
-                                                </button>
-                                            </li>
-                                        </ul>
+                        <div className="prose prose-lg max-w-none text-gray-700">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {items.map((item, idx) => (
+                                    <div key={idx} className="flex items-center gap-4 p-6 bg-purple-50 rounded-2xl border-l-4 border-purple-400 hover:bg-purple-100 transition-colors shadow-sm">
+                                        <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center text-white shadow-lg">
+                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                                        </div>
+                                        <span className="text-lg font-bold">{item}</span>
                                     </div>
-                                )}
-                            </div>
-
-                            {/* Аккордеон Видеоролики */}
-                            <div className="mt-4 bg-blue-50 rounded-lg overflow-hidden">
-                                <FileAccordTitle
-                                    title={videosTitle}
-                                    isOpen={openVideos}
-                                    toggleOpen={() => setOpenVideos(!openVideos)}
-                                />
-                                {openVideos && (
-                                    <div className="p-4">
-                                        <ul className="space-y-2">
-                                            <li>
-                                                <button
-                                                    onClick={() => openModal({
-                                                        type: 'video',
-                                                        title: 'Видеоролик 1',
-                                                        // ... data ...
-                                                    })}
-                                                    className="text-blue-600 hover:text-blue-800 underline text-left"
-                                                >
-                                                    Видеоролик 1
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                )}
+                                ))}
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-
-            {/* Модальное окно */}
-            <Modal show={modalOpen} onClose={closeModal} maxWidth="2xl">
-                <div className="p-6">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-semibold text-gray-900">
-                            {selectedItem?.title || 'Выберите действие'}
-                        </h2>
-                        <button onClick={closeModal} className="text-gray-400 hover:text-gray-500">
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-                    {/* Content similar to parent... simplified for brevity layout */}
-                    <div className="text-center p-4">Content placeholder</div>
-                </div>
-            </Modal>
         </>
     );
 }
 
 Communications.layout = (page) => {
-    const h1 = translationService.t('directions.center_prevention', 'Центр профилактики и укрепления здоровья');
-    return <LayoutDirection img="zozh" h1={h1}>{page}</LayoutDirection>;
+    return (
+        <LayoutFolderChlank
+            h1={translationService.t('directionsPages.centerPrevention.column3Title', 'Коммуникации и просвещение')}
+            parentRoute={route('direction.center_prevention')}
+            parentName={translationService.t('directions.center_prevention', 'Центр профилактики')}
+            heroBgColor="bg-purple-200"
+            heroColorSec="bg-purple-300"
+            buttonBgColor="bg-purple-100"
+            buttonHoverBgColor="hover:bg-purple-200"
+            buttonBorderColor="border-purple-300"
+            bgColor="bg-white"
+        >
+            {page}
+        </LayoutFolderChlank>
+    );
 };

@@ -4,10 +4,11 @@ import Layout from '@/Layouts/Layout';
 import Header from '@/Components/Sections/Header';
 import Footer from '@/Components/Sections/Footer';
 import translationService from '@/Services/TranslationService';
+import AIPerformanceChart from '@/Components/AIPerformanceChart';
 
 // Глобальная функция для получения перевода
 const t = (key, fallback = '') => {
-    return translationService.t(key, fallback);
+  return translationService.t(key, fallback);
 };
 
 /**
@@ -26,7 +27,7 @@ export default function AIServiceDetail({ service, slug }) {
         <div className="container mx-auto px-5 py-12">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Сервис не найден</h2>
-            <Link 
+            <Link
               href={route('electronic.health')}
               className="text-blue-600 hover:text-blue-800 underline"
             >
@@ -74,7 +75,7 @@ export default function AIServiceDetail({ service, slug }) {
     if (service.description) {
       return service.description;
     }
-    
+
     const parts = [];
     if (modalityArray.length > 0) {
       parts.push(`Сервис для анализа ${modalityArray.join(', ')}`);
@@ -85,7 +86,7 @@ export default function AIServiceDetail({ service, slug }) {
     if (pathologyArray.length > 0 && pathologyArray.length <= 2) {
       parts.push(`для выявления ${pathologyArray.join(', ')}`);
     }
-    
+
     return parts.length > 0 ? parts.join(' ') : 'ИИ сервис для медицинской диагностики';
   };
 
@@ -104,7 +105,7 @@ export default function AIServiceDetail({ service, slug }) {
     const pdfTypes = ['pdf'];
     const docTypes = ['doc', 'docx'];
     const excelTypes = ['xls', 'xlsx'];
-    
+
     if (imageTypes.includes(ext)) return 'image';
     if (pdfTypes.includes(ext)) return 'pdf';
     if (docTypes.includes(ext)) return 'document';
@@ -122,13 +123,13 @@ export default function AIServiceDetail({ service, slug }) {
   const handleDownloadDocument = (doc) => {
     const url = doc.url || doc.file_path || doc.path;
     if (!url) return;
-    
+
     // Если это полный URL, используем его напрямую
     if (url.startsWith('http://') || url.startsWith('https://')) {
       window.open(url, '_blank');
       return;
     }
-    
+
     // Иначе формируем URL для скачивания
     const downloadUrl = url.startsWith('/') ? url : `/storage/${url}`;
     const link = window.document.createElement('a');
@@ -148,16 +149,16 @@ export default function AIServiceDetail({ service, slug }) {
   // Функция для рендеринга содержимого документа в модальном окне
   const renderDocumentContent = () => {
     if (!selectedDocument) return null;
-    
+
     const url = selectedDocument.url || selectedDocument.file_path || selectedDocument.path;
     const fullUrl = url?.startsWith('http') ? url : (url?.startsWith('/') ? url : `/storage/${url}`);
     const fileType = getFileType(selectedDocument.name || selectedDocument.file_name || '');
-    
+
     switch (fileType) {
       case 'image':
         return (
-          <img 
-            src={fullUrl} 
+          <img
+            src={fullUrl}
             alt={selectedDocument.name || selectedDocument.file_name || 'Документ'}
             className="max-w-full max-h-[80vh] mx-auto"
           />
@@ -192,11 +193,11 @@ export default function AIServiceDetail({ service, slug }) {
   return (
     <Layout>
       <Head title={`${service.name || 'ИИ Сервис'} - ${t('directions.electronic_health', 'Цифровое здравоохранение')}`} />
-      
+
       {/* Hero блок с изображением на фоне и информационным блоком слева */}
       <div className="relative w-full min-h-[500px] mb-8" style={{ marginTop: '96px' }}>
         {/* Фоновое изображение */}
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: service.image ? `url(${service.image})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -247,6 +248,14 @@ export default function AIServiceDetail({ service, slug }) {
                     </div>
                   </div>
                 )}
+
+                {/* График производительности в Hero блоке */}
+                <div className="mt-8 pt-6 border-t border-gray-100">
+                  <AIPerformanceChart
+                    metrics={service.metrics || {}}
+                    title="Эффективность ИИ"
+                  />
+                </div>
               </div>
             </div>
 
@@ -266,9 +275,9 @@ export default function AIServiceDetail({ service, slug }) {
                     ></iframe>
                   ) : service.image ? (
                     <>
-                      <img 
-                        src={service.image} 
-                        alt={service.name || 'Изображение сервиса'} 
+                      <img
+                        src={service.image}
+                        alt={service.name || 'Изображение сервиса'}
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           e.target.style.display = 'none';
@@ -304,63 +313,57 @@ export default function AIServiceDetail({ service, slug }) {
             <nav className="flex -mb-px">
               <button
                 onClick={() => setActiveTab('brief')}
-                className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'brief'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${activeTab === 'brief'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
               >
                 Краткая информация
               </button>
               <button
                 onClick={() => setActiveTab('purpose')}
-                className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'purpose'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${activeTab === 'purpose'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
               >
                 Назначение и указания по применению
               </button>
               <button
                 onClick={() => setActiveTab('validation')}
-                className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'validation'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${activeTab === 'validation'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
               >
                 Валидация и производительность
               </button>
               <button
                 onClick={() => setActiveTab('warnings')}
-                className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'warnings'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${activeTab === 'warnings'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
               >
                 Предупреждения
               </button>
               {service.publications && service.publications.length > 0 && (
                 <button
                   onClick={() => setActiveTab('publications')}
-                  className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${
-                    activeTab === 'publications'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
+                  className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${activeTab === 'publications'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
                 >
                   Публикации
                 </button>
               )}
               <button
                 onClick={() => setActiveTab('documentation')}
-                className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'documentation'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                className={`py-4 px-6 text-sm font-medium border-b-2 transition-colors ${activeTab === 'documentation'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
               >
                 Документация
               </button>
@@ -433,7 +436,7 @@ export default function AIServiceDetail({ service, slug }) {
                     </p>
                   </div>
                 )}
-                
+
                 <div>
                   <h4 className="text-lg font-semibold mb-2 text-gray-800" style={{ fontWeight: 600, fontSize: '22px', color: '#001C45' }}>
                     Назначение Сервиса:
@@ -471,250 +474,169 @@ export default function AIServiceDetail({ service, slug }) {
 
             {/* Валидация и производительность */}
             {activeTab === 'validation' && (
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold mb-3 text-gray-800">Оценка безопасности и эффективности</h3>
-                
-                {service.validationTable ? (() => {
-                  // Определяем количество колонок на основе первой строки данных
-                  const firstRow = service.validationTable.rows && service.validationTable.rows[0];
-                  if (!firstRow) return <p className="text-gray-700">Данные валидации будут добавлены позже.</p>;
-                  
-                  // Проверяем, есть ли расширенная таблица с множественными патологиями
-                  const hasExtendedTable = firstRow.providerValue2 !== undefined || firstRow.standardValue2 !== undefined;
-                  
-                  if (hasExtendedTable) {
-                    // Расширенная таблица с множественными патологиями
-                    // Подсчитываем количество патологий
-                    let pathologyCount = 0;
-                    for (let i = 1; i <= 20; i++) {
-                      if (firstRow[`providerValue${i}`] !== undefined || firstRow[`standardValue${i}`] !== undefined || firstRow[`prospectiveValue${i}`] !== undefined) {
-                        pathologyCount = i;
-                      } else {
-                        break;
-                      }
-                    }
-                    
-                    // Определяем, есть ли проспективная валидация для какой-либо патологии
-                    const hasProspective = service.validationTable.rows && service.validationTable.rows.some(row => {
-                      for (let i = 1; i <= pathologyCount; i++) {
-                        if (row[`prospectiveValue${i}`] !== undefined && row[`prospectiveValue${i}`] !== '') {
-                          return true;
-                        }
-                      }
-                      return false;
-                    });
-                    
-                    // Создаем массив заголовков колонок
-                    const headers = [];
-                    for (let i = 1; i <= pathologyCount; i++) {
-                      if (firstRow[`providerValue${i}`] !== undefined || firstRow[`standardValue${i}`] !== undefined || firstRow[`prospectiveValue${i}`] !== undefined) {
-                        headers.push({
-                          provider: service.validationTable.providerLabel || 'Валидация поставщика сервиса',
-                          standard: service.validationTable.standardLabel || 'Валидация на эталонном наборе данных',
-                          prospective: service.validationTable.prospectiveLabel || 'Проспективная валидация НПКЦ',
-                          index: i,
-                          hasProspective: hasProspective && (firstRow[`prospectiveValue${i}`] !== undefined && firstRow[`prospectiveValue${i}`] !== '')
-                        });
-                      }
-                    }
-                    
-                    return (
-                      <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
-                          <thead className="bg-gray-50">
-                            <tr>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border border-gray-300">
-                                Параметр
-                              </th>
-                              {headers.map((header, idx) => (
-                                <React.Fragment key={idx}>
-                                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border border-gray-300">
-                                    {header.provider}
-                                  </th>
-                                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border border-gray-300">
-                                    {header.standard}
-                                  </th>
-                                  {header.hasProspective && (
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border border-gray-300">
-                                      {header.prospective}
-                                    </th>
-                                  )}
-                                </React.Fragment>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody className="bg-white divide-y divide-gray-200">
-                            {service.validationTable.rows && service.validationTable.rows.map((row, idx) => (
-                              <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                <td className="px-4 py-3 text-sm text-gray-700 border border-gray-300 font-medium">
-                                  {row.parameter}
-                                </td>
-                                {headers.map((header, hIdx) => (
-                                  <React.Fragment key={hIdx}>
-                                    <td className="px-4 py-3 text-sm text-gray-900 border border-gray-300">
-                                      {row[`providerValue${header.index}`] || ''}
-                                    </td>
-                                    <td className="px-4 py-3 text-sm text-gray-900 border border-gray-300">
-                                      {row[`standardValue${header.index}`] || ''}
-                                    </td>
-                                    {header.hasProspective && (
-                                      <td className="px-4 py-3 text-sm text-gray-900 border border-gray-300">
-                                        {row[`prospectiveValue${header.index}`] || ''}
-                                      </td>
-                                    )}
-                                  </React.Fragment>
-                                ))}
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    );
-                  } else {
-                    // Простая таблица с двумя колонками
-                    return (
-                      <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
-                          <thead className="bg-gray-50">
-                            <tr>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border border-gray-300">
-                                Параметр
-                              </th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border border-gray-300">
-                                {service.validationTable.providerLabel || 'Валидация поставщика сервиса'}
-                              </th>
-                              <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border border-gray-300">
-                                {service.validationTable.standardLabel || 'Валидация на эталонном наборе данных'}
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody className="bg-white divide-y divide-gray-200">
-                            {service.validationTable.rows && service.validationTable.rows.map((row, idx) => (
-                              <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                <td className="px-4 py-3 text-sm text-gray-700 border border-gray-300 font-medium">
-                                  {row.parameter}
-                                </td>
-                                <td className="px-4 py-3 text-sm text-gray-900 border border-gray-300">
-                                  {row.providerValue || ''}
-                                </td>
-                                <td className="px-4 py-3 text-sm text-gray-900 border border-gray-300">
-                                  {row.standardValue || ''}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    );
-                  }
-                })() : (
-                  <p className="text-gray-700">Данные валидации будут добавлены позже.</p>
-                )}
-
-                {service.effectiveness && (
-                  <div className="mt-4">
-                    <p className="text-gray-700">{service.effectiveness}</p>
+              <div className="space-y-6">
+                <div className="flex flex-col md:flex-row gap-8 items-start">
+                  <div className="w-full md:w-1/3 bg-gray-50 p-6 rounded-xl border border-gray-100">
+                    <AIPerformanceChart
+                      metrics={service.metrics || {}}
+                      title="Метрики валидации"
+                    />
+                    <div className="mt-4 text-xs text-gray-500 text-center italic">
+                      * Данные получены в ходе клинических испытаний и технической валидации
+                    </div>
                   </div>
-                )}
+                  <div className="w-full md:w-2/3">
+                    <h3 className="text-xl font-semibold mb-4 text-gray-800">Оценка безопасности и эффективности</h3>
+
+                    {service.validationTable ? (() => {
+                      if (service.validationTable.headers) {
+                        const headers = service.validationTable.headers;
+                        return (
+                          <div className="overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-200 border border-gray-200 text-sm">
+                              <thead className="bg-gray-50">
+                                <tr>
+                                  <th rowSpan="2" className="px-4 py-3 text-left font-bold text-gray-700 uppercase border border-gray-300">Параметр</th>
+                                  {headers.map((h, i) => (
+                                    <th key={i} colSpan={h.hasProspective ? 3 : 2} className="px-4 py-2 text-center font-bold text-gray-800 uppercase border border-gray-300 bg-gray-100">{h.title}</th>
+                                  ))}
+                                </tr>
+                                <tr>
+                                  {headers.map((h, i) => (
+                                    <React.Fragment key={i}>
+                                      <th className="px-4 py-2 text-center text-xs border border-gray-300">{h.provider}</th>
+                                      <th className="px-4 py-2 text-center text-xs border border-gray-300">{h.standard}</th>
+                                      {h.hasProspective && <th className="px-4 py-2 text-center text-xs border border-gray-300">{h.prospective}</th>}
+                                    </React.Fragment>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {service.validationTable.rows?.map((row, i) => (
+                                  <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                    <td className="px-4 py-2 font-medium border border-gray-300">{row.parameter}</td>
+                                    {headers.map((h, hi) => (
+                                      <React.Fragment key={hi}>
+                                        <td className="px-4 py-2 text-center border border-gray-300">{row[`providerValue${h.index}`] || '-'}</td>
+                                        <td className="px-4 py-2 text-center border border-gray-300">{row[`standardValue${h.index}`] || '-'}</td>
+                                        {h.hasProspective && <td className="px-4 py-2 text-center border border-gray-300">{row[`prospectiveValue${h.index}`] || '-'}</td>}
+                                      </React.Fragment>
+                                    ))}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <div className="overflow-x-auto">
+                            <table className="min-w-full border border-gray-200">
+                              <thead className="bg-gray-50 uppercase text-xs">
+                                <tr>
+                                  <th className="px-4 py-3 text-left border border-gray-300">Параметр</th>
+                                  <th className="px-4 py-3 text-left border border-gray-300">{service.validationTable.providerLabel || 'Разработчик'}</th>
+                                  <th className="px-4 py-3 text-left border border-gray-300">{service.validationTable.standardLabel || 'Референт'}</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {service.validationTable.rows?.map((row, i) => (
+                                  <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                    <td className="px-4 py-2 font-medium border border-gray-300">{row.parameter}</td>
+                                    <td className="px-4 py-2 border border-gray-300">{row.providerValue || ''}</td>
+                                    <td className="px-4 py-2 border border-gray-300">{row.standardValue || ''}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        );
+                      }
+                    })() : (
+                      <p className="text-gray-700 italic">Данные валидации будут добавлены позже.</p>
+                    )}
+
+                    {service.effectiveness && (
+                      <div className="mt-8 p-6 bg-blue-50 rounded-xl border border-blue-100 text-gray-800 leading-relaxed shadow-sm">
+                        <div className="flex items-start gap-4">
+                          <svg className="w-6 h-6 text-blue-600 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <p>{service.effectiveness}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
 
             {/* Предупреждения */}
             {activeTab === 'warnings' && (
-              <div className="space-y-6">
-                {/* Информация о рисках */}
+              <div className="space-y-8">
                 {service.risks && service.risks.length > 0 && (
-                  <div>
-                    <h4 className="text-lg font-semibold mb-3 text-gray-800">Информация о рисках применения Сервиса:</h4>
-                    <ul className="list-disc list-inside space-y-2 text-gray-700">
-                      {service.risks.map((risk, idx) => (
-                        <li key={idx}>{risk}</li>
-                      ))}
+                  <div className="bg-red-50 p-6 rounded-xl border border-red-100">
+                    <h4 className="text-lg font-bold mb-4 text-red-900 flex items-center gap-2">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                      Информация о рисках:
+                    </h4>
+                    <ul className="list-disc list-inside space-y-2 text-red-800">
+                      {service.risks.map((risk, idx) => <li key={idx}>{risk}</li>)}
                     </ul>
                   </div>
                 )}
 
-                {/* Ограничения использования */}
                 {service.limitations && (
-                  <div>
-                    <h4 className="text-lg font-semibold mb-3 text-gray-800">Ограничения использования Сервиса:</h4>
-                    {service.limitations.demographic && service.limitations.demographic.length > 0 && (
-                      <div className="mb-4">
-                        <h5 className="font-semibold mb-2 text-gray-700">Демографические:</h5>
-                        <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                          {service.limitations.demographic.map((item, idx) => (
-                            <li key={idx}>{item}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {service.limitations.personal && service.limitations.personal.length > 0 && (
-                      <div className="mb-4">
-                        <h5 className="font-semibold mb-2 text-gray-700">Персональные:</h5>
-                        <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                          {service.limitations.personal.map((item, idx) => (
-                            <li key={idx}>{item}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {service.limitations.technical && service.limitations.technical.length > 0 && (
-                      <div className="mb-4">
-                        <h5 className="font-semibold mb-2 text-gray-700">Технические:</h5>
-                        <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                          {service.limitations.technical.map((item, idx) => (
-                            <li key={idx}>{item}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {service.limitations.additional && service.limitations.additional.length > 0 && (
-                      <div className="mb-4">
-                        <h5 className="font-semibold mb-2 text-gray-700">Дополнительные ограничения алгоритмов, анализирующих отдельные семиотические признаки:</h5>
-                        <ul className="list-disc list-inside space-y-1 text-gray-700 ml-4">
-                          {service.limitations.additional.map((item, idx) => (
-                            <li key={idx}>{item}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                  <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                    <h4 className="text-xl font-bold mb-6 text-gray-800 border-b pb-3">Ограничения использования:</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      {['demographic', 'personal', 'technical'].map((cat) => (
+                        service.limitations[cat] && service.limitations[cat].length > 0 && (
+                          <div key={cat}>
+                            <h5 className="font-bold text-gray-700 mb-3 uppercase text-xs tracking-wider">
+                              {cat === 'demographic' ? 'Демографические' : cat === 'personal' ? 'Персональные' : 'Технические'}
+                            </h5>
+                            <ul className="list-disc list-inside space-y-2 text-sm text-gray-600">
+                              {service.limitations[cat].map((item, idx) => <li key={idx}>{item}</li>)}
+                            </ul>
+                          </div>
+                        )
+                      ))}
+                    </div>
                   </div>
                 )}
 
-                {/* Причины прекращения использования */}
-                {service.discontinuationReasons && service.discontinuationReasons.length > 0 && (
-                  <div>
-                    <h4 className="text-lg font-semibold mb-3 text-gray-800">Причины, требующие прекращения использования Сервиса:</h4>
-                    <ul className="list-disc list-inside space-y-2 text-gray-700">
-                      {service.discontinuationReasons.map((reason, idx) => (
-                        <li key={idx}>{reason}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Случаи приостановки использования */}
-                {service.suspensionCases && service.suspensionCases.length > 0 && (
-                  <div>
-                    <h4 className="text-lg font-semibold mb-3 text-gray-800">Случаи, при которых рекомендуется приостановка использования сервиса и консультация с разработчиками:</h4>
-                    <ul className="list-disc list-inside space-y-2 text-gray-700">
-                      {service.suspensionCases.map((case_item, idx) => (
-                        <li key={idx}>{case_item}</li>
-                      ))}
-                    </ul>
+                {(service.discontinuationReasons || service.suspensionCases) && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {service.discontinuationReasons && (
+                      <div className="bg-orange-50 p-6 rounded-xl border border-orange-100">
+                        <h4 className="font-bold text-orange-900 mb-4">Причины прекращения использования:</h4>
+                        <ul className="list-disc list-inside space-y-2 text-sm text-orange-800">
+                          {service.discontinuationReasons.map((r, i) => <li key={i}>{r}</li>)}
+                        </ul>
+                      </div>
+                    )}
+                    {service.suspensionCases && (
+                      <div className="bg-yellow-50 p-6 rounded-xl border border-yellow-100">
+                        <h4 className="font-bold text-yellow-900 mb-4">Случаи приостановки:</h4>
+                        <ul className="list-disc list-inside space-y-2 text-sm text-yellow-800">
+                          {service.suspensionCases.map((c, i) => <li key={i}>{c}</li>)}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             )}
 
             {/* Публикации */}
-            {activeTab === 'publications' && service.publications && service.publications.length > 0 && (
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold mb-3 text-gray-800">Публикации</h3>
-                <div className="space-y-3">
-                  {service.publications.map((pub, idx) => (
-                    <div key={idx} className="border-l-4 border-blue-500 pl-4 py-2">
-                      <p className="text-gray-700 leading-relaxed">{pub}</p>
+            {activeTab === 'publications' && (
+              <div className="space-y-6">
+                <h3 className="text-xl font-bold text-gray-800 border-l-4 border-blue-600 pl-4">Научные публикации</h3>
+                <div className="grid gap-4">
+                  {service.publications?.map((pub, idx) => (
+                    <div key={idx} className="bg-gray-50 p-5 rounded-lg border border-gray-100 hover:border-blue-200 transition-colors shadow-sm">
+                      <p className="text-gray-700 leading-relaxed italic">"{pub}"</p>
                     </div>
                   ))}
                 </div>
@@ -723,82 +645,43 @@ export default function AIServiceDetail({ service, slug }) {
 
             {/* Документация */}
             {activeTab === 'documentation' && (
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold mb-3 text-gray-800">Документация</h3>
+              <div className="space-y-6">
+                <h3 className="text-xl font-bold text-gray-800">Документация</h3>
                 {documents.length > 0 ? (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
+                  <div className="overflow-x-auto shadow-sm rounded-lg border border-gray-200">
+                    <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border border-gray-300">
-                            Название документа
-                          </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border border-gray-300">
-                            Тип файла
-                          </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border border-gray-300">
-                            Размер
-                          </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border border-gray-300">
-                            Действия
-                          </th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Название</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Тип</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Размер</th>
+                          <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase">Действия</th>
                         </tr>
                       </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {documents.map((doc, idx) => {
-                          const fileName = doc.name || doc.file_name || 'Документ';
-                          const fileType = getFileType(fileName);
-                          const fileExtension = getFileExtension(fileName).toUpperCase();
-                          const fileSize = doc.size || doc.file_size || '-';
-                          
-                          return (
-                            <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                              <td className="px-4 py-3 text-sm text-gray-900 border border-gray-300">
-                                {fileName}
-                              </td>
-                              <td className="px-4 py-3 text-sm text-gray-700 border border-gray-300">
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                  {fileExtension || 'ФАЙЛ'}
-                                </span>
-                              </td>
-                              <td className="px-4 py-3 text-sm text-gray-700 border border-gray-300">
-                                {fileSize}
-                              </td>
-                              <td className="px-4 py-3 text-sm border border-gray-300">
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={() => handleViewDocument(doc)}
-                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                  >
-                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                    Просмотр
-                                  </button>
-                                  <button
-                                    onClick={() => handleDownloadDocument(doc)}
-                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                                  >
-                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                    </svg>
-                                    Скачать
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
+                      <tbody className="bg-white divide-y divide-gray-100">
+                        {documents.map((doc, idx) => (
+                          <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
+                            <td className="px-6 py-4 text-sm font-medium text-gray-900">{doc.name || doc.file_name}</td>
+                            <td className="px-6 py-4">
+                              <span className="px-2 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold rounded uppercase">
+                                {getFileExtension(doc.name || doc.file_name)}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-500">{doc.size || '-'}</td>
+                            <td className="px-6 py-4 text-right">
+                              <div className="flex justify-end gap-2">
+                                <button onClick={() => handleViewDocument(doc)} className="text-blue-600 hover:text-blue-800 text-xs font-bold uppercase tracking-wider">Просмотр</button>
+                                <button onClick={() => handleDownloadDocument(doc)} className="text-green-600 hover:text-green-800 text-xs font-bold uppercase tracking-wider">Скачать</button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <p>Документация будет добавлена позже.</p>
+                  <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                    <p className="text-gray-500 italic">Документация отсутствует или находится в процессе загрузки.</p>
                   </div>
                 )}
               </div>
@@ -806,83 +689,41 @@ export default function AIServiceDetail({ service, slug }) {
           </div>
         </div>
 
-        {/* Видео-материалы (если есть) */}
+        {/* Видео-материалы */}
         {service.videos && service.videos.length > 0 && (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-semibold mb-4 text-gray-800">Видео-материалы</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white rounded-xl shadow-md p-8 mb-8 border border-gray-100">
+            <h3 className="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-3">
+              <div className="w-1.5 h-8 bg-red-600 rounded-full"></div>
+              Видео-материалы
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {service.videos.map((video, idx) => (
-                <div key={idx} className="relative" style={{ paddingBottom: '56.25%' }}>
-                  <iframe
-                    className="absolute top-0 left-0 w-full h-full rounded-lg"
-                    src={video.url}
-                    title={video.title || `Видео ${idx + 1}`}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
+                <div key={idx} className="bg-gray-100 rounded-xl overflow-hidden shadow-inner aspect-video">
+                  <iframe className="w-full h-full" src={video.url} title={video.title || `Video ${idx + 1}`} frameBorder="0" allowFullScreen />
                 </div>
               ))}
             </div>
           </div>
         )}
-
       </div>
 
-      {/* Модальное окно для просмотра документа */}
+      {/* Модальное окно просмотра документов */}
       {isModalOpen && selectedDocument && (
-        <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            {/* Фон модального окна */}
-            <div 
-              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
-              onClick={handleCloseModal}
-            ></div>
-
-            {/* Центрирование модального окна */}
-            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-            {/* Модальное окно */}
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-6xl sm:w-full">
-              {/* Заголовок модального окна */}
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                    {selectedDocument.name || selectedDocument.file_name || 'Документ'}
-                  </h3>
-                  <button
-                    onClick={handleCloseModal}
-                    className="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500"
-                  >
-                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-
-              {/* Содержимое модального окна */}
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 max-h-[80vh] overflow-y-auto">
-                {renderDocumentContent()}
-              </div>
-
-              {/* Футер модального окна */}
-              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-gray-200">
-                <button
-                  type="button"
-                  onClick={() => handleDownloadDocument(selectedDocument)}
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
-                >
-                  Скачать
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCloseModal}
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                >
-                  Закрыть
-                </button>
-              </div>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCloseModal}></div>
+          <div className="relative bg-white w-full max-w-6xl h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div className="px-6 py-4 border-b flex items-center justify-between bg-gray-50">
+              <h3 className="font-bold text-gray-800 truncate pr-8">{selectedDocument.name || selectedDocument.file_name}</h3>
+              <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600 transition-colors">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="flex-grow bg-gray-200 overflow-auto flex items-center justify-center">
+              {renderDocumentContent()}
+            </div>
+            <div className="p-4 border-t bg-white flex justify-end gap-3">
+              <button onClick={handleCloseModal} className="px-6 py-2 text-gray-600 font-bold hover:bg-gray-100 rounded-lg">Закрыть</button>
+              <button onClick={() => handleDownloadDocument(selectedDocument)} className="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 shadow-lg shadow-blue-200">Скачать оригинал</button>
             </div>
           </div>
         </div>
@@ -890,4 +731,3 @@ export default function AIServiceDetail({ service, slug }) {
     </Layout>
   );
 }
-

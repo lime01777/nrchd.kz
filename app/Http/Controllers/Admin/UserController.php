@@ -18,6 +18,26 @@ class UserController extends Controller
         'user' => 'Пользователь',
     ];
 
+    private const PERMISSIONS_MAP = [
+        'dashboard' => 'Главная',
+        'assistant' => 'AI Аналитик',
+        'registry' => 'KPI и Перечень (ПТЗ)',
+        'ai_protocols' => 'Клин. протоколы ИИ',
+        'news' => 'Новости',
+        'media' => 'СМИ о нас',
+        'comments' => 'Комментарии',
+        'documents' => 'Документы',
+        'otz_applications' => 'Заявки РТЗ',
+        'medtech' => 'Платформа MedTech',
+        'vacancies' => 'Вакансии',
+        'vacancy_applications' => 'Заявки на вакансии',
+        'contact_applications' => 'Заявки обратной связи',
+        'youth_health_centers' => 'МЦЗ (Карта)',
+        'clinics' => 'Клиники Казахстана',
+        'users' => 'Пользователи',
+        'settings' => 'Настройки',
+    ];
+
     /**
      * Display a listing of the resource.
      */
@@ -63,6 +83,7 @@ class UserController extends Controller
     {
         return Inertia::render('Admin/Users/Edit', [
             'availableRoles' => self::ROLE_LABELS,
+            'availablePermissions' => self::PERMISSIONS_MAP,
         ]);
     }
 
@@ -83,6 +104,7 @@ class UserController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
+            'permissions' => $request->input('permissions', []),
         ]);
 
         return redirect()->route('admin.admin.users')->with('success', 'Пользователь успешно создан');
@@ -101,8 +123,10 @@ class UserController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'role' => $user->role,
+                'permissions' => $user->permissions ?: [],
             ],
             'availableRoles' => self::ROLE_LABELS,
+            'availablePermissions' => self::PERMISSIONS_MAP,
         ]);
     }
 
@@ -132,6 +156,8 @@ class UserController extends Controller
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
         }
+
+        $user->permissions = $request->input('permissions', []);
 
         $user->save();
 
