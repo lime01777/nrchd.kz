@@ -118,50 +118,66 @@ class NewsPublicController extends Controller
             ->values()
             ->all();
 
+        // Вспомогательная функция для очистки невалидных UTF-8 символов
+        $cleanUtf8 = function ($item) use (&$cleanUtf8) {
+            if (is_string($item)) {
+                return mb_convert_encoding($item, 'UTF-8', 'UTF-8');
+            } elseif (is_array($item)) {
+                $cleaned = [];
+                foreach ($item as $k => $v) {
+                    $cleaned[$k] = $cleanUtf8($v);
+                }
+                return $cleaned;
+            }
+            return $item;
+        };
+
+        $newsData = [
+            'id' => $news->id,
+            'title' => $news->title,
+            'slug' => $news->slug,
+            'excerpt' => $news->excerpt,
+            'type' => $news->type,
+            'body' => $news->body,
+            'cover_url' => $news->cover_url,
+            'cover_thumb_url' => $news->cover_thumb_url,
+            'cover_image_alt' => $news->cover_image_alt,
+            'seo_title' => $seoTitle,
+            'seo_description' => $seoDescription,
+            'published_at' => $news->published_at?->format('Y-m-d H:i:s'),
+            'published_at_formatted' => $news->published_at?->format('d.m.Y'),
+            'published_at_full' => $news->published_at ? $news->published_at->format('d.m.Y H:i') : null,
+            'external_url' => $news->external_url,
+            'media' => $media,
+            'gallery_images' => $galleryImages,
+            'gallery_videos' => $galleryVideos,
+            'videos' => $videoItems,
+            'social_instagram' => $news->social_instagram ?? null,
+            'social_facebook' => $news->social_facebook ?? null,
+            'social_youtube' => $news->social_youtube ?? null,
+            'social_telegram' => $news->social_telegram ?? null,
+            'comments' => $news->comments()
+                ->where('is_approved', true)
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->map(function($c) {
+                    return [
+                        'id' => $c->id,
+                        'name' => $c->name,
+                        'content' => $c->content,
+                        'created_at' => $c->created_at->format('d.m.Y H:i'),
+                    ];
+                }),
+        ];
+
         return Inertia::render('News/Show', [
-            'news' => [
-                'id' => $news->id,
-                'title' => $news->title,
-                'slug' => $news->slug,
-                'excerpt' => $news->excerpt,
-                'type' => $news->type,
-                'body' => $news->body,
-                'cover_url' => $news->cover_url,
-                'cover_thumb_url' => $news->cover_thumb_url,
-                'cover_image_alt' => $news->cover_image_alt,
-                'seo_title' => $seoTitle,
-                'seo_description' => $seoDescription,
-                'published_at' => $news->published_at?->format('Y-m-d H:i:s'),
-                'published_at_formatted' => $news->published_at?->format('d.m.Y'),
-                'published_at_full' => $news->published_at ? $news->published_at->format('d.m.Y H:i') : null,
-                'external_url' => $news->external_url,
-                'media' => $media,
-                'gallery_images' => $galleryImages,
-                'gallery_videos' => $galleryVideos,
-                'videos' => $videoItems,
-                'social_instagram' => $news->social_instagram ?? null,
-                'social_facebook' => $news->social_facebook ?? null,
-                'social_youtube' => $news->social_youtube ?? null,
-                'social_telegram' => $news->social_telegram ?? null,
-                'comments' => $news->comments()
-                    ->where('is_approved', true)
-                    ->orderBy('created_at', 'desc')
-                    ->get()
-                    ->map(function($c) {
-                        return [
-                            'id' => $c->id,
-                            'name' => $c->name,
-                            'content' => $c->content,
-                            'created_at' => $c->created_at->format('d.m.Y H:i'),
-                        ];
-                    }),
-            ],
-            'relatedNews' => $relatedNews,
-            'seo' => [
+            'news' => $cleanUtf8($newsData),
+            'relatedNews' => $cleanUtf8($relatedNews->toArray()),
+            'seo' => $cleanUtf8([
                 'title' => $seoTitle,
                 'description' => $seoDescription,
                 'image' => $coverImageUrl,
-            ],
+            ]),
         ])->withViewData([
             'title' => $seoTitle,
             'description' => $seoDescription,

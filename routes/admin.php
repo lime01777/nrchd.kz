@@ -23,6 +23,10 @@ use App\Http\Controllers\Admin\ClinicController;
 use App\Http\Controllers\Admin\YouthHealthCenterController;
 
 Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(function () {
+    Route::get('/', function () {
+        return redirect()->route('admin.dashboard');
+    })->name('index');
+
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
     // Управление комментариями
