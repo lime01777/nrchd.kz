@@ -496,7 +496,21 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                                                 className="h-4 w-4 border-gray-200 text-blue-600 focus:ring-blue-500"
                                             />
                                             <label htmlFor="locale_en" className="ml-2 block text-sm font-medium text-gray-700 cursor-pointer">
-                                                English (отображается везде)
+                                                English
+                                            </label>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <input
+                                                id="locale_all"
+                                                name="locale"
+                                                type="radio"
+                                                value="all"
+                                                checked={data.locale === 'all'}
+                                                onChange={(e) => setData('locale', e.target.value)}
+                                                className="h-4 w-4 border-gray-200 text-blue-600 focus:ring-blue-500"
+                                            />
+                                            <label htmlFor="locale_all" className="ml-2 block text-sm font-medium text-gray-700 cursor-pointer">
+                                                Во всех языковых версиях
                                             </label>
                                         </div>
                                     </div>

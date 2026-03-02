@@ -61,7 +61,7 @@ class NewsPublicController extends Controller
         // Получаем 3 последние опубликованные новости (кроме текущей)
         $currentLocale = app()->getLocale();
         $relatedNews = News::published()
-            ->when($currentLocale !== 'en', fn($q) => $q->where('locale', $currentLocale))
+            ->when($currentLocale !== 'en', fn($q) => $q->whereIn('locale', [$currentLocale, 'all']))
             ->ofType($news->type ?? News::TYPE_NEWS)
             ->where('id', '!=', $news->id)
             ->orderByDesc('published_at')
@@ -196,7 +196,7 @@ class NewsPublicController extends Controller
         // Фильтрация по языку: для английской версии показываем все новости, для остальных - только соответствующие языку
         $currentLocale = app()->getLocale();
         if ($currentLocale !== 'en') {
-            $query->where('locale', $currentLocale);
+            $query->whereIn('locale', [$currentLocale, 'all']);
         }
 
         if ($request->filled('search')) {
@@ -281,7 +281,7 @@ class NewsPublicController extends Controller
         $currentLocale = app()->getLocale();
         $tags = News::published()
             ->ofType($type)
-            ->when($currentLocale !== 'en', fn($q) => $q->where('locale', $currentLocale))
+            ->when($currentLocale !== 'en', fn($q) => $q->whereIn('locale', [$currentLocale, 'all']))
             ->pluck('tags')
             ->flatMap(function ($item) {
                 if (empty($item)) {

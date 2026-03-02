@@ -227,7 +227,7 @@ export default function Index({ news, filters, section = 'news', sectionMeta = n
                                             {item.status === 'published' ? 'Опубликовано' : 'Черновик'}
                                         </span>
                                         <span className="absolute right-4 top-4 rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-blue-800">
-                                            {item.locale === 'ru' ? 'RU' : item.locale === 'kz' ? 'KZ' : item.locale === 'en' ? 'EN' : 'RU'}
+                                            {item.locale === 'all' ? 'ВСЕ' : item.locale === 'ru' ? 'RU' : item.locale === 'kz' ? 'KZ' : item.locale === 'en' ? 'EN' : 'RU'}
                                         </span>
                                     </div>
 
