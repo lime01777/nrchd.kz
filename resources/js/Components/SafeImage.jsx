@@ -4,17 +4,18 @@ import React, { useState } from 'react';
  * Безопасный компонент для загрузки изображений с обработкой ошибок
  * Предотвращает DOMException при загрузке невалидных медиа-файлов
  */
-export default function SafeImage({ 
-  src, 
-  alt = '', 
-  className = '', 
+export default function SafeImage({
+  src,
+  alt = '',
+  className = '',
   fallbackSrc = '/img/placeholder.jpg',
   onLoad,
   onError,
-  ...props 
+  ...props
 }) {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasTriedFallback, setHasTriedFallback] = useState(false);
 
   const handleLoad = (e) => {
     setIsLoading(false);
@@ -26,7 +27,7 @@ export default function SafeImage({
 
   const handleError = (e) => {
     // Предотвращаем бесконечный цикл - если уже пытались загрузить fallback, сразу показываем placeholder UI
-    if (e.target.dataset.fallbackAttempted) {
+    if (hasTriedFallback) {
       setIsLoading(false);
       setHasError(true);
       if (onError) {
@@ -36,11 +37,11 @@ export default function SafeImage({
     }
 
     console.warn('Ошибка загрузки изображения:', src);
-    
+
     // Пытаемся загрузить fallback изображение только один раз и только если он указан и не пустой
     if (fallbackSrc && fallbackSrc.trim() !== '' && e.target.src !== fallbackSrc && !fallbackSrc.includes('data:image')) {
       try {
-        e.target.dataset.fallbackAttempted = 'true';
+        setHasTriedFallback(true);
         e.target.src = fallbackSrc;
         // Не устанавливаем hasError сразу, ждем результата загрузки fallback
         return;
@@ -48,11 +49,11 @@ export default function SafeImage({
         console.error('Ошибка при загрузке fallback изображения:', fallbackError);
       }
     }
-    
+
     // Если fallback не помог или его нет, сразу показываем placeholder UI
     setIsLoading(false);
     setHasError(true);
-    
+
     if (onError) {
       onError(e);
     }
@@ -60,14 +61,14 @@ export default function SafeImage({
 
   // Проверяем валидность src перед рендерингом
   const isValidSrc = src && (
-    typeof src === 'string' && 
-    src.trim() !== '' && 
+    typeof src === 'string' &&
+    src.trim() !== '' &&
     (src.startsWith('http') || src.startsWith('/'))
   );
-  
+
   // Проверяем, является ли это blob URL (может вызвать CORS ошибки)
   const isBlobUrl = src && typeof src === 'string' && src.startsWith('blob:');
-  
+
   // Если это blob URL, показываем fallback (избегаем CORS ошибок)
   if (isBlobUrl) {
     console.warn('Обнаружен blob URL, показываем fallback:', src);

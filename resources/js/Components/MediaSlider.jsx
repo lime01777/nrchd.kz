@@ -37,8 +37,8 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  // Фильтруем и нормализуем медиа
-  const normalizedMedia = media
+  // Фильтруем и нормализуем медиа (используем useMemo чтобы избежать лишних пересчетов)
+  const normalizedMedia = React.useMemo(() => media
     .map((item, index) => {
       if (!item) {
         return null;
@@ -47,7 +47,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
       if (typeof item === 'string') {
         const type = detectTypeByPath(item);
         return {
-          id: generateId(),
+          id: `media-str-${index}`,
           type,
           path: item,
           url: item,
@@ -63,7 +63,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
         const type = item.type || detectTypeByPath(rawPath);
 
         return {
-          id: item.id || generateId(),
+          id: item.id || `media-obj-${index}`,
           type,
           path: rawPath,
           url: item.url || item.path || rawPath,
@@ -77,10 +77,10 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
 
       return null;
     })
-    .filter(Boolean);
+    .filter(Boolean), [media]);
 
   const mediaContainsVideo = normalizedMedia.some((item) => item?.type === 'video');
-  const computedAutoPlay = autoPlay && !mediaContainsVideo;
+  const computedAutoPlay = autoPlay && !mediaContainsVideo && !isLightboxOpen;
   const [isPlaying, setIsPlaying] = useState(computedAutoPlay);
 
   useEffect(() => {
@@ -88,18 +88,18 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
   }, [computedAutoPlay]);
 
   useEffect(() => {
-    if (!computedAutoPlay || !isPlaying || normalizedMedia.length <= 1) return;
+    if (!computedAutoPlay || !isPlaying || normalizedMedia.length <= 1 || isLightboxOpen) return;
 
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % normalizedMedia.length);
     }, interval);
 
     return () => clearInterval(timer);
-  }, [computedAutoPlay, isPlaying, interval, normalizedMedia.length]);
+  }, [computedAutoPlay, isPlaying, interval, normalizedMedia.length, isLightboxOpen]);
 
   // Обработчики навигации
   const goToPrevious = () => {
-    setCurrentIndex((prevIndex) => 
+    setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? normalizedMedia.length - 1 : prevIndex - 1
     );
   };
@@ -120,6 +120,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
     }
     // Предотвращаем повторное открытие, если уже открыто
     if (!isLightboxOpen) {
+      setIsPlaying(false);
       setLightboxIndex(currentIndex);
       setIsLightboxOpen(true);
     }
@@ -128,6 +129,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
   // Обработчик клика по превью для открытия в полном размере
   const handleThumbnailClick = (index) => {
     if (!isLightboxOpen) {
+      setIsPlaying(false);
       setCurrentIndex(index);
       setLightboxIndex(index);
       setIsLightboxOpen(true);
@@ -160,7 +162,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
     <>
       <div className={`flex flex-col gap-4 ${className}`}>
         {/* Основной контент - большое изображение/видео */}
-        <div 
+        <div
           className="relative w-full h-64 md:h-80 lg:h-96 bg-black rounded-lg overflow-hidden cursor-pointer group select-none"
           onClick={handleMainMediaClick}
           onMouseDown={(e) => {
@@ -169,9 +171,9 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
               e.preventDefault();
             }
           }}
-          style={{ 
-            userSelect: 'none', 
-            WebkitUserSelect: 'none', 
+          style={{
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
             MozUserSelect: 'none',
             msUserSelect: 'none'
           }}
@@ -219,7 +221,7 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
               fallbackSrc="/img/placeholder.jpg"
             />
           )}
-          
+
           {/* Overlay с иконкой увеличения - только для изображений */}
           {currentMedia.type === 'image' && (
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center pointer-events-none">
@@ -268,17 +270,16 @@ export default function MediaSlider({ media = [], className = '', autoPlay = tru
                         e.preventDefault();
                       }
                     }}
-                    style={{ 
-                      userSelect: 'none', 
-                      WebkitUserSelect: 'none', 
+                    style={{
+                      userSelect: 'none',
+                      WebkitUserSelect: 'none',
                       MozUserSelect: 'none',
                       msUserSelect: 'none'
                     }}
-                    className={`relative flex-shrink-0 w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden border-2 transition-all duration-200 select-none ${
-                      isActive
-                        ? 'border-blue-600 ring-2 ring-blue-400 ring-offset-2 scale-105'
-                        : 'border-gray-300 hover:border-blue-400 hover:scale-105'
-                    }`}
+                    className={`relative flex-shrink-0 w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden border-2 transition-all duration-200 select-none ${isActive
+                      ? 'border-blue-600 ring-2 ring-blue-400 ring-offset-2 scale-105'
+                      : 'border-gray-300 hover:border-blue-400 hover:scale-105'
+                      }`}
                     aria-label={`Просмотр ${item.name || `Медиа ${index + 1}`}`}
                   >
                     {item.type === 'video' ? (
