@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
+import ChangePasswordModal from '@/Components/Admin/ChangePasswordModal';
 
 export default function AdminLayout({ children, title }) {
   const page = usePage();
   const { auth } = page.props;
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
 
   const isCurrent = (...patterns) => patterns.some((pattern) => route().current(pattern));
 
@@ -304,18 +306,27 @@ export default function AdminLayout({ children, title }) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <div className="ml-3">
+              <div className="ml-3 flex flex-col items-start gap-1">
                 <p className="text-sm font-medium text-gray-700">
                   {auth?.user?.name || 'Администратор'}
                 </p>
-                <Link
-                  href={route('logout')}
-                  method="post"
-                  as="button"
-                  className="text-xs font-medium text-gray-500 hover:text-gray-700"
-                >
-                  Выйти
-                </Link>
+                <div className="flex items-center gap-3 mt-1">
+                  <button
+                    type="button"
+                    onClick={() => setPasswordModalOpen(true)}
+                    className="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors"
+                  >
+                    Сменить пароль
+                  </button>
+                  <Link
+                    href={route('logout')}
+                    method="post"
+                    as="button"
+                    className="text-xs font-medium text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    Выйти
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -356,6 +367,11 @@ export default function AdminLayout({ children, title }) {
           </div>
         </main>
       </div>
+
+      <ChangePasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setPasswordModalOpen(false)}
+      />
     </div>
   );
 }
