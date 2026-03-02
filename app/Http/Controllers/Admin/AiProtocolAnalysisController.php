@@ -15,7 +15,7 @@ class AiProtocolAnalysisController extends Controller
 {
     public function index()
     {
-        $analyses = AiProtocolAnalysis::orderBy('created_at', 'desc')->get();
+        $analyses = AiProtocolAnalysis::with('user')->orderBy('created_at', 'desc')->get();
         return Inertia::render('Admin/AiProtocol/Index', [
             'analyses' => $analyses
         ]);

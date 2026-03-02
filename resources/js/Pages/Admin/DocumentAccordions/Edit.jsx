@@ -81,7 +81,7 @@ export default function Edit({ accordion, folders, pages }) {
                     </Link>
                 </div>
 
-                <div className="bg-white shadow-md rounded-lg overflow-hidden p-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-2xl border border-gray-100/50 overflow-hidden p-6">
                     <form onSubmit={handleSubmit}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             <div>

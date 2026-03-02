@@ -110,7 +110,7 @@ export default function NewsCreateNew({ availableCategories = [] }) {
       <div className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Заголовок страницы */}
-          <div className="mb-8 bg-white rounded-lg shadow-sm p-6">
+          <div className="mb-8 bg-white rounded-2xl shadow-sm p-6">
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Создать новость</h1>
@@ -121,7 +121,7 @@ export default function NewsCreateNew({ availableCategories = [] }) {
               <div className="flex gap-3">
                 <Link
                   href={route('admin.news.index')}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+                  className="inline-flex items-center px-4 py-2 border border-gray-200 rounded-2xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
                 >
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -131,7 +131,7 @@ export default function NewsCreateNew({ availableCategories = [] }) {
                 <button
                   type="button"
                   onClick={() => setShowPreview(!showPreview)}
-                  className="inline-flex items-center px-4 py-2 border border-blue-300 rounded-lg shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+                  className="inline-flex items-center px-4 py-2 border border-blue-300 rounded-2xl shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
                 >
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -148,7 +148,7 @@ export default function NewsCreateNew({ availableCategories = [] }) {
             <div className="lg:col-span-2 space-y-6">
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Заголовок */}
-                <div className="bg-white shadow-sm rounded-lg p-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">Заголовок</h2>
                   <div>
                     <InputLabel htmlFor="title" value="Заголовок новости *" />
@@ -170,7 +170,7 @@ export default function NewsCreateNew({ availableCategories = [] }) {
                 </div>
 
                 {/* Содержимое с TipTap редактором */}
-                <div className="bg-white shadow-sm rounded-lg p-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">Содержимое</h2>
                   <div>
                     <InputLabel htmlFor="content" value="Текст новости *" />
@@ -189,7 +189,7 @@ export default function NewsCreateNew({ availableCategories = [] }) {
                 </div>
 
                 {/* Медиа файлы */}
-                <div className="bg-white shadow-sm rounded-lg p-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">
                     Медиа файлы
                     {media.length > 0 && (
@@ -206,11 +206,11 @@ export default function NewsCreateNew({ availableCategories = [] }) {
                 </div>
 
                 {/* Кнопки действий */}
-                <div className="bg-white shadow-sm rounded-lg p-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                   <div className="flex justify-between items-center">
                     <Link
                       href={route('admin.news.index')}
-                      className="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+                      className="inline-flex items-center px-6 py-3 border border-gray-200 rounded-2xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
                     >
                       Отмена
                     </Link>
@@ -222,13 +222,13 @@ export default function NewsCreateNew({ availableCategories = [] }) {
                           setTimeout(() => handleSubmit({ preventDefault: () => {} }), 100);
                         }}
                         disabled={processing}
-                        className="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition disabled:opacity-50"
+                        className="inline-flex items-center px-6 py-3 border border-gray-200 rounded-2xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition disabled:opacity-50"
                       >
                         💾 Сохранить как черновик
                       </button>
                       <PrimaryButton 
                         disabled={processing}
-                        className="px-6 py-3 text-sm font-medium rounded-lg"
+                        className="px-6 py-3 text-sm font-medium rounded-2xl"
                       >
                         {processing ? '⏳ Публикуем...' : '🚀 Опубликовать'}
                       </PrimaryButton>
@@ -241,7 +241,7 @@ export default function NewsCreateNew({ availableCategories = [] }) {
             {/* Боковая панель с настройками */}
             <div className="space-y-6">
               {/* Статус и дата публикации */}
-              <div className="bg-white shadow-sm rounded-lg p-6">
+              <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Публикация</h3>
                 
                 <div className="space-y-4">
@@ -277,7 +277,7 @@ export default function NewsCreateNew({ availableCategories = [] }) {
               </div>
 
               {/* Категории */}
-              <div className="bg-white shadow-sm rounded-lg p-6">
+              <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Категории *
                 </h3>
@@ -290,7 +290,7 @@ export default function NewsCreateNew({ availableCategories = [] }) {
               </div>
 
               {/* Теги */}
-              <div className="bg-white shadow-sm rounded-lg p-6">
+              <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Теги
                   <span className="text-gray-500 text-sm font-normal ml-2">(необязательно)</span>
@@ -303,7 +303,7 @@ export default function NewsCreateNew({ availableCategories = [] }) {
               </div>
 
               {/* Информация */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
                 <h4 className="text-sm font-semibold text-blue-900 mb-2">💡 Подсказки</h4>
                 <ul className="text-xs text-blue-800 space-y-1">
                   <li>• Используйте редактор для форматирования текста</li>
@@ -317,7 +317,7 @@ export default function NewsCreateNew({ availableCategories = [] }) {
 
           {/* Превью новости */}
           {showPreview && (
-            <div className="mt-8 bg-white shadow-lg rounded-lg p-8">
+            <div className="mt-8 bg-white shadow-lg rounded-2xl p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Превью новости</h2>
               
               {data.title && (
@@ -340,13 +340,13 @@ export default function NewsCreateNew({ availableCategories = [] }) {
                     <img 
                       src={media[0].preview || media[0].path} 
                       alt="Обложка" 
-                      className="w-full h-auto rounded-lg shadow-md"
+                      className="w-full h-auto rounded-2xl shadow-md"
                     />
                   ) : (
                     <video 
                       src={media[0].preview || media[0].path} 
                       controls 
-                      className="w-full h-auto rounded-lg shadow-md"
+                      className="w-full h-auto rounded-2xl shadow-md"
                     />
                   )}
                 </div>

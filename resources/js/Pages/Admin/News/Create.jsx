@@ -136,7 +136,7 @@ export default function NewsCreate() {
               <div className="flex gap-3">
                 <Link
                   href={route('admin.news.index')}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="inline-flex items-center px-4 py-2 border border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -146,7 +146,7 @@ export default function NewsCreate() {
                 <button
                   type="button"
                   onClick={() => setShowPreview(!showPreview)}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="inline-flex items-center px-4 py-2 border border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -163,7 +163,7 @@ export default function NewsCreate() {
             <div className="lg:col-span-2">
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Основная информация */}
-                <div className="bg-white shadow rounded-lg p-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                   <h2 className="text-lg font-medium text-gray-900 mb-4">Основная информация</h2>
                   
                   <div className="space-y-4">
@@ -200,7 +200,7 @@ export default function NewsCreate() {
                 </div>
 
                 {/* Медиа */}
-                <div className="bg-white shadow rounded-lg p-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                   <h2 className="text-lg font-medium text-gray-900 mb-4">Медиа файлы</h2>
                   <ModernMediaUploader
                     existingMedia={media}
@@ -215,7 +215,7 @@ export default function NewsCreate() {
                 <div className="flex justify-end space-x-3">
                   <Link
                     href={route('admin.news.index')}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="inline-flex items-center px-4 py-2 border border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
                     Отмена
                   </Link>
@@ -229,7 +229,7 @@ export default function NewsCreate() {
             {/* Боковая панель */}
             <div className="space-y-6">
               {/* Статус и дата публикации */}
-              <div className="bg-white shadow rounded-lg p-6">
+              <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                 <h2 className="text-lg font-medium text-gray-900 mb-4">Публикация</h2>
                 
                 <div className="space-y-4">
@@ -258,7 +258,7 @@ export default function NewsCreate() {
               </div>
 
               {/* Категории */}
-              <div className="bg-white shadow rounded-lg p-6">
+              <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                 <h2 className="text-lg font-medium text-gray-900 mb-4">Категории</h2>
                 <CategorySelector
                   selectedCategories={data.category}
@@ -271,7 +271,7 @@ export default function NewsCreate() {
               </div>
 
               {/* Теги */}
-              <div className="bg-white shadow rounded-lg p-6">
+              <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                 <h2 className="text-lg font-medium text-gray-900 mb-4">Теги</h2>
                 <TagSelector
                   selectedTags={data.tags}
@@ -284,7 +284,7 @@ export default function NewsCreate() {
               </div>
 
               {/* Статистика */}
-              <div className="bg-white shadow rounded-lg p-6">
+              <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                 <h2 className="text-lg font-medium text-gray-900 mb-4">Статистика</h2>
                 <div className="space-y-2 text-sm text-gray-600">
                   <div className="flex justify-between">
@@ -314,7 +314,7 @@ export default function NewsCreate() {
 
           {/* Превью */}
           {showPreview && (
-            <div className="mt-8 bg-white shadow rounded-lg p-6">
+            <div className="mt-8 bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
               <h2 className="text-lg font-medium text-gray-900 mb-4">Превью новости</h2>
               <div className="prose max-w-none">
                 <h1 className="text-2xl font-bold text-gray-900 mb-4">
@@ -332,7 +332,7 @@ export default function NewsCreate() {
                     <h3 className="text-lg font-medium mb-2">Медиа файлы:</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       {media.map((item, index) => (
-                        <div key={index} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                        <div key={index} className="aspect-square bg-gray-100 rounded-2xl overflow-hidden">
                           {item.type === 'video' ? (
                             <video src={item.path} className="w-full h-full object-cover" muted />
                           ) : (

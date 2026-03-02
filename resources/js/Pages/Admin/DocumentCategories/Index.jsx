@@ -12,7 +12,7 @@ export default function Index({ auth, categories }) {
 
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+          <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
             <div className="p-6 text-gray-900">
               <div className="flex justify-between mb-6">
                 <h1 className="text-2xl font-semibold">Категории документов</h1>
@@ -28,7 +28,7 @@ export default function Index({ auth, categories }) {
                 <div className="overflow-x-auto">
                   <table className="min-w-full bg-white">
                     <thead>
-                      <tr className="w-full h-16 border-b border-gray-200 bg-gray-50">
+                      <tr className="w-full h-16 border-b border-gray-200 bg-gray-50/50">
                         <th className="text-left pl-4">ID</th>
                         <th className="text-left">Название</th>
                         <th className="text-left">ID аккордеона</th>
@@ -40,7 +40,7 @@ export default function Index({ auth, categories }) {
                     </thead>
                     <tbody>
                       {categories.map((category) => (
-                        <tr key={category.id} className="h-16 border-b border-gray-200 hover:bg-gray-50">
+                        <tr key={category.id} className="h-16 border-b border-gray-200 hover:bg-gray-50/50">
                           <td className="pl-4">{category.id}</td>
                           <td>{category.title}</td>
                           <td>{category.accordion_id}</td>

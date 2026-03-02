@@ -247,30 +247,42 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
 
     return (
         <AdminLayout title={meta?.title}>
-            <div className="py-8">
+            <div className="min-h-screen bg-gray-50/50 pb-12 pt-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="mb-6">
-                        <h1 className="text-3xl font-bold text-gray-900">
-                            {isEditing
-                                ? (meta?.editLabel || 'Редактировать новость')
-                                : (meta?.createLabel || 'Создать новость')}
-                        </h1>
-                        {meta?.subtitle && (
-                            <p className="mt-1 text-sm text-gray-500">{meta.subtitle}</p>
-                        )}
-                        <Link
-                            href={indexRoute}
-                            className="mt-2 inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
-                        >
-                            <span className="mr-2">←</span>
-                            {meta?.returnLabel || 'Вернуться к списку'}
-                        </Link>
+                    {/* Header Section */}
+                    <div className="mb-8 bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100/80 relative overflow-hidden">
+                        {/* Decorative gradient blob */}
+                        <div className="absolute top-0 right-0 -mt-16 -mr-16 w-48 h-48 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-2xl"></div>
+
+                        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div>
+                                <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
+                                    {isEditing
+                                        ? (meta?.editLabel || 'Редактировать новость')
+                                        : (meta?.createLabel || 'Создать новость')}
+                                </h1>
+                                {meta?.subtitle && (
+                                    <p className="mt-2 text-sm text-gray-500 flex items-center gap-2">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        {meta.subtitle}
+                                    </p>
+                                )}
+                            </div>
+
+                            <Link
+                                href={indexRoute}
+                                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50/50/80 border border-gray-200 rounded-xl hover:bg-gray-100 hover:text-blue-600 transition-colors"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                                {meta?.returnLabel || 'Вернуться к списку'}
+                            </Link>
+                        </div>
                     </div>
 
                     <form onSubmit={(event) => submitForm(event)} className="space-y-6">
                         {/* Парсер URL для материалов СМИ */}
                         {currentType === 'media' && (
-                            <div className="bg-white shadow rounded-lg p-6">
+                            <div className="bg-white/90 backdrop-blur shadow-lg border border-gray-100/50 rounded-2xl p-6 md:p-8">
                                 <UrlParser
                                     initialUrl={data.external_url}
                                     onUrlChange={(url) => {
@@ -317,7 +329,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                             </div>
                         )}
 
-                        <div className="bg-white shadow rounded-lg p-6 space-y-6">
+                        <div className="bg-white/90 backdrop-blur shadow-lg border border-gray-100/50 rounded-2xl p-6 md:p-8 space-y-8">
                             <div>
                                 <InputLabel htmlFor="title" value="Заголовок *" />
                                 <TextInput
@@ -363,7 +375,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                                             id="excerpt"
                                             value={data.excerpt}
                                             onChange={(e) => setData('excerpt', e.target.value)}
-                                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                            className="mt-1 block w-full rounded-xl border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                                             rows={3}
                                             placeholder="Краткое описание новости для превью..."
                                         />
@@ -372,34 +384,35 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
 
                                     <div>
                                         <InputLabel htmlFor="body" value="Текст новости *" />
-                                        <div className="mt-1 border border-gray-300 rounded-md">
+                                        <div className="mt-1 border border-gray-200 rounded-xl overflow-hidden focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500 transition-shadow">
                                             {editor && (
-                                                <div className="border-b border-gray-200 p-2 flex flex-wrap gap-2">
+                                                <div className="border-b border-gray-100 bg-gray-50/50/80 backdrop-blur-sm px-3 py-2 flex flex-wrap gap-1.5 items-center">
                                                     <button
                                                         type="button"
                                                         onClick={() => editor.chain().focus().toggleBold().run()}
-                                                        className={`px-3 py-1 rounded text-sm ${editor.isActive('bold') ? 'bg-gray-200 font-semibold' : 'hover:bg-gray-100'}`}
+                                                        className={`px-3 py-1.5 rounded-2xl text-sm font-medium transition-colors ${editor.isActive('bold') ? 'bg-white shadow-sm text-blue-600 border border-gray-200' : 'text-gray-600 hover:bg-white hover:text-gray-900 border border-transparent'}`}
                                                     >
                                                         Жирный
                                                     </button>
                                                     <button
                                                         type="button"
                                                         onClick={() => editor.chain().focus().toggleItalic().run()}
-                                                        className={`px-3 py-1 rounded text-sm italic ${editor.isActive('italic') ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+                                                        className={`px-3 py-1.5 rounded-2xl text-sm font-medium italic transition-colors ${editor.isActive('italic') ? 'bg-white shadow-sm text-blue-600 border border-gray-200' : 'text-gray-600 hover:bg-white hover:text-gray-900 border border-transparent'}`}
                                                     >
                                                         Курсив
                                                     </button>
+                                                    <div className="w-px h-5 bg-gray-300 mx-1"></div>
                                                     <button
                                                         type="button"
                                                         onClick={() => editor.chain().focus().toggleBulletList().run()}
-                                                        className={`px-3 py-1 rounded text-sm ${editor.isActive('bulletList') ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
+                                                        className={`px-3 py-1.5 rounded-2xl text-sm font-medium transition-colors ${editor.isActive('bulletList') ? 'bg-white shadow-sm text-blue-600 border border-gray-200' : 'text-gray-600 hover:bg-white hover:text-gray-900 border border-transparent'}`}
                                                     >
                                                         Список
                                                     </button>
                                                     <button
                                                         type="button"
                                                         onClick={() => editor.chain().focus().setParagraph().run()}
-                                                        className="px-3 py-1 rounded text-sm hover:bg-gray-100"
+                                                        className="px-3 py-1.5 rounded-2xl text-sm font-medium text-gray-600 hover:bg-white hover:text-gray-900 border border-transparent transition-colors"
                                                     >
                                                         Абзац
                                                     </button>
@@ -430,7 +443,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                                                 id="seo_description"
                                                 value={data.seo_description}
                                                 onChange={(e) => setData('seo_description', e.target.value)}
-                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                                className="mt-1 block w-full rounded-xl border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                                                 rows={2}
                                                 placeholder="Если не указано — используется краткое описание"
                                             />
@@ -443,7 +456,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                 <div>
                                     <InputLabel value="Язык версии / Тіл нұсқасы" className="mb-2" />
-                                    <div className="space-y-3 bg-gray-50 p-3 rounded-md border border-gray-200">
+                                    <div className="space-y-3 bg-gray-50/50 p-4 rounded-xl border border-gray-200 shadow-inner">
                                         <div className="flex items-center">
                                             <input
                                                 id="locale_ru"
@@ -452,7 +465,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                                                 value="ru"
                                                 checked={data.locale === 'ru'}
                                                 onChange={(e) => setData('locale', e.target.value)}
-                                                className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                className="h-4 w-4 border-gray-200 text-blue-600 focus:ring-blue-500"
                                             />
                                             <label htmlFor="locale_ru" className="ml-2 block text-sm font-medium text-gray-700 cursor-pointer">
                                                 Русская версия
@@ -466,7 +479,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                                                 value="kz"
                                                 checked={data.locale === 'kz'}
                                                 onChange={(e) => setData('locale', e.target.value)}
-                                                className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                className="h-4 w-4 border-gray-200 text-blue-600 focus:ring-blue-500"
                                             />
                                             <label htmlFor="locale_kz" className="ml-2 block text-sm font-medium text-gray-700 cursor-pointer">
                                                 Қазақша нұсқасы
@@ -480,7 +493,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                                                 value="en"
                                                 checked={data.locale === 'en'}
                                                 onChange={(e) => setData('locale', e.target.value)}
-                                                className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                className="h-4 w-4 border-gray-200 text-blue-600 focus:ring-blue-500"
                                             />
                                             <label htmlFor="locale_en" className="ml-2 block text-sm font-medium text-gray-700 cursor-pointer">
                                                 English (отображается везде)
@@ -495,7 +508,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                                         id="status"
                                         value={data.status}
                                         onChange={(e) => setData('status', e.target.value)}
-                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                        className="mt-1 block w-full border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors"
                                         required={currentType !== 'media'}
                                     >
                                         <option value="draft">Черновик</option>
@@ -520,7 +533,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                         {/* Категории и медиа только для обычных новостей */}
                         {currentType !== 'media' && (
                             <>
-                                <div className="bg-white shadow rounded-lg p-6">
+                                <div className="bg-white/90 backdrop-blur shadow-lg border border-gray-100/50 rounded-2xl p-6 md:p-8">
                                     <h2 className="text-lg font-medium text-gray-900 mb-4">Категории</h2>
                                     {availableCategories.length === 0 ? (
                                         <p className="text-sm text-gray-500">
@@ -537,7 +550,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                                     <InputError message={errors.category} className="mt-2" />
                                 </div>
 
-                                <div className="bg-white shadow rounded-lg p-6">
+                                <div className="bg-white/90 backdrop-blur shadow-lg border border-gray-100/50 rounded-2xl p-6 md:p-8">
                                     <div className="flex items-center justify-between mb-4">
                                         <div>
                                             <h2 className="text-lg font-medium text-gray-900">Галерея</h2>
@@ -558,17 +571,17 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                             </>
                         )}
 
-                        <div className="flex flex-wrap justify-end gap-4">
+                        <div className="flex flex-col sm:flex-row items-center justify-end gap-4 p-6 bg-white/60 backdrop-blur-sm border border-gray-100 rounded-2xl shadow-sm mt-8">
                             <Link
                                 href={indexRoute}
-                                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                                className="w-full sm:w-auto px-6 py-2.5 border border-gray-200 rounded-xl text-gray-700 bg-white hover:bg-gray-50/50 focus:ring-4 focus:ring-gray-100 transition-all font-medium text-center"
                             >
                                 Отмена
                             </Link>
                             <PrimaryButton
                                 type="submit"
                                 disabled={processing || isPublishing}
-                                className="px-4 py-2"
+                                className="w-full sm:w-auto px-6 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all"
                             >
                                 {processing
                                     ? 'Сохранение...'
@@ -581,7 +594,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                                     type="button"
                                     disabled={processing || isPublishing}
                                     onClick={handlePublishNow}
-                                    className="px-4 py-2 bg-green-600 hover:bg-green-700"
+                                    className="w-full sm:w-auto px-6 py-2.5 bg-green-600 hover:bg-green-500 rounded-xl shadow-md hover:shadow-lg focus:ring-green-300 transition-all"
                                 >
                                     {isPublishing ? 'Публикация...' : 'Сохранить и опубликовать'}
                                 </PrimaryButton>

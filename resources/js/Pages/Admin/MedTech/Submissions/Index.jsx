@@ -57,7 +57,7 @@ export default function SubmissionsIndex({ submissions }) {
                     </div>
 
                     {/* Фильтры */}
-                    <div className="bg-white shadow rounded-lg p-4 mb-6">
+                    <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-4 mb-6">
                         <div className="flex gap-4 items-end">
                             <div className="flex-1">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -66,7 +66,7 @@ export default function SubmissionsIndex({ submissions }) {
                                 <select
                                     value={statusFilter}
                                     onChange={(e) => setStatusFilter(e.target.value)}
-                                    className="block w-full border-gray-300 rounded-md shadow-sm"
+                                    className="block w-full border-gray-200 rounded-xl shadow-sm"
                                 >
                                     <option value="">Все статусы</option>
                                     <option value="new">Новая</option>
@@ -77,17 +77,17 @@ export default function SubmissionsIndex({ submissions }) {
                             </div>
                             <button
                                 onClick={handleFilter}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
                             >
                                 Применить
                             </button>
                         </div>
                     </div>
 
-                    <div className="bg-white shadow rounded-lg overflow-hidden">
+                    <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
+                                <thead className="bg-gray-50/50">
                                     <tr>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Организация</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Контактное лицо</th>
@@ -102,7 +102,7 @@ export default function SubmissionsIndex({ submissions }) {
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {submissions.data && submissions.data.length > 0 ? (
                                         submissions.data.map((submission) => (
-                                            <tr key={submission.id} className="hover:bg-gray-50">
+                                            <tr key={submission.id} className="hover:bg-gray-50/50">
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                     {submission.organization}
                                                 </td>
@@ -156,7 +156,7 @@ export default function SubmissionsIndex({ submissions }) {
                                     <Link
                                         key={index}
                                         href={link.url || '#'}
-                                        className={`px-3 py-2 rounded-md ${link.active ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                                        className={`px-3 py-2 rounded-xl ${link.active ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50/50'}`}
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />
                                 ))}

@@ -13,13 +13,24 @@ class CheckPermission
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $permission): Response
+    public function handle(Request $request, Closure $next, string $permissions): Response
     {
         if (!auth()->check()) {
             return redirect()->route('login');
         }
 
-        if (!auth()->user()->hasPermission($permission)) {
+        $user = auth()->user();
+        $permissionArray = explode('|', $permissions);
+        
+        $hasAccess = false;
+        foreach ($permissionArray as $permission) {
+            if ($user->hasPermission(trim($permission))) {
+                $hasAccess = true;
+                break;
+            }
+        }
+
+        if (!$hasAccess) {
             abort(403, 'У вас нет прав для доступа к этому разделу.');
         }
 

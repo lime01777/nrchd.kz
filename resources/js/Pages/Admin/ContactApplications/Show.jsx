@@ -107,7 +107,7 @@ export default function ContactApplicationShow({ application, users, statuses })
                         {/* Бейдж направления */}
                         <div className="text-right">
                             <div className="text-xs text-gray-500 mb-1">Направление:</div>
-                            <span className="inline-block text-sm font-semibold px-4 py-2 rounded-lg" style={{
+                            <span className="inline-block text-sm font-semibold px-4 py-2 rounded-2xl" style={{
                                 backgroundColor: getCategoryColor(application.category) + '20',
                                 color: getCategoryColor(application.category),
                                 border: `2px solid ${getCategoryColor(application.category)}`
@@ -128,7 +128,7 @@ export default function ContactApplicationShow({ application, users, statuses })
                         {/* Основная информация */}
                         <div className="md:col-span-2 space-y-6">
                             {/* Информация о заявителе */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg border-l-4" style={{borderLeftColor: getCategoryColor(application.category)}}>
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl border-l-4" style={{borderLeftColor: getCategoryColor(application.category)}}>
                                 <div className="p-6 bg-white border-b border-gray-200">
                                     <div className="flex justify-between items-start mb-4">
                                         <h3 className="text-lg font-semibold text-gray-900">
@@ -197,7 +197,7 @@ export default function ContactApplicationShow({ application, users, statuses })
 
                             {/* Тема (если есть) */}
                             {application.subject && (
-                                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                                <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                                     <div className="p-6 bg-white border-b border-gray-200">
                                         <h3 className="text-lg font-semibold text-gray-900 mb-4">
                                             Тема
@@ -208,7 +208,7 @@ export default function ContactApplicationShow({ application, users, statuses })
                             )}
 
                             {/* Сообщение */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                                 <div className="p-6 bg-white border-b border-gray-200">
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                                         Сообщение
@@ -219,7 +219,7 @@ export default function ContactApplicationShow({ application, users, statuses })
 
                             {/* Вложение */}
                             {application.attachment_path && (
-                                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                                <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                                     <div className="p-6 bg-white border-b border-gray-200">
                                         <h3 className="text-lg font-semibold text-gray-900 mb-4">
                                             Вложение
@@ -228,7 +228,7 @@ export default function ContactApplicationShow({ application, users, statuses })
                                             href={application.attachment_url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
                                         >
                                             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -243,7 +243,7 @@ export default function ContactApplicationShow({ application, users, statuses })
                         {/* Боковая панель */}
                         <div className="space-y-6">
                             {/* Управление статусом */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                                 <div className="p-6 bg-white border-b border-gray-200">
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                                         Изменить статус
@@ -269,7 +269,7 @@ export default function ContactApplicationShow({ application, users, statuses })
                             </div>
 
                             {/* Назначение пользователю */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                                 <div className="p-6 bg-white border-b border-gray-200">
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                                         Назначить ответственного
@@ -278,7 +278,7 @@ export default function ContactApplicationShow({ application, users, statuses })
                                     <select
                                         value={data.assigned_to}
                                         onChange={(e) => assignUser(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                        className="w-full px-3 py-2 border border-gray-200 rounded-xl"
                                         disabled={processing}
                                     >
                                         <option value="">Не назначена</option>
@@ -298,7 +298,7 @@ export default function ContactApplicationShow({ application, users, statuses })
                             </div>
 
                             {/* Заметки администратора */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                                 <div className="p-6 bg-white border-b border-gray-200">
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                                         Заметки администратора
@@ -310,7 +310,7 @@ export default function ContactApplicationShow({ application, users, statuses })
                                                 value={data.admin_notes}
                                                 onChange={(e) => setData('admin_notes', e.target.value)}
                                                 rows={6}
-                                                className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                                                className="w-full border border-gray-200 rounded-xl p-2 text-sm"
                                                 placeholder="Добавьте заметки..."
                                             />
                                             <div className="mt-2 flex space-x-2">
@@ -355,7 +355,7 @@ export default function ContactApplicationShow({ application, users, statuses })
                             </div>
 
                             {/* Действия */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                                 <div className="p-6 bg-white border-b border-gray-200">
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                                         Действия

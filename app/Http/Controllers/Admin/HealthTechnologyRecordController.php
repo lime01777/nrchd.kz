@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\HealthTechnology;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Exports\HealthTechnologiesExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class HealthTechnologyRecordController extends Controller
 {
@@ -23,7 +26,7 @@ class HealthTechnologyRecordController extends Controller
         
         // Add other filters as needed...
         
-        $data = $query->latest()->get();
+        $data = $query->latest()->take(500)->get();
         
         return Inertia::render('Admin/Registry/Index', [
             'initialRegistryData' => $data
@@ -80,7 +83,7 @@ class HealthTechnologyRecordController extends Controller
      */
     public function dashboard()
     {
-        $data = HealthTechnology::all();
+        $data = HealthTechnology::latest()->take(500)->get();
         return Inertia::render('Admin/Registry/Dashboard', [
             'registryData' => $data
         ]);
@@ -104,5 +107,36 @@ class HealthTechnologyRecordController extends Controller
     {
         HealthTechnology::destroy($id);
         return redirect()->back()->with('success', 'Технология удалена.');
+    }
+
+    /**
+     * Export the registry in the requested format
+     */
+    public function export(Request $request)
+    {
+        $format = $request->input('format', 'xls');
+        $filters = $request->all();
+
+        if ($format === 'csv') {
+            return Excel::download(new HealthTechnologiesExport($filters), 'registry_export.csv', \Maatwebsite\Excel\Excel::CSV, [
+                'Content-Type' => 'text/csv',
+            ]);
+        }
+
+        if ($format === 'xls') {
+            return Excel::download(new HealthTechnologiesExport($filters), 'registry_export.xlsx');
+        }
+
+        if ($format === 'pdf') {
+            $export = new HealthTechnologiesExport($filters);
+            $data = $export->collection();
+            
+            $pdf = Pdf::loadView('admin.registry.pdf', ['data' => $data]);
+            $pdf->setPaper('a4', 'landscape');
+            
+            return $pdf->download('registry_export.pdf');
+        }
+
+        return redirect()->back()->with('error', 'Неизвестный формат экспорта');
     }
 }

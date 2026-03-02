@@ -22,7 +22,7 @@ class MediaService
     /**
      * Максимальный размер файла (100MB)
      */
-    const MAX_FILE_SIZE = 102400; // KB
+    const MAX_FILE_SIZE = 51200; // 50MB in KB
     
     /**
      * Загрузить медиа файл

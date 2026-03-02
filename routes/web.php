@@ -534,6 +534,12 @@ require __DIR__.'/admin.php';
 
 require __DIR__.'/branches.php';
 
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     // Пример интеграции с Google Drive
     Route::get('/examples/google-drive', function () {

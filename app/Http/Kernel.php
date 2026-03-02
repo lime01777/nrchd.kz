@@ -71,5 +71,6 @@ class Kernel extends HttpKernel
         'conference.subdomain' => \App\Http\Middleware\ConferenceSubdomainMiddleware::class,
         'locale' => \App\Http\Middleware\SetLocale::class,
         'document.manager' => \App\Http\Middleware\DocumentManagerAccess::class,
+        'permission' => \App\Http\Middleware\CheckPermission::class,
     ];
 }

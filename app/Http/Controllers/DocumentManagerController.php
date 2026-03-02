@@ -23,17 +23,12 @@ class DocumentManagerController extends Controller
         // Определяем доступные папки в зависимости от роли пользователя
         $allowedFolders = [];
         
-        if ($user->isAdmin()) {
-            // Админ имеет доступ ко всем папкам
+        if ($user->hasPermission('documents')) {
+            // Пользователь с правом 'documents' (или админ) имеет доступ ко всем папкам
             $allowedFolders = [
                 'Клинические протоколы',
                 'Bioethics',
                 'Другие документы'
-            ];
-        } elseif ($user->isDocumentManager()) {
-            // Менеджер документов имеет доступ только к клиническим протоколам
-            $allowedFolders = [
-                'Клинические протоколы'
             ];
         }
 
@@ -337,16 +332,7 @@ class DocumentManagerController extends Controller
      */
     private function hasAccessToFolder($user, $folderPath)
     {
-        if ($user->isAdmin()) {
-            return true; // Админ имеет доступ ко всем папкам
-        }
-
-        if ($user->isDocumentManager()) {
-            // Менеджер документов имеет доступ только к клиническим протоколам
-            return strpos($folderPath, 'Клинические протоколы') === 0;
-        }
-
-        return false;
+        return $user->hasPermission('documents');
     }
 
     /**

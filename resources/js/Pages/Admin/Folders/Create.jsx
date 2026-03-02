@@ -52,7 +52,7 @@ export default function Create() {
         </h2>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-2xl shadow overflow-hidden">
         <form onSubmit={handleSubmit} className="p-6">
           <div className="mb-4">
             <InputLabel htmlFor="title" value="Название" />
@@ -74,7 +74,7 @@ export default function Create() {
               id="color"
               name="color"
               value={data.color}
-              className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+              className="mt-1 block w-full border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl shadow-sm"
               onChange={(e) => setData('color', e.target.value)}
               required
             >
@@ -97,7 +97,7 @@ export default function Create() {
               id="colorsec"
               name="colorsec"
               value={data.colorsec}
-              className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+              className="mt-1 block w-full border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl shadow-sm"
               onChange={(e) => setData('colorsec', e.target.value)}
               required
             >

@@ -90,13 +90,13 @@ export default function TestImageUpload() {
             <h2 className="text-xl font-semibold text-gray-900">Тест загрузки изображений</h2>
             <Link
               href={route('admin.news.index')}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500"
+              className="inline-flex items-center px-4 py-2 border border-gray-200 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50/50 transition-all shadow-sm"
             >
               Назад к новостям
             </Link>
           </div>
 
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+          <div className="bg-white/90 backdrop-blur-sm shadow-sm overflow-hidden rounded-2xl border border-gray-100/50">
             <form onSubmit={handleSubmit} className="p-6">
               <div className="mb-6">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Загрузка медиа-файлов</h3>
@@ -111,7 +111,7 @@ export default function TestImageUpload() {
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Текущие медиа-файлы:</h3>
                 <div className="space-y-2">
                   {media.map((item, index) => (
-                    <div key={index} className="p-3 bg-gray-50 rounded border">
+                    <div key={index} className="p-3 bg-gray-50/50 rounded border">
                       <p><strong>Тип:</strong> {typeof item}</p>
                       <p><strong>Имя:</strong> {item instanceof File ? item.name : (typeof item === 'string' ? item : 'N/A')}</p>
                       <p><strong>Размер:</strong> {item instanceof File ? `${(item.size / 1024).toFixed(2)} KB` : 'N/A'}</p>
@@ -128,7 +128,7 @@ export default function TestImageUpload() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                 >
                   {isSubmitting ? 'Отправка...' : 'Отправить тест'}
                 </button>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import MediaSlider from '@/Components/MediaSlider';
 import LayoutNews from '@/Layouts/LayoutNews';
+import DOMPurify from 'dompurify';
 
 /**
  * Публичная страница детального просмотра новости
@@ -231,7 +232,7 @@ export default function Show({ news, relatedNews, seo }) {
             {/* Основной текст */}
             <article
                 className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:leading-relaxed prose-a:text-blue-600 mb-16"
-                dangerouslySetInnerHTML={{ __html: news.body }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(news.body) }}
             />
 
             {/* Блок комментариев */}

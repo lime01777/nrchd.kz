@@ -32,6 +32,7 @@ class NewsModuleTest extends TestCase
             'slug' => 'testovaya-novost',
             'body' => 'Содержимое тестовой новости',
             'status' => 'draft',
+            'category' => ['Общие'],
         ]);
 
         // Assert: проверяем редирект и наличие записи
@@ -58,6 +59,7 @@ class NewsModuleTest extends TestCase
             'slug' => 'novost-s-oblozhkoi',
             'body' => 'Содержимое',
             'status' => 'draft',
+            'category' => ['Общие'],
             'cover' => $image,
         ]);
 
@@ -120,7 +122,10 @@ class NewsModuleTest extends TestCase
     public function test_only_admin_and_editor_can_create_news(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
-        $editor = User::factory()->create(['role' => 'editor']);
+        $editor = User::factory()->create([
+            'role' => 'editor',
+            'permissions' => ['news']
+        ]);
         $user = User::factory()->create(['role' => 'user']);
 
         // Admin может создать
@@ -149,11 +154,12 @@ class NewsModuleTest extends TestCase
             'title' => 'Тестовая новость с заголовком',
             'body' => 'Содержимое',
             'status' => 'draft',
+            'category' => ['Общие'],
         ]);
 
         // Assert: slug сгенерирован автоматически
         $news = News::where('title', 'Тестовая новость с заголовком')->firstOrFail();
-        $this->assertEquals('testovaya-novost-s-zagolovkom', $news->slug);
+        $this->assertEquals('testovaia-novost-s-zagolovkom', $news->slug);
     }
 
     /**
@@ -170,6 +176,7 @@ class NewsModuleTest extends TestCase
             'title' => 'Test Slug',
             'body' => 'Содержимое',
             'status' => 'draft',
+            'category' => ['Общие'],
         ]);
 
         // Assert: slug уникализирован

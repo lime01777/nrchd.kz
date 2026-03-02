@@ -27,7 +27,7 @@ export default function Index({ comments }) {
         <AdminLayout title="Управление комментариями">
             <Head title="Комментарии" />
 
-            <div className="bg-white shadow overflow-hidden sm:rounded-md">
+            <div className="bg-white/90 backdrop-blur-sm shadow-sm overflow-hidden rounded-2xl border border-gray-100/50">
                 <ul className="divide-y divide-gray-200">
                     {comments.data.length > 0 ? comments.data.map((comment) => (
                         <li key={comment.id}>
@@ -93,14 +93,14 @@ export default function Index({ comments }) {
 
             {comments.links && comments.links.length > 3 && (
                 <div className="mt-4 flex justify-center">
-                    <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    <nav className="relative z-0 inline-flex rounded-xl shadow-sm -space-x-px" aria-label="Pagination">
                         {comments.links.map((link, i) => (
                             <Link
                                 key={i}
                                 href={link.url}
                                 className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${link.active
                                         ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                                        : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                                        : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50/50'
                                     } ${i === 0 ? 'rounded-l-md' : ''} ${i === comments.links.length - 1 ? 'rounded-r-md' : ''}`}
                                 dangerouslySetInnerHTML={{ __html: link.label }}
                             />

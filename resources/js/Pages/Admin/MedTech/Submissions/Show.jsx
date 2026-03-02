@@ -51,7 +51,7 @@ export default function SubmissionShow({ submission }) {
                         </Link>
                     </div>
 
-                    <div className="bg-white shadow rounded-lg p-6 space-y-6">
+                    <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6 space-y-6">
                         <div className="flex justify-between items-start">
                             <h1 className="text-2xl font-bold text-gray-900">Заявка #{submission.id}</h1>
                             <span className={`px-3 py-1 text-sm rounded ${getStatusColor(submission.status)}`}>
@@ -149,7 +149,7 @@ export default function SubmissionShow({ submission }) {
                                         id="status"
                                         value={data.status}
                                         onChange={(e) => setData('status', e.target.value)}
-                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                        className="mt-1 block w-full border-gray-200 rounded-xl shadow-sm"
                                     >
                                         <option value="new">Новая</option>
                                         <option value="reviewed">На рассмотрении</option>
@@ -165,7 +165,7 @@ export default function SubmissionShow({ submission }) {
                                         value={data.admin_notes}
                                         onChange={(e) => setData('admin_notes', e.target.value)}
                                         rows={4}
-                                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                        className="mt-1 block w-full border-gray-200 rounded-xl shadow-sm"
                                         placeholder="Внутренние заметки по заявке"
                                     />
                                 </div>

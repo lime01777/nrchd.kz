@@ -9,97 +9,67 @@ use App\Models\User;
  * Политика доступа для модели News
  * 
  * Правила:
- * - viewAny/view: все пользователи
- * - create/update/delete/restore: только роли admin или editor
+ * - Пользователь имеет доступ к действиям, если у него есть соответствующее разрешение
+ *   (news для обычных новостей, media для материалов из СМИ).
+ * - Администратор имеет доступ ко всему автоматически через метод hasPermission.
  */
 class NewsPolicy
 {
     /**
-     * Определяет, может ли пользователь просматривать список новостей
-     * Доступно всем
-     *
-     * @param User $user
-     * @return bool
+     * Проверка общего доступа к списку
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->hasPermission('news') || $user->hasPermission('media');
     }
 
     /**
-     * Определяет, может ли пользователь просматривать конкретную новость
-     * Доступно всем
-     *
-     * @param User $user
-     * @param News $news
-     * @return bool
+     * Просмотр конкретной записи
      */
     public function view(User $user, News $news): bool
     {
-        return true;
+        return $user->hasPermission($news->type === 'media' ? 'media' : 'news');
     }
 
     /**
-     * Определяет, может ли пользователь создавать новости
-     * Только для ролей admin или editor
-     *
-     * @param User $user
-     * @return bool
+     * Создание новой записи
      */
     public function create(User $user): bool
     {
-        return in_array($user->role, ['admin', 'editor'], true);
+        // На этапе создания типа в модели еще нет, поэтому проверяем наличие
+        // хотя бы одного из разрешений. Контроллер может дополнительно проверить тип.
+        return $user->hasPermission('news') || $user->hasPermission('media');
     }
 
     /**
-     * Определяет, может ли пользователь обновлять новость
-     * Только для ролей admin или editor
-     *
-     * @param User $user
-     * @param News $news
-     * @return bool
+     * Обновление записи
      */
     public function update(User $user, News $news): bool
     {
-        return in_array($user->role, ['admin', 'editor'], true);
+        return $user->hasPermission($news->type === 'media' ? 'media' : 'news');
     }
 
     /**
-     * Определяет, может ли пользователь удалять новость
-     * Только для ролей admin или editor
-     *
-     * @param User $user
-     * @param News $news
-     * @return bool
+     * Удаление записи
      */
     public function delete(User $user, News $news): bool
     {
-        return $user->role === 'admin';
+        return $user->hasPermission($news->type === 'media' ? 'media' : 'news');
     }
 
     /**
-     * Определяет, может ли пользователь восстанавливать удаленную новость
-     * Только для ролей admin или editor
-     *
-     * @param User $user
-     * @param News $news
-     * @return bool
+     * Восстановление удаленной записи
      */
     public function restore(User $user, News $news): bool
     {
-        return $user->role === 'admin';
+        return $user->hasPermission($news->type === 'media' ? 'media' : 'news');
     }
 
     /**
-     * Определяет, может ли пользователь окончательно удалять новость
-     * Только для ролей admin или editor
-     *
-     * @param User $user
-     * @param News $news
-     * @return bool
+     * Окончательное удаление записи
      */
     public function forceDelete(User $user, News $news): bool
     {
-        return $user->role === 'admin';
+        return $user->hasPermission($news->type === 'media' ? 'media' : 'news');
     }
 }

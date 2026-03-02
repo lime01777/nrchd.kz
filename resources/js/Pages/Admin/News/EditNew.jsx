@@ -96,7 +96,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
       <div className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Заголовок страницы */}
-          <div className="mb-8 bg-white rounded-lg shadow-sm p-6">
+          <div className="mb-8 bg-white rounded-2xl shadow-sm p-6">
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">Редактировать новость</h1>
@@ -110,7 +110,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
               <div className="flex gap-3">
                 <Link
                   href={route('admin.news.index')}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+                  className="inline-flex items-center px-4 py-2 border border-gray-200 rounded-2xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
                 >
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -120,7 +120,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
                 <button
                   type="button"
                   onClick={() => setShowPreview(!showPreview)}
-                  className="inline-flex items-center px-4 py-2 border border-blue-300 rounded-lg shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+                  className="inline-flex items-center px-4 py-2 border border-blue-300 rounded-2xl shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
                 >
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -131,7 +131,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
                 <button
                   type="button"
                   onClick={handleDelete}
-                  className={`inline-flex items-center px-4 py-2 border rounded-lg shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition ${
+                  className={`inline-flex items-center px-4 py-2 border rounded-2xl shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition ${
                     showDeleteConfirm
                       ? 'border-red-600 text-white bg-red-600 hover:bg-red-700 focus:ring-red-500 animate-pulse'
                       : 'border-red-300 text-red-700 bg-white hover:bg-red-50 focus:ring-red-500'
@@ -151,7 +151,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
             <div className="lg:col-span-2 space-y-6">
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Заголовок */}
-                <div className="bg-white shadow-sm rounded-lg p-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">Заголовок</h2>
                   <div>
                     <InputLabel htmlFor="title" value="Заголовок новости *" />
@@ -172,7 +172,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
                 </div>
 
                 {/* Содержимое с TipTap редактором */}
-                <div className="bg-white shadow-sm rounded-lg p-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">Содержимое</h2>
                   <div>
                     <InputLabel htmlFor="content" value="Текст новости *" />
@@ -191,7 +191,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
                 </div>
 
                 {/* Медиа файлы */}
-                <div className="bg-white shadow-sm rounded-lg p-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">
                     Медиа файлы
                     {media.length > 0 && (
@@ -208,11 +208,11 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
                 </div>
 
                 {/* Кнопки действий */}
-                <div className="bg-white shadow-sm rounded-lg p-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                   <div className="flex justify-between items-center">
                     <Link
                       href={route('admin.news.index')}
-                      className="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+                      className="inline-flex items-center px-6 py-3 border border-gray-200 rounded-2xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
                     >
                       Отмена
                     </Link>
@@ -224,13 +224,13 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
                           setTimeout(() => handleSubmit({ preventDefault: () => {} }), 100);
                         }}
                         disabled={processing}
-                        className="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition disabled:opacity-50"
+                        className="inline-flex items-center px-6 py-3 border border-gray-200 rounded-2xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition disabled:opacity-50"
                       >
                         💾 Сохранить как черновик
                       </button>
                       <PrimaryButton 
                         disabled={processing}
-                        className="px-6 py-3 text-sm font-medium rounded-lg"
+                        className="px-6 py-3 text-sm font-medium rounded-2xl"
                       >
                         {processing ? '⏳ Сохраняем...' : '💾 Сохранить изменения'}
                       </PrimaryButton>
@@ -243,7 +243,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
             {/* Боковая панель с настройками */}
             <div className="space-y-6">
               {/* Статус и дата публикации */}
-              <div className="bg-white shadow-sm rounded-lg p-6">
+              <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Публикация</h3>
                 
                 <div className="space-y-4">
@@ -279,7 +279,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
               </div>
 
               {/* Категории */}
-              <div className="bg-white shadow-sm rounded-lg p-6">
+              <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Категории *
                 </h3>
@@ -292,7 +292,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
               </div>
 
               {/* Теги */}
-              <div className="bg-white shadow-sm rounded-lg p-6">
+              <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Теги
                   <span className="text-gray-500 text-sm font-normal ml-2">(необязательно)</span>
@@ -305,7 +305,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
               </div>
 
               {/* Статистика */}
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6">
                 <h4 className="text-sm font-semibold text-blue-900 mb-3">📊 Статистика</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
@@ -332,7 +332,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
               </div>
 
               {/* Действия с новостью */}
-              <div className="bg-white shadow-sm rounded-lg p-6">
+              <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                 <h4 className="text-sm font-semibold text-gray-900 mb-3">⚙️ Действия</h4>
                 <div className="space-y-2">
                   {news.slug && (
@@ -340,7 +340,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
                       href={route('news.show', news.slug)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block w-full text-center px-4 py-2 border border-blue-300 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition"
+                      className="block w-full text-center px-4 py-2 border border-blue-300 rounded-2xl text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition"
                     >
                       👁 Просмотреть на сайте
                     </a>
@@ -348,7 +348,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
                   <button
                     type="button"
                     onClick={handleDelete}
-                    className={`block w-full px-4 py-2 border rounded-lg text-sm font-medium transition ${
+                    className={`block w-full px-4 py-2 border rounded-2xl text-sm font-medium transition ${
                       showDeleteConfirm
                         ? 'border-red-600 text-white bg-red-600 hover:bg-red-700 animate-pulse'
                         : 'border-red-300 text-red-700 bg-white hover:bg-red-50'
@@ -366,7 +366,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
             <div className="lg:col-span-2 space-y-6">
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Заголовок */}
-                <div className="bg-white shadow-sm rounded-lg p-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">Заголовок</h2>
                   <div>
                     <InputLabel htmlFor="title" value="Заголовок новости *" />
@@ -387,7 +387,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
                 </div>
 
                 {/* Содержимое с TipTap редактором */}
-                <div className="bg-white shadow-sm rounded-lg p-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">Содержимое</h2>
                   <div>
                     <InputLabel htmlFor="content" value="Текст новости *" />
@@ -406,7 +406,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
                 </div>
 
                 {/* Медиа файлы */}
-                <div className="bg-white shadow-sm rounded-lg p-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">
                     Медиа файлы
                     {media.length > 0 && (
@@ -423,18 +423,18 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
                 </div>
 
                 {/* Кнопки действий */}
-                <div className="bg-white shadow-sm rounded-lg p-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                   <div className="flex justify-between items-center">
                     <Link
                       href={route('admin.news.index')}
-                      className="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+                      className="inline-flex items-center px-6 py-3 border border-gray-200 rounded-2xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
                     >
                       Отмена
                     </Link>
                     <div className="flex gap-3">
                       <PrimaryButton 
                         disabled={processing}
-                        className="px-6 py-3 text-sm font-medium rounded-lg"
+                        className="px-6 py-3 text-sm font-medium rounded-2xl"
                       >
                         {processing ? '⏳ Сохраняем...' : '💾 Сохранить изменения'}
                       </PrimaryButton>
@@ -449,7 +449,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
 
           {/* Превью новости */}
           {showPreview && (
-            <div className="mt-8 bg-white shadow-lg rounded-lg p-8">
+            <div className="mt-8 bg-white shadow-lg rounded-2xl p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b pb-4">Превью новости</h2>
               
               {data.title && (
@@ -495,7 +495,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
                 <div className="mt-8 pt-6 border-t flex flex-wrap gap-2">
                   <span className="text-gray-600 font-medium mr-2">Теги:</span>
                   {data.tags.map((tag, index) => (
-                    <span key={index} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm">
+                    <span key={index} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-2xl text-sm">
                       #{tag}
                     </span>
                   ))}
@@ -503,7 +503,7 @@ export default function NewsEditNew({ news, availableCategories = [] }) {
               )}
               
               {data.publish_date && (
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="mt-6 p-4 bg-blue-50 rounded-2xl border border-blue-200">
                   <p className="text-sm text-blue-800">
                     📅 <strong>Дата публикации:</strong> {new Date(data.publish_date).toLocaleString('ru-RU', {
                       year: 'numeric',

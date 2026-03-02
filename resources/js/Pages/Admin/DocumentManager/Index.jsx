@@ -22,21 +22,21 @@ export default function DocumentManagerIndex({ user, allowedFolders }) {
     const loadDocuments = async (folder, currentFilters = {}) => {
         setLoading(true);
         setError(null);
-        
+
         try {
             // Строим URL с параметрами фильтрации
             const params = new URLSearchParams();
             params.append('folder', folder);
-            
+
             if (currentFilters.search) params.append('search', currentFilters.search);
             if (currentFilters.medicine) params.append('medicine', currentFilters.medicine);
             if (currentFilters.mkb) params.append('mkb', currentFilters.mkb);
             if (currentFilters.year) params.append('year', currentFilters.year);
             if (currentFilters.category) params.append('category', currentFilters.category);
-            
+
             const response = await fetch(`/admin/document-manager/documents?${params.toString()}`);
             const data = await response.json();
-            
+
             if (response.ok) {
                 setDocuments(data.documents || []);
                 setDirectories(data.directories || []);
@@ -82,7 +82,7 @@ export default function DocumentManagerIndex({ user, allowedFolders }) {
             });
 
             const data = await response.json();
-            
+
             if (response.ok) {
                 // Перезагружаем документы
                 loadDocuments(currentFolder);
@@ -111,7 +111,7 @@ export default function DocumentManagerIndex({ user, allowedFolders }) {
             });
 
             const data = await response.json();
-            
+
             if (response.ok) {
                 // Перезагружаем документы
                 loadDocuments(currentFolder);
@@ -143,7 +143,7 @@ export default function DocumentManagerIndex({ user, allowedFolders }) {
             });
 
             const data = await response.json();
-            
+
             if (response.ok) {
                 // Перезагружаем документы
                 loadDocuments(currentFolder);
@@ -158,64 +158,62 @@ export default function DocumentManagerIndex({ user, allowedFolders }) {
 
     return (
         <>
-            <Head title="Управление документами" />
-            
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            <div className="flex justify-between items-center mb-6">
-                                <h1 className="text-2xl font-bold text-gray-900">
-                                    Управление документами
-                                </h1>
-                                <div className="text-sm text-gray-600">
-                                    Пользователь: {user.name} ({user.email})
-                                </div>
-                            </div>
+            <Head title="Менеджер файлов" />
 
-                            {/* Навигация по папкам */}
-                            <div className="mb-6">
-                                <div className="flex flex-wrap gap-2">
-                                    {allowedFolders.map((folder) => (
-                                        <button
-                                            key={folder}
-                                            onClick={() => handleFolderChange(folder)}
-                                            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                                                currentFolder === folder
-                                                    ? 'bg-blue-600 text-white'
-                                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                                            }`}
-                                        >
-                                            {folder}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Сообщение об ошибке */}
-                            {error && (
-                                <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative">
-                                    <strong className="font-bold">Ошибка!</strong>
-                                    <span className="block sm:inline"> {error}</span>
-                                </div>
-                            )}
-
-                            {/* Браузер документов */}
-                            <DocumentBrowser
-                                documents={documents}
-                                directories={directories}
-                                currentPath={currentFolder}
-                                loading={loading}
-                                onDocumentSelect={handleDocumentSelect}
-                                onRename={handleRename}
-                                onMove={handleMove}
-                                onDelete={handleDelete}
-                                onFolderChange={handleFolderChange}
-                                onFiltersChange={handleFiltersChange}
-                                filters={filters}
-                            />
+            <div className="py-8 min-h-screen">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+                        <div>
+                            <h1 className="text-2xl font-bold text-slate-800">
+                                Файловый менеджер (Документы)
+                            </h1>
+                            <p className="mt-1 text-sm text-slate-500">
+                                Управление файлами для: {user.name} ({user.email})
+                            </p>
                         </div>
                     </div>
+
+                    {/* Navigation tabs */}
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div className="flex bg-slate-50 border-b border-slate-200 overflow-x-auto custom-scrollbar">
+                            {allowedFolders.map((folder) => (
+                                <button
+                                    key={folder}
+                                    onClick={() => handleFolderChange(folder)}
+                                    className={`px-6 py-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${currentFolder === folder
+                                            ? 'border-blue-500 text-blue-700 bg-white'
+                                            : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                                        }`}
+                                >
+                                    {folder}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Сообщение об ошибке */}
+                    {error && (
+                        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative">
+                            <strong className="font-bold">Ошибка!</strong>
+                            <span className="block sm:inline"> {error}</span>
+                        </div>
+                    )}
+
+                    {/* Браузер документов */}
+                    <DocumentBrowser
+                        documents={documents}
+                        directories={directories}
+                        currentPath={currentFolder}
+                        loading={loading}
+                        onDocumentSelect={handleDocumentSelect}
+                        onRename={handleRename}
+                        onMove={handleMove}
+                        onDelete={handleDelete}
+                        onFolderChange={handleFolderChange}
+                        onFiltersChange={handleFiltersChange}
+                        filters={filters}
+                    />
                 </div>
             </div>
 

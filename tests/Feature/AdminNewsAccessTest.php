@@ -47,6 +47,7 @@ class AdminNewsAccessTest extends TestCase
     {
         $editor = User::factory()->create([
             'role' => 'editor',
+            'permissions' => ['news'],
         ]);
 
         $response = $this->actingAs($editor)->get(route('admin.news.create', 'news'));
@@ -76,6 +77,7 @@ class AdminNewsAccessTest extends TestCase
     {
         $user = User::factory()->create([
             'role' => $role,
+            'permissions' => ['news'],
         ]);
 
         $response = $this->actingAs($user)->get(route('admin.news.create', $section));

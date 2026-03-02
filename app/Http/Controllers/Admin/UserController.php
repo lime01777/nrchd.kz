@@ -36,6 +36,7 @@ class UserController extends Controller
         'clinics' => 'Клиники Казахстана',
         'users' => 'Пользователи',
         'settings' => 'Настройки',
+        'glossary' => 'Глоссарий',
     ];
 
     /**
@@ -107,7 +108,7 @@ class UserController extends Controller
             'permissions' => $request->input('permissions', []),
         ]);
 
-        return redirect()->route('admin.admin.users')->with('success', 'Пользователь успешно создан');
+        return redirect()->route('admin.users')->with('success', 'Пользователь успешно создан');
     }
 
     /**
@@ -161,7 +162,7 @@ class UserController extends Controller
 
         $user->save();
 
-        return redirect()->route('admin.admin.users')->with('success', 'Пользователь успешно обновлен');
+        return redirect()->route('admin.users')->with('success', 'Пользователь успешно обновлен');
     }
 
     /**
@@ -177,7 +178,7 @@ class UserController extends Controller
 
         $user->delete();
 
-        return redirect()->route('admin.admin.users')->with('success', 'Пользователь успешно удален');
+        return redirect()->route('admin.users')->with('success', 'Пользователь успешно удален');
     }
 
     /**

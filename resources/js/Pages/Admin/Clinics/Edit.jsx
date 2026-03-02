@@ -76,7 +76,7 @@ export default function ClinicEdit({ clinic }) {
             
             <div className="py-6">
                 <div className="max-w-5xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                         <div className="p-6 bg-white border-b border-gray-200">
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-2xl font-semibold text-gray-900">
@@ -84,7 +84,7 @@ export default function ClinicEdit({ clinic }) {
                                 </h2>
                                 <Link
                                     href={route('admin.clinics.index')}
-                                    className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition"
+                                    className="px-4 py-2 bg-gray-50/500 text-white rounded-xl hover:bg-gray-600 transition"
                                 >
                                     ← Назад к списку
                                 </Link>
@@ -103,7 +103,7 @@ export default function ClinicEdit({ clinic }) {
                                     className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors cursor-pointer ${
                                         currentLang === 'ru'
                                             ? 'border-blue-500 text-blue-600 bg-blue-50'
-                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50/50'
                                     }`}
                                 >
                                     🇷🇺 Русский
@@ -119,7 +119,7 @@ export default function ClinicEdit({ clinic }) {
                                     className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors cursor-pointer ${
                                         currentLang === 'kk'
                                             ? 'border-blue-500 text-blue-600 bg-blue-50'
-                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50/50'
                                     }`}
                                 >
                                     🇰🇿 Казахский
@@ -135,7 +135,7 @@ export default function ClinicEdit({ clinic }) {
                                     className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors cursor-pointer ${
                                         currentLang === 'en'
                                             ? 'border-blue-500 text-blue-600 bg-blue-50'
-                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50/50'
                                     }`}
                                 >
                                     🇬🇧 English
@@ -153,7 +153,7 @@ export default function ClinicEdit({ clinic }) {
                                             type="text"
                                             value={data.name_ru}
                                             onChange={e => setData('name_ru', e.target.value)}
-                                            className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.name_ru ? 'border-red-500' : ''}`}
+                                            className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.name_ru ? 'border-red-500' : ''}`}
                                             placeholder='Название клиники'
                                         />
                                         {errors.name_ru && <p className="mt-1 text-sm text-red-600">{errors.name_ru}</p>}
@@ -168,7 +168,7 @@ export default function ClinicEdit({ clinic }) {
                                             type="text"
                                             value={data.name_kk}
                                             onChange={e => setData('name_kk', e.target.value)}
-                                            className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.name_kk ? 'border-red-500' : ''}`}
+                                            className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.name_kk ? 'border-red-500' : ''}`}
                                             placeholder='Клиника атауы'
                                         />
                                         {errors.name_kk && <p className="mt-1 text-sm text-red-600">{errors.name_kk}</p>}
@@ -183,7 +183,7 @@ export default function ClinicEdit({ clinic }) {
                                             type="text"
                                             value={data.name_en}
                                             onChange={e => setData('name_en', e.target.value)}
-                                            className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.name_en ? 'border-red-500' : ''}`}
+                                            className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.name_en ? 'border-red-500' : ''}`}
                                             placeholder='Clinic name'
                                         />
                                         {errors.name_en && <p className="mt-1 text-sm text-red-600">{errors.name_en}</p>}
@@ -199,7 +199,7 @@ export default function ClinicEdit({ clinic }) {
                                         <textarea
                                             value={data.short_desc_ru}
                                             onChange={e => setData('short_desc_ru', e.target.value)}
-                                            className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.short_desc_ru ? 'border-red-500' : ''}`}
+                                            className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.short_desc_ru ? 'border-red-500' : ''}`}
                                             rows="3"
                                             placeholder='Краткое описание клиники'
                                         />
@@ -214,7 +214,7 @@ export default function ClinicEdit({ clinic }) {
                                         <textarea
                                             value={data.short_desc_kk}
                                             onChange={e => setData('short_desc_kk', e.target.value)}
-                                            className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.short_desc_kk ? 'border-red-500' : ''}`}
+                                            className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.short_desc_kk ? 'border-red-500' : ''}`}
                                             rows="3"
                                             placeholder='Клиниканың қысқаша сипаттамасы'
                                         />
@@ -229,7 +229,7 @@ export default function ClinicEdit({ clinic }) {
                                         <textarea
                                             value={data.short_desc_en}
                                             onChange={e => setData('short_desc_en', e.target.value)}
-                                            className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.short_desc_en ? 'border-red-500' : ''}`}
+                                            className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.short_desc_en ? 'border-red-500' : ''}`}
                                             rows="3"
                                             placeholder='Short clinic description'
                                         />
@@ -249,7 +249,7 @@ export default function ClinicEdit({ clinic }) {
                                             type="file"
                                             accept="image/*"
                                             onChange={e => setData('logo', e.target.files[0])}
-                                            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         />
                                         {errors.logo && <p className="mt-1 text-sm text-red-600">{errors.logo}</p>}
                                         {clinic.logo_url && (
@@ -268,7 +268,7 @@ export default function ClinicEdit({ clinic }) {
                                             type="file"
                                             accept="image/*"
                                             onChange={e => setData('hero', e.target.files[0])}
-                                            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         />
                                         {errors.hero && <p className="mt-1 text-sm text-red-600">{errors.hero}</p>}
                                         {clinic.hero_url && (
@@ -291,7 +291,7 @@ export default function ClinicEdit({ clinic }) {
                                                     type="text"
                                                     value={data.city_ru}
                                                     onChange={e => setData('city_ru', e.target.value)}
-                                                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.city_ru ? 'border-red-500' : ''}`}
+                                                    className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.city_ru ? 'border-red-500' : ''}`}
                                                     placeholder='г. Астана'
                                                 />
                                                 {errors.city_ru && <p className="mt-1 text-sm text-red-600">{errors.city_ru}</p>}
@@ -304,7 +304,7 @@ export default function ClinicEdit({ clinic }) {
                                                     type="text"
                                                     value={data.address_ru}
                                                     onChange={e => setData('address_ru', e.target.value)}
-                                                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.address_ru ? 'border-red-500' : ''}`}
+                                                    className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.address_ru ? 'border-red-500' : ''}`}
                                                     placeholder='ул. Пример, д. 1'
                                                 />
                                                 {errors.address_ru && <p className="mt-1 text-sm text-red-600">{errors.address_ru}</p>}
@@ -321,7 +321,7 @@ export default function ClinicEdit({ clinic }) {
                                                     type="text"
                                                     value={data.city_kk}
                                                     onChange={e => setData('city_kk', e.target.value)}
-                                                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.city_kk ? 'border-red-500' : ''}`}
+                                                    className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.city_kk ? 'border-red-500' : ''}`}
                                                     placeholder='Астана қ.'
                                                 />
                                                 {errors.city_kk && <p className="mt-1 text-sm text-red-600">{errors.city_kk}</p>}
@@ -334,7 +334,7 @@ export default function ClinicEdit({ clinic }) {
                                                     type="text"
                                                     value={data.address_kk}
                                                     onChange={e => setData('address_kk', e.target.value)}
-                                                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.address_kk ? 'border-red-500' : ''}`}
+                                                    className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.address_kk ? 'border-red-500' : ''}`}
                                                     placeholder='Мысал көшесі, 1 үй'
                                                 />
                                                 {errors.address_kk && <p className="mt-1 text-sm text-red-600">{errors.address_kk}</p>}
@@ -351,7 +351,7 @@ export default function ClinicEdit({ clinic }) {
                                                     type="text"
                                                     value={data.city_en}
                                                     onChange={e => setData('city_en', e.target.value)}
-                                                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.city_en ? 'border-red-500' : ''}`}
+                                                    className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.city_en ? 'border-red-500' : ''}`}
                                                     placeholder='Astana'
                                                 />
                                                 {errors.city_en && <p className="mt-1 text-sm text-red-600">{errors.city_en}</p>}
@@ -364,7 +364,7 @@ export default function ClinicEdit({ clinic }) {
                                                     type="text"
                                                     value={data.address_en}
                                                     onChange={e => setData('address_en', e.target.value)}
-                                                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.address_en ? 'border-red-500' : ''}`}
+                                                    className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.address_en ? 'border-red-500' : ''}`}
                                                     placeholder='Example St, 1'
                                                 />
                                                 {errors.address_en && <p className="mt-1 text-sm text-red-600">{errors.address_en}</p>}
@@ -383,7 +383,7 @@ export default function ClinicEdit({ clinic }) {
                                             type="text"
                                             value={data.phone}
                                             onChange={e => setData('phone', e.target.value)}
-                                            className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.phone ? 'border-red-500' : ''}`}
+                                            className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.phone ? 'border-red-500' : ''}`}
                                             placeholder='+7 (XXX) XXX-XX-XX'
                                         />
                                         {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
@@ -396,7 +396,7 @@ export default function ClinicEdit({ clinic }) {
                                             type="email"
                                             value={data.email}
                                             onChange={e => setData('email', e.target.value)}
-                                            className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.email ? 'border-red-500' : ''}`}
+                                            className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.email ? 'border-red-500' : ''}`}
                                             placeholder='info@clinic.kz'
                                         />
                                         {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
@@ -409,7 +409,7 @@ export default function ClinicEdit({ clinic }) {
                                             type="url"
                                             value={data.website}
                                             onChange={e => setData('website', e.target.value)}
-                                            className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.website ? 'border-red-500' : ''}`}
+                                            className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.website ? 'border-red-500' : ''}`}
                                             placeholder='https://clinic.kz'
                                         />
                                         {errors.website && <p className="mt-1 text-sm text-red-600">{errors.website}</p>}
@@ -421,14 +421,14 @@ export default function ClinicEdit({ clinic }) {
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
                                         Услуги (можно выбрать несколько)
                                     </label>
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 border rounded-md">
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 border rounded-xl">
                                         {commonServices.map((service) => (
                                             <label key={service} className="flex items-center">
                                                 <input
                                                     type="checkbox"
                                                     checked={data.services_ru?.includes(service) || false}
                                                     onChange={() => handleServiceToggle(service)}
-                                                    className="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500"
+                                                    className="rounded border-gray-200 text-blue-600 shadow-sm focus:ring-blue-500"
                                                 />
                                                 <span className="ml-2 text-sm text-gray-700">{service}</span>
                                             </label>
@@ -444,7 +444,7 @@ export default function ClinicEdit({ clinic }) {
                                             type="checkbox"
                                             checked={data.is_published}
                                             onChange={e => setData('is_published', e.target.checked)}
-                                            className="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500"
+                                            className="rounded border-gray-200 text-blue-600 shadow-sm focus:ring-blue-500"
                                         />
                                         <span className="ml-2 text-sm text-gray-700">Опубликована</span>
                                     </label>
@@ -453,7 +453,7 @@ export default function ClinicEdit({ clinic }) {
                                             type="checkbox"
                                             checked={data.is_medical_tourism}
                                             onChange={e => setData('is_medical_tourism', e.target.checked)}
-                                            className="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500"
+                                            className="rounded border-gray-200 text-blue-600 shadow-sm focus:ring-blue-500"
                                         />
                                         <span className="ml-2 text-sm text-gray-700">Медицинский туризм</span>
                                     </label>
@@ -470,14 +470,14 @@ export default function ClinicEdit({ clinic }) {
                                 <div className="flex justify-end space-x-3 pt-4 border-t">
                                     <Link
                                         href={route('admin.clinics.index')}
-                                        className="px-6 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+                                        className="px-6 py-2 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition"
                                     >
                                         Отмена
                                     </Link>
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {processing ? 'Сохранение...' : 'Сохранить изменения'}
                                     </button>

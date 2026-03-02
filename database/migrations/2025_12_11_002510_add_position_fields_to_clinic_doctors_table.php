@@ -12,7 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('clinic_doctors', function (Blueprint $table) {
-            //
+            if (!Schema::hasColumn('clinic_doctors', 'position_ru')) {
+                $table->string('position_ru')->nullable()->after('name_en');
+            }
+            if (!Schema::hasColumn('clinic_doctors', 'position_kk')) {
+                $table->string('position_kk')->nullable()->after('position_ru');
+            }
+            if (!Schema::hasColumn('clinic_doctors', 'position_en')) {
+                $table->string('position_en')->nullable()->after('position_kk');
+            }
         });
     }
 
@@ -22,7 +30,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('clinic_doctors', function (Blueprint $table) {
-            //
+            $table->dropColumn(['position_ru', 'position_kk', 'position_en']);
         });
     }
 };

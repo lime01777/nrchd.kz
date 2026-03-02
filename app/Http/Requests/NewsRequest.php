@@ -36,8 +36,7 @@ class NewsRequest extends FormRequest
         $isMedia = $this->input('type') === 'media' || $this->input('section') === 'media';
         
         $rules = [
-            // Для СМИ только заголовок обязателен
-            'title' => $isMedia ? 'required|string|max:255' : 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'slug' => [
                 'nullable',
                 'string',
@@ -46,13 +45,13 @@ class NewsRequest extends FormRequest
                 Rule::unique('news', 'slug')->ignore($this->route('news')?->id),
             ],
             'excerpt' => 'nullable|string|max:1000',
-            'body' => 'nullable|string', // Для СМИ может быть пустым, убираем min:10
-            'content' => 'nullable|string', // Для обратной совместимости, убираем min:10
+            'body' => $isMedia ? 'nullable|string' : 'required|string|min:10',
+            'content' => 'nullable|string', // Для обратной совместимости
             'cover' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120', // Убираем dimensions для СМИ
             'cover_image_alt' => 'nullable|string|max:255',
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string|max:255',
-            'status' => $isMedia ? 'nullable|in:draft,published' : 'required|in:draft,published', // Для СМИ необязателен
+            'status' => $isMedia ? 'nullable|in:draft,published,scheduled' : 'required|in:draft,published,scheduled',
             'type' => 'nullable|string|in:news,media',
             // Для материалов СМИ external_url необязателен
             'external_url' => 'nullable|url|max:512',
@@ -65,12 +64,16 @@ class NewsRequest extends FormRequest
         ];
 
         $allowedCategories = config('news.categories', []);
-        $categoryRules = ['nullable', 'array', 'max:5'];
         $categoryItemRules = ['string', 'max:100'];
         if (!empty($allowedCategories)) {
             $categoryItemRules[] = Rule::in($allowedCategories);
         }
-        $rules['category'] = $categoryRules;
+        
+        if ($isMedia) {
+            $rules['category'] = ['nullable', 'array', 'max:5'];
+        } else {
+            $rules['category'] = ['required', 'array', 'min:1', 'max:5'];
+        }
         $rules['category.*'] = $categoryItemRules;
 
         // Для материалов СМИ body необязателен (уже установлено выше)

@@ -99,7 +99,7 @@ export default function IndexModern({ news, filters }) {
               </div>
               <Link
                 href={route('admin.news.create', 'news')}
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 <PlusIcon className="w-4 h-4 mr-2" />
                 Создать новость
@@ -108,7 +108,7 @@ export default function IndexModern({ news, filters }) {
           </div>
 
           {/* Фильтры и поиск */}
-          <div className="bg-white shadow rounded-lg p-6 mb-6">
+          <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6 mb-6">
             <form onSubmit={handleSearch} className="space-y-4">
               {/* Основная строка поиска */}
               <div className="flex gap-4">
@@ -120,21 +120,21 @@ export default function IndexModern({ news, filters }) {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder="Поиск по заголовку или содержимому..."
-                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowFilters(!showFilters)}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="inline-flex items-center px-4 py-2 border border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   <FunnelIcon className="w-4 h-4 mr-2" />
                   Фильтры
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   Найти
                 </button>
@@ -150,7 +150,7 @@ export default function IndexModern({ news, filters }) {
                     <select
                       value={statusFilter}
                       onChange={(e) => setStatusFilter(e.target.value)}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     >
                       <option value="">Все статусы</option>
                       <option value="Черновик">Черновик</option>
@@ -166,7 +166,7 @@ export default function IndexModern({ news, filters }) {
                     <select
                       value={categoryFilter}
                       onChange={(e) => setCategoryFilter(e.target.value)}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-3 py-2 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     >
                       <option value="">Все категории</option>
                       {getUniqueCategories().map(category => (
@@ -178,7 +178,7 @@ export default function IndexModern({ news, filters }) {
                     <button
                       type="button"
                       onClick={resetFilters}
-                      className="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      className="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-200 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
                       Сбросить
                     </button>
@@ -189,7 +189,7 @@ export default function IndexModern({ news, filters }) {
           </div>
 
           {/* Список новостей */}
-          <div className="bg-white shadow overflow-hidden sm:rounded-md">
+          <div className="bg-white/90 backdrop-blur-sm shadow-sm overflow-hidden rounded-2xl border border-gray-100/50">
             {news.data.length === 0 ? (
               <div className="text-center py-12">
                 <div className="mx-auto h-12 w-12 text-gray-400">
@@ -208,7 +208,7 @@ export default function IndexModern({ news, filters }) {
                   <div className="mt-6">
                     <Link
                       href={route('admin.news.create', 'news')}
-                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                      className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700"
                     >
                       <PlusIcon className="w-4 h-4 mr-2" />
                       Создать новость
@@ -219,7 +219,7 @@ export default function IndexModern({ news, filters }) {
             ) : (
               <ul className="divide-y divide-gray-200">
                 {news.data.map((item) => (
-                  <li key={item.id} className="hover:bg-gray-50 transition-colors">
+                  <li key={item.id} className="hover:bg-gray-50/50 transition-colors">
                     <div className="px-6 py-4">
                       <div className="flex items-start justify-between">
                         <div className="flex-1 min-w-0">
@@ -273,21 +273,21 @@ export default function IndexModern({ news, filters }) {
                           <Link
                             href={`/news/${item.slug}`}
                             target="_blank"
-                            className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                            className="inline-flex items-center px-3 py-1 border border-gray-200 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50/50"
                             title="Просмотреть"
                           >
                             <EyeIcon className="w-4 h-4" />
                           </Link>
                           <Link
                             href={route('admin.news.edit', item.id)}
-                            className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                            className="inline-flex items-center px-3 py-1 border border-gray-200 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50/50"
                             title="Редактировать"
                           >
                             <PencilIcon className="w-4 h-4" />
                           </Link>
                           <button
                             onClick={() => handleDelete(item.id)}
-                            className="inline-flex items-center px-3 py-1 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50"
+                            className="inline-flex items-center px-3 py-1 border border-red-300 text-sm font-medium rounded-xl text-red-700 bg-white hover:bg-red-50"
                             title="Удалить"
                           >
                             <TrashIcon className="w-4 h-4" />
@@ -311,7 +311,7 @@ export default function IndexModern({ news, filters }) {
                 {news.prev_page_url && (
                   <Link
                     href={news.prev_page_url}
-                    className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    className="inline-flex items-center px-3 py-2 border border-gray-200 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50/50"
                   >
                     Назад
                   </Link>
@@ -319,7 +319,7 @@ export default function IndexModern({ news, filters }) {
                 {news.next_page_url && (
                   <Link
                     href={news.next_page_url}
-                    className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    className="inline-flex items-center px-3 py-2 border border-gray-200 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50/50"
                   >
                     Вперед
                   </Link>

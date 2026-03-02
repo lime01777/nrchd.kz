@@ -23,7 +23,7 @@ class DocumentManagerAccess
         $user = auth()->user();
 
         // Проверяем, имеет ли пользователь доступ к управлению документами
-        if (!$user->hasAdminAccess()) {
+        if (!$user->hasPermission('documents')) {
             abort(403, 'У вас нет доступа к управлению документами');
         }
 

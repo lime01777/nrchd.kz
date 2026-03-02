@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class NewsManagementTest extends TestCase
 {
@@ -21,14 +22,17 @@ class NewsManagementTest extends TestCase
     {
         parent::setUp();
         
-        $this->user = User::factory()->create();
+        $this->user = User::factory()->create([
+            'role' => 'editor',
+            'permissions' => ['news']
+        ]);
         $this->mediaService = app(MediaService::class);
         
         // Создаем тестовую директорию для медиа
         Storage::fake('public');
     }
 
-    /** @test */
+    #[Test]
     public function user_can_create_news_with_media()
     {
         $this->actingAs($this->user);
@@ -48,13 +52,13 @@ class NewsManagementTest extends TestCase
 
         $response = $this->post(route('admin.news.store'), $newsData);
 
-        $response->assertRedirect(route('admin.news'));
+        $response->assertRedirect(route('admin.news.index'));
         $response->assertSessionHas('success');
 
         // Проверяем, что новость создана
         $this->assertDatabaseHas('news', [
             'title' => 'Тестовая новость',
-            'status' => 'Опубликовано'
+            'status' => 'published'
         ]);
 
         $news = News::where('title', 'Тестовая новость')->first();
@@ -69,7 +73,7 @@ class NewsManagementTest extends TestCase
         }
     }
 
-    /** @test */
+    #[Test]
     public function user_can_upload_media_to_existing_news()
     {
         $this->actingAs($this->user);
@@ -84,7 +88,7 @@ class NewsManagementTest extends TestCase
         $imageFile = UploadedFile::fake()->image('new-image.jpg', 800, 600);
         
         $response = $this->post(route('admin.news.media.upload', $news->id), [
-            'files' => [$imageFile]
+            'media_files' => [$imageFile]
         ]);
 
         $response->assertStatus(200);
@@ -95,7 +99,7 @@ class NewsManagementTest extends TestCase
         $this->assertCount(1, $news->images);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_delete_media_from_news()
     {
         $this->actingAs($this->user);
@@ -126,7 +130,7 @@ class NewsManagementTest extends TestCase
         $this->assertCount(0, $news->images);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_set_cover_image()
     {
         $this->actingAs($this->user);
@@ -167,7 +171,7 @@ class NewsManagementTest extends TestCase
         $this->assertTrue($news->images[1]['is_cover']);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_update_media_order()
     {
         $this->actingAs($this->user);
@@ -197,8 +201,8 @@ class NewsManagementTest extends TestCase
 
         // Меняем порядок
         $newOrder = [
-            ['id' => 'test-media-2', 'position' => 0],
-            ['id' => 'test-media-1', 'position' => 1]
+            ['id' => 'test-media-2', 'position' => 0, 'path' => '/storage/news/test-image-2.jpg'],
+            ['id' => 'test-media-1', 'position' => 1, 'path' => '/storage/news/test-image-1.jpg']
         ];
 
         $response = $this->patch(route('admin.news.media.order', $news->id), [
@@ -214,25 +218,27 @@ class NewsManagementTest extends TestCase
         $this->assertEquals(1, $news->images[1]['position']);
     }
 
-    /** @test */
+    #[Test]
     public function user_can_filter_news_by_status()
     {
         $this->actingAs($this->user);
 
         // Создаем новости с разными статусами
-        News::factory()->create(['title' => 'Черновик', 'status' => 'Черновик']);
-        News::factory()->create(['title' => 'Опубликовано', 'status' => 'Опубликовано']);
-        News::factory()->create(['title' => 'Запланировано', 'status' => 'Запланировано']);
+        News::factory()->create(['title' => 'Черновик', 'status' => 'draft']);
+        News::factory()->create(['title' => 'Опубликовано', 'status' => 'published']);
+        News::factory()->create(['title' => 'Запланировано', 'status' => 'scheduled']);
 
-        $response = $this->get(route('admin.news', ['status' => 'Опубликовано']));
+        $response = $this->get(route('admin.news.index', ['status' => 'published']));
 
         $response->assertStatus(200);
-        $response->assertSee('Опубликовано');
-        $response->assertDontSee('Черновик');
-        $response->assertDontSee('Запланировано');
+        $response->assertInertia(fn ($page) => $page
+            ->component('Admin/News/Index')
+            ->has('news.data', 1)
+            ->where('news.data.0.title', 'Опубликовано')
+        );
     }
 
-    /** @test */
+    #[Test]
     public function user_can_search_news()
     {
         $this->actingAs($this->user);
@@ -241,14 +247,17 @@ class NewsManagementTest extends TestCase
         News::factory()->create(['title' => 'Новость о медицине', 'content' => 'Содержимое о медицине']);
         News::factory()->create(['title' => 'Новость о технологиях', 'content' => 'Содержимое о технологиях']);
 
-        $response = $this->get(route('admin.news', ['search' => 'медицина']));
+        $response = $this->get(route('admin.news.index', ['search' => 'медицин']));
 
         $response->assertStatus(200);
-        $response->assertSee('Новость о медицине');
-        $response->assertDontSee('Новость о технологиях');
+        $response->assertInertia(fn ($page) => $page
+            ->component('Admin/News/Index')
+            ->has('news.data', 1)
+            ->where('news.data.0.title', 'Новость о медицине')
+        );
     }
 
-    /** @test */
+    #[Test]
     public function media_service_validates_file_types()
     {
         // Тестируем валидацию типов файлов
@@ -265,7 +274,7 @@ class NewsManagementTest extends TestCase
         $this->mediaService->uploadMedia($invalidFile);
     }
 
-    /** @test */
+    #[Test]
     public function media_service_validates_file_size()
     {
         // Создаем файл больше лимита (50MB)
@@ -275,35 +284,36 @@ class NewsManagementTest extends TestCase
         $this->mediaService->uploadMedia($largeFile);
     }
 
-    /** @test */
+    #[Test]
     public function news_can_be_scheduled_for_future_publication()
     {
         $this->actingAs($this->user);
 
-        $futureDate = now()->addDays(7)->toISOString();
+        $futureDate = now()->addDays(7)->startOfMinute()->toISOString();
 
         $newsData = [
             'title' => 'Запланированная новость',
             'content' => 'Это новость, которая будет опубликована в будущем.',
             'category' => ['Анонсы'],
             'status' => 'scheduled',
-            'publish_date' => $futureDate
+            'published_at' => $futureDate
         ];
 
         $response = $this->post(route('admin.news.store'), $newsData);
 
-        $response->assertRedirect(route('admin.news'));
+        $response->assertRedirect(route('admin.news.index'));
         
         $this->assertDatabaseHas('news', [
             'title' => 'Запланированная новость',
-            'status' => 'Запланировано'
+            'status' => 'scheduled'
         ]);
 
         $news = News::where('title', 'Запланированная новость')->first();
-        $this->assertEquals($futureDate, $news->publish_date->toISOString());
+        $this->assertNotNull($news->published_at);
+        $this->assertEquals($futureDate, $news->published_at->toISOString());
     }
 
-    /** @test */
+    #[Test]
     public function news_validation_works_correctly()
     {
         $this->actingAs($this->user);
@@ -311,7 +321,7 @@ class NewsManagementTest extends TestCase
         // Тестируем валидацию с пустыми данными
         $response = $this->post(route('admin.news.store'), []);
 
-        $response->assertSessionHasErrors(['title', 'content', 'category', 'status']);
+        $response->assertSessionHasErrors(['title', 'body', 'category', 'status']);
 
         // Тестируем валидацию с некорректными данными
         $response = $this->post(route('admin.news.store'), [
@@ -321,6 +331,6 @@ class NewsManagementTest extends TestCase
             'status' => 'invalid_status' // Невалидный статус
         ]);
 
-        $response->assertSessionHasErrors(['title', 'content', 'category', 'status']);
+        $response->assertSessionHasErrors(['title', 'body', 'category', 'status']);
     }
 }

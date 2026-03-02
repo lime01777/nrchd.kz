@@ -20,7 +20,7 @@ export default function ClinicsIndex({ clinics }) {
             
             <div className="py-3">
                 <div className="max-w-7xl mx-auto sm:px-4 lg:px-6">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                         <div className="p-4 bg-white border-b border-gray-200">
                             <div className="flex justify-between items-center mb-3">
                                 <h2 className="text-xl font-semibold text-gray-900">
@@ -28,7 +28,7 @@ export default function ClinicsIndex({ clinics }) {
                                 </h2>
                                 <Link
                                     href={route('admin.clinics.create')}
-                                    className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
+                                    className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-xl hover:bg-blue-700 transition"
                                 >
                                     + Добавить
                                 </Link>
@@ -44,7 +44,7 @@ export default function ClinicsIndex({ clinics }) {
                             {/* Таблица клиник */}
                             <div className="overflow-x-auto">
                                 <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
+                                    <thead className="bg-gray-50/50">
                                         <tr>
                                             <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Название
@@ -66,7 +66,7 @@ export default function ClinicsIndex({ clinics }) {
                                     <tbody className="bg-white divide-y divide-gray-200">
                                         {clinics.data && clinics.data.length > 0 ? (
                                             clinics.data.map((clinic) => (
-                                                <tr key={clinic.id} className="hover:bg-gray-50">
+                                                <tr key={clinic.id} className="hover:bg-gray-50/50">
                                                     <td className="px-4 py-2">
                                                         <div className="text-sm font-medium text-gray-900 truncate max-w-xs">
                                                             {clinic.name_ru}
@@ -140,7 +140,7 @@ export default function ClinicsIndex({ clinics }) {
                                         {clinics.prev_page_url && (
                                             <Link
                                                 href={clinics.prev_page_url}
-                                                className="relative inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                                                className="relative inline-flex items-center px-3 py-1.5 border border-gray-200 text-xs font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50/50"
                                             >
                                                 Назад
                                             </Link>
@@ -148,7 +148,7 @@ export default function ClinicsIndex({ clinics }) {
                                         {clinics.next_page_url && (
                                             <Link
                                                 href={clinics.next_page_url}
-                                                className="ml-2 relative inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                                                className="ml-2 relative inline-flex items-center px-3 py-1.5 border border-gray-200 text-xs font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50/50"
                                             >
                                                 Вперед
                                             </Link>
@@ -161,7 +161,7 @@ export default function ClinicsIndex({ clinics }) {
                                             </p>
                                         </div>
                                         <div>
-                                            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                            <nav className="relative z-0 inline-flex rounded-xl shadow-sm -space-x-px" aria-label="Pagination">
                                                 {clinics.links.map((link, index) => (
                                                     <Link
                                                         key={index}
@@ -169,7 +169,7 @@ export default function ClinicsIndex({ clinics }) {
                                                         className={`relative inline-flex items-center px-2.5 py-1.5 border text-xs font-medium ${
                                                             link.active
                                                                 ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                                                                : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                                                                : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50/50'
                                                         } ${!link.url ? 'cursor-not-allowed opacity-50' : ''}`}
                                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                                     />

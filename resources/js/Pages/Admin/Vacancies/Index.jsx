@@ -26,13 +26,13 @@ export default function VacanciesIndex({ vacancies }) {
             
             <div className="py-6">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                         <div className="p-6 bg-white border-b border-gray-200">
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-2xl font-semibold text-gray-900">Вакансии</h2>
                                 <Link
                                     href={route('vacancies.create')}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
                                 >
                                     Добавить вакансию
                                 </Link>
@@ -50,7 +50,7 @@ export default function VacanciesIndex({ vacancies }) {
                                 <input
                                     type="text"
                                     placeholder="Поиск вакансий..."
-                                    className="w-full px-4 py-2 border rounded-md"
+                                    className="w-full px-4 py-2 border rounded-xl"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />

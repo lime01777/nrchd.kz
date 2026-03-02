@@ -62,7 +62,7 @@ export default function RegistryForm({ item = null }) {
                             Назад к реестру технологий
                         </Link>
                     </div>
-                    <form onSubmit={submit} className="space-y-6 bg-white shadow rounded-lg p-6">
+                    <form onSubmit={submit} className="space-y-6 bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                         <div>
                             <InputLabel htmlFor="name" value="Название технологии/проекта *" />
                             <TextInput
@@ -83,7 +83,7 @@ export default function RegistryForm({ item = null }) {
                                 value={data.description}
                                 onChange={(e) => setData('description', e.target.value)}
                                 rows={3}
-                                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                className="mt-1 block w-full border-gray-200 rounded-xl shadow-sm"
                                 placeholder="1-2 предложения для отображения в таблице"
                             />
                             <InputError message={errors.description} className="mt-2" />
@@ -96,7 +96,7 @@ export default function RegistryForm({ item = null }) {
                                 value={data.full_description}
                                 onChange={(e) => setData('full_description', e.target.value)}
                                 rows={5}
-                                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                className="mt-1 block w-full border-gray-200 rounded-xl shadow-sm"
                                 placeholder="Полное описание для карточки технологии"
                             />
                             <InputError message={errors.full_description} className="mt-2" />
@@ -109,7 +109,7 @@ export default function RegistryForm({ item = null }) {
                                     id="type"
                                     value={data.type}
                                     onChange={(e) => setData('type', e.target.value)}
-                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                    className="mt-1 block w-full border-gray-200 rounded-xl shadow-sm"
                                 >
                                     <option value="">Выберите тип</option>
                                     {technologyTypes.map((type) => (
@@ -140,7 +140,7 @@ export default function RegistryForm({ item = null }) {
                                     id="trl"
                                     value={data.trl}
                                     onChange={(e) => setData('trl', e.target.value ? parseInt(e.target.value) : '')}
-                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                    className="mt-1 block w-full border-gray-200 rounded-xl shadow-sm"
                                 >
                                     <option value="">Выберите TRL</option>
                                     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((level) => (
@@ -158,7 +158,7 @@ export default function RegistryForm({ item = null }) {
                                     id="status"
                                     value={data.status}
                                     onChange={(e) => setData('status', e.target.value)}
-                                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                    className="mt-1 block w-full border-gray-200 rounded-xl shadow-sm"
                                 >
                                     <option value="">Выберите статус</option>
                                     {statuses.map((status) => (
@@ -202,7 +202,7 @@ export default function RegistryForm({ item = null }) {
                                 value={data.pilot_sites}
                                 onChange={(e) => setData('pilot_sites', e.target.value)}
                                 rows={2}
-                                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                className="mt-1 block w-full border-gray-200 rounded-xl shadow-sm"
                                 placeholder="Краткое указание пилотных площадок"
                             />
                             <InputError message={errors.pilot_sites} className="mt-2" />
@@ -214,7 +214,7 @@ export default function RegistryForm({ item = null }) {
                                 type="checkbox"
                                 checked={data.is_active}
                                 onChange={(e) => setData('is_active', e.target.checked)}
-                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                className="rounded border-gray-200 text-blue-600 focus:ring-blue-500"
                             />
                             <label htmlFor="is_active" className="ml-2 text-sm text-gray-700">
                                 Активна
@@ -224,7 +224,7 @@ export default function RegistryForm({ item = null }) {
                         <div className="flex justify-end space-x-3">
                             <Link
                                 href={route('admin.medtech.registry')}
-                                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                                className="px-4 py-2 border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50/50"
                             >
                                 Отмена
                             </Link>

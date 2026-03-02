@@ -44,6 +44,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
     // Реестр технологий здравоохранения (РТЗ)
     Route::prefix('registry')->name('registry.')->middleware('permission:registry')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Admin\HealthTechnologyRecordController::class, 'dashboard'])->name('dashboard');
+        Route::get('/export', [\App\Http\Controllers\Admin\HealthTechnologyRecordController::class, 'export'])->name('export');
 
         Route::get('/', [\App\Http\Controllers\Admin\HealthTechnologyRecordController::class, 'index'])->name('index');
         Route::post('/upload', [\App\Http\Controllers\Admin\HealthTechnologyRecordController::class, 'uploadFile'])->name('upload');
@@ -62,7 +63,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
     });
     
     // Управление новостями (с политикой доступа)
-    Route::middleware('permission:news')->group(function () {
+    Route::middleware('permission:news|media')->group(function () {
         Route::get('/news/{type?}', [App\Http\Controllers\Admin\NewsController::class, 'index'])
             ->where('type', implode('|', News::TYPES))
             ->name('news.index');
@@ -82,48 +83,48 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
     });
     
     // Управление медиа новостей
-    Route::post('/news/upload-media', [App\Http\Controllers\Admin\NewsController::class, 'uploadMediaFiles'])->name('admin.news.upload-media');
-    Route::post('/news/{newsId}/media', [App\Http\Controllers\Admin\NewsController::class, 'uploadMedia'])->name('admin.news.media.upload');
-    Route::patch('/news/{newsId}/media/order', [App\Http\Controllers\Admin\NewsController::class, 'updateMediaOrder'])->name('admin.news.media.order');
-    Route::delete('/news/{newsId}/media/{mediaId}', [App\Http\Controllers\Admin\NewsController::class, 'deleteMedia'])->name('admin.news.media.delete');
-    Route::patch('/news/{newsId}/cover/{mediaId}', [App\Http\Controllers\Admin\NewsController::class, 'setCover'])->name('admin.news.cover.set');
-    Route::delete('/news/media/temp', [App\Http\Controllers\Admin\NewsController::class, 'deleteTemporaryMedia'])->name('admin.news.media.temp-delete');
+    Route::post('/news/upload-media', [App\Http\Controllers\Admin\NewsController::class, 'uploadMediaFiles'])->name('news.upload-media');
+    Route::post('/news/{newsId}/media', [App\Http\Controllers\Admin\NewsController::class, 'uploadMedia'])->name('news.media.upload');
+    Route::patch('/news/{newsId}/media/order', [App\Http\Controllers\Admin\NewsController::class, 'updateMediaOrder'])->name('news.media.order');
+    Route::delete('/news/{newsId}/media/{mediaId}', [App\Http\Controllers\Admin\NewsController::class, 'deleteMedia'])->name('news.media.delete');
+    Route::patch('/news/{newsId}/cover/{mediaId}', [App\Http\Controllers\Admin\NewsController::class, 'setCover'])->name('news.cover.set');
+    Route::delete('/news/media/temp', [App\Http\Controllers\Admin\NewsController::class, 'deleteTemporaryMedia'])->name('news.media.temp-delete');
 
     // Управление заявками ОТЗ
     Route::middleware('permission:otz_applications')->group(function () {
         Route::resource('otz-applications', App\Http\Controllers\Admin\OtzApplicationController::class, [
-            'names' => 'admin.otz-applications'
+            'names' => 'otz-applications'
         ]);
-        Route::post('/otz-applications/{otzApplication}/upload-documents', [App\Http\Controllers\Admin\OtzApplicationController::class, 'uploadDocuments'])->name('admin.otz-applications.upload-documents');
-        Route::delete('/otz-applications/{otzApplication}/delete-document', [App\Http\Controllers\Admin\OtzApplicationController::class, 'deleteDocument'])->name('admin.otz-applications.delete-document');
+        Route::post('/otz-applications/{otzApplication}/upload-documents', [App\Http\Controllers\Admin\OtzApplicationController::class, 'uploadDocuments'])->name('otz-applications.upload-documents');
+        Route::delete('/otz-applications/{otzApplication}/delete-document', [App\Http\Controllers\Admin\OtzApplicationController::class, 'deleteDocument'])->name('otz-applications.delete-document');
     });
 
     // Управление документами
     Route::middleware('permission:documents')->group(function () {
-        Route::get('/documents', [App\Http\Controllers\Admin\DocumentController::class, 'index'])->name('admin.documents');
-        Route::get('/documents/create', [App\Http\Controllers\Admin\DocumentController::class, 'create'])->name('admin.documents.create');
-        Route::post('/documents', [App\Http\Controllers\Admin\DocumentController::class, 'store'])->name('admin.documents.store');
-        Route::get('/documents/{id}/edit', [App\Http\Controllers\Admin\DocumentController::class, 'edit'])->name('admin.documents.edit');
-        Route::put('/documents/{id}', [App\Http\Controllers\Admin\DocumentController::class, 'update'])->name('admin.documents.update');
-        Route::delete('/documents/{id}', [App\Http\Controllers\Admin\DocumentController::class, 'destroy'])->name('admin.documents.destroy');
+        Route::get('/documents', [App\Http\Controllers\Admin\DocumentController::class, 'index'])->name('documents');
+        Route::get('/documents/create', [App\Http\Controllers\Admin\DocumentController::class, 'create'])->name('documents.create');
+        Route::post('/documents', [App\Http\Controllers\Admin\DocumentController::class, 'store'])->name('documents.store');
+        Route::get('/documents/{id}/edit', [App\Http\Controllers\Admin\DocumentController::class, 'edit'])->name('documents.edit');
+        Route::put('/documents/{id}', [App\Http\Controllers\Admin\DocumentController::class, 'update'])->name('documents.update');
+        Route::delete('/documents/{id}', [App\Http\Controllers\Admin\DocumentController::class, 'destroy'])->name('documents.destroy');
     });
 
     // Управление пользователями
     Route::middleware('permission:users')->group(function () {
-        Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users');
-        Route::get('/users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.users.create');
-        Route::post('/users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store');
-        Route::get('/users/{id}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('admin.users.edit');
-        Route::put('/users/{id}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.users.update');
-        Route::patch('/users/{user}/role', [App\Http\Controllers\Admin\UserController::class, 'updateRole'])->name('admin.users.update-role');
-        Route::delete('/users/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy');
+        Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users');
+        Route::get('/users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');
+        Route::post('/users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
+        Route::get('/users/{id}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{id}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
+        Route::patch('/users/{user}/role', [App\Http\Controllers\Admin\UserController::class, 'updateRole'])->name('users.update-role');
+        Route::delete('/users/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
     });
 
     // Настройки
     Route::middleware('permission:settings')->group(function () {
-        Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings');
-        Route::put('/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
-        Route::post('/settings/backup', [App\Http\Controllers\Admin\SettingController::class, 'createBackup'])->name('admin.settings.backup');
+        Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings');
+        Route::put('/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+        Route::post('/settings/backup', [App\Http\Controllers\Admin\SettingController::class, 'createBackup'])->name('settings.backup');
     });
     
     // Платформа MedTech
@@ -165,29 +166,31 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
     });
 
     // Глоссарий
-    Route::resource('glossary', GlossaryController::class)->names([
-        'index' => 'admin.glossary.index',
-        'create' => 'admin.glossary.create',
-        'store' => 'admin.glossary.store',
-        'show' => 'admin.glossary.show',
-        'edit' => 'admin.glossary.edit',
-        'update' => 'admin.glossary.update',
-        'destroy' => 'admin.glossary.destroy',
-    ]);
-    Route::post('glossary/{term}/toggle', [GlossaryController::class, 'toggle'])->name('admin.glossary.toggle');
-    Route::post('glossary/import-employees', [GlossaryController::class, 'importEmployees'])->name('admin.glossary.import-employees');
+    Route::middleware('permission:glossary')->group(function () {
+        Route::resource('glossary', GlossaryController::class)->names([
+            'index' => 'glossary.index',
+            'create' => 'glossary.create',
+            'store' => 'glossary.store',
+            'show' => 'glossary.show',
+            'edit' => 'glossary.edit',
+            'update' => 'glossary.update',
+            'destroy' => 'glossary.destroy',
+        ]);
+        Route::post('glossary/{term}/toggle', [GlossaryController::class, 'toggle'])->name('glossary.toggle');
+        Route::post('glossary/import-employees', [GlossaryController::class, 'importEmployees'])->name('glossary.import-employees');
+    });
 
-    // Управление документами (для менеджеров документов)
-    Route::middleware(['document.manager'])->group(function () {
-        Route::get('/document-manager', [App\Http\Controllers\DocumentManagerController::class, 'index'])->name('admin.document-manager');
-        Route::get('/document-manager/documents', [App\Http\Controllers\DocumentManagerController::class, 'getDocuments'])->name('admin.document-manager.documents');
-        Route::post('/document-manager/rename', [App\Http\Controllers\DocumentManagerController::class, 'rename'])->name('admin.document-manager.rename');
-        Route::post('/document-manager/move', [App\Http\Controllers\DocumentManagerController::class, 'move'])->name('admin.document-manager.move');
-        Route::delete('/document-manager/delete', [App\Http\Controllers\DocumentManagerController::class, 'delete'])->name('admin.document-manager.delete');
+    // Управление документами (файловый менеджер)
+    Route::middleware(['permission:documents'])->group(function () {
+        Route::get('/document-manager', [App\Http\Controllers\DocumentManagerController::class, 'index'])->name('document-manager');
+        Route::get('/document-manager/documents', [App\Http\Controllers\DocumentManagerController::class, 'getDocuments'])->name('document-manager.documents');
+        Route::post('/document-manager/rename', [App\Http\Controllers\DocumentManagerController::class, 'rename'])->name('document-manager.rename');
+        Route::post('/document-manager/move', [App\Http\Controllers\DocumentManagerController::class, 'move'])->name('document-manager.move');
+        Route::delete('/document-manager/delete', [App\Http\Controllers\DocumentManagerController::class, 'delete'])->name('document-manager.delete');
     });
 });
 
-Route::prefix('admin/storage')->middleware(['auth'])->group(function () {
+Route::prefix('admin/storage')->middleware(['auth', 'permission:documents|news'])->group(function () {
     Route::get('list', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'list']);
     Route::delete('delete', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'delete']);
     Route::post('upload', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'upload']);
@@ -195,7 +198,7 @@ Route::prefix('admin/storage')->middleware(['auth'])->group(function () {
 });
 
 // API для библиотеки изображений
-Route::prefix('admin/images')->middleware(['auth'])->group(function () {
+Route::prefix('admin/images')->middleware(['auth', 'permission:news|media'])->group(function () {
     Route::get('news', [\App\Http\Controllers\Admin\ImageLibraryController::class, 'getNewsImages']);
 });
 

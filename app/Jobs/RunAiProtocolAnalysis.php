@@ -118,7 +118,7 @@ class RunAiProtocolAnalysis implements ShouldQueue
                 'status' => 'completed',
                 'progress' => 100,
                 'result_path' => 'ai_protocols_output/report_' . $analysis->id . '.xlsx',
-                'log' => $process->getOutput()
+                'log' => mb_substr($process->getOutput(), 0, 60000, 'UTF-8')
             ]);
 
             Log::info("AiProtocolAnalysis job completed for ID {$this->analysisId}");
@@ -133,7 +133,7 @@ class RunAiProtocolAnalysis implements ShouldQueue
             $analysis->update([
                 'status' => 'error',
                 'progress' => 0,
-                'log' => $errorLog
+                'log' => mb_substr($errorLog, 0, 60000, 'UTF-8')
             ]);
             
             Log::error("AiProtocolAnalysis Job Failed: " . $e->getMessage());

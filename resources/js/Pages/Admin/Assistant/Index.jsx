@@ -267,7 +267,7 @@ export default function AssistantIndex({ technologies = [] }) {
                                     value={input}
                                     onChange={e => setInput(e.target.value)}
                                     placeholder={`Запитайте про "${selectedTech.name.substring(0, 30)}..."`}
-                                    className="w-full pl-6 pr-14 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-500 transition-all shadow-inner outline-none text-sm placeholder:text-gray-400"
+                                    className="w-full pl-6 pr-14 py-4 bg-gray-50/50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-500 transition-all shadow-inner outline-none text-sm placeholder:text-gray-400"
                                 />
                                 <button
                                     type="submit"
@@ -313,7 +313,7 @@ export default function AssistantIndex({ technologies = [] }) {
                                     {activeDocs.map(doc => (
                                         <div key={doc.id} className="group flex flex-col p-3.5 bg-white border border-gray-100 rounded-xl hover:border-blue-200 hover:shadow-md transition-all relative">
                                             <div className="flex items-start gap-3 mb-2">
-                                                <div className="bg-red-50 text-red-500 p-2 rounded-lg shrink-0 group-hover:bg-red-500 group-hover:text-white transition-colors">
+                                                <div className="bg-red-50 text-red-500 p-2 rounded-2xl shrink-0 group-hover:bg-red-500 group-hover:text-white transition-colors">
                                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                                 </div>
                                                 <div className="min-w-0 flex-grow">
@@ -332,7 +332,7 @@ export default function AssistantIndex({ technologies = [] }) {
                                                 </a>
                                                 <button
                                                     onClick={() => handleDeleteDoc(doc.name)}
-                                                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-all active:scale-90"
+                                                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all active:scale-90"
                                                     title="Удалить из базы знаний"
                                                 >
                                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>

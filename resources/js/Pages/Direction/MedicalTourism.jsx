@@ -1,4 +1,4 @@
-import { Head, usePage, router } from '@inertiajs/react';
+import { Head, usePage, router, Link } from '@inertiajs/react';
 import React, { useMemo, useState, useEffect } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import FolderChlank from '@/Components/FolderChlank';
@@ -6,87 +6,87 @@ import translationService from '@/Services/TranslationService';
 import { route } from '@/ziggy-helper'; // Импорт функции для генерации маршрутов
 
 export default function MedicalTourism({ clinics = [] }) {
-    const [search, setSearch] = useState('');
-    
-    // Функция для получения перевода
-    const t = (key, fallback = '') => {
-        return translationService.t(key, fallback);
+  const [search, setSearch] = useState('');
+
+  // Функция для получения перевода
+  const t = (key, fallback = '') => {
+    return translationService.t(key, fallback);
+  };
+
+  // Состояния для переводов (для реактивного обновления)
+  const [pageTitle, setPageTitle] = useState('');
+  const [intro, setIntro] = useState('');
+  const [folder1, setFolder1] = useState('');
+  const [folder2, setFolder2] = useState('');
+  const [folder3, setFolder3] = useState('');
+  const [folder4, setFolder4] = useState('');
+  const [popularDirectionsTitle, setPopularDirectionsTitle] = useState('');
+  const [popularDirectionsDescription, setPopularDirectionsDescription] = useState('');
+  const [servicesLink, setServicesLink] = useState('');
+  const [cardiology, setCardiology] = useState('');
+  const [cardiologyDescription, setCardiologyDescription] = useState('');
+  const [orthopedics, setOrthopedics] = useState('');
+  const [orthopedicsDescription, setOrthopedicsDescription] = useState('');
+  const [reproductiveMedicine, setReproductiveMedicine] = useState('');
+  const [reproductiveMedicineDescription, setReproductiveMedicineDescription] = useState('');
+  const [astanaClinicsTitle, setAstanaClinicsTitle] = useState('');
+  const [searchPlaceholder, setSearchPlaceholder] = useState('');
+  const [noClinicsFound, setNoClinicsFound] = useState('');
+  const [h1Title, setH1Title] = useState('');
+
+  // Обновление переводов при смене языка
+  useEffect(() => {
+    const updateTranslations = () => {
+      setPageTitle(t('directionsPages.medicalTourism.title', 'Медицинский туризм'));
+      setIntro(t('directionsPages.medicalTourism.intro'));
+      setFolder1(t('directionsPages.medicalTourism.folder1'));
+      setFolder2(t('directionsPages.medicalTourism.folder2'));
+      setFolder3(t('directionsPages.medicalTourism.folder3'));
+      setFolder4(t('directionsPages.medicalTourism.folder4'));
+      setPopularDirectionsTitle(t('directionsPages.medicalTourism.popularDirectionsTitle'));
+      setPopularDirectionsDescription(t('directionsPages.medicalTourism.popularDirectionsDescription'));
+      setServicesLink(t('directionsPages.medicalTourism.servicesLink'));
+      setCardiology(t('directionsPages.medicalTourism.cardiology'));
+      setCardiologyDescription(t('directionsPages.medicalTourism.cardiologyDescription'));
+      setOrthopedics(t('directionsPages.medicalTourism.orthopedics'));
+      setOrthopedicsDescription(t('directionsPages.medicalTourism.orthopedicsDescription'));
+      setReproductiveMedicine(t('directionsPages.medicalTourism.reproductiveMedicine'));
+      setReproductiveMedicineDescription(t('directionsPages.medicalTourism.reproductiveMedicineDescription'));
+      setAstanaClinicsTitle(t('directionsPages.medicalTourism.astanaClinicsTitle'));
+      setSearchPlaceholder(t('directionsPages.medicalTourism.searchPlaceholder'));
+      setNoClinicsFound(t('directionsPages.medicalTourism.noClinicsFound'));
+      setH1Title(t('directionsPages.medicalTourism.title', 'Медицинский туризм'));
     };
 
-    // Состояния для переводов (для реактивного обновления)
-    const [pageTitle, setPageTitle] = useState('');
-    const [intro, setIntro] = useState('');
-    const [folder1, setFolder1] = useState('');
-    const [folder2, setFolder2] = useState('');
-    const [folder3, setFolder3] = useState('');
-    const [folder4, setFolder4] = useState('');
-    const [popularDirectionsTitle, setPopularDirectionsTitle] = useState('');
-    const [popularDirectionsDescription, setPopularDirectionsDescription] = useState('');
-    const [servicesLink, setServicesLink] = useState('');
-    const [cardiology, setCardiology] = useState('');
-    const [cardiologyDescription, setCardiologyDescription] = useState('');
-    const [orthopedics, setOrthopedics] = useState('');
-    const [orthopedicsDescription, setOrthopedicsDescription] = useState('');
-    const [reproductiveMedicine, setReproductiveMedicine] = useState('');
-    const [reproductiveMedicineDescription, setReproductiveMedicineDescription] = useState('');
-    const [astanaClinicsTitle, setAstanaClinicsTitle] = useState('');
-    const [searchPlaceholder, setSearchPlaceholder] = useState('');
-    const [noClinicsFound, setNoClinicsFound] = useState('');
-    const [h1Title, setH1Title] = useState('');
+    updateTranslations();
+    window.addEventListener('languageChanged', updateTranslations);
 
-    // Обновление переводов при смене языка
-    useEffect(() => {
-        const updateTranslations = () => {
-            setPageTitle(t('directionsPages.medicalTourism.title', 'Медицинский туризм'));
-            setIntro(t('directionsPages.medicalTourism.intro'));
-            setFolder1(t('directionsPages.medicalTourism.folder1'));
-            setFolder2(t('directionsPages.medicalTourism.folder2'));
-            setFolder3(t('directionsPages.medicalTourism.folder3'));
-            setFolder4(t('directionsPages.medicalTourism.folder4'));
-            setPopularDirectionsTitle(t('directionsPages.medicalTourism.popularDirectionsTitle'));
-            setPopularDirectionsDescription(t('directionsPages.medicalTourism.popularDirectionsDescription'));
-            setServicesLink(t('directionsPages.medicalTourism.servicesLink'));
-            setCardiology(t('directionsPages.medicalTourism.cardiology'));
-            setCardiologyDescription(t('directionsPages.medicalTourism.cardiologyDescription'));
-            setOrthopedics(t('directionsPages.medicalTourism.orthopedics'));
-            setOrthopedicsDescription(t('directionsPages.medicalTourism.orthopedicsDescription'));
-            setReproductiveMedicine(t('directionsPages.medicalTourism.reproductiveMedicine'));
-            setReproductiveMedicineDescription(t('directionsPages.medicalTourism.reproductiveMedicineDescription'));
-            setAstanaClinicsTitle(t('directionsPages.medicalTourism.astanaClinicsTitle'));
-            setSearchPlaceholder(t('directionsPages.medicalTourism.searchPlaceholder'));
-            setNoClinicsFound(t('directionsPages.medicalTourism.noClinicsFound'));
-            setH1Title(t('directionsPages.medicalTourism.title', 'Медицинский туризм'));
-        };
+    return () => {
+      window.removeEventListener('languageChanged', updateTranslations);
+    };
+  }, []);
 
-        updateTranslations();
-        window.addEventListener('languageChanged', updateTranslations);
+  // Данные о клиниках Казахстана для медицинского туризма (получаем с сервера)
+  const kazakhstanClinics = clinics.map(clinic => ({
+    id: clinic.id,
+    name: clinic.name,
+    image: clinic.image || clinic.hero_url || clinic.logo_url || '/img/clinics/clinic.jpg',
+    description: clinic.short_desc || '',
+    specialties: clinic.specialties || [],
+    address: clinic.address || '',
+    phone: clinic.phone || '',
+    website: clinic.website || '',
+    slug: clinic.slug,
+  }));
 
-        return () => {
-            window.removeEventListener('languageChanged', updateTranslations);
-        };
-    }, []);
+  // Фильтрация клиник по названию
+  const filteredClinics = useMemo(() => {
+    const q = (search || '').toLowerCase().trim();
+    if (!q) return kazakhstanClinics;
+    return kazakhstanClinics.filter(c => c.name.toLowerCase().includes(q));
+  }, [search, kazakhstanClinics]);
 
-    // Данные о клиниках Казахстана для медицинского туризма (получаем с сервера)
-    const kazakhstanClinics = clinics.map(clinic => ({
-        id: clinic.id,
-        name: clinic.name,
-        image: clinic.image || clinic.hero_url || clinic.logo_url || '/img/clinics/clinic.jpg',
-        description: clinic.short_desc || '',
-        specialties: clinic.specialties || [],
-        address: clinic.address || '',
-        phone: clinic.phone || '',
-        website: clinic.website || '',
-        slug: clinic.slug,
-    }));
-
-    // Фильтрация клиник по названию
-    const filteredClinics = useMemo(() => {
-        const q = (search || '').toLowerCase().trim();
-        if (!q) return kazakhstanClinics;
-        return kazakhstanClinics.filter(c => c.name.toLowerCase().includes(q));
-    }, [search, kazakhstanClinics]);
-
-    return (
+  return (
     <>
       <Head title={pageTitle} />
       <section className="text-gray-600 body-font pb-8">
@@ -116,13 +116,13 @@ export default function MedicalTourism({ clinics = [] }) {
             <p className="text-gray-600 max-w-3xl mx-auto mb-6">
               {popularDirectionsDescription}
             </p>
-            <a href={route('medical.tourism.services')} className="inline-flex items-center text-green-600 hover:text-green-800 font-medium">
+            <Link href={route('medical.tourism.services')} className="inline-flex items-center text-green-600 hover:text-green-800 font-medium">
               {servicesLink}
-            </a>
+            </Link>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8 px-4">
-            <a href={route('medical.tourism.services')} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-300 cursor-pointer">
+            <Link href={route('medical.tourism.services')} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-300 cursor-pointer">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 mx-auto">
                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -130,9 +130,9 @@ export default function MedicalTourism({ clinics = [] }) {
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3 text-center">{cardiology}</h3>
               <p className="text-gray-600 text-center">{cardiologyDescription}</p>
-            </a>
-            
-            <a href={route('medical.tourism.services')} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-300 cursor-pointer">
+            </Link>
+
+            <Link href={route('medical.tourism.services')} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-300 cursor-pointer">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 mx-auto">
                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-10 0a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2" />
@@ -140,9 +140,9 @@ export default function MedicalTourism({ clinics = [] }) {
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3 text-center">{orthopedics}</h3>
               <p className="text-gray-600 text-center">{orthopedicsDescription}</p>
-            </a>
-            
-            <a href={route('medical.tourism.services')} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-300 cursor-pointer">
+            </Link>
+
+            <Link href={route('medical.tourism.services')} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transform transition-all duration-300 cursor-pointer">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 mx-auto">
                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
@@ -150,7 +150,7 @@ export default function MedicalTourism({ clinics = [] }) {
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3 text-center">{reproductiveMedicine}</h3>
               <p className="text-gray-600 text-center">{reproductiveMedicineDescription}</p>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -170,13 +170,13 @@ export default function MedicalTourism({ clinics = [] }) {
               />
             </div>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredClinics.map((clinic) => (
               <div key={clinic.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
                 <div className="h-48 bg-gray-200 overflow-hidden flex-shrink-0">
-                  <img 
-                    src={clinic.image} 
+                  <img
+                    src={clinic.image}
                     alt={clinic.name}
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -193,7 +193,7 @@ export default function MedicalTourism({ clinics = [] }) {
                   </p>
                   <div className="flex flex-wrap gap-1 mb-3">
                     {clinic.specialties.map((specialty, index) => (
-                      <span 
+                      <span
                         key={index}
                         className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full"
                       >
@@ -235,6 +235,6 @@ export default function MedicalTourism({ clinics = [] }) {
 }
 
 MedicalTourism.layout = page => {
-    const h1 = translationService.t('directionsPages.medicalTourism.title', 'Медицинский туризм');
-    return <LayoutDirection img="medical-tourism" h1={h1} useVideo={false}>{page}</LayoutDirection>;
+  const h1 = translationService.t('directionsPages.medicalTourism.title', 'Медицинский туризм');
+  return <LayoutDirection img="medical-tourism" h1={h1} useVideo={false}>{page}</LayoutDirection>;
 };

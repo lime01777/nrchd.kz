@@ -24,7 +24,7 @@ export default function Index() {
                     </div>
                 )}
 
-                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                <div className="bg-white/90 backdrop-blur-sm shadow-md rounded-2xl border border-gray-100/50 overflow-hidden">
                     <div className="overflow-x-auto">
                         <Table>
                             <Table.Head>

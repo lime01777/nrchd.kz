@@ -74,7 +74,7 @@ export default function YouthHealthCentersIndex({ centers, regions, filters }) {
             
             <div className="py-6">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                         <div className="p-6 bg-white border-b border-gray-200">
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-2xl font-semibold text-gray-900">
@@ -82,7 +82,7 @@ export default function YouthHealthCentersIndex({ centers, regions, filters }) {
                                 </h2>
                                 <Link
                                     href={route('admin.youth-health-centers.create')}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
                                 >
                                     + Добавить МЦЗ
                                 </Link>
@@ -101,7 +101,7 @@ export default function YouthHealthCentersIndex({ centers, regions, filters }) {
                                     <input
                                         type="text"
                                         placeholder="Поиск по названию, организации, адресу..."
-                                        className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         onKeyPress={(e) => e.key === 'Enter' && handleFilter()}
@@ -110,7 +110,7 @@ export default function YouthHealthCentersIndex({ centers, regions, filters }) {
                                 
                                 <div>
                                     <select
-                                        className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         value={selectedRegion}
                                         onChange={(e) => setSelectedRegion(e.target.value)}
                                     >
@@ -124,13 +124,13 @@ export default function YouthHealthCentersIndex({ centers, regions, filters }) {
                                 <div className="flex gap-2">
                                     <button
                                         onClick={handleFilter}
-                                        className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition"
+                                        className="px-4 py-2 bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition"
                                     >
                                         Применить
                                     </button>
                                     <button
                                         onClick={handleResetFilters}
-                                        className="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500 transition"
+                                        className="px-4 py-2 bg-gray-400 text-white rounded-xl hover:bg-gray-50/500 transition"
                                     >
                                         Сбросить
                                     </button>
@@ -139,13 +139,13 @@ export default function YouthHealthCentersIndex({ centers, regions, filters }) {
                             
                             {/* Массовые действия */}
                             {selectedCenters.length > 0 && (
-                                <div className="mb-4 p-4 bg-blue-50 rounded-md flex justify-between items-center">
+                                <div className="mb-4 p-4 bg-blue-50 rounded-xl flex justify-between items-center">
                                     <span className="text-sm text-gray-700">
                                         Выбрано центров: <strong>{selectedCenters.length}</strong>
                                     </span>
                                     <button
                                         onClick={handleBulkDelete}
-                                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition text-sm"
+                                        className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition text-sm"
                                     >
                                         Удалить выбранные
                                     </button>
@@ -155,7 +155,7 @@ export default function YouthHealthCentersIndex({ centers, regions, filters }) {
                             {/* Таблица МЦЗ */}
                             <div className="overflow-x-auto">
                                 <table className="min-w-full bg-white">
-                                    <thead className="bg-gray-50">
+                                    <thead className="bg-gray-50/50">
                                         <tr>
                                             <th className="py-3 px-4 border-b text-left">
                                                 <input
@@ -259,7 +259,7 @@ export default function YouthHealthCentersIndex({ centers, regions, filters }) {
                                             <Link
                                                 key={index}
                                                 href={link.url || '#'}
-                                                className={`px-3 py-2 rounded-md text-sm ${
+                                                className={`px-3 py-2 rounded-xl text-sm ${
                                                     link.active
                                                         ? 'bg-blue-600 text-white'
                                                         : link.url

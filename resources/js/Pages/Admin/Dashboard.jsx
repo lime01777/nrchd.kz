@@ -38,14 +38,14 @@ export default function Dashboard({ stats, recentNews, recentComments }) {
       )
     },
     {
-      name: 'Посетителей за неделю',
-      stat: formatNumber(stats?.visitorsWeek),
+      name: 'Ср. просмотров новостей',
+      stat: formatNumber(stats?.averageViews),
       icon: (
         <svg className="h-6 w-6 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
         </svg>
-      ),
-      hint: stats?.visitorsWeek === null ? 'Для отображения подключите Яндекс.Метрику' : undefined
+      )
     },
   ];
 
@@ -55,10 +55,10 @@ export default function Dashboard({ stats, recentNews, recentComments }) {
         <h3 className="text-lg leading-6 font-medium text-gray-900">Статистика</h3>
         <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {statItems.map((item) => (
-            <div key={item.name} className="bg-white overflow-hidden shadow rounded-lg">
+            <div key={item.name} className="bg-white overflow-hidden shadow rounded-2xl">
               <div className="px-4 py-5 sm:p-6">
                 <div className="flex items-center">
-                  <div className="flex-shrink-0 bg-blue-100 rounded-md p-3">
+                  <div className="flex-shrink-0 bg-blue-100 rounded-xl p-3">
                     {item.icon}
                   </div>
                   <div className="ml-5 w-0 flex-1">
@@ -79,7 +79,7 @@ export default function Dashboard({ stats, recentNews, recentComments }) {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Последние новости */}
-        <div className="bg-white shadow rounded-lg">
+        <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50">
           <div className="px-4 py-5 border-b border-gray-200 sm:px-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg leading-6 font-medium text-gray-900">Последние новости</h3>
@@ -110,7 +110,7 @@ export default function Dashboard({ stats, recentNews, recentComments }) {
                       <div>
                         <Link
                           href={route('admin.news.edit', newsItem.id)}
-                          className="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition ease-in-out duration-150"
+                          className="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition ease-in-out duration-150"
                         >
                           Изменить
                         </Link>
@@ -124,7 +124,7 @@ export default function Dashboard({ stats, recentNews, recentComments }) {
         </div>
 
         {/* Последние комментарии */}
-        <div className="bg-white shadow rounded-lg">
+        <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50">
           <div className="px-4 py-5 border-b border-gray-200 sm:px-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg leading-6 font-medium text-gray-900">Последние комментарии</h3>

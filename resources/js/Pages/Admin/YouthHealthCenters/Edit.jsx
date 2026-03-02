@@ -24,7 +24,7 @@ export default function YouthHealthCenterEdit({ center }) {
             
             <div className="py-6">
                 <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                         <div className="p-6 bg-white border-b border-gray-200">
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-2xl font-semibold text-gray-900">
@@ -32,7 +32,7 @@ export default function YouthHealthCenterEdit({ center }) {
                                 </h2>
                                 <Link
                                     href={route('admin.youth-health-centers.index')}
-                                    className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition"
+                                    className="px-4 py-2 bg-gray-50/500 text-white rounded-xl hover:bg-gray-600 transition"
                                 >
                                     ← Назад к списку
                                 </Link>
@@ -48,7 +48,7 @@ export default function YouthHealthCenterEdit({ center }) {
                                         type="text"
                                         value={data.name}
                                         onChange={e => setData('name', e.target.value)}
-                                        className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.name ? 'border-red-500' : ''}`}
+                                        className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.name ? 'border-red-500' : ''}`}
                                         placeholder='Молодежный центр здоровья «Саулық»'
                                     />
                                     {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
@@ -63,7 +63,7 @@ export default function YouthHealthCenterEdit({ center }) {
                                         type="text"
                                         value={data.organization}
                                         onChange={e => setData('organization', e.target.value)}
-                                        className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.organization ? 'border-red-500' : ''}`}
+                                        className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.organization ? 'border-red-500' : ''}`}
                                         placeholder='ГКП на ПХВ «Городская поликлиника №1»'
                                     />
                                     {errors.organization && <p className="mt-1 text-sm text-red-600">{errors.organization}</p>}
@@ -78,7 +78,7 @@ export default function YouthHealthCenterEdit({ center }) {
                                         type="text"
                                         value={data.region}
                                         onChange={e => setData('region', e.target.value)}
-                                        className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.region ? 'border-red-500' : ''}`}
+                                        className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.region ? 'border-red-500' : ''}`}
                                         placeholder='город Алматы'
                                     />
                                     {errors.region && <p className="mt-1 text-sm text-red-600">{errors.region}</p>}
@@ -95,7 +95,7 @@ export default function YouthHealthCenterEdit({ center }) {
                                     <textarea
                                         value={data.address}
                                         onChange={e => setData('address', e.target.value)}
-                                        className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.address ? 'border-red-500' : ''}`}
+                                        className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.address ? 'border-red-500' : ''}`}
                                         rows="3"
                                         placeholder='город Алматы, Бостандыкский район, улица Торайгырова, дом 12а'
                                     />
@@ -113,7 +113,7 @@ export default function YouthHealthCenterEdit({ center }) {
                                             step="0.0000001"
                                             value={data.latitude}
                                             onChange={e => setData('latitude', e.target.value)}
-                                            className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.latitude ? 'border-red-500' : ''}`}
+                                            className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.latitude ? 'border-red-500' : ''}`}
                                             placeholder='43.2357'
                                         />
                                         {errors.latitude && <p className="mt-1 text-sm text-red-600">{errors.latitude}</p>}
@@ -131,7 +131,7 @@ export default function YouthHealthCenterEdit({ center }) {
                                             step="0.0000001"
                                             value={data.longitude}
                                             onChange={e => setData('longitude', e.target.value)}
-                                            className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.longitude ? 'border-red-500' : ''}`}
+                                            className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.longitude ? 'border-red-500' : ''}`}
                                             placeholder='76.9094'
                                         />
                                         {errors.longitude && <p className="mt-1 text-sm text-red-600">{errors.longitude}</p>}
@@ -147,7 +147,7 @@ export default function YouthHealthCenterEdit({ center }) {
                                         type="checkbox"
                                         checked={data.is_active}
                                         onChange={e => setData('is_active', e.target.checked)}
-                                        className="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500"
+                                        className="rounded border-gray-200 text-blue-600 shadow-sm focus:ring-blue-500"
                                     />
                                     <label className="ml-2 text-sm text-gray-700">
                                         Активен (отображается на карте)
@@ -155,7 +155,7 @@ export default function YouthHealthCenterEdit({ center }) {
                                 </div>
                                 
                                 {/* Подсказка для координат */}
-                                <div className="p-4 bg-blue-50 rounded-md">
+                                <div className="p-4 bg-blue-50 rounded-xl">
                                     <p className="text-sm text-blue-800">
                                         <strong>Подсказка:</strong> Вы можете найти координаты адреса на 
                                         <a 
@@ -174,14 +174,14 @@ export default function YouthHealthCenterEdit({ center }) {
                                 <div className="flex justify-end space-x-3 pt-4 border-t">
                                     <Link
                                         href={route('admin.youth-health-centers.index')}
-                                        className="px-6 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+                                        className="px-6 py-2 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition"
                                     >
                                         Отмена
                                     </Link>
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="px-6 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {processing ? 'Сохранение...' : 'Сохранить изменения'}
                                     </button>

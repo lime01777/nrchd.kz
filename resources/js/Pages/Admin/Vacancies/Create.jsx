@@ -114,13 +114,13 @@ export default function VacancyCreate() {
             
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                         <div className="p-6 bg-white border-b border-gray-200">
                             <div className="mb-6 flex justify-between">
                                 <h1 className="text-2xl font-semibold text-gray-900">Создание вакансии</h1>
                                 <Link
                                     href={route('vacancies.index')}
-                                    className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+                                    className="px-4 py-2 bg-gray-300 text-gray-800 rounded-xl hover:bg-gray-400"
                                 >
                                     Назад к списку
                                 </Link>
@@ -135,7 +135,7 @@ export default function VacancyCreate() {
                                     <input
                                         type="text"
                                         id="title"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                        className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring focus:ring-blue-200"
                                         value={data.title}
                                         onChange={e => setData('title', e.target.value)}
                                         required
@@ -151,7 +151,7 @@ export default function VacancyCreate() {
                                     <input
                                         type="text"
                                         id="slug"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                        className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring focus:ring-blue-200"
                                         value={data.slug}
                                         onChange={e => setData('slug', e.target.value)}
                                         placeholder="Оставьте пустым для автоматической генерации"
@@ -167,7 +167,7 @@ export default function VacancyCreate() {
                                     </label>
                                     <textarea
                                         id="excerpt"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                        className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring focus:ring-blue-200"
                                         rows="3"
                                         value={data.excerpt || ''}
                                         onChange={e => setData('excerpt', e.target.value)}
@@ -184,7 +184,7 @@ export default function VacancyCreate() {
                                         <input
                                             type="text"
                                             id="city"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                            className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring focus:ring-blue-200"
                                             value={data.city}
                                             onChange={e => setData('city', e.target.value)}
                                             required
@@ -200,7 +200,7 @@ export default function VacancyCreate() {
                                         <input
                                             type="text"
                                             id="department"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                            className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring focus:ring-blue-200"
                                             value={data.department}
                                             onChange={e => setData('department', e.target.value)}
                                             required
@@ -217,7 +217,7 @@ export default function VacancyCreate() {
                                         </label>
                                         <select
                                             id="employment_type"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                            className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring focus:ring-blue-200"
                                             value={data.employment_type}
                                             onChange={e => setData('employment_type', e.target.value)}
                                             required
@@ -237,7 +237,7 @@ export default function VacancyCreate() {
                                         </label>
                                         <select
                                             id="status"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                            className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring focus:ring-blue-200"
                                             value={data.status}
                                             onChange={e => setData('status', e.target.value)}
                                             required
@@ -258,7 +258,7 @@ export default function VacancyCreate() {
                                         <input
                                             type="date"
                                             id="published_at"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                            className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring focus:ring-blue-200"
                                             value={data.published_at}
                                             onChange={e => setData('published_at', e.target.value)}
                                         />
@@ -273,7 +273,7 @@ export default function VacancyCreate() {
                                     </label>
                                     <textarea
                                         id="body"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                        className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring focus:ring-blue-200"
                                         value={bodyText}
                                         onChange={e => updateBodyFromText(e.target.value)}
                                         rows="10"
@@ -290,7 +290,7 @@ export default function VacancyCreate() {
                                     </label>
                                     <textarea
                                         id="functional_responsibilities"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                        className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring focus:ring-blue-200"
                                         value={functionalResponsibilitiesText}
                                         onChange={e => updateArrayFromText(e.target.value, 'functional_responsibilities', setFunctionalResponsibilitiesText)}
                                         rows="8"
@@ -306,7 +306,7 @@ export default function VacancyCreate() {
                                     </label>
                                     <textarea
                                         id="qualification_requirements"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                        className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring focus:ring-blue-200"
                                         value={qualificationRequirementsText}
                                         onChange={e => updateArrayFromText(e.target.value, 'qualification_requirements', setQualificationRequirementsText)}
                                         rows="8"
@@ -322,7 +322,7 @@ export default function VacancyCreate() {
                                     </label>
                                     <textarea
                                         id="application_procedure"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                                        className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring focus:ring-blue-200"
                                         value={applicationProcedureText}
                                         onChange={e => updateArrayFromText(e.target.value, 'application_procedure', setApplicationProcedureText)}
                                         rows="6"
@@ -335,14 +335,14 @@ export default function VacancyCreate() {
                                 <div className="mt-6 flex items-center justify-end">
                                     <button
                                         type="button"
-                                        className="mr-3 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                        className="mr-3 px-4 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50/50"
                                         onClick={() => window.history.back()}
                                     >
                                         Отмена
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                        className="px-4 py-2 bg-blue-600 border border-transparent rounded-xl text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                         disabled={processing}
                                     >
                                         {processing ? 'Сохранение...' : 'Сохранить вакансию'}

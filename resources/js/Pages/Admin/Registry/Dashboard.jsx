@@ -1,6 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
+import html2pdf from 'html2pdf.js';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
+import RegistryKazakhstanMap from '@/Components/RegistryKazakhstanMap';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -55,6 +57,8 @@ const dictDirections = {
 };
 
 export default function RegistryDashboard({ registryData = [] }) {
+    const dashboardRef = useRef(null);
+    const [isExporting, setIsExporting] = useState(false);
 
     // Helper to normalize data structure
     const mapToCamel = (data) => {
@@ -150,13 +154,15 @@ export default function RegistryDashboard({ registryData = [] }) {
             else revOk++;
         });
 
-        // KPI-6: Geography
+        // KPI-6: Geography (безопасная обработка null region)
         const regions = {};
         activeData.forEach(item => {
+            const regionStr = item.region || '';
+            if (!regionStr) return;
             // Split regions if comma separated
-            const regs = item.region.split(',').map(s => s.trim());
+            const regs = regionStr.split(',').map(s => s.trim());
             regs.forEach(r => {
-                if (r === '-') return;
+                if (!r || r === '-') return;
                 regions[r] = (regions[r] || 0) + 1;
             });
         });
@@ -231,146 +237,133 @@ export default function RegistryDashboard({ registryData = [] }) {
         ]
     };
 
-    const handlePrint = () => {
-        window.print();
+    const handlePrint = async () => {
+        setIsExporting(true);
+        const element = dashboardRef.current;
+        const opt = {
+            margin: 0.2,
+            filename: 'kpi_dashboard_ptz.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+        };
+
+        await html2pdf().set(opt).from(element).save();
+        setIsExporting(false);
+    };
+
+    const handleExportCSV = () => {
+        window.open(route('admin.registry.export', { format: 'csv' }), '_blank');
     };
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center no-print">
+            <div className="flex justify-between items-center no-print border-b border-gray-100 pb-4">
                 <div>
                     <h2 className="text-2xl font-bold text-gray-800">Dashboard KPI: Перечень технологий (ПТЗ)</h2>
                     <p className="text-gray-500 text-sm mt-1">Мониторинг ключевых показателей эффективности внедрения технологий</p>
                 </div>
                 <div className="flex gap-2">
-                    <button onClick={handlePrint} className="flex items-center gap-2 bg-white border border-gray-300 px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors shadow-sm text-gray-700">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                        Экспорт PDF
+                    <button onClick={handlePrint} disabled={isExporting} className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-2xl text-sm hover:bg-gray-50 transition-colors shadow-sm text-gray-700 disabled:opacity-50">
+                        {isExporting ? (
+                            <svg className="animate-spin h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        ) : (
+                            <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        )}
+                        {isExporting ? 'Генерация...' : 'Скачать PDF'}
                     </button>
-                    {/* Mock Export Data Button */}
-                    <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 shadow-sm transition-colors">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Выгрузка данных (CSV)
+                    <button onClick={handleExportCSV} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-2xl text-sm hover:bg-blue-700 shadow-sm transition-colors cursor-pointer">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Экспорт (CSV)
                     </button>
                 </div>
             </div>
 
-            {/* KPI Cards Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <div>
-                        <div className="text-gray-500 text-sm font-medium uppercase tracking-wide">Всего технологий</div>
-                        <div className="text-4xl font-extrabold text-blue-600 mt-2">{stats.totalActive}</div>
+            <div ref={dashboardRef} className="space-y-6 pb-4">
+                {/* KPI Cards Row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
+                        <div>
+                            <div className="text-gray-500 text-sm font-medium uppercase tracking-wide">Всего технологий</div>
+                            <div className="text-4xl font-extrabold text-blue-600 mt-2">{stats.totalActive}</div>
+                        </div>
+                        <div className="text-xs text-green-600 bg-green-50 w-fit px-2 py-1 rounded mt-3 font-medium">+2 за месяц</div>
                     </div>
-                    <div className="text-xs text-green-600 bg-green-50 w-fit px-2 py-1 rounded mt-3 font-medium">+2 за месяц</div>
-                </div>
 
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <div>
-                        <div className="text-gray-500 text-sm font-medium uppercase tracking-wide">Доля ИИ (Class A)</div>
-                        <div className="flex items-baseline gap-2 mt-2">
-                            <span className="text-4xl font-extrabold text-purple-600">{stats.aiShare}%</span>
-                            <span className="text-sm text-gray-500">({stats.aiCount} шт.)</span>
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
+                        <div>
+                            <div className="text-gray-500 text-sm font-medium uppercase tracking-wide">Доля ИИ (Class A)</div>
+                            <div className="flex items-baseline gap-2 mt-2">
+                                <span className="text-4xl font-extrabold text-purple-600">{stats.aiShare}%</span>
+                                <span className="text-sm text-gray-500">({stats.aiCount} шт.)</span>
+                            </div>
+                        </div>
+                        <div className="text-xs text-purple-600 mt-1">Автономных (A2): <b>{stats.aiAutonomous}</b></div>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
+                        <div>
+                            <div className="text-gray-500 text-sm font-medium uppercase tracking-wide">Ревалидация (30 дней)</div>
+                            <div className="text-4xl font-extrabold text-orange-500 mt-2">{stats.revalidation.upcoming}</div>
+                        </div>
+                        <div className="flex gap-2 mt-3">
+                            <span className="text-xs text-red-600 bg-red-50 px-2 py-1 rounded font-medium">Просрочено: {stats.revalidation.overdue}</span>
+                            <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded font-medium">Норма: {stats.revalidation.ok}</span>
                         </div>
                     </div>
-                    <div className="text-xs text-purple-600 mt-1">Автономных (A2): <b>{stats.aiAutonomous}</b></div>
-                </div>
 
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <div>
-                        <div className="text-gray-500 text-sm font-medium uppercase tracking-wide">Ревалидация (30 дней)</div>
-                        <div className="text-4xl font-extrabold text-orange-500 mt-2">{stats.revalidation.upcoming}</div>
-                    </div>
-                    <div className="flex gap-2 mt-3">
-                        <span className="text-xs text-red-600 bg-red-50 px-2 py-1 rounded font-medium">Просрочено: {stats.revalidation.overdue}</span>
-                        <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded font-medium">Норма: {stats.revalidation.ok}</span>
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
+                        <div>
+                            <div className="text-gray-500 text-sm font-medium uppercase tracking-wide">География внедрения</div>
+                            <div className="text-4xl font-extrabold text-indigo-600 mt-2">{Object.keys(stats.regions).length}</div>
+                        </div>
+                        <div className="text-xs text-gray-500 mt-3 truncate" title={Object.keys(stats.regions).join(', ')}>
+                            {Object.keys(stats.regions).slice(0, 3).join(', ')}...
+                        </div>
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <div>
-                        <div className="text-gray-500 text-sm font-medium uppercase tracking-wide">География внедрения</div>
-                        <div className="text-4xl font-extrabold text-indigo-600 mt-2">{Object.keys(stats.regions).length}</div>
+                {/* Charts Row 1 */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h3 className="text-lg font-bold text-gray-800 mb-4">Распределение по статусам</h3>
+                        <div className="h-64 flex justify-center">
+                            <Doughnut data={statusChartData} options={{ maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }} />
+                        </div>
                     </div>
-                    <div className="text-xs text-gray-500 mt-3 truncate" title={Object.keys(stats.regions).join(', ')}>
-                        {Object.keys(stats.regions).slice(0, 3).join(', ')}...
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h3 className="text-lg font-bold text-gray-800 mb-4">Топ-5 Направлений</h3>
+                        <div className="h-64">
+                            <Bar
+                                data={directionChartData}
+                                options={{
+                                    maintainAspectRatio: false,
+                                    indexAxis: 'y',
+                                    plugins: { legend: { display: false } }
+                                }}
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Charts Row 1 */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h3 className="text-lg font-bold text-gray-800 mb-4">Распределение по статусам</h3>
-                    <div className="h-64 flex justify-center">
-                        <Doughnut data={statusChartData} options={{ maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }} />
+                {/* Charts Row 2 */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 lg:col-span-2">
+                        <h3 className="text-lg font-bold text-gray-800 mb-4">Скорость внедрения (Динамика)</h3>
+                        <div className="h-64">
+                            <Line data={speedChartData} options={{ maintainAspectRatio: false }} />
+                        </div>
+                    </div>
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h3 className="text-lg font-bold text-gray-800 mb-4">Пенетрация ИИ</h3>
+                        <div className="h-64 flex justify-center">
+                            <Pie data={aiChartData} options={{ maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }} />
+                        </div>
                     </div>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h3 className="text-lg font-bold text-gray-800 mb-4">Топ-5 Направлений</h3>
-                    <div className="h-64">
-                        <Bar
-                            data={directionChartData}
-                            options={{
-                                maintainAspectRatio: false,
-                                indexAxis: 'y',
-                                plugins: { legend: { display: false } }
-                            }}
-                        />
-                    </div>
-                </div>
-            </div>
 
-            {/* Charts Row 2 */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 lg:col-span-2">
-                    <h3 className="text-lg font-bold text-gray-800 mb-4">Скорость внедрения (Динамика)</h3>
-                    <div className="h-64">
-                        <Line data={speedChartData} options={{ maintainAspectRatio: false }} />
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <h3 className="text-lg font-bold text-gray-800 mb-4">Пенетрация ИИ</h3>
-                    <div className="h-64 flex justify-center">
-                        <Pie data={aiChartData} options={{ maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }} />
-                    </div>
-                </div>
-            </div>
-
-            {/* Geography Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100">
-                    <h3 className="text-lg font-bold text-gray-800">География проектов</h3>
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left text-gray-500">
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3">Регион</th>
-                                <th className="px-6 py-3">Кол-во проектов</th>
-                                <th className="px-6 py-3">% от общего</th>
-                                <th className="px-6 py-3">Топ направление</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Object.entries(stats.regions).map(([region, count], idx) => (
-                                <tr key={region} className="bg-white border-b hover:bg-gray-50">
-                                    <td className="px-6 py-4 font-medium text-gray-900">{region}</td>
-                                    <td className="px-6 py-4">{count}</td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-16 bg-gray-200 rounded-full h-1.5">
-                                                <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${(count / stats.totalActive) * 100}%` }}></div>
-                                            </div>
-                                            {Math.round((count / stats.totalActive) * 100)}%
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-xs text-gray-500">Cardiology, AI</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                {/* Интерактивная карта Казахстана */}
+                <RegistryKazakhstanMap registryData={registryData} />
             </div>
 
             <style>{`

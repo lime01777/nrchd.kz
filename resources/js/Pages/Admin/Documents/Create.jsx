@@ -33,7 +33,7 @@ export default function Create({ categories }) {
         </h2>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white rounded-2xl shadow overflow-hidden">
         <form onSubmit={handleSubmit} className="p-6">
           <div className="mb-4">
             <InputLabel htmlFor="category_id" value="Категория" />
@@ -41,7 +41,7 @@ export default function Create({ categories }) {
               id="category_id"
               name="category_id"
               value={data.category_id}
-              className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+              className="mt-1 block w-full border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl shadow-sm"
               onChange={(e) => setData('category_id', e.target.value)}
               required
             >
@@ -75,7 +75,7 @@ export default function Create({ categories }) {
               id="file"
               type="file"
               name="file"
-              className="mt-1 block w-full border p-2 rounded-md"
+              className="mt-1 block w-full border p-2 rounded-xl"
               onChange={handleFileChange}
               required
             />

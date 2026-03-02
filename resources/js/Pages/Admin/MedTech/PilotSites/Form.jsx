@@ -42,7 +42,7 @@ export default function PilotSiteForm({ pilotSite = null }) {
                             Назад к списку пилотных площадок
                         </Link>
                     </div>
-                    <form onSubmit={submit} className="space-y-6 bg-white shadow rounded-lg p-6">
+                    <form onSubmit={submit} className="space-y-6 bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                         <div>
                             <InputLabel htmlFor="name" value="Название учреждения *" />
                             <TextInput
@@ -113,7 +113,7 @@ export default function PilotSiteForm({ pilotSite = null }) {
                                 value={data.description}
                                 onChange={(e) => setData('description', e.target.value)}
                                 rows={3}
-                                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                className="mt-1 block w-full border-gray-200 rounded-xl shadow-sm"
                                 placeholder="Описание роли площадки"
                             />
                             <InputError message={errors.description} className="mt-2" />
@@ -126,7 +126,7 @@ export default function PilotSiteForm({ pilotSite = null }) {
                                 value={data.technologies}
                                 onChange={(e) => setData('technologies', e.target.value)}
                                 rows={3}
-                                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                                className="mt-1 block w-full border-gray-200 rounded-xl shadow-sm"
                                 placeholder="Какие технологии/направления пилотируются"
                             />
                             <InputError message={errors.technologies} className="mt-2" />
@@ -138,7 +138,7 @@ export default function PilotSiteForm({ pilotSite = null }) {
                                 type="checkbox"
                                 checked={data.is_active}
                                 onChange={(e) => setData('is_active', e.target.checked)}
-                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                className="rounded border-gray-200 text-blue-600 focus:ring-blue-500"
                             />
                             <label htmlFor="is_active" className="ml-2 text-sm text-gray-700">
                                 Активна
@@ -148,7 +148,7 @@ export default function PilotSiteForm({ pilotSite = null }) {
                         <div className="flex justify-end space-x-3">
                             <Link
                                 href={route('admin.medtech.pilot-sites')}
-                                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                                className="px-4 py-2 border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50/50"
                             >
                                 Отмена
                             </Link>

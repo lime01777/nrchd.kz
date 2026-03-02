@@ -434,6 +434,48 @@ const HomeCharts = () => {
     );
 };
 
+// Компонент для анимации печатания
+const TypewriterText = ({ text, isTyping, className }) => {
+    const [displayText, setDisplayText] = useState('');
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isComplete, setIsComplete] = useState(false);
+
+    useEffect(() => {
+        // Сброс при смене текста
+        setDisplayText('');
+        setCurrentIndex(0);
+        setIsComplete(false);
+    }, [text]);
+
+    useEffect(() => {
+        if (isTyping && currentIndex < text.length) {
+            const timer = setTimeout(() => {
+                setDisplayText(text.slice(0, currentIndex + 1));
+                setCurrentIndex(currentIndex + 1);
+            }, 50); // Скорость печатания
+
+            return () => clearTimeout(timer);
+        } else if (!isTyping && currentIndex < text.length) {
+            // Если печатание закончилось, но текст не полный - допечатать
+            setDisplayText(text);
+            setCurrentIndex(text.length);
+            setIsComplete(true);
+        } else if (!isTyping && currentIndex >= text.length) {
+            // Если печатание закончилось и текст полный
+            setIsComplete(true);
+        }
+    }, [isTyping, currentIndex, text]);
+
+    return (
+        <span className={className}>
+            {displayText}
+            {isTyping && currentIndex < text.length && !isComplete && (
+                <span className="animate-pulse">|</span>
+            )}
+        </span>
+    );
+};
+
 export default function Home() {
     // Используем новый сервис переводов
     const t = (key, fallback = '') => {
@@ -514,47 +556,7 @@ export default function Home() {
         document.getElementById('background')?.classList.add('!hidden');
     };
 
-    // Компонент для анимации печатания
-    const TypewriterText = ({ text, isTyping, className }) => {
-        const [displayText, setDisplayText] = useState('');
-        const [currentIndex, setCurrentIndex] = useState(0);
-        const [isComplete, setIsComplete] = useState(false);
 
-        useEffect(() => {
-            // Сброс при смене текста
-            setDisplayText('');
-            setCurrentIndex(0);
-            setIsComplete(false);
-        }, [text]);
-
-        useEffect(() => {
-            if (isTyping && currentIndex < text.length) {
-                const timer = setTimeout(() => {
-                    setDisplayText(text.slice(0, currentIndex + 1));
-                    setCurrentIndex(currentIndex + 1);
-                }, 50); // Скорость печатания
-
-                return () => clearTimeout(timer);
-            } else if (!isTyping && currentIndex < text.length) {
-                // Если печатание закончилось, но текст не полный - допечатать
-                setDisplayText(text);
-                setCurrentIndex(text.length);
-                setIsComplete(true);
-            } else if (!isTyping && currentIndex >= text.length) {
-                // Если печатание закончилось и текст полный
-                setIsComplete(true);
-            }
-        }, [isTyping, currentIndex, text]);
-
-        return (
-            <span className={className}>
-                {displayText}
-                {isTyping && currentIndex < text.length && !isComplete && (
-                    <span className="animate-pulse">|</span>
-                )}
-            </span>
-        );
-    };
 
     return (
         <>
@@ -603,14 +605,10 @@ export default function Home() {
                     {heroSlides.map((slide, index) => (
                         <img
                             key={slide.id}
-                            className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out ${index === currentSlide ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-110'
+                            className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out min-h-screen min-w-full ${index === currentSlide ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-110'
                                 }`}
                             alt={`hero-${slide.id}`}
                             src={slide.image}
-                            style={{
-                                minHeight: '100vh',
-                                minWidth: '100%'
-                            }}
                             onError={(e) => {
                                 console.error(`Ошибка загрузки изображения: ${slide.image}`);
                                 e.target.src = '/img/HeroImg/home-hero.png'; // Fallback изображение
@@ -623,7 +621,7 @@ export default function Home() {
                 </div>
 
                 {/* Контент с анимацией */}
-                <div className="absolute inset-0 flex items-center justify-start z-20">
+                <div className="absolute inset-0 flex items-center justify-start z-20 pt-[15vh]">
                     <div className="container mx-auto px-5 flex items-center justify-start w-full">
                         <div className="lg:w-1/2 lg:pl-24 md:pl-16 flex flex-col items-start text-left bg-transparent px-4 relative min-h-[400px]">
                             {heroSlides.map((slide, index) => (

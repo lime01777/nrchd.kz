@@ -127,14 +127,14 @@ export default function ContentIndex({ algorithmSteps = [], algorithmIndicators 
 
                     <form onSubmit={handleSubmit} className="space-y-8">
                         {/* Изображение алгоритма */}
-                        <div className="bg-white shadow rounded-lg p-6">
+                        <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                             <h2 className="text-xl font-semibold text-gray-900 mb-4">Изображение алгоритма внедрения</h2>
                             {algorithmImage && (
                                 <div className="mb-4">
                                     <img
                                         src={algorithmImage}
                                         alt="Алгоритм внедрения"
-                                        className="max-w-full h-auto rounded-lg border border-gray-200"
+                                        className="max-w-full h-auto rounded-2xl border border-gray-200"
                                     />
                                 </div>
                             )}
@@ -151,20 +151,20 @@ export default function ContentIndex({ algorithmSteps = [], algorithmIndicators 
                         </div>
 
                         {/* Этапы алгоритма */}
-                        <div className="bg-white shadow rounded-lg p-6">
+                        <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-xl font-semibold text-gray-900">Этапы алгоритма</h2>
                                 <button
                                     type="button"
                                     onClick={addStep}
-                                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded-xl hover:bg-blue-700"
                                 >
                                     Добавить этап
                                 </button>
                             </div>
                             <div className="space-y-4">
                                 {steps.map((step, index) => (
-                                    <div key={step.id} className="border border-gray-200 rounded-lg p-4">
+                                    <div key={step.id} className="border border-gray-200 rounded-2xl p-4">
                                         <div className="flex justify-between items-center mb-2">
                                             <span className="text-sm font-medium text-gray-700">Этап {index + 1}</span>
                                             {steps.length > 1 && (
@@ -181,7 +181,7 @@ export default function ContentIndex({ algorithmSteps = [], algorithmIndicators 
                                             value={step.content_ru || ''}
                                             onChange={(e) => updateStep(step.id, 'content_ru', e.target.value)}
                                             rows={3}
-                                            className="w-full border-gray-300 rounded-md shadow-sm"
+                                            className="w-full border-gray-200 rounded-xl shadow-sm"
                                             placeholder="Описание этапа на русском *"
                                             required
                                         />
@@ -191,20 +191,20 @@ export default function ContentIndex({ algorithmSteps = [], algorithmIndicators 
                         </div>
 
                         {/* Ключевые индикаторы */}
-                        <div className="bg-white shadow rounded-lg p-6">
+                        <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-xl font-semibold text-gray-900">Ключевые индикаторы</h2>
                                 <button
                                     type="button"
                                     onClick={addIndicator}
-                                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                    className="px-3 py-1 text-sm bg-blue-600 text-white rounded-xl hover:bg-blue-700"
                                 >
                                     Добавить индикатор
                                 </button>
                             </div>
                             <div className="space-y-4">
                                 {indicators.map((indicator, index) => (
-                                    <div key={indicator.id} className="border border-gray-200 rounded-lg p-4">
+                                    <div key={indicator.id} className="border border-gray-200 rounded-2xl p-4">
                                         <div className="flex justify-between items-center mb-2">
                                             <span className="text-sm font-medium text-gray-700">Индикатор {index + 1}</span>
                                             {indicators.length > 1 && (
@@ -221,7 +221,7 @@ export default function ContentIndex({ algorithmSteps = [], algorithmIndicators 
                                             value={indicator.content_ru || ''}
                                             onChange={(e) => updateIndicator(indicator.id, 'content_ru', e.target.value)}
                                             rows={2}
-                                            className="w-full border-gray-300 rounded-md shadow-sm"
+                                            className="w-full border-gray-200 rounded-xl shadow-sm"
                                             placeholder="Описание индикатора на русском *"
                                             required
                                         />

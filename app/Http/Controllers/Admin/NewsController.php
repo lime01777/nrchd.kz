@@ -34,7 +34,6 @@ class NewsController extends Controller
         private readonly MediaService $mediaService,
         private readonly UrlMetadataService $urlMetadataService
     ) {
-        $this->authorizeResource(News::class, 'news');
     }
 
     /**
@@ -46,6 +45,11 @@ class NewsController extends Controller
     public function index(Request $request, ?string $section = null): InertiaResponse
     {
         $type = $this->resolveType($section ?? $request->route('type') ?? $request->input('type'));
+        
+        if (!Auth::user()->hasPermission($type)) {
+            abort(403, 'У вас нет прав для доступа к этому разделу.');
+        }
+
         $query = News::query()->ofType($type);
 
         // Фильтр по статусу
@@ -132,7 +136,9 @@ class NewsController extends Controller
             'section' => $normalizedSection,
         ]);
 
-        $this->authorize('create', News::class);
+        if (!Auth::user()->hasPermission($normalizedSection)) {
+            abort(403, 'У вас нет прав для создания записей в этом разделе.');
+        }
 
         return Inertia::render('Admin/News/Form', [
             'news' => null,
@@ -152,20 +158,19 @@ class NewsController extends Controller
      */
     public function store(NewsRequest $request): RedirectResponse
     {
-        // Проверяем права доступа
-        try {
-            $this->authorize('create', News::class);
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+        $type = $this->resolveSection($request->input('section', $request->input('type')));
+        
+        if (!Auth::user()->hasPermission($type)) {
             $user = Auth::user();
-            Log::error('Отказ в доступе при создании новости', [
+            Log::error('Отказ в доступе при создании публикации', [
                 'user_id' => $user?->id,
                 'user_role' => $user?->role,
-                'error' => $e->getMessage(),
+                'section' => $type
             ]);
             
             return back()
                 ->withInput()
-                ->withErrors(['error' => 'У вас нет прав для создания новостей. Требуется роль admin или editor.']);
+                ->withErrors(['error' => 'У вас нет прав для создания публикаций в этом разделе.']);
         }
         
         // Логируем начало обработки запроса
@@ -274,7 +279,7 @@ class NewsController extends Controller
             // $type уже определен выше
 
             $news->status = $validated['status'];
-            $news->published_at = $validated['status'] === 'published' 
+            $news->published_at = in_array($validated['status'], ['published', 'scheduled'])
                 ? ($validated['published_at'] ?? now())
                 : null;
             $news->created_by = Auth::id();
@@ -285,6 +290,13 @@ class NewsController extends Controller
             $news->category = ! empty($categories) ? $categories : [];
 
             $mediaItems = $this->parseMediaInput($request->input('media'));
+            
+            // Обработка прямой загрузки файлов (для тестов и полноценного API)
+            if ($request->hasFile('media_files')) {
+                $uploaded = $this->mediaService->uploadMultipleMedia($request->file('media_files'));
+                $mediaItems = array_merge($mediaItems ?? [], $uploaded);
+            }
+
             if (!empty($mediaItems)) {
                 $news->images = $mediaItems;
                 
@@ -405,6 +417,10 @@ class NewsController extends Controller
      */
     public function edit(News $news): InertiaResponse
     {
+        if (!Auth::user()->hasPermission($news->type === 'media' ? 'media' : 'news')) {
+            abort(403, 'У вас нет прав для редактирования этой записи.');
+        }
+
         $meta = $this->sectionMeta($news->type ?? News::TYPE_NEWS);
 
         return Inertia::render('Admin/News/Form', [
@@ -443,6 +459,10 @@ class NewsController extends Controller
      */
     public function update(NewsRequest $request, News $news): RedirectResponse
     {
+        if (!Auth::user()->hasPermission($news->type === 'media' ? 'media' : 'news')) {
+            abort(403, 'У вас нет прав для редактирования этой записи.');
+        }
+
         try {
             $validated = $request->validated();
 
@@ -470,7 +490,7 @@ class NewsController extends Controller
             $news->category = ! empty($categories) ? $categories : null;
             
             // Обновляем дату публикации
-            if ($validated['status'] === 'published') {
+            if (in_array($validated['status'], ['published', 'scheduled'])) {
                 $news->published_at = $validated['published_at'] ?? $news->published_at ?? now();
             } else {
                 $news->published_at = null;
@@ -523,6 +543,10 @@ class NewsController extends Controller
      */
     public function destroy(News $news): RedirectResponse
     {
+        if (!Auth::user()->hasPermission($news->type === 'media' ? 'media' : 'news')) {
+            abort(403, 'У вас нет прав для удаления этой записи.');
+        }
+
         try {
             // Удаляем файлы обложки
             $this->deleteCoverFiles($news);
@@ -672,10 +696,7 @@ class NewsController extends Controller
      */
     public function uploadMediaFiles(Request $request): JsonResponse
     {
-        // Проверяем права доступа
-        try {
-            $this->authorize('create', News::class);
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+        if (!Auth::user()->hasPermission('news') && !Auth::user()->hasPermission('media')) {
             $user = Auth::user();
             Log::error('Отказ в доступе при загрузке медиа', [
                 'user_id' => $user?->id,

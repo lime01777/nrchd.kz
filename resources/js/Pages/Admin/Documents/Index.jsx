@@ -196,7 +196,7 @@ export default function DocumentsIndex() {
       {loading ? (
         <div>Загрузка...</div>
       ) : (
-        <div className="bg-white shadow rounded p-4">
+        <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b">
@@ -214,7 +214,7 @@ export default function DocumentsIndex() {
                 <tr><td colSpan={7} className="text-center text-gray-400 py-8">Папка пуста</td></tr>
               )}
               {items.map(item => (
-                <tr key={item.path} className="border-b hover:bg-gray-50">
+                <tr key={item.path} className="border-b hover:bg-gray-50/50">
                   <td className="py-2">
                     {item.type === 'folder' ? (
                       <button className="text-blue-600 hover:underline" onClick={() => handleOpenFolder(item.path)}>

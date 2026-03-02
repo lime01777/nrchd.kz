@@ -107,10 +107,10 @@ return new class extends Migration
             $table->string('name_kk')->nullable();
             $table->string('name_en')->nullable();
             
-            // Специальность
-            $table->string('specialty_ru');
-            $table->string('specialty_kk')->nullable();
-            $table->string('specialty_en')->nullable();
+            // Должность (бывшая специальность)
+            $table->string('position_ru')->nullable();
+            $table->string('position_kk')->nullable();
+            $table->string('position_en')->nullable();
             
             // Описание
             $table->text('bio_ru')->nullable();

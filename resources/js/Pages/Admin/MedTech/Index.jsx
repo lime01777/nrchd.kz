@@ -81,7 +81,7 @@ export default function MedTechIndex({ stats }) {
                             <Link
                                 key={section.route}
                                 href={route(section.route)}
-                                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+                                className="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow"
                             >
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1">

@@ -15,4 +15,9 @@ class AiProtocolAnalysis extends Model
         'progress',
         'user_id'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

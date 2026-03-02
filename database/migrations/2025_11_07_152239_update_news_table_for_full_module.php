@@ -151,18 +151,17 @@ return new class extends Migration
      */
     private function hasIndex(string $table, string $indexName): bool
     {
-        $connection = Schema::getConnection();
-        $database = $connection->getDatabaseName();
-        
-        $result = DB::select(
-            "SELECT COUNT(*) as count 
-             FROM information_schema.statistics 
-             WHERE table_schema = ? 
-             AND table_name = ? 
-             AND index_name = ?",
-            [$database, $table, $indexName]
-        );
-        
-        return $result[0]->count > 0;
+        try {
+            $indexes = Schema::getIndexes($table);
+            foreach ($indexes as $index) {
+                if ($index['name'] === $indexName) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (\Exception $e) {
+            // Fallback for older Laravel or specific drivers if needed
+            return false;
+        }
     }
 };

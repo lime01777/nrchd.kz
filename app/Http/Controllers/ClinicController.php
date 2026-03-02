@@ -136,7 +136,7 @@ class ClinicController extends Controller
         $jsonLd = $this->generateJsonLd($clinic);
 
         return Inertia::render('Clinics/Show', [
-            'clinic' => new ClinicResource($clinic),
+            'clinic' => (new ClinicResource($clinic))->resolve(),
             'jsonLd' => $jsonLd,
         ]);
     }

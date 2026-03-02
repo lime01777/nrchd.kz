@@ -12,7 +12,7 @@ export default function UsersIndex() {
 
   const handleSearch = (event) => {
     event.preventDefault();
-    router.get(route('admin.admin.users'), { search: searchQuery }, {
+    router.get(route('admin.users'), { search: searchQuery }, {
       preserveState: true,
       replace: true,
     });
@@ -20,12 +20,12 @@ export default function UsersIndex() {
 
   const handleReset = () => {
     setSearchQuery('');
-    router.get(route('admin.admin.users'), {}, { preserveState: true, replace: true });
+    router.get(route('admin.users'), {}, { preserveState: true, replace: true });
   };
 
   const handleRoleChange = (userId, newRole) => {
     setPendingUserId(userId);
-    router.patch(route('admin.admin.users.update-role', userId), { role: newRole }, {
+    router.patch(route('admin.users.update-role', userId), { role: newRole }, {
       preserveScroll: true,
       preserveState: true,
       onFinish: () => setPendingUserId(null),
@@ -37,7 +37,7 @@ export default function UsersIndex() {
       return;
     }
     setPendingUserId(user.id);
-    router.delete(route('admin.admin.users.destroy', user.id), {
+    router.delete(route('admin.users.destroy', user.id), {
       preserveScroll: true,
       onFinish: () => setPendingUserId(null),
     });
@@ -48,8 +48,8 @@ export default function UsersIndex() {
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-xl font-semibold text-gray-900">Управление пользователями</h2>
         <Link
-          href={route('admin.admin.users.create')}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          href={route('admin.users.create')}
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-blue-600 hover:bg-blue-700 transition-all hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           <svg className="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -64,7 +64,7 @@ export default function UsersIndex() {
             <input
               type="text"
               placeholder="Поиск по имени или email..."
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -77,14 +77,14 @@ export default function UsersIndex() {
           <div className="flex space-x-3">
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="px-5 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition-all shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Найти
             </button>
             <button
               type="button"
               onClick={handleReset}
-              className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="px-4 py-2 border border-gray-200 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50/50 transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Сбросить
             </button>
@@ -93,21 +93,21 @@ export default function UsersIndex() {
       </form>
 
       {flash?.error && (
-        <div className="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700">
+        <div className="mb-4 rounded-xl bg-red-50 p-4 text-sm text-red-700">
           {flash.error}
         </div>
       )}
       {flash?.success && (
-        <div className="mb-4 rounded-md bg-green-50 p-4 text-sm text-green-700">
+        <div className="mb-4 rounded-xl bg-green-50 p-4 text-sm text-green-700">
           {flash.success}
         </div>
       )}
 
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-          <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+          <div className="bg-white/90 backdrop-blur-sm shadow-sm overflow-hidden border border-gray-100/50 rounded-2xl">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50/50">
                 <tr>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Пользователь
@@ -151,7 +151,7 @@ export default function UsersIndex() {
                         value={user.role}
                         onChange={(event) => handleRoleChange(user.id, event.target.value)}
                         disabled={pendingUserId === user.id}
-                        className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-1 pl-2 pr-8 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="mt-1 block w-full rounded-xl border border-gray-200 bg-white py-2 pl-3 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all rounded-xl shadow-sm"
                       >
                         {roleOptions.map(([value, label]) => (
                           <option key={value} value={value}>{label}</option>
@@ -169,7 +169,7 @@ export default function UsersIndex() {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-3">
                         <Link
-                          href={route('admin.admin.users.edit', user.id)}
+                          href={route('admin.users.edit', user.id)}
                           className="text-blue-600 hover:text-blue-900"
                         >
                           Изменить
@@ -197,7 +197,7 @@ export default function UsersIndex() {
           <nav className="flex items-center space-x-2">
             {paginationLinks.map((link, index) => {
               const key = link.url ?? `page-${index}`;
-              const commonClasses = 'px-3 py-2 text-sm font-medium rounded-md';
+              const commonClasses = 'px-3 py-2 text-sm font-medium rounded-xl';
 
               if (!link.url) {
                 return (
@@ -213,11 +213,10 @@ export default function UsersIndex() {
                 <Link
                   key={key}
                   href={link.url}
-                  className={`${commonClasses} ${
-                    link.active
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                  }`}
+                  className={`${commonClasses} ${link.active
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50/50'
+                    }`}
                   dangerouslySetInnerHTML={{ __html: link.label }}
                 />
               );

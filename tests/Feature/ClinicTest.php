@@ -15,6 +15,7 @@ class ClinicTest extends TestCase
     {
         // Создаем тестовую клинику
         $clinic = Clinic::factory()->create([
+            'city_ru' => 'OtherCity',
             'is_published' => true,
             'publish_at' => now(),
         ]);
@@ -31,6 +32,7 @@ class ClinicTest extends TestCase
     public function test_clinic_show_page_loads()
     {
         $clinic = Clinic::factory()->create([
+            'city_ru' => 'OtherCity',
             'is_published' => true,
             'publish_at' => now(),
         ]);
@@ -59,12 +61,18 @@ class ClinicTest extends TestCase
     {
         $clinic1 = Clinic::factory()->create([
             'name_ru' => 'Тестовая клиника',
+            'city_ru' => 'OtherCity',
+            'city_kk' => 'OtherCity',
+            'city_en' => 'OtherCity',
             'is_published' => true,
             'publish_at' => now(),
         ]);
 
         $clinic2 = Clinic::factory()->create([
             'name_ru' => 'Другая клиника',
+            'city_ru' => 'OtherCity',
+            'city_kk' => 'OtherCity',
+            'city_en' => 'OtherCity',
             'is_published' => true,
             'publish_at' => now(),
         ]);
@@ -82,12 +90,16 @@ class ClinicTest extends TestCase
     {
         $clinic1 = Clinic::factory()->create([
             'city_ru' => 'Астана',
+            'city_kk' => 'Астана',
+            'city_en' => 'Astana',
             'is_published' => true,
             'publish_at' => now(),
         ]);
 
         $clinic2 = Clinic::factory()->create([
             'city_ru' => 'Алматы',
+            'city_kk' => 'Алматы',
+            'city_en' => 'Almaty',
             'is_published' => true,
             'publish_at' => now(),
         ]);
@@ -104,6 +116,7 @@ class ClinicTest extends TestCase
     public function test_clinic_doctors_relationship_works()
     {
         $clinic = Clinic::factory()->create([
+            'city_ru' => 'OtherCity',
             'is_published' => true,
             'publish_at' => now(),
         ]);
@@ -128,7 +141,7 @@ class ClinicTest extends TestCase
             'slug' => null, // Позволяем автогенерацию
         ]);
 
-        $this->assertEquals('testovaya-klinika', $clinic->slug);
+        $this->assertEquals('testovaia-klinika', $clinic->slug);
     }
 
     public function test_clinic_unique_slug_generation_works()
@@ -143,7 +156,7 @@ class ClinicTest extends TestCase
             'slug' => null,
         ]);
 
-        $this->assertEquals('testovaya-klinika', $clinic1->slug);
-        $this->assertEquals('testovaya-klinika-1', $clinic2->slug);
+        $this->assertEquals('testovaia-klinika', $clinic1->slug);
+        $this->assertEquals('testovaia-klinika-1', $clinic2->slug);
     }
 }

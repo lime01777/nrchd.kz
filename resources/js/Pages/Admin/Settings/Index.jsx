@@ -48,14 +48,14 @@ export default function SettingsIndex() {
         <h2 className="text-xl font-semibold text-gray-900">Настройки</h2>
       </div>
 
-      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div className="bg-white/90 backdrop-blur-sm shadow-sm overflow-hidden rounded-2xl border border-gray-100/50">
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex">
             <button
               className={`whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm ${
                 activeTab === 'general'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-200'
               }`}
               onClick={() => setActiveTab('general')}
             >
@@ -65,7 +65,7 @@ export default function SettingsIndex() {
               className={`whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm ${
                 activeTab === 'social'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-200'
               }`}
               onClick={() => setActiveTab('social')}
             >
@@ -75,7 +75,7 @@ export default function SettingsIndex() {
               className={`whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm ${
                 activeTab === 'backup'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-200'
               }`}
               onClick={() => setActiveTab('backup')}
             >
@@ -100,7 +100,7 @@ export default function SettingsIndex() {
                       id="siteName"
                       value={generalData.siteName}
                       onChange={(e) => setGeneralData('siteName', e.target.value)}
-                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-200 rounded-xl"
                     />
                   </div>
                   {generalErrors.siteName && (
@@ -119,7 +119,7 @@ export default function SettingsIndex() {
                       rows={3}
                       value={generalData.siteDescription}
                       onChange={(e) => setGeneralData('siteDescription', e.target.value)}
-                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-200 rounded-xl"
                     />
                   </div>
                   {generalErrors.siteDescription && (
@@ -138,7 +138,7 @@ export default function SettingsIndex() {
                       id="contactEmail"
                       value={generalData.contactEmail}
                       onChange={(e) => setGeneralData('contactEmail', e.target.value)}
-                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-200 rounded-xl"
                     />
                   </div>
                   {generalErrors.contactEmail && (
@@ -157,7 +157,7 @@ export default function SettingsIndex() {
                       id="contactPhone"
                       value={generalData.contactPhone}
                       onChange={(e) => setGeneralData('contactPhone', e.target.value)}
-                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-200 rounded-xl"
                     />
                   </div>
                   {generalErrors.contactPhone && (
@@ -176,7 +176,7 @@ export default function SettingsIndex() {
                       id="address"
                       value={generalData.address}
                       onChange={(e) => setGeneralData('address', e.target.value)}
-                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-200 rounded-xl"
                     />
                   </div>
                   {generalErrors.address && (
@@ -189,7 +189,7 @@ export default function SettingsIndex() {
                 <button
                   type="submit"
                   disabled={processingGeneral}
-                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   {processingGeneral ? 'Сохранение...' : 'Сохранить настройки'}
                 </button>
@@ -205,8 +205,8 @@ export default function SettingsIndex() {
                   <label htmlFor="facebook" className="block text-sm font-medium text-gray-700">
                     Facebook
                   </label>
-                  <div className="mt-1 flex rounded-md shadow-sm">
-                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+                  <div className="mt-1 flex rounded-xl shadow-sm">
+                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-200 bg-gray-50/50 text-gray-500 sm:text-sm">
                       https://
                     </span>
                     <input
@@ -215,7 +215,7 @@ export default function SettingsIndex() {
                       id="facebook"
                       value={socialData.facebook.replace('https://', '')}
                       onChange={(e) => setSocialData('facebook', `https://${e.target.value}`)}
-                      className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300"
+                      className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-200"
                       placeholder="facebook.com/yourpage"
                     />
                   </div>
@@ -225,8 +225,8 @@ export default function SettingsIndex() {
                   <label htmlFor="instagram" className="block text-sm font-medium text-gray-700">
                     Instagram
                   </label>
-                  <div className="mt-1 flex rounded-md shadow-sm">
-                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+                  <div className="mt-1 flex rounded-xl shadow-sm">
+                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-200 bg-gray-50/50 text-gray-500 sm:text-sm">
                       https://
                     </span>
                     <input
@@ -235,7 +235,7 @@ export default function SettingsIndex() {
                       id="instagram"
                       value={socialData.instagram.replace('https://', '')}
                       onChange={(e) => setSocialData('instagram', `https://${e.target.value}`)}
-                      className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300"
+                      className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-200"
                       placeholder="instagram.com/yourhandle"
                     />
                   </div>
@@ -245,8 +245,8 @@ export default function SettingsIndex() {
                   <label htmlFor="twitter" className="block text-sm font-medium text-gray-700">
                     Twitter
                   </label>
-                  <div className="mt-1 flex rounded-md shadow-sm">
-                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+                  <div className="mt-1 flex rounded-xl shadow-sm">
+                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-200 bg-gray-50/50 text-gray-500 sm:text-sm">
                       https://
                     </span>
                     <input
@@ -255,7 +255,7 @@ export default function SettingsIndex() {
                       id="twitter"
                       value={socialData.twitter.replace('https://', '')}
                       onChange={(e) => setSocialData('twitter', `https://${e.target.value}`)}
-                      className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300"
+                      className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-200"
                       placeholder="twitter.com/yourhandle"
                     />
                   </div>
@@ -265,8 +265,8 @@ export default function SettingsIndex() {
                   <label htmlFor="youtube" className="block text-sm font-medium text-gray-700">
                     YouTube
                   </label>
-                  <div className="mt-1 flex rounded-md shadow-sm">
-                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+                  <div className="mt-1 flex rounded-xl shadow-sm">
+                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-200 bg-gray-50/50 text-gray-500 sm:text-sm">
                       https://
                     </span>
                     <input
@@ -275,7 +275,7 @@ export default function SettingsIndex() {
                       id="youtube"
                       value={socialData.youtube.replace('https://', '')}
                       onChange={(e) => setSocialData('youtube', `https://${e.target.value}`)}
-                      className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300"
+                      className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-200"
                       placeholder="youtube.com/channel/your-channel"
                     />
                   </div>
@@ -285,8 +285,8 @@ export default function SettingsIndex() {
                   <label htmlFor="linkedin" className="block text-sm font-medium text-gray-700">
                     LinkedIn
                   </label>
-                  <div className="mt-1 flex rounded-md shadow-sm">
-                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+                  <div className="mt-1 flex rounded-xl shadow-sm">
+                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-200 bg-gray-50/50 text-gray-500 sm:text-sm">
                       https://
                     </span>
                     <input
@@ -295,7 +295,7 @@ export default function SettingsIndex() {
                       id="linkedin"
                       value={socialData.linkedin.replace('https://', '')}
                       onChange={(e) => setSocialData('linkedin', `https://${e.target.value}`)}
-                      className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300"
+                      className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-200"
                       placeholder="linkedin.com/company/your-company"
                     />
                   </div>
@@ -306,7 +306,7 @@ export default function SettingsIndex() {
                 <button
                   type="submit"
                   disabled={processingSocial}
-                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   {processingSocial ? 'Сохранение...' : 'Сохранить настройки'}
                 </button>
@@ -327,7 +327,7 @@ export default function SettingsIndex() {
                         type="checkbox"
                         checked={backupData.autoBackup}
                         onChange={(e) => setBackupData('autoBackup', e.target.checked)}
-                        className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
+                        className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-200 rounded"
                       />
                     </div>
                     <div className="ml-3 text-sm">
@@ -351,7 +351,7 @@ export default function SettingsIndex() {
                       name="backupFrequency"
                       value={backupData.backupFrequency}
                       onChange={(e) => setBackupData('backupFrequency', e.target.value)}
-                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-200 rounded-xl"
                       disabled={!backupData.autoBackup}
                     >
                       <option value="daily">Ежедневно</option>
@@ -372,7 +372,7 @@ export default function SettingsIndex() {
                       id="backupRetention"
                       value={backupData.backupRetention}
                       onChange={(e) => setBackupData('backupRetention', e.target.value)}
-                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-200 rounded-xl"
                       disabled={!backupData.autoBackup}
                     />
                   </div>
@@ -382,7 +382,7 @@ export default function SettingsIndex() {
                   <div className="mt-4">
                     <button
                       type="button"
-                      className="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      className="inline-flex justify-center py-2 px-4 border border-gray-200 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
                       Создать резервную копию сейчас
                     </button>
@@ -394,7 +394,7 @@ export default function SettingsIndex() {
                 <button
                   type="submit"
                   disabled={processingBackup}
-                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   {processingBackup ? 'Сохранение...' : 'Сохранить настройки'}
                 </button>

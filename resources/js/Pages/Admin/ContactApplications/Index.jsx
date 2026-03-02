@@ -63,26 +63,26 @@ export default function ContactApplicationsIndex({
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     {/* Статистика по статусам */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4">
+                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl p-4">
                             <div className="text-sm text-gray-600">Всего</div>
                             <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
                         </div>
-                        <div className="bg-blue-50 overflow-hidden shadow-sm sm:rounded-lg p-4">
+                        <div className="bg-blue-50 overflow-hidden shadow-sm sm:rounded-2xl p-4">
                             <div className="text-sm text-blue-600">Новые</div>
                             <div className="text-2xl font-bold text-blue-900">{stats.new}</div>
                         </div>
-                        <div className="bg-yellow-50 overflow-hidden shadow-sm sm:rounded-lg p-4">
+                        <div className="bg-yellow-50 overflow-hidden shadow-sm sm:rounded-2xl p-4">
                             <div className="text-sm text-yellow-600">В работе</div>
                             <div className="text-2xl font-bold text-yellow-900">{stats.in_progress}</div>
                         </div>
-                        <div className="bg-green-50 overflow-hidden shadow-sm sm:rounded-lg p-4">
+                        <div className="bg-green-50 overflow-hidden shadow-sm sm:rounded-2xl p-4">
                             <div className="text-sm text-green-600">Решены</div>
                             <div className="text-2xl font-bold text-green-900">{stats.resolved}</div>
                         </div>
                     </div>
 
                     {/* Статистика по категориям (направлениям/формам) */}
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6 p-6">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl mb-6 p-6">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Статистика по направлениям и формам</h3>
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
                             {Object.entries(categories).map(([key, label]) => (
@@ -95,7 +95,7 @@ export default function ContactApplicationsIndex({
                                             preserveScroll: true,
                                         });
                                     }}
-                                    className={`border-2 rounded-lg p-3 text-left transition-all hover:shadow-md ${
+                                    className={`border-2 rounded-2xl p-3 text-left transition-all hover:shadow-md ${
                                         localFilters.category === key 
                                             ? 'border-blue-500 bg-blue-50' 
                                             : 'border-gray-200 hover:border-blue-300'
@@ -128,7 +128,7 @@ export default function ContactApplicationsIndex({
                         )}
                     </div>
 
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                         <div className="p-6 bg-white border-b border-gray-200">
                             <div className="mb-6">
                                 <h2 className="text-2xl font-semibold text-gray-900">Заявки обратной связи</h2>
@@ -150,7 +150,7 @@ export default function ContactApplicationsIndex({
                                     <input
                                         type="text"
                                         placeholder="Имя, email, телефон..."
-                                        className="w-full px-4 py-2 border rounded-md"
+                                        className="w-full px-4 py-2 border rounded-xl"
                                         value={localFilters.search}
                                         onChange={(e) => setLocalFilters({...localFilters, search: e.target.value})}
                                         onKeyPress={(e) => e.key === 'Enter' && applyFilters()}
@@ -162,7 +162,7 @@ export default function ContactApplicationsIndex({
                                         Направление/Форма
                                     </label>
                                     <select
-                                        className="w-full px-4 py-2 border rounded-md"
+                                        className="w-full px-4 py-2 border rounded-xl"
                                         value={localFilters.category}
                                         onChange={(e) => setLocalFilters({...localFilters, category: e.target.value})}
                                     >
@@ -180,7 +180,7 @@ export default function ContactApplicationsIndex({
                                         Статус
                                     </label>
                                     <select
-                                        className="w-full px-4 py-2 border rounded-md"
+                                        className="w-full px-4 py-2 border rounded-xl"
                                         value={localFilters.status}
                                         onChange={(e) => setLocalFilters({...localFilters, status: e.target.value})}
                                     >
@@ -196,7 +196,7 @@ export default function ContactApplicationsIndex({
                                         Назначена
                                     </label>
                                     <select
-                                        className="w-full px-4 py-2 border rounded-md"
+                                        className="w-full px-4 py-2 border rounded-xl"
                                         value={localFilters.assigned_to}
                                         onChange={(e) => setLocalFilters({...localFilters, assigned_to: e.target.value})}
                                     >
@@ -216,13 +216,13 @@ export default function ContactApplicationsIndex({
                                     <div className="flex space-x-2">
                                         <button
                                             onClick={applyFilters}
-                                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                            className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
                                         >
                                             Применить
                                         </button>
                                         <button
                                             onClick={resetFilters}
-                                            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                                            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300"
                                         >
                                             Сбросить
                                         </button>
@@ -234,7 +234,7 @@ export default function ContactApplicationsIndex({
                             <div className="overflow-x-auto">
                                 <table className="min-w-full bg-white">
                                     <thead>
-                                        <tr className="bg-gray-50">
+                                        <tr className="bg-gray-50/50">
                                             <th className="py-3 px-4 border-b text-left font-semibold text-gray-700">ID</th>
                                             <th className="py-3 px-4 border-b text-left font-semibold text-gray-700">Направление</th>
                                             <th className="py-3 px-4 border-b text-left font-semibold text-gray-700">Заявитель</th>
@@ -248,7 +248,7 @@ export default function ContactApplicationsIndex({
                                     <tbody>
                                         {applications.data.length > 0 ? (
                                             applications.data.map((application) => (
-                                                <tr key={application.id} className="hover:bg-gray-50 border-l-4" style={{borderLeftColor: getCategoryColor(application.category)}}>
+                                                <tr key={application.id} className="hover:bg-gray-50/50 border-l-4" style={{borderLeftColor: getCategoryColor(application.category)}}>
                                                     <td className="py-3 px-4 border-b">
                                                         <span className="font-semibold text-gray-700">#{application.id}</span>
                                                     </td>
@@ -318,10 +318,10 @@ export default function ContactApplicationsIndex({
                                             <Link
                                                 key={index}
                                                 href={link.url || '#'}
-                                                className={`px-3 py-2 border rounded-md ${
+                                                className={`px-3 py-2 border rounded-xl ${
                                                     link.active
                                                         ? 'bg-blue-600 text-white border-blue-600'
-                                                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                                        : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50/50'
                                                 } ${!link.url ? 'cursor-not-allowed opacity-50' : ''}`}
                                                 dangerouslySetInnerHTML={{ __html: link.label }}
                                                 disabled={!link.url}

@@ -1,4 +1,4 @@
-import { Head, usePage } from "@inertiajs/react";
+import { Head, usePage, Link } from "@inertiajs/react";
 import React from 'react';
 import LayoutDirection from "@/Layouts/LayoutDirection";
 import FolderChlank from '@/Components/FolderChlank';
@@ -41,7 +41,7 @@ export default function Bioethics() {
             </p>
 
             <p className="tracking-wide leading-relaxed mb-4">
-              {t('directionsPages.bioethics.orderPrefix')}<a href={route('bioethics.composition')} className="text-blue-600 hover:text-blue-800 underline">{t('directionsPages.bioethics.compositionLink')}</a>).
+              {t('directionsPages.bioethics.orderPrefix')}<Link href={route('bioethics.composition')} className="text-blue-600 hover:text-blue-800 underline">{t('directionsPages.bioethics.compositionLink')}</Link>).
             </p>
 
             <p className="tracking-wide leading-relaxed mb-4">

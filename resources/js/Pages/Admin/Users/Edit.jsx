@@ -17,9 +17,9 @@ export default function UserEdit({ user = null, availableRoles = {}, availablePe
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isEditing) {
-      put(route('admin.admin.users.update', user.id));
+      put(route('admin.users.update', user.id));
     } else {
-      post(route('admin.admin.users.store'));
+      post(route('admin.users.store'));
     }
   };
 
@@ -30,8 +30,8 @@ export default function UserEdit({ user = null, availableRoles = {}, availablePe
           {isEditing ? 'Редактирование пользователя' : 'Добавление пользователя'}
         </h2>
         <Link
-          href={route('admin.admin.users')}
-          className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          href={route('admin.users')}
+          className="inline-flex items-center px-4 py-2 border border-gray-200 text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50/50 transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           <svg className="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -40,7 +40,7 @@ export default function UserEdit({ user = null, availableRoles = {}, availablePe
         </Link>
       </div>
 
-      <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div className="bg-white/90 backdrop-blur-sm shadow-sm overflow-hidden rounded-2xl border border-gray-100/50">
         <form onSubmit={handleSubmit}>
           <div className="px-4 py-5 sm:p-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-6">
@@ -56,7 +56,7 @@ export default function UserEdit({ user = null, availableRoles = {}, availablePe
                     id="name"
                     value={data.name}
                     onChange={(e) => setData('name', e.target.value)}
-                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-200 rounded-xl"
                     required
                   />
                 </div>
@@ -77,7 +77,7 @@ export default function UserEdit({ user = null, availableRoles = {}, availablePe
                     id="email"
                     value={data.email}
                     onChange={(e) => setData('email', e.target.value)}
-                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-200 rounded-xl"
                     required
                   />
                 </div>
@@ -97,7 +97,7 @@ export default function UserEdit({ user = null, availableRoles = {}, availablePe
                     name="role"
                     value={data.role}
                     onChange={(e) => setData('role', e.target.value)}
-                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-200 rounded-xl"
                     required
                   >
                     {Object.entries(availableRoles).map(([value, label]) => (
@@ -124,7 +124,7 @@ export default function UserEdit({ user = null, availableRoles = {}, availablePe
                     id="password"
                     value={data.password}
                     onChange={(e) => setData('password', e.target.value)}
-                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-200 rounded-xl"
                     required={!isEditing}
                   />
                 </div>
@@ -145,7 +145,7 @@ export default function UserEdit({ user = null, availableRoles = {}, availablePe
                     id="password_confirmation"
                     value={data.password_confirmation}
                     onChange={(e) => setData('password_confirmation', e.target.value)}
-                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-200 rounded-xl"
                     required={!isEditing}
                   />
                 </div>
@@ -165,7 +165,7 @@ export default function UserEdit({ user = null, availableRoles = {}, availablePe
                           id={`permission-${value}`}
                           name="permissions[]"
                           type="checkbox"
-                          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          className="h-4 w-4 rounded border-gray-200 text-blue-600 focus:ring-blue-500"
                           checked={data.permissions.includes(value)}
                           onChange={(e) => {
                             const checked = e.target.checked;
@@ -191,11 +191,11 @@ export default function UserEdit({ user = null, availableRoles = {}, availablePe
               </div>
             </div>
           </div>
-          <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
+          <div className="px-4 py-3 bg-gray-50/50 text-right sm:px-6">
             <button
               type="submit"
               disabled={processing}
-              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               {processing ? 'Сохранение...' : isEditing ? 'Сохранить изменения' : 'Добавить пользователя'}
             </button>

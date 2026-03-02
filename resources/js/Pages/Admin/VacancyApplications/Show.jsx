@@ -85,7 +85,7 @@ export default function VacancyApplicationShow({ application }) {
                         {/* Основная информация */}
                         <div className="md:col-span-2 space-y-6">
                             {/* Информация о кандидате */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                                 <div className="p-6 bg-white border-b border-gray-200">
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                                         Информация о кандидате
@@ -131,7 +131,7 @@ export default function VacancyApplicationShow({ application }) {
                             </div>
 
                             {/* Информация о вакансии */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                                 <div className="p-6 bg-white border-b border-gray-200">
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                                         Вакансия
@@ -171,7 +171,7 @@ export default function VacancyApplicationShow({ application }) {
 
                             {/* Сопроводительное письмо */}
                             {application.cover_letter && (
-                                <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                                <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                                     <div className="p-6 bg-white border-b border-gray-200">
                                         <h3 className="text-lg font-semibold text-gray-900 mb-4">
                                             Сопроводительное письмо
@@ -182,7 +182,7 @@ export default function VacancyApplicationShow({ application }) {
                             )}
 
                             {/* Резюме */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                                 <div className="p-6 bg-white border-b border-gray-200">
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                                         Резюме
@@ -191,7 +191,7 @@ export default function VacancyApplicationShow({ application }) {
                                         href={application.resume_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
                                     >
                                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -205,7 +205,7 @@ export default function VacancyApplicationShow({ application }) {
                         {/* Боковая панель */}
                         <div className="space-y-6">
                             {/* Статус */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                                 <div className="p-6 bg-white border-b border-gray-200">
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                                         Статус
@@ -260,7 +260,7 @@ export default function VacancyApplicationShow({ application }) {
                             </div>
 
                             {/* Заметки HR */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                                 <div className="p-6 bg-white border-b border-gray-200">
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                                         Заметки HR
@@ -272,7 +272,7 @@ export default function VacancyApplicationShow({ application }) {
                                                 value={data.notes}
                                                 onChange={(e) => setData('notes', e.target.value)}
                                                 rows={6}
-                                                className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                                                className="w-full border border-gray-200 rounded-xl p-2 text-sm"
                                                 placeholder="Добавьте заметки..."
                                             />
                                             <div className="mt-2 flex space-x-2">
@@ -317,7 +317,7 @@ export default function VacancyApplicationShow({ application }) {
                             </div>
 
                             {/* Действия */}
-                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-2xl">
                                 <div className="p-6 bg-white border-b border-gray-200">
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                                         Действия

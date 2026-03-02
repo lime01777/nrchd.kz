@@ -100,6 +100,7 @@ class News extends Model
         'category' => 'array',
         'type' => 'string',
         'tags' => 'array',
+        'images' => 'array',
     ];
 
     /**
@@ -422,63 +423,5 @@ class News extends Model
 
         $firstVideo = reset($videos);
         return is_string($firstVideo) ? $firstVideo : ($firstVideo['path'] ?? null);
-    }
-
-    /**
-     * Мутатор для поля images - нормализует структуру медиа (для обратной совместимости)
-     *
-     * @param mixed $value
-     * @return void
-     */
-    public function setImagesAttribute($value): void
-    {
-        if (is_array($value)) {
-            $normalizedMedia = [];
-            foreach ($value as $item) {
-                if (is_string($item)) {
-                    $extension = strtolower(pathinfo($item, PATHINFO_EXTENSION));
-                    $videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'ogg'];
-                    $type = in_array($extension, $videoExtensions) ? 'video' : 'image';
-                    
-                    $normalizedMedia[] = [
-                        'path' => $item,
-                        'type' => $type,
-                        'name' => basename($item),
-                        'source' => 'existing'
-                    ];
-                } elseif (is_array($item)) {
-                    $normalizedMedia[] = $item;
-                }
-            }
-            $this->attributes['images'] = json_encode($normalizedMedia);
-        } else {
-            $this->attributes['images'] = $value;
-        }
-    }
-
-    /**
-     * Аксессор для поля images - возвращает нормализованные данные (для обратной совместимости)
-     *
-     * @param mixed $value
-     * @return array
-     */
-    public function getImagesAttribute($value): array
-    {
-        if (empty($value)) {
-            return [];
-        }
-
-        if (is_string($value)) {
-            $decoded = json_decode($value, true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                return $decoded;
-            }
-        }
-
-        if (is_array($value)) {
-            return $value;
-        }
-
-        return [];
     }
 }

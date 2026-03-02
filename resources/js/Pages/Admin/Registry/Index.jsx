@@ -226,23 +226,28 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
     ];
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl animate-fade-in-down my-8 flex flex-col max-h-[90vh]">
-                <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl shrink-0">
-                    <h3 className="text-lg font-bold text-gray-800">{initialData ? 'Редактировать технологию' : 'Создать карточку технологии'}</h3>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
+        <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 sm:p-6 overflow-y-auto">
+            <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-5xl animate-fade-in-down my-auto flex flex-col max-h-[90vh] border border-gray-100/50">
+                <div className="px-6 py-5 border-b border-gray-100/80 flex justify-between items-center rounded-t-2xl shrink-0 bg-gradient-to-r from-blue-50/50 to-purple-50/50 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-2xl"></div>
+                    <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700 relative z-10">
+                        {initialData ? 'Редактировать технологию ПТЗ' : 'Создать карточку технологии ПТЗ'}
+                    </h3>
+                    <button onClick={onClose} className="relative z-10 text-gray-400 hover:text-red-500 transition-colors bg-white rounded-full p-1.5 shadow-sm border border-gray-100 hover:bg-red-50">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
                 </div>
 
                 {/* Tabs Header */}
-                <div className="flex border-b border-gray-200 px-6 shrink-0 overflow-x-auto">
+                <div className="flex px-6 pt-2 pb-0 shrink-0 overflow-x-auto gap-2 border-b border-gray-100">
                     {tabs.map(tab => (
                         <button
                             key={tab.id}
                             type="button"
                             onClick={() => setActiveTab(tab.id)}
-                            className={`py-3 px-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${activeTab === tab.id
-                                ? 'border-blue-600 text-blue-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            className={`py-3 px-5 text-sm font-medium transition-all whitespace-nowrap rounded-t-xl mb-[-1px] border-t border-x ${activeTab === tab.id
+                                ? 'border-gray-200 bg-white text-blue-600 shadow-sm relative z-10'
+                                : 'border-transparent text-gray-500 hover:bg-gray-50/50/80 hover:text-gray-700'
                                 }`}
                         >
                             {tab.label}
@@ -257,7 +262,7 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="md:col-span-2">
                                     <label className="block text-sm font-medium text-gray-700 mb-2">Логотип компании</label>
-                                    <div className="flex items-center gap-4 p-4 border border-dashed border-gray-300 rounded-lg bg-gray-50">
+                                    <div className="flex items-center gap-4 p-4 border border-dashed border-gray-200 rounded-2xl bg-gray-50/50">
                                         {formData.logoUrl ? (
                                             <img src={formData.logoUrl} alt="Preview" className="h-20 w-20 object-contain bg-white rounded shadow-sm p-1" />
                                         ) : (
@@ -274,29 +279,29 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
 
                                 <div className="md:col-span-2">
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Наименование технологии <span className="text-red-500">*</span></label>
-                                    <input required name="name" value={formData.name} onChange={handleChange} className="w-full border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 p-2.5" placeholder="Полное название" />
+                                    <input required name="name" value={formData.name} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm p-3" placeholder="Полное название" />
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Дата валидации</label>
-                                    <input type="date" name="validationDate" value={formData.validationDate} onChange={handleChange} className="w-full border-gray-300 rounded-lg text-sm p-2.5" />
+                                    <input type="date" name="validationDate" value={formData.validationDate} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Дата пилотирования</label>
-                                    <input type="date" name="pilotingDate" value={formData.pilotingDate} onChange={handleChange} className="w-full border-gray-300 rounded-lg text-sm p-2.5" />
+                                    <input type="date" name="pilotingDate" value={formData.pilotingDate} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Дата ревалидации (Жизненный цикл)</label>
-                                    <input type="date" name="revalidationDate" value={formData.revalidationDate} onChange={handleChange} className="w-full border-gray-300 rounded-lg text-sm p-2.5" />
+                                    <input type="date" name="revalidationDate" value={formData.revalidationDate} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm" />
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Описание <span className="text-red-500">*</span></label>
-                                <textarea required name="description" value={formData.description} onChange={handleChange} rows="5" className="w-full border-gray-300 rounded-lg text-sm p-2.5" placeholder="Подробное описание технологии, назначения и ключевых особенностей..."></textarea>
+                                <textarea required name="description" value={formData.description} onChange={handleChange} rows="5" className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm" placeholder="Подробное описание технологии, назначения и ключевых особенностей..."></textarea>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Направления (Паспорт)</label>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 bg-gray-50/50 p-4 rounded-2xl border border-gray-200">
                                     {Object.entries(dictDirections).map(([key, label]) => (
                                         <label key={key} className="flex items-center space-x-2 cursor-pointer">
                                             <input
@@ -304,7 +309,7 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                                                 value={key}
                                                 checked={(formData.directions || []).includes(key)}
                                                 onChange={handleDirectionChange}
-                                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                className="rounded border-gray-200 text-blue-600 focus:ring-blue-500"
                                             />
                                             <span className="text-sm text-gray-700">{label}</span>
                                         </label>
@@ -319,37 +324,37 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                         <div className="space-y-6 animate-fade-in">
                             <div className="bg-blue-50 p-6 rounded-xl border border-blue-100 flex flex-col items-center justify-center mb-6">
                                 <span className="text-sm font-medium text-gray-500 mb-2 uppercase tracking-wide">Итоговый реестровый код</span>
-                                <span className="font-mono text-3xl font-bold text-blue-700 bg-white px-6 py-3 rounded-lg shadow-sm border border-blue-200">{registryCode}</span>
+                                <span className="font-mono text-3xl font-bold text-blue-700 bg-white px-6 py-3 rounded-2xl shadow-sm border border-blue-200">{registryCode}</span>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Код A (Применение ИИ)</label>
-                                    <select name="codeA" value={formData.codeA} onChange={handleChange} className="w-full border-gray-300 rounded-lg text-sm p-2.5">
+                                    <select name="codeA" value={formData.codeA} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm bg-white">
                                         {Object.keys(dictCodeA).map(k => <option key={k} value={k}>{dictCodeA[k]}</option>)}
                                     </select>
                                 </div>
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Код B (Назначение)</label>
-                                    <select name="codeB" value={formData.codeB} onChange={handleChange} className="w-full border-gray-300 rounded-lg text-sm p-2.5">
+                                    <select name="codeB" value={formData.codeB} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm bg-white">
                                         {Object.keys(dictCodeB).map(k => <option key={k} value={k}>{dictCodeB[k]}</option>)}
                                     </select>
                                 </div>
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Код C (Уровень)</label>
-                                    <select name="codeC" value={formData.codeC} onChange={handleChange} className="w-full border-gray-300 rounded-lg text-sm p-2.5">
+                                    <select name="codeC" value={formData.codeC} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm bg-white">
                                         {Object.keys(dictCodeC).map(k => <option key={k} value={k}>{dictCodeC[k]}</option>)}
                                     </select>
                                 </div>
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Код D (Тип ПО)</label>
-                                    <select name="codeD" value={formData.codeD} onChange={handleChange} className="w-full border-gray-300 rounded-lg text-sm p-2.5">
+                                    <select name="codeD" value={formData.codeD} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm bg-white">
                                         {Object.keys(dictCodeD).map(k => <option key={k} value={k}>{dictCodeD[k]}</option>)}
                                     </select>
                                 </div>
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-500 uppercase mb-1">Код E (Модель)</label>
-                                    <select name="codeE" value={formData.codeE} onChange={handleChange} className="w-full border-gray-300 rounded-lg text-sm p-2.5">
+                                    <select name="codeE" value={formData.codeE} onChange={handleChange} className="w-full border-gray-200 rounded-2xl text-sm p-2.5">
                                         {Object.keys(dictCodeE).map(k => <option key={k} value={k}>{dictCodeE[k]}</option>)}
                                     </select>
                                 </div>
@@ -363,30 +368,30 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Тип технологии <span className="text-red-500">*</span></label>
-                                    <select name="type" value={formData.type} onChange={handleChange} className="w-full border-gray-300 rounded-lg text-sm p-2.5">
+                                    <select name="type" value={formData.type} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm bg-white">
                                         {Object.entries(dictTypes).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                                     </select>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Текущий статус <span className="text-red-500">*</span></label>
-                                    <select name="status" value={formData.status} onChange={handleChange} className="w-full border-gray-300 rounded-lg text-sm p-2.5">
+                                    <select name="status" value={formData.status} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm bg-white">
                                         {Object.entries(dictStatus).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
                                     </select>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Уровень TRL (1-9)</label>
                                     <div className="flex items-center gap-3">
-                                        <input type="range" min="1" max="9" name="trl" value={formData.trl} onChange={handleChange} className="flex-grow h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
+                                        <input type="range" min="1" max="9" name="trl" value={formData.trl} onChange={handleChange} className="flex-grow h-2 bg-gray-200 rounded-2xl appearance-none cursor-pointer" />
                                         <span className="font-bold text-lg text-blue-600 w-8 text-center">{formData.trl}</span>
                                     </div>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Регион внедрения</label>
-                                    <input name="region" value={formData.region} onChange={handleChange} placeholder="Например: Астана, Алматы" className="w-full border-gray-300 rounded-lg text-sm p-2.5" />
+                                    <input name="region" value={formData.region} onChange={handleChange} placeholder="Например: Астана, Алматы" className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm bg-white" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Уровень риска</label>
-                                    <select name="riskLevel" value={formData.riskLevel} onChange={handleChange} className="w-full border-gray-300 rounded-lg text-sm p-2.5">
+                                    <select name="riskLevel" value={formData.riskLevel} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm bg-white">
                                         <option value="low">Низкий (Class I)</option>
                                         <option value="medium">Средний (Class IIa/IIb)</option>
                                         <option value="high">Высокий (Class III)</option>
@@ -394,7 +399,7 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Автономность ИИ</label>
-                                    <select name="autonomyLevel" value={formData.autonomyLevel} onChange={handleChange} className="w-full border-gray-300 rounded-lg text-sm p-2.5">
+                                    <select name="autonomyLevel" value={formData.autonomyLevel} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm bg-white">
                                         <option value="low">Низкая</option>
                                         <option value="medium">Средняя</option>
                                         <option value="high">Высокая</option>
@@ -410,19 +415,19 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                             <div className="grid grid-cols-1 gap-6">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Инициатор (Организация-заявитель)</label>
-                                    <input name="initiator" value={formData.initiator} onChange={handleChange} placeholder="Например: МЗ РК" className="w-full border-gray-300 rounded-lg text-sm p-2.5" />
+                                    <input name="initiator" value={formData.initiator} onChange={handleChange} placeholder="Например: МЗ РК" className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm bg-white" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Разработчик (Vendor)</label>
-                                    <input name="developer" value={formData.developer} onChange={handleChange} placeholder="Например: MedTech Solutions" className="w-full border-gray-300 rounded-lg text-sm p-2.5" />
+                                    <input name="developer" value={formData.developer} onChange={handleChange} placeholder="Например: MedTech Solutions" className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm bg-white" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Пилотирующая организация</label>
-                                    <input name="pilotOrg" value={formData.pilotOrg} onChange={handleChange} placeholder="Организация, где проходит пилот" className="w-full border-gray-300 rounded-lg text-sm p-2.5" />
+                                    <input name="pilotOrg" value={formData.pilotOrg} onChange={handleChange} placeholder="Организация, где проходит пилот" className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm bg-white" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Организации применения</label>
-                                    <textarea name="appOrgs" value={formData.appOrgs} onChange={handleChange} rows="3" placeholder="Перечислите через запятую..." className="w-full border-gray-300 rounded-lg text-sm p-2.5"></textarea>
+                                    <textarea name="appOrgs" value={formData.appOrgs} onChange={handleChange} rows="3" placeholder="Перечислите через запятую..." className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm bg-white"></textarea>
                                     <p className="text-xs text-gray-500 mt-1">Укажите список организаций, где технология уже внедрена.</p>
                                 </div>
                             </div>
@@ -436,12 +441,12 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                             <div className="space-y-3">
                                 <h4 className="text-sm font-bold text-gray-700 mb-2">Прикрепленные документы</h4>
                                 {formData.documents.length === 0 ? (
-                                    <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300 text-gray-400">
+                                    <div className="text-center py-8 bg-gray-50/50 rounded-xl border border-dashed border-gray-200 text-gray-400">
                                         Нет загруженных документов
                                     </div>
                                 ) : (
                                     formData.documents.map((doc, idx) => (
-                                        <div key={idx} className="flex justify-between items-center bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+                                        <div key={idx} className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                                             <div className="flex items-center gap-3">
                                                 <div className="bg-blue-100 p-2 rounded text-blue-600">
                                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
@@ -460,12 +465,12 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                             </div>
 
                             {/* Add Document Form */}
-                            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mt-4">
+                            <div className="bg-gray-50/50/80 p-5 rounded-xl border border-gray-100 shadow-inner mt-4">
                                 <h4 className="text-sm font-bold text-gray-700 mb-3">Добавить документ</h4>
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
                                     <div className="sm:col-span-2">
                                         <label className="block text-xs font-medium text-gray-600 mb-1">Файл</label>
-                                        <input type="file" onChange={handleDocUpload} disabled={uploadingDoc} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer bg-white rounded border border-gray-300" />
+                                        <input type="file" onChange={handleDocUpload} disabled={uploadingDoc} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer bg-white rounded-xl border border-gray-200 shadow-sm" />
                                         {uploadingDoc && <p className="text-xs text-blue-500 mt-1">Загрузка файла...</p>}
                                     </div>
                                     <div>
@@ -473,7 +478,7 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                                         <select
                                             value={newDoc.type}
                                             onChange={(e) => setNewDoc({ ...newDoc, type: e.target.value })}
-                                            className="w-full text-sm border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full text-sm border-gray-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 bg-white p-2.5 shadow-sm"
                                         >
                                             <option value="other">Другое</option>
                                             <option value="protocol">Протокол</option>
@@ -488,7 +493,7 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                                     type="button"
                                     onClick={addDocument}
                                     disabled={!newDoc.url || uploadingDoc}
-                                    className="mt-3 w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                                    className="mt-4 w-full bg-blue-600 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow"
                                 >
                                     {uploadingDoc ? 'Загрузка...' : 'Добавить документ'}
                                 </button>
@@ -498,9 +503,9 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                 </form>
 
                 {/* Footer Buttons */}
-                <div className="flex gap-3 justify-end px-6 py-4 border-t border-gray-100 bg-gray-50 rounded-b-xl shrink-0">
-                    <button type="button" onClick={onClose} className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 text-sm font-medium hover:bg-white hover:shadow-sm transition-all focus:ring-2 focus:ring-gray-200">Отмена</button>
-                    <button onClick={handleSubmit} type="button" className="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 shadow-lg shadow-blue-500/30 transition-all focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Сохранить карточку</button>
+                <div className="flex gap-3 justify-end px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-2xl shrink-0">
+                    <button type="button" onClick={onClose} className="px-6 py-2.5 border border-gray-200 bg-white rounded-xl text-gray-700 text-sm font-medium hover:bg-gray-50/50 hover:text-gray-900 shadow-sm transition-all focus:ring-4 focus:ring-gray-100">Отмена</button>
+                    <button onClick={handleSubmit} type="button" className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 shadow-md shadow-blue-500/20 transition-all focus:ring-4 focus:ring-blue-100">Сохранить карточку</button>
                 </div>
             </div>
         </div>
@@ -640,7 +645,7 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
 
                 <div class="mb-8">
                     <h2 class="text-lg font-bold text-gray-800 mb-3 border-l-4 border-gray-500 pl-3">Описание технологии</h2>
-                    <div class="bg-gray-50 p-4 rounded text-sm text-gray-700 leading-relaxed text-justify border border-gray-100">
+                    <div class="bg-gray-50/50 p-4 rounded text-sm text-gray-700 leading-relaxed text-justify border border-gray-100">
                         ${item.description || 'Описание отсутствует'}
                     </div>
                 </div>
@@ -804,35 +809,18 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
     };
 
     const handleExport = (format) => {
-        if (format === 'csv') {
-            const headers = ["ID", "Реестр. код", "Дата", "Наименование", "Тип", "Инициатор", "Разработчик", "Статус", "Направления"];
-            const csvContent = "data:text/csv;charset=utf-8,"
-                + headers.join(",") + "\n"
-                + filteredData.map(e => {
-                    return [
-                        e.id,
-                        e.registryCode,
-                        e.date || "",
-                        `"${(e.name || "").replace(/"/g, '""')}"`,
-                        e.type,
-                        `"${(e.initiator || "").replace(/"/g, '""')}"`,
-                        `"${(e.developer || "").replace(/"/g, '""')}"`,
-                        e.status,
-                        `"${e.directions.join(', ')}"`
-                    ].join(",");
-                }).join("\n");
+        const queryParams = new URLSearchParams();
+        queryParams.append('format', format);
 
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "registry_export.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } else {
-            // Mock export for PDF/XLS
-            alert(`Экспорт в ${format.toUpperCase()} будет доступен после интеграции с бекендом.`);
-        }
+        if (searchQuery) queryParams.append('search', searchQuery);
+
+        Object.keys(filters).forEach(key => {
+            if (filters[key]) {
+                queryParams.append(key, filters[key]);
+            }
+        });
+
+        window.open(route('admin.registry.export') + '?' + queryParams.toString(), '_blank');
     };
 
     const [editingItem, setEditingItem] = useState(null);
@@ -905,19 +893,19 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
                 <div className="flex gap-2">
                     <button
                         onClick={() => handleExport('csv')}
-                        className="px-3 py-2 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50 flex items-center gap-1 transition-colors text-xs font-medium">
+                        className="px-3 py-2 bg-white border border-gray-200 rounded text-sm hover:bg-gray-50/50 flex items-center gap-1 transition-colors text-xs font-medium">
                         <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         CSV
                     </button>
                     <button
                         onClick={() => handleExport('xls')}
-                        className="px-3 py-2 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50 flex items-center gap-1 transition-colors text-xs font-medium">
+                        className="px-3 py-2 bg-white border border-gray-200 rounded text-sm hover:bg-gray-50/50 flex items-center gap-1 transition-colors text-xs font-medium">
                         <svg className="w-3 h-3 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                         XLS
                     </button>
                     <button
                         onClick={() => handleExport('pdf')}
-                        className="px-3 py-2 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50 flex items-center gap-1 transition-colors text-xs font-medium">
+                        className="px-3 py-2 bg-white border border-gray-200 rounded text-sm hover:bg-gray-50/50 flex items-center gap-1 transition-colors text-xs font-medium">
                         <svg className="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
                         PDF
                     </button>
@@ -931,13 +919,13 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
             </div>
 
             {/* Controls: Search & Filter Toggle */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-4">
+            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 mb-4">
                 <div className="flex flex-col md:flex-row gap-4 justify-between">
                     <div className="relative flex-grow max-w-2xl">
                         <input
                             type="text"
                             placeholder="Поиск по коду, названию, разработчику..."
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -945,7 +933,7 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
                     </div>
                     <button
                         onClick={() => setShowFilters(!showFilters)}
-                        className={`px-4 py-2 rounded-lg border flex items-center gap-2 transition-colors ${showFilters ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-gray-300 text-gray-700'}`}
+                        className={`px-4 py-2 rounded-2xl border flex items-center gap-2 transition-colors ${showFilters ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-gray-200 text-gray-700'}`}
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
                         Фильтры
@@ -955,37 +943,37 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
                 {/* Filters Panel */}
                 {showFilters && (
                     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-4 pt-4 border-t border-gray-100 animate-fade-in-down">
-                        <select className="form-select border-gray-300 rounded-md text-sm" value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
+                        <select className="form-select border-gray-200 rounded-xl text-sm" value={filters.status} onChange={(e) => handleFilterChange('status', e.target.value)}>
                             <option value="">Все статусы</option>
                             {Object.entries(dictStatus).map(([key, val]) => <option key={key} value={key}>{val.label}</option>)}
                         </select>
 
-                        <select className="form-select border-gray-300 rounded-md text-sm" value={filters.type} onChange={(e) => handleFilterChange('type', e.target.value)}>
+                        <select className="form-select border-gray-200 rounded-xl text-sm" value={filters.type} onChange={(e) => handleFilterChange('type', e.target.value)}>
                             <option value="">Все типы</option>
                             {Object.entries(dictTypes).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
                         </select>
 
-                        <select className="form-select border-gray-300 rounded-md text-sm" value={filters.direction} onChange={(e) => handleFilterChange('direction', e.target.value)}>
+                        <select className="form-select border-gray-200 rounded-xl text-sm" value={filters.direction} onChange={(e) => handleFilterChange('direction', e.target.value)}>
                             <option value="">Все направления</option>
                             {Object.entries(dictDirections).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
                         </select>
 
-                        <select className="form-select border-gray-300 rounded-md text-sm" value={filters.codeA} onChange={(e) => handleFilterChange('codeA', e.target.value)}>
+                        <select className="form-select border-gray-200 rounded-xl text-sm" value={filters.codeA} onChange={(e) => handleFilterChange('codeA', e.target.value)}>
                             <option value="">Класс А (ИИ)</option>
                             {Object.entries(dictCodeA).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
                         </select>
 
-                        <select className="form-select border-gray-300 rounded-md text-sm" value={filters.codeB} onChange={(e) => handleFilterChange('codeB', e.target.value)}>
+                        <select className="form-select border-gray-200 rounded-xl text-sm" value={filters.codeB} onChange={(e) => handleFilterChange('codeB', e.target.value)}>
                             <option value="">Класс B (Функция)</option>
                             {Object.entries(dictCodeB).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
                         </select>
 
-                        <select className="form-select border-gray-300 rounded-md text-sm" value={filters.codeD} onChange={(e) => handleFilterChange('codeD', e.target.value)}>
+                        <select className="form-select border-gray-200 rounded-xl text-sm" value={filters.codeD} onChange={(e) => handleFilterChange('codeD', e.target.value)}>
                             <option value="">Класс D (Внедрение)</option>
                             {Object.entries(dictCodeD).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
                         </select>
 
-                        <select className="form-select border-gray-300 rounded-md text-sm" value={filters.codeE} onChange={(e) => handleFilterChange('codeE', e.target.value)}>
+                        <select className="form-select border-gray-200 rounded-xl text-sm" value={filters.codeE} onChange={(e) => handleFilterChange('codeE', e.target.value)}>
                             <option value="">Класс E (Обучаемость)</option>
                             {Object.entries(dictCodeE).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
                         </select>
@@ -993,7 +981,7 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
                         <div className="flex flex-col sm:flex-row gap-2 col-span-1 md:col-span-2 lg:col-span-1">
                             <input
                                 type="date"
-                                className="form-input border-gray-300 rounded-md text-sm w-full"
+                                className="form-input border-gray-200 rounded-xl text-sm w-full"
                                 placeholder="С даты"
                                 value={filters.dateFrom}
                                 onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
@@ -1001,7 +989,7 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
                             />
                             <input
                                 type="date"
-                                className="form-input border-gray-300 rounded-md text-sm w-full"
+                                className="form-input border-gray-200 rounded-xl text-sm w-full"
                                 placeholder="По дату"
                                 value={filters.dateTo}
                                 onChange={(e) => handleFilterChange('dateTo', e.target.value)}
@@ -1016,9 +1004,9 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
             <div className="overflow-x-auto bg-white rounded-xl shadow-lg border border-gray-100">
                 <table className="min-w-full leading-normal">
                     <thead>
-                        <tr className="bg-gray-50 border-b-2 border-gray-100">
+                        <tr className="bg-gray-50/50 border-b-2 border-gray-100">
                             <th className="px-4 py-3 text-left">
-                                <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" onChange={handleSelectAll} checked={paginatedData.length > 0 && selectedIds.length === paginatedData.length} />
+                                <input type="checkbox" className="rounded border-gray-200 text-blue-600 focus:ring-blue-500" onChange={handleSelectAll} checked={paginatedData.length > 0 && selectedIds.length === paginatedData.length} />
                             </th>
                             <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => handleSort('id')}>
                                 № <SortIcon colKey="id" />
@@ -1056,11 +1044,11 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
                         ) : (
                             paginatedData.map((item) => (
                                 <React.Fragment key={item.id}>
-                                    <tr className={`border-b border-gray-100 transition-colors duration-200 ${expandedId === item.id ? 'bg-blue-50' : 'hover:bg-gray-50'}`}>
+                                    <tr className={`border-b border-gray-100 transition-colors duration-200 ${expandedId === item.id ? 'bg-blue-50' : 'hover:bg-gray-50/50'}`}>
                                         <td className="px-4 py-4 text-sm">
                                             <input
                                                 type="checkbox"
-                                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                className="rounded border-gray-200 text-blue-600 focus:ring-blue-500"
                                                 checked={selectedIds.includes(item.id)}
                                                 onChange={() => toggleSelection(item.id)}
                                             />
@@ -1141,7 +1129,7 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
 
                                                         {/* HEADER BLOCK: Logo, Company, Name */}
                                                         <div className="flex flex-col md:flex-row gap-6 bg-white p-6 rounded-xl border border-blue-100 shadow-sm items-center md:items-start">
-                                                            <div className="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-200 p-2">
+                                                            <div className="flex-shrink-0 w-32 h-32 md:w-40 md:h-40 bg-gray-50/50 rounded-2xl flex items-center justify-center border border-gray-200 p-2">
                                                                 {item.logoUrl ? (
                                                                     <img src={item.logoUrl} alt="Logo" className="max-w-full max-h-full object-contain" />
                                                                 ) : (
@@ -1162,7 +1150,7 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
 
                                                             {/* Column 1: Passport & Description */}
                                                             <div className="lg:col-span-2 space-y-6">
-                                                                <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                                                                <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                                                                     <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                                                                         <span className="w-1 h-6 bg-blue-500 rounded-full"></span>
                                                                         Паспорт и описание
@@ -1177,7 +1165,7 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
                                                                     </div>
                                                                     <div className="mt-4">
                                                                         <h4 className="font-semibold text-gray-700 mb-2 text-sm">Краткое описание технологии</h4>
-                                                                        <p className="text-gray-600 text-sm leading-relaxed bg-gray-50 p-3 rounded border border-gray-100">
+                                                                        <p className="text-gray-600 text-sm leading-relaxed bg-gray-50/50 p-3 rounded border border-gray-100">
                                                                             {item.description}
                                                                         </p>
                                                                     </div>
@@ -1203,7 +1191,7 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
                                                                     </div>
                                                                 </div>
 
-                                                                <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                                                                <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                                                                     <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                                                                         <span className="w-1 h-6 bg-purple-500 rounded-full"></span>
                                                                         Участники и применение
@@ -1224,36 +1212,36 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
 
                                                             {/* Column 2: Classification, Lifecycle, Docs */}
                                                             <div className="space-y-6">
-                                                                <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                                                                <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                                                                     <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                                                                         <span className="w-1 h-6 bg-green-500 rounded-full"></span>
                                                                         Классификация
                                                                     </h3>
                                                                     <div className="grid grid-cols-1 gap-4">
-                                                                        <div className="p-3 bg-gray-50 rounded border border-gray-100">
+                                                                        <div className="p-3 bg-gray-50/50 rounded border border-gray-100">
                                                                             <div className="text-xs text-gray-500 mb-1">Класс A (ИИ)</div>
                                                                             <div className="font-semibold text-gray-800">{dictCodeA[item.codeA] || item.codeA}</div>
                                                                         </div>
-                                                                        <div className="p-3 bg-gray-50 rounded border border-gray-100">
+                                                                        <div className="p-3 bg-gray-50/50 rounded border border-gray-100">
                                                                             <div className="text-xs text-gray-500 mb-1">Класс B (Функционал)</div>
                                                                             <div className="font-semibold text-gray-800">{dictCodeB[item.codeB] || item.codeB}</div>
                                                                         </div>
-                                                                        <div className="p-3 bg-gray-50 rounded border border-gray-100">
+                                                                        <div className="p-3 bg-gray-50/50 rounded border border-gray-100">
                                                                             <div className="text-xs text-gray-500 mb-1">Класс C (Контур)</div>
                                                                             <div className="font-semibold text-gray-800">{item.codeC}</div>
                                                                         </div>
-                                                                        <div className="p-3 bg-gray-50 rounded border border-gray-100">
+                                                                        <div className="p-3 bg-gray-50/50 rounded border border-gray-100">
                                                                             <div className="text-xs text-gray-500 mb-1">Класс D (Внедрение)</div>
                                                                             <div className="font-semibold text-gray-800">{dictCodeD[item.codeD] || item.codeD}</div>
                                                                         </div>
-                                                                        <div className="p-3 bg-gray-50 rounded border border-gray-100">
+                                                                        <div className="p-3 bg-gray-50/50 rounded border border-gray-100">
                                                                             <div className="text-xs text-gray-500 mb-1">Класс E (Обучаемость)</div>
                                                                             <div className="font-semibold text-gray-800">{dictCodeE[item.codeE] || item.codeE}</div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
 
-                                                                <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                                                                <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                                                                     <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                                                                         <span className="w-1 h-6 bg-yellow-500 rounded-full"></span>
                                                                         Жизненный цикл
@@ -1266,9 +1254,9 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
                                                                     )}
                                                                 </div>
 
-                                                                <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                                                                <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                                                                     <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                                                        <span className="w-1 h-6 bg-gray-500 rounded-full"></span>
+                                                                        <span className="w-1 h-6 bg-gray-50/500 rounded-full"></span>
                                                                         Документы
                                                                     </h3>
                                                                     <div className="flex flex-col gap-2">
@@ -1280,8 +1268,8 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
                                                                         )) : <span className="text-gray-400 text-sm">Нет документов</span>}
                                                                     </div>
                                                                     <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end gap-2">
-                                                                        <button onClick={() => handlePrintCard(item)} className="text-xs text-gray-600 border border-gray-300 px-3 py-1 rounded hover:bg-gray-50">Печать карточки</button>
-                                                                        <button onClick={() => handleHistory(item)} className="text-xs text-gray-600 border border-gray-300 px-3 py-1 rounded hover:bg-gray-50">История</button>
+                                                                        <button onClick={() => handlePrintCard(item)} className="text-xs text-gray-600 border border-gray-200 px-3 py-1 rounded hover:bg-gray-50/50">Печать карточки</button>
+                                                                        <button onClick={() => handleHistory(item)} className="text-xs text-gray-600 border border-gray-200 px-3 py-1 rounded hover:bg-gray-50/50">История</button>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1308,15 +1296,15 @@ export default function RegistryIndex({ initialRegistryData = [] }) {
                     <button
                         disabled={page === 1}
                         onClick={() => setPage(p => p - 1)}
-                        className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-50 text-gray-600"
+                        className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-50/50 text-gray-600"
                     >
                         ←
                     </button>
-                    <span className="px-3 py-1 border-t border-b bg-gray-50 text-gray-700">{page}</span>
+                    <span className="px-3 py-1 border-t border-b bg-gray-50/50 text-gray-700">{page}</span>
                     <button
                         disabled={page === totalPages || totalPages === 0}
                         onClick={() => setPage(p => p + 1)}
-                        className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-50 text-gray-600"
+                        className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-50/50 text-gray-600"
                     >
                         →
                     </button>

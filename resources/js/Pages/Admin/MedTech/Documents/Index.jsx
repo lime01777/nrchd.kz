@@ -28,15 +28,15 @@ export default function DocumentsIndex({ documents }) {
                         <h1 className="text-3xl font-bold text-gray-900">Нормативная база</h1>
                         <Link
                             href={route('admin.medtech.documents.create')}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                            className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700"
                         >
                             Добавить документ
                         </Link>
                     </div>
 
-                    <div className="bg-white shadow rounded-lg overflow-hidden">
+                    <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 overflow-hidden">
                         <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
+                            <thead className="bg-gray-50/50">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Название</th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Тип</th>
@@ -86,7 +86,7 @@ export default function DocumentsIndex({ documents }) {
                                     <Link
                                         key={index}
                                         href={link.url || '#'}
-                                        className={`px-3 py-2 rounded-md ${link.active ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                                        className={`px-3 py-2 rounded-xl ${link.active ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50/50'}`}
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />
                                 ))}

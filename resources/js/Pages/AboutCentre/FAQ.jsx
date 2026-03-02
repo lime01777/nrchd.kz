@@ -1,4 +1,4 @@
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, Link } from '@inertiajs/react';
 import React, { useState } from 'react';
 import LayoutDirection from '@/Layouts/LayoutDirection';
 import translationService from '@/Services/TranslationService';
@@ -35,22 +35,22 @@ export default function FAQ() {
                             <div className="bg-white rounded-lg">
                                 {faqItems.map((item, index) => (
                                     <div key={index} className="border-b border-gray-200 last:border-b-0">
-                                        <button 
+                                        <button
                                             onClick={() => toggleQuestion(index)}
                                             className="w-full py-4 px-5 text-left flex justify-between items-center hover:bg-gray-50 focus:outline-none"
                                         >
                                             <span className="text-lg font-medium text-gray-900">{item.question}</span>
-                                            <svg 
-                                                className={`w-6 h-6 transition-transform duration-200 ${openQuestion === index ? 'transform rotate-180' : ''}`} 
-                                                fill="none" 
-                                                stroke="currentColor" 
-                                                viewBox="0 0 24 24" 
+                                            <svg
+                                                className={`w-6 h-6 transition-transform duration-200 ${openQuestion === index ? 'transform rotate-180' : ''}`}
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
                                                 xmlns="http://www.w3.org/2000/svg"
                                             >
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                                             </svg>
                                         </button>
-                                        <div 
+                                        <div
                                             className={`overflow-hidden transition-all duration-300 ${openQuestion === index ? 'max-h-96' : 'max-h-0'}`}
                                         >
                                             <div className="p-5 bg-gray-50 text-gray-600">
@@ -68,9 +68,9 @@ export default function FAQ() {
                             {t('faq.notFoundText')}
                         </p>
                         <div className="flex items-center justify-center">
-                            <a href={route('about.contacts')} className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
+                            <Link href={route('about.contacts')} className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">
                                 {t('faq.contactsButton')}
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>
