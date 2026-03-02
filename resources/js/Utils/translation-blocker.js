@@ -21,11 +21,11 @@ const blockTexts = [
 function createBlockerStyle() {
   const style = document.createElement('style');
   style.textContent = `
-    /* Скрываем все информационные блоки о переводе */
-    body > div:not(.container):not(.main-content):not([class*="component"]):not([id]),
-    body > div:empty,
-    body > div[style*="fixed"],
-    body > div[style*="absolute"] {
+    /* Скрываем все информационные блоки о переводе, но пропускаем UI порталы (модалки, лайтбоксы) */
+    body > div:not(.container):not(.main-content):not([class*="component"]):not([id]):not(.fixed):not([class*="z-[9999]"]):not([class*="inset-0"]),
+    body > div:empty:not(.fixed):not([class*="inset-0"]),
+    body > div[style*="fixed"]:not(.fixed):not([class*="inset-0"]):not([id]),
+    body > div[style*="absolute"]:not(.fixed):not([class*="inset-0"]):not([id]) {
       display: none !important;
       visibility: hidden !important;
       opacity: 0 !important;
@@ -51,7 +51,7 @@ function containsBlockedText(element) {
 function hideExistingBlocks() {
   // Ищем все div на верхнем уровне body
   const topLevelDivs = document.querySelectorAll('body > div');
-  
+
   topLevelDivs.forEach(div => {
     // Проверяем, содержит ли div запрещенный текст
     if (containsBlockedText(div)) {
@@ -97,13 +97,13 @@ function createObserver() {
       }
     });
   });
-  
+
   // Наблюдаем за изменениями в body
   observer.observe(document.body, {
     childList: true,
     subtree: true
   });
-  
+
   return observer;
 }
 
@@ -111,17 +111,17 @@ function createObserver() {
 function runBlocker() {
   // Создаем стиль
   createBlockerStyle();
-  
+
   // Блокируем существующие блоки
   hideExistingBlocks();
-  
+
   // Создаем наблюдатель для новых блоков
   const observer = createObserver();
-  
+
   // Запускаем повторно через 100мс и 500мс чтобы наверняка поймать все блоки
   setTimeout(hideExistingBlocks, 100);
   setTimeout(hideExistingBlocks, 500);
-  
+
   // Запускаем каждые 2 секунды для абсолютной надежности
   setInterval(hideExistingBlocks, 2000);
 }

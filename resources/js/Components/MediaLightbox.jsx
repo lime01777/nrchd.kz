@@ -39,7 +39,7 @@ export default function MediaLightbox({
         document.body.style.overflow = '';
         document.body.style.paddingRight = '';
       }
-      
+
       // Вызываем callback закрытия
       if (onClose) {
         onClose();
@@ -83,10 +83,10 @@ export default function MediaLightbox({
     // Сохраняем оригинальные значения
     const originalOverflow = document.body.style.overflow;
     const originalPaddingRight = document.body.style.paddingRight;
-    
+
     // Получаем ширину скроллбара
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    
+
     // Блокируем прокрутку и компенсируем скроллбар
     document.body.style.overflow = 'hidden';
     if (scrollbarWidth > 0) {
@@ -133,7 +133,8 @@ export default function MediaLightbox({
   const currentMedia = normalizedMedia[currentIndex];
 
   const modalContent = (
-    <div 
+    <div
+      id="media-lightbox-portal"
       className="fixed inset-0 z-[9999] flex flex-col bg-black/90 backdrop-blur-sm"
       onClick={(e) => {
         // Закрываем лайтбокс при клике на фон
@@ -166,7 +167,7 @@ export default function MediaLightbox({
       </div>
 
       {/* Основная область просмотра */}
-      <div 
+      <div
         className="relative flex flex-1 items-center justify-center px-6 pb-6"
         onClick={(e) => e.stopPropagation()}
       >
@@ -248,11 +249,10 @@ export default function MediaLightbox({
                     e.stopPropagation();
                     handleSelect(index);
                   }}
-                  className={`relative flex h-20 w-32 shrink-0 overflow-hidden rounded-lg border transition ${
-                    isActive
+                  className={`relative flex h-20 w-32 shrink-0 overflow-hidden rounded-lg border transition ${isActive
                       ? 'border-white/90 ring-2 ring-blue-400'
                       : 'border-white/20 hover:border-white/60'
-                  }`}
+                    }`}
                 >
                   {item.type === 'video' ? (
                     <>
