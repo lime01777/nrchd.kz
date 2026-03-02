@@ -1,0 +1,1 @@
+import{j as n}from"./app-BYWtgtUl.js";function i({className:t="",...r}){const e=t.replace(/\bh-\d+\b|\bw-\w+\b|\bw-\d+\b|\bfill-current\b/g,"").trim();return n.jsx("span",{...r,className:`text-4xl font-extrabold tracking-tight text-blue-600 ${e}`.trim(),children:"ННЦРЗ"})}export{i as A};

@@ -15,7 +15,7 @@ export default function SafeImage({
 }) {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [hasTriedFallback, setHasTriedFallback] = useState(false);
+  const hasTriedFallback = React.useRef(false);
 
   const handleLoad = (e) => {
     setIsLoading(false);
@@ -27,7 +27,7 @@ export default function SafeImage({
 
   const handleError = (e) => {
     // Предотвращаем бесконечный цикл - если уже пытались загрузить fallback, сразу показываем placeholder UI
-    if (hasTriedFallback) {
+    if (hasTriedFallback.current) {
       setIsLoading(false);
       setHasError(true);
       if (onError) {
@@ -39,9 +39,9 @@ export default function SafeImage({
     console.warn('Ошибка загрузки изображения:', src);
 
     // Пытаемся загрузить fallback изображение только один раз и только если он указан и не пустой
-    if (fallbackSrc && fallbackSrc.trim() !== '' && e.target.src !== fallbackSrc && !fallbackSrc.includes('data:image')) {
+    if (fallbackSrc && fallbackSrc.trim() !== '' && !e.target.src.endsWith(fallbackSrc.replace(/^\//, '')) && !fallbackSrc.includes('data:image')) {
       try {
-        setHasTriedFallback(true);
+        hasTriedFallback.current = true;
         e.target.src = fallbackSrc;
         // Не устанавливаем hasError сразу, ждем результата загрузки fallback
         return;
