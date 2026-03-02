@@ -38,10 +38,11 @@
     34 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     35 => 'Termwind\\Laravel\\TermwindServiceProvider',
     36 => 'Pest\\Laravel\\PestServiceProvider',
-    37 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
-    38 => 'Barryvdh\\TranslationManager\\ManagerServiceProvider',
-    39 => 'App\\Providers\\AppServiceProvider',
-    40 => 'App\\Providers\\AuthServiceProvider',
+    37 => 'Spatie\\Activitylog\\ActivitylogServiceProvider',
+    38 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
+    39 => 'Barryvdh\\TranslationManager\\ManagerServiceProvider',
+    40 => 'App\\Providers\\AppServiceProvider',
+    41 => 'App\\Providers\\AuthServiceProvider',
   ),
   'eager' => 
   array (
@@ -66,10 +67,11 @@
     18 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     19 => 'Termwind\\Laravel\\TermwindServiceProvider',
     20 => 'Pest\\Laravel\\PestServiceProvider',
-    21 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
-    22 => 'Barryvdh\\TranslationManager\\ManagerServiceProvider',
-    23 => 'App\\Providers\\AppServiceProvider',
-    24 => 'App\\Providers\\AuthServiceProvider',
+    21 => 'Spatie\\Activitylog\\ActivitylogServiceProvider',
+    22 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
+    23 => 'Barryvdh\\TranslationManager\\ManagerServiceProvider',
+    24 => 'App\\Providers\\AppServiceProvider',
+    25 => 'App\\Providers\\AuthServiceProvider',
   ),
   'deferred' => 
   array (

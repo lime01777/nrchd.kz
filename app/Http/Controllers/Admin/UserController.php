@@ -35,6 +35,7 @@ class UserController extends Controller
         'youth_health_centers' => 'МЦЗ (Карта)',
         'clinics' => 'Клиники Казахстана',
         'users' => 'Пользователи',
+        'logs' => 'Логи действий',
         'settings' => 'Настройки',
         'glossary' => 'Глоссарий',
     ];

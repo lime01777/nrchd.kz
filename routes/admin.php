@@ -124,6 +124,11 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
         Route::delete('/users/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
     });
 
+    // Логи действий
+    Route::middleware('permission:logs')->group(function () {
+        Route::get('/logs', [App\Http\Controllers\Admin\LogController::class, 'index'])->name('logs.index');
+    });
+
     // Настройки
     Route::middleware('permission:settings')->group(function () {
         Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings');
