@@ -96,7 +96,10 @@ class NewsRequest extends FormRequest
                 $rules['body'] = 'sometimes|nullable|string|min:10';
                 $rules['cover'] = 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120|dimensions:min_width=800,min_height=400';
             }
-            $rules['category'] = array_merge(['sometimes'], $categoryRules);
+            
+            $rules['category'] = $isMedia 
+                ? ['sometimes', 'nullable', 'array', 'max:5']
+                : ['sometimes', 'required', 'array', 'min:1', 'max:5'];
         }
 
         return $rules;
