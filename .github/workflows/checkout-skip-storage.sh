@@ -3,6 +3,7 @@
 # Добавьте это в ваш workflow перед checkout
 
 # Включаем поддержку длинных путей
+cd /var/www/nrchd.kz
 git config core.longpaths true
 
 # Настраиваем sparse-checkout для исключения папки storage

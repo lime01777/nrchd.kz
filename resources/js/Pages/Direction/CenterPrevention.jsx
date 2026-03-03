@@ -207,18 +207,10 @@ export default function CenterPrevention() {
 
       <div className="bg-gray-50 py-20">
         <div className="container px-5 mx-auto">
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div className="flex flex-wrap">
             <FolderChlank color="bg-emerald-200" colorsec="bg-emerald-300" title={tab1Label} description={tab1Folder} href="#" />
             <FolderChlank color="bg-emerald-200" colorsec="bg-emerald-300" title={tab2Label} description={tab2Folder} href="#" />
             <FolderChlank color="bg-emerald-200" colorsec="bg-emerald-300" title={tab3Label} description={tab3Folder} href="#" />
-          </div>
-
-          <div className="mt-12">
-            <TabsFileDisplay tabs={[{ label: infographicsTitle, folder: "ЗОЖ/Инфографики" }]} borderColor="border-emerald-200" />
-          </div>
-
-          <div className="mt-12">
-            <TabsFileDisplay tabs={[{ label: videosTitle, folder: "ЗОЖ/Видеоролики" }]} borderColor="border-emerald-200" />
           </div>
         </div>
       </div>

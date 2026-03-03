@@ -9,6 +9,7 @@ jobs:
     steps:
       - name: Configure Git for long paths
         run: |
+          cd /var/www/nrchd.kz
           git config core.longpaths true
           git sparse-checkout init --cone
           git sparse-checkout set '/*' '!public/storage'

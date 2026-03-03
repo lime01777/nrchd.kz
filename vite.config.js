@@ -11,6 +11,11 @@ export default defineConfig({
         }),
         react(),
     ],
+    server: {
+        watch: {
+            ignored: ['**/resources/v0.96/venv/**']
+        }
+    },
     resolve: {
         alias: {
             '@': path.resolve(__dirname, 'resources/js'),
@@ -21,10 +26,10 @@ export default defineConfig({
             output: {
                 manualChunks: (id) => {
                     if (id.includes('node_modules')) {
-                        if (id.includes('react') || id.includes('react-dom')) return 'vendor-react';
-                        if (id.includes('chart.js') || id.includes('react-chartjs-2')) return 'vendor-chartjs';
-                        if (id.includes('leaflet') || id.includes('react-leaflet')) return 'vendor-leaflet';
-                        if (id.includes('@tiptap') || id.includes('prosemirror')) return 'vendor-tiptap';
+                        if (id.includes('/node_modules/react/') || id.includes('/node_modules/react-dom/') || id.includes('/node_modules/scheduler/')) return 'vendor-react';
+                        if (id.includes('/chart.js/') || id.includes('/react-chartjs-2/')) return 'vendor-chartjs';
+                        if (id.includes('/leaflet/') || id.includes('/react-leaflet/')) return 'vendor-leaflet';
+                        if (id.includes('/@tiptap/') || id.includes('/prosemirror-')) return 'vendor-tiptap';
                         if (id.includes('framer-motion')) return 'vendor-framer';
                         return 'vendor'; // all other vendors go here
                     }
