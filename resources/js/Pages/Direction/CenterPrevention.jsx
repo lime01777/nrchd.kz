@@ -133,19 +133,8 @@ export default function CenterPrevention() {
   };
 
   return (
-    <Layout>
+    <>
       <Head title={t('directionsPages.centerPrevention.title', 'Центр профилактики')} />
-
-      <HeroSection
-        title={t('directionsPages.centerPrevention.title', 'Центр профилактики и укрепления здоровья')}
-        subtitle={t('directionsPages.centerPrevention.subtitle', 'Формирование здорового образа жизни')}
-        description={t('directionsPages.centerPrevention.intro', 'Центр профилактики и укрепления здоровья ННЦРЗ занимается разработкой и внедрением программ, направленных на раннее выявление заболеваний и формирование здоровых привычек у населения.')}
-        image="/images/sections/prevention-hero.jpg"
-        breadcrumbs={[
-          { label: t('header.directions', 'Направления'), link: '/directions' },
-          { label: t('directionsPages.centerPrevention.title', 'Центр профилактики') }
-        ]}
-      />
 
       <section className="py-20 bg-white">
         <div className="container px-5 mx-auto">
@@ -217,31 +206,21 @@ export default function CenterPrevention() {
       </section>
 
       <div className="bg-gray-50 py-20">
-        <div className="container px-5 mx-auto">
-          <FolderBlank
-            tab1Label={t('directionsPages.centerPrevention.tab1Label', 'Законодательство')}
-            tab1Folder={t('directionsPages.centerPrevention.tab1Folder', 'ЗОЖ/Законадательство')}
-            tab2Label={t('directionsPages.centerPrevention.tab2Label', 'Подкасты')}
-            tab2Folder={t('directionsPages.centerPrevention.tab2Folder', 'ЗОЖ/Подкасты')}
-            tab3Label={t('directionsPages.centerPrevention.tab3Label', 'Инструменты')}
-            tab3Folder={t('directionsPages.centerPrevention.tab3Folder', 'ЗОЖ/Инструменты')}
-          />
+        <div className="flex flex-wrap gap-4">
+          <FolderChlank color="bg-emerald-200" colorsec="bg-emerald-300" title={tab1Label} description={tab1Folder} href="#" />
+          <FolderChlank color="bg-emerald-200" colorsec="bg-emerald-300" title={tab2Label} description={tab2Folder} href="#" />
+          <FolderChlank color="bg-emerald-200" colorsec="bg-emerald-300" title={tab3Label} description={tab3Folder} href="#" />
+        </div>
 
-          <div className="mt-12">
-            <FolderTabsDetailed
-              title={infographicsTitle}
-              folderPath="ЗОЖ/Инфографики"
-            />
-          </div>
+        <div className="mt-12">
+          <TabsFileDisplay tabs={[{ label: infographicsTitle, folder: "ЗОЖ/Инфографики" }]} borderColor="border-emerald-200" />
+        </div>
 
-          <div className="mt-12">
-            <FolderVideosDetailed
-              title={videosTitle}
-              folderPath="ЗОЖ/Видеоролики"
-            />
-          </div>
+        <div className="mt-12">
+          <TabsFileDisplay tabs={[{ label: videosTitle, folder: "ЗОЖ/Видеоролики" }]} borderColor="border-emerald-200" />
         </div>
       </div>
+    </div >
 
       <section className="py-20 bg-white">
         <div className="container px-5 mx-auto">
@@ -253,7 +232,7 @@ export default function CenterPrevention() {
           </div>
 
           <div className="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-gray-100">
-            <KazakhstanMap variant="youth" />
+            <KazakhstanInteractiveMap />
           </div>
 
           <div className="mt-20">
@@ -264,7 +243,7 @@ export default function CenterPrevention() {
       </section>
 
       <VolunteerForm />
-    </Layout>
+    </>
   );
 }
 
