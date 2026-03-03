@@ -16,12 +16,16 @@ class LogAdminActions
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
+        
+        \Illuminate\Support\Facades\Log::info('LogAdminActions triggered', [
+            'method' => $request->method(),
+            'path' => $request->path(),
+            'segment1' => $request->segment(1),
+            'has_user' => (bool)$request->user(),
+        ]);
 
         // Логируем только методы, изменяющие данные, и только если пользователь авторизован
         if (in_array($request->method(), ['POST', 'PUT', 'PATCH', 'DELETE']) && $request->user()) {
-            
-            // Получаем понятное имя сущности из пути (например, news, users, documents)
-            $segment = $request->segment(2); // если /admin/news/1, то segment(2) -> 'news'
             
             // Если мы почему-то вне админки, пропускаем, хотя middleware будет висеть на web
             if ($request->segment(1) !== 'admin') {
