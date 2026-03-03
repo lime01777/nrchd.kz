@@ -54,7 +54,7 @@ export default function CenterPrevention() {
   const [youthCentersTitle, setYouthCentersTitle] = useState('');
   const [youthCentersDescription, setYouthCentersDescription] = useState('');
   const [h1Title, setH1Title] = useState('');
-  const [currentLanguage, setCurrentLanguage] = useState(translationService.getCurrentLanguage()); // Added as per edit
+  const [currentLanguage, setCurrentLanguage] = useState(translationService.getLanguage()); // Added as per edit
 
   // Обновление переводов при смене языка
   useEffect(() => {
