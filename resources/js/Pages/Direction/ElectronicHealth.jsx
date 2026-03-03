@@ -211,7 +211,7 @@ export default function ElectronicHealth({ registryData = [], aiServices = [] })
         </div>
       </section>
 
-      {/* <AIServiceCatalog services={aiServices} registryData={registryData} /> */}
+      <AIServiceCatalog services={aiServices} registryData={registryData} />
 
       {/* <HealthTechnologyRegistry registryData={registryData} /> */}
 

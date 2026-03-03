@@ -456,64 +456,18 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                 <div>
                                     <InputLabel value="Язык версии / Тіл нұсқасы" className="mb-2" />
-                                    <div className="space-y-3 bg-gray-50/50 p-4 rounded-xl border border-gray-200 shadow-inner">
-                                        <div className="flex items-center">
-                                            <input
-                                                id="locale_ru"
-                                                name="locale"
-                                                type="radio"
-                                                value="ru"
-                                                checked={data.locale === 'ru'}
-                                                onChange={(e) => setData('locale', e.target.value)}
-                                                className="h-4 w-4 border-gray-200 text-blue-600 focus:ring-blue-500"
-                                            />
-                                            <label htmlFor="locale_ru" className="ml-2 block text-sm font-medium text-gray-700 cursor-pointer">
-                                                Русская версия
-                                            </label>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <input
-                                                id="locale_kz"
-                                                name="locale"
-                                                type="radio"
-                                                value="kz"
-                                                checked={data.locale === 'kz'}
-                                                onChange={(e) => setData('locale', e.target.value)}
-                                                className="h-4 w-4 border-gray-200 text-blue-600 focus:ring-blue-500"
-                                            />
-                                            <label htmlFor="locale_kz" className="ml-2 block text-sm font-medium text-gray-700 cursor-pointer">
-                                                Қазақша нұсқасы
-                                            </label>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <input
-                                                id="locale_en"
-                                                name="locale"
-                                                type="radio"
-                                                value="en"
-                                                checked={data.locale === 'en'}
-                                                onChange={(e) => setData('locale', e.target.value)}
-                                                className="h-4 w-4 border-gray-200 text-blue-600 focus:ring-blue-500"
-                                            />
-                                            <label htmlFor="locale_en" className="ml-2 block text-sm font-medium text-gray-700 cursor-pointer">
-                                                English
-                                            </label>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <input
-                                                id="locale_all"
-                                                name="locale"
-                                                type="radio"
-                                                value="all"
-                                                checked={data.locale === 'all'}
-                                                onChange={(e) => setData('locale', e.target.value)}
-                                                className="h-4 w-4 border-gray-200 text-blue-600 focus:ring-blue-500"
-                                            />
-                                            <label htmlFor="locale_all" className="ml-2 block text-sm font-medium text-gray-700 cursor-pointer">
-                                                Во всех языковых версиях
-                                            </label>
-                                        </div>
-                                    </div>
+                                    <select
+                                        id="locale"
+                                        name="locale"
+                                        value={data.locale}
+                                        onChange={(e) => setData('locale', e.target.value)}
+                                        className="mt-1 block w-full border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors bg-white hover:border-gray-300 py-3"
+                                    >
+                                        <option value="ru">Русская версия</option>
+                                        <option value="kz">Қазақша нұсқасы</option>
+                                        <option value="en">English</option>
+                                        <option value="all">Во всех языковых версиях</option>
+                                    </select>
                                     <InputError message={errors.locale} className="mt-2" />
                                 </div>
                                 <div>
@@ -547,7 +501,7 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                         {/* Категории и медиа только для обычных новостей */}
                         {currentType !== 'media' && (
                             <>
-                                <div className="bg-white/90 backdrop-blur shadow-lg border border-gray-100/50 rounded-2xl p-6 md:p-8">
+                                <div className="relative z-20 bg-white/90 backdrop-blur shadow-lg border border-gray-100/50 rounded-2xl p-6 md:p-8">
                                     <h2 className="text-lg font-medium text-gray-900 mb-4">Категории</h2>
                                     {availableCategories.length === 0 ? (
                                         <p className="text-sm text-gray-500">
@@ -578,6 +532,10 @@ export default function Form({ news = null, media: initialMediaProp = [], sectio
                                         existingMedia={media}
                                         onMediaUploaded={handleMediaUploaded}
                                         onMediaRemoved={handleMediaRemoved}
+                                        onMediaReordered={(newMedia) => {
+                                            setMedia(newMedia);
+                                            setData('media', newMedia);
+                                        }}
                                         maxFiles={30}
                                     />
                                     <InputError message={errors.media} className="mt-2" />

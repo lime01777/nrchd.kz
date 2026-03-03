@@ -207,7 +207,7 @@ export default function CenterPrevention() {
 
       <div className="bg-gray-50 py-20">
         <div className="container px-5 mx-auto">
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4 justify-center">
             <FolderChlank color="bg-emerald-200" colorsec="bg-emerald-300" title={tab1Label} description={tab1Folder} href="#" />
             <FolderChlank color="bg-emerald-200" colorsec="bg-emerald-300" title={tab2Label} description={tab2Folder} href="#" />
             <FolderChlank color="bg-emerald-200" colorsec="bg-emerald-300" title={tab3Label} description={tab3Folder} href="#" />

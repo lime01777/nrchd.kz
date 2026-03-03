@@ -1,5 +1,4 @@
 import React, { useMemo, useRef, useState } from 'react';
-import html2pdf from 'html2pdf.js';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 import RegistryKazakhstanMap from '@/Components/RegistryKazakhstanMap';
@@ -237,6 +236,22 @@ export default function RegistryDashboard({ registryData = [] }) {
         ]
     };
 
+    const loadHtml2Pdf = () => {
+        return new Promise((resolve, reject) => {
+            if (window.html2pdf) {
+                resolve(window.html2pdf);
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+            script.integrity = 'sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==';
+            script.crossOrigin = 'anonymous';
+            script.onload = () => resolve(window.html2pdf);
+            script.onerror = () => reject(new Error('Failed to load html2pdf from CDN'));
+            document.body.appendChild(script);
+        });
+    };
+
     const handlePrint = async () => {
         setIsExporting(true);
         const element = dashboardRef.current;
@@ -248,8 +263,15 @@ export default function RegistryDashboard({ registryData = [] }) {
             jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
         };
 
-        await html2pdf().set(opt).from(element).save();
-        setIsExporting(false);
+        try {
+            const html2pdf = await loadHtml2Pdf();
+            await html2pdf().set(opt).from(element).save();
+        } catch (error) {
+            console.error('Failed to generate PDF', error);
+            alert('Ошибка при генерации PDF. Пожалуйста, проверьте подключение к интернету.');
+        } finally {
+            setIsExporting(false);
+        }
     };
 
     const handleExportCSV = () => {

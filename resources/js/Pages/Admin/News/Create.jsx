@@ -56,14 +56,14 @@ export default function NewsCreate() {
   // Обработка отправки формы
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Преобразуем content в body для соответствия API
     const formData = {
       ...data,
       body: data.content || data.body || '', // Используем content как body
       media: media
     };
-    
+
     // Удаляем content, если есть body
     if (formData.body && formData.content) {
       delete formData.content;
@@ -110,7 +110,7 @@ export default function NewsCreate() {
   // Обработка изменения статуса
   const handleStatusChange = (newStatus) => {
     setData('status', newStatus);
-    
+
     // Если статус "scheduled", устанавливаем дату публикации
     if (newStatus === 'scheduled' && !data.publish_date) {
       const tomorrow = new Date();
@@ -165,7 +165,7 @@ export default function NewsCreate() {
                 {/* Основная информация */}
                 <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                   <h2 className="text-lg font-medium text-gray-900 mb-4">Основная информация</h2>
-                  
+
                   <div className="space-y-4">
                     {/* Заголовок */}
                     <div>
@@ -206,6 +206,7 @@ export default function NewsCreate() {
                     existingMedia={media}
                     onMediaUploaded={handleMediaUploaded}
                     onMediaRemoved={handleMediaRemoved}
+                    onMediaReordered={setMedia}
                     maxFiles={20}
                   />
                   <InputError message={errors.media} className="mt-2" />
@@ -231,7 +232,7 @@ export default function NewsCreate() {
               {/* Статус и дата публикации */}
               <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
                 <h2 className="text-lg font-medium text-gray-900 mb-4">Публикация</h2>
-                
+
                 <div className="space-y-4">
                   {/* Статус */}
                   <div>

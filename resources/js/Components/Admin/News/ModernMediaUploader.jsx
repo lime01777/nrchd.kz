@@ -1,15 +1,17 @@
 import React, { useState, useCallback } from 'react';
 
-export default function ModernMediaUploader({ 
-  existingMedia = [], 
-  onMediaUploaded, 
-  onMediaRemoved, 
+export default function ModernMediaUploader({
+  existingMedia = [],
+  onMediaUploaded,
+  onMediaRemoved,
+  onMediaReordered,
   maxFiles = 20,
-  className = '' 
+  className = ''
 }) {
   const [uploading, setUploading] = useState(false);
   const [externalUrl, setExternalUrl] = useState('');
   const [externalError, setExternalError] = useState('');
+  const [draggedIdx, setDraggedIdx] = useState(null);
 
   const generateId = () => {
     if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -110,7 +112,7 @@ export default function ModernMediaUploader({
     }
 
     setUploading(true);
-    
+
     try {
       // Создаем FormData для загрузки файлов
       const formData = new FormData();
@@ -142,7 +144,7 @@ export default function ModernMediaUploader({
           const errorText = await response.text();
           throw new Error('Сессия истекла. Пожалуйста, обновите страницу и попробуйте снова.');
         }
-        
+
         // Пытаемся получить детальную ошибку
         let errorMessage = 'Ошибка загрузки файлов';
         try {
@@ -151,12 +153,12 @@ export default function ModernMediaUploader({
         } catch (e) {
           errorMessage = `Ошибка ${response.status}: ${response.statusText}`;
         }
-        
+
         throw new Error(errorMessage);
       }
 
       const result = await response.json();
-      
+
       if (onMediaUploaded && result.success && result.media) {
         onMediaUploaded(result.media);
       }
@@ -220,13 +222,44 @@ export default function ModernMediaUploader({
     }
   };
 
+  const handleDragStart = (e, index) => {
+    setDraggedIdx(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e, dropIdx) => {
+    e.preventDefault();
+    if (draggedIdx === null || draggedIdx === dropIdx) return;
+
+    // reorder existingMedia
+    const newMedia = [...existingMedia];
+    const draggedItem = newMedia[draggedIdx];
+    newMedia.splice(draggedIdx, 1);
+    newMedia.splice(dropIdx, 0, draggedItem);
+
+    // update position properties
+    const orderedMedia = newMedia.map((item, idx) => ({ ...item, position: idx }));
+
+    if (onMediaReordered) {
+      onMediaReordered(orderedMedia);
+    } else if (onMediaUploaded) {
+      // Fallback or depending on how parent deals with it
+    }
+    setDraggedIdx(null);
+  };
+
   return (
     <div className={className}>
       {/* Зона загрузки */}
       <div
-        className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-          uploadDisabled ? 'cursor-not-allowed opacity-60 border-gray-200' : 'cursor-pointer border-gray-300 hover:border-gray-400'
-        }`}
+        className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${uploadDisabled ? 'cursor-not-allowed opacity-60 border-gray-200' : 'cursor-pointer border-gray-300 hover:border-gray-400'
+          }`}
       >
         <input
           type="file"
@@ -307,8 +340,16 @@ export default function ModernMediaUploader({
               const providerLabel = media.provider ? media.provider.toUpperCase() : null;
 
               return (
-                <div key={media.id || `media-${index}`} className="relative group">
-                  <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                <div
+                  key={media.id || `media-${index}`}
+                  className={`relative group cursor-move transition-all duration-200 ease-in-out ${draggedIdx === index ? 'opacity-50 scale-95 border-2 border-blue-400 border-dashed rounded-lg z-10 shadow-lg' : ''}`}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, index)}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, index)}
+                  onDragEnd={() => setDraggedIdx(null)}
+                >
+                  <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden pointer-events-none sm:pointer-events-auto">
                     {media.type === 'video' ? (
                       isEmbed ? (
                         <iframe
