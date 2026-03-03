@@ -27,8 +27,9 @@ class LogAdminActions
         // Логируем только методы, изменяющие данные, и только если пользователь авторизован
         if (in_array($request->method(), ['POST', 'PUT', 'PATCH', 'DELETE']) && $request->user()) {
             
-            // Если мы почему-то вне админки, пропускаем, хотя middleware будет висеть на web
-            if ($request->segment(1) !== 'admin') {
+            // Если мы почему-то вне админки, пропускаем
+            $segments = $request->segments();
+            if (!in_array('admin', $segments)) {
                 return $response;
             }
 
