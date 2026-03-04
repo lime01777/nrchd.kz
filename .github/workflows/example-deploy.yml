@@ -8,33 +8,44 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
-    steps:
-      # ВАЖНО: Настройка Git ДО checkout для пропуска проблемных файлов
-      - name: Configure Git for long paths and sparse checkout
-        run: |
-          cd /var/www/nrchd.kz
-          git config core.longpaths true
-          git sparse-checkout init --cone
-          git sparse-checkout set '/*' '!public/storage'
-      
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          # Дополнительная настройка для исключения папки storage
-          sparse-checkout: |
-            /*
-            !public/storage
-          sparse-checkout-cone-mode: true
-      
-      # Остальные шаги вашего развертывания
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'
-      
-      - name: Install dependencies
-        run: composer install --no-dev --optimize-autoloader
-      
-      # ... остальные шаги развертывания
 
+    steps:
+      # Подключаемся к VPS по SSH и выполняем все команды там
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          # Все команды выполняются уже на сервере VPS
+          script: |
+            set -e
+            cd /var/www/nrchd.kz
+
+            echo "==> Получаем последние изменения из репозитория..."
+            git pull origin main
+
+            echo "==> Устанавливаем PHP-зависимости..."
+            composer install --no-dev --optimize-autoloader
+
+            echo "==> Устанавливаем Node.js-зависимости и собираем фронтенд..."
+            npm ci
+            npm run build
+
+            echo "==> Выполняем миграции базы данных..."
+            php artisan migrate --force
+
+            echo "==> Очищаем и перестраиваем кеши Laravel..."
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            echo "==> Обновляем права на папки..."
+            sudo chown -R www-data:www-data storage bootstrap/cache
+            sudo chmod -R 775 storage bootstrap/cache
+
+            echo "==> Перезапускаем очереди (если используются)..."
+            php artisan queue:restart || true
+
+            echo "Deploy completed successfully!"

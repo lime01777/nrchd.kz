@@ -1,16 +1,29 @@
-name: Fix Long Paths on Checkout
+name: Fix - Run Command on Server
 
+# Вспомогательный воркфлоу для ручного запуска произвольных команд на VPS
 on:
   workflow_dispatch:
+    inputs:
+      command:
+        description: 'Команда для выполнения на сервере (в папке /var/www/nrchd.kz)'
+        required: true
+        default: 'php artisan route:cache && php artisan config:cache'
 
 jobs:
-  fix-checkout:
+  fix:
     runs-on: ubuntu-latest
-    steps:
-      - name: Configure Git for long paths
-        run: |
-          cd /var/www/nrchd.kz
-          git config core.longpaths true
-          git sparse-checkout init --cone
-          git sparse-checkout set '/*' '!public/storage'
 
+    steps:
+      - name: Run command on VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            set -e
+            cd /var/www/nrchd.kz
+            echo "==> Выполняем: ${{ github.event.inputs.command }}"
+            ${{ github.event.inputs.command }}
+            echo "Done."

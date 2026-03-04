@@ -11,14 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ВАЖНО: Настройка Git ДО checkout для пропуска проблемных файлов с длинными путями
+      # Git настраивается автоматически через actions/checkout
       - name: Configure Git for long paths
-        run: |
-          cd /var/www/nrchd.kz
-          git config core.longpaths true
-          git sparse-checkout init --cone
-          git sparse-checkout set '/*' '!public/storage'
+        run: git config --global core.longpaths true
       
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
