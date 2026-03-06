@@ -258,11 +258,73 @@ class DocumentManagerController extends Controller
         } catch (\Exception $e) {
             Log::error('Ошибка при создании папки', [
                 'error' => $e->getMessage(),
-                'path' => $fullPath
+                'path' => $currentPath . '/' . $folderName
             ]);
             
             return response()->json(['error' => 'Ошибка при создании папки'], 500);
         }
+    }
+
+    /**
+     * Загрузить файлы в указанную папку
+     */
+    public function upload(Request $request)
+    {
+        $request->validate([
+            'currentPath' => 'required|string',
+            'files' => 'required|array',
+            'files.*' => 'required|file' // Можно добавить макс. размер: |max:50000
+        ]);
+
+        /** @var User $user */
+        $user = Auth::user();
+        $currentPath = $request->input('currentPath');
+
+        // Проверяем доступ к папке, куда грузим
+        if (!$this->hasAccessToFolder($user, $currentPath)) {
+            return response()->json(['error' => 'Нет доступа к этой папке'], 403);
+        }
+
+        $fullPath = public_path('storage/documents/' . $currentPath);
+
+        if (!File::exists($fullPath)) {
+            return response()->json(['error' => 'Папка назначения не найдена'], 404);
+        }
+
+        $uploadedCount = 0;
+        $errors = [];
+
+        foreach ($request->file('files') as $file) {
+            $fileName = $file->getClientOriginalName();
+            $targetPath = $fullPath . DIRECTORY_SEPARATOR . $fileName;
+
+            if (File::exists($targetPath)) {
+                $errors[] = "Файл {$fileName} уже существует";
+                continue;
+            }
+
+            try {
+                $file->move($fullPath, $fileName);
+                $uploadedCount++;
+            } catch (\Exception $e) {
+                $errors[] = "Ошибка загрузки {$fileName}";
+                Log::error('Ошибка загрузки документа', [
+                    'error' => $e->getMessage(),
+                    'file' => $fileName,
+                    'path' => $currentPath
+                ]);
+            }
+        }
+
+        if (count($errors) > 0) {
+            return response()->json([
+                'error' => "Загружено: {$uploadedCount}. Ошибки: " . implode(', ', $errors)
+            ], 207); // 207 Multi-Status
+        }
+
+        return response()->json([
+            'message' => "Успешно загружено файлов: {$uploadedCount}"
+        ]);
     }
 
     /**

@@ -16,7 +16,7 @@ export default function ZozhReports() {
                     <div className="bg-white p-6 rounded-lg shadow-md">
                         {/* Отображаем файлы из папки zozh_reports */}
                         <SimpleFileDisplay
-                            folder="documents/ЗОЖ/zozh_reports"
+                            folder="ЗОЖ/zozh_reports"
                             title={pageName}
                             bgColor="bg-white"
                         />

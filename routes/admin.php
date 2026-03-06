@@ -109,6 +109,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
         Route::get('/documents/list', [App\Http\Controllers\DocumentManagerController::class, 'getDocuments'])->name('documents.list');
         Route::get('/documents/folder-tree', [App\Http\Controllers\DocumentManagerController::class, 'getFolderTree'])->name('documents.folder-tree');
         Route::post('/documents/create-folder', [App\Http\Controllers\DocumentManagerController::class, 'createFolder'])->name('documents.create-folder');
+        Route::post('/documents/upload', [App\Http\Controllers\DocumentManagerController::class, 'upload'])->name('documents.upload');
         Route::post('/documents/rename', [App\Http\Controllers\DocumentManagerController::class, 'rename'])->name('documents.rename');
         Route::post('/documents/move', [App\Http\Controllers\DocumentManagerController::class, 'move'])->name('documents.move');
         Route::post('/documents/bulk-move', [App\Http\Controllers\DocumentManagerController::class, 'bulkMove'])->name('documents.bulk-move');

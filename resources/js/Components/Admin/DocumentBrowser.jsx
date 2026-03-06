@@ -21,6 +21,7 @@ export default function DocumentBrowser({
     onDelete,
     onFolderChange,
     onCreateFolder,
+    onUploadFile,
     onBulkMove,
     allowedFolders = [],
     onFiltersChange,
@@ -30,6 +31,8 @@ export default function DocumentBrowser({
     const [newName, setNewName] = useState('');
     const [showMoveModal, setShowMoveModal] = useState(false);
     const [showCreateFolderModal, setShowCreateFolderModal] = useState(false);
+    const [showUploadModal, setShowUploadModal] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showBulkMoveModal, setShowBulkMoveModal] = useState(false);
     const [bulkMoveTarget, setBulkMoveTarget] = useState('');
     const [newFolderName, setNewFolderName] = useState('');
@@ -37,6 +40,22 @@ export default function DocumentBrowser({
     const [selectedItem, setSelectedItem] = useState(null);
     // Множественный выбор: храним path и type
     const [selectedItems, setSelectedItems] = useState([]);
+
+    // Drag and Drop state
+    const [dragActive, setDragActive] = useState(false);
+    const [uploadFiles, setUploadFiles] = useState([]);
+    const [isUploading, setIsUploading] = useState(false);
+
+    // Закрытие dropdown при клике вне
+    React.useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (isDropdownOpen && !event.target.closest('.dropdown-container')) {
+                setIsDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [isDropdownOpen]);
 
     const handleRename = (item) => {
         setEditingItem(item);
@@ -147,6 +166,55 @@ export default function DocumentBrowser({
         if (result.success) {
             setShowBulkMoveModal(false);
             setSelectedItems([]);
+        }
+        alert(result.message);
+    };
+
+    // --- Drag and Drop Handlers ---
+    const handleDrag = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.type === "dragenter" || e.type === "dragover") {
+            setDragActive(true);
+        } else if (e.type === "dragleave") {
+            setDragActive(false);
+        }
+    };
+
+    const handleDrop = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        setDragActive(false);
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleFiles(e.dataTransfer.files);
+        }
+    };
+
+    const handleChange = function (e) {
+        e.preventDefault();
+        if (e.target.files && e.target.files[0]) {
+            handleFiles(e.target.files);
+        }
+    };
+
+    const handleFiles = (files) => {
+        setUploadFiles([...uploadFiles, ...Array.from(files)]);
+    };
+
+    const removeUploadFile = (index) => {
+        const newFiles = [...uploadFiles];
+        newFiles.splice(index, 1);
+        setUploadFiles(newFiles);
+    };
+
+    const handleUploadSubmit = async () => {
+        if (uploadFiles.length === 0 || !onUploadFile) return;
+        setIsUploading(true);
+        const result = await onUploadFile(uploadFiles);
+        setIsUploading(false);
+        if (result.success) {
+            setShowUploadModal(false);
+            setUploadFiles([]);
         }
         alert(result.message);
     };
@@ -324,14 +392,46 @@ export default function DocumentBrowser({
                         </div>
                     </div>
                 )}
-                {onCreateFolder && (
-                    <button
-                        onClick={() => setShowCreateFolderModal(true)}
-                        className="flex items-center text-sm font-bold bg-indigo-50 border border-indigo-200 text-indigo-700 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors shadow-sm"
-                    >
-                        <FolderIcon className="w-4 h-4 mr-1.5" />
-                        Новая папка
-                    </button>
+                {(onCreateFolder || onUploadFile) && (
+                    <div className="relative dropdown-container">
+                        <button
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                            className="flex items-center text-sm font-bold bg-indigo-600 border border-indigo-700 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+                        >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
+
+                        {isDropdownOpen && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-200 z-50 overflow-hidden">
+                                {onCreateFolder && (
+                                    <button
+                                        onClick={() => {
+                                            setIsDropdownOpen(false);
+                                            setShowCreateFolderModal(true);
+                                        }}
+                                        className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-indigo-600 flex items-center transition-colors border-b border-slate-100"
+                                    >
+                                        <FolderIcon className="w-4 h-4 mr-2" />
+                                        Добавить папку
+                                    </button>
+                                )}
+                                {onUploadFile && (
+                                    <button
+                                        onClick={() => {
+                                            setIsDropdownOpen(false);
+                                            setShowUploadModal(true);
+                                        }}
+                                        className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-indigo-600 flex items-center transition-colors"
+                                    >
+                                        <DocumentIcon className="w-4 h-4 mr-2" />
+                                        Загрузить файл
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 )}
             </div>
 
@@ -728,12 +828,111 @@ export default function DocumentBrowser({
                 </div>
             )}
 
-            {/* Дерево папок для массового перемещения */}
-            {showBulkMoveModal && (
-                <FolderTreePicker
-                    onConfirm={(path) => handleBulkMoveSubmit(path)}
-                    onClose={() => setShowBulkMoveModal(false)}
-                />
+            {/* Модальное окно загрузки файлов */}
+            {showUploadModal && (
+                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+                    <div className="relative mx-auto border border-slate-200 w-full max-w-lg shadow-2xl rounded-2xl bg-white p-6">
+                        <div className="mb-5 flex justify-between items-center">
+                            <h3 className="text-xl font-bold text-slate-800">
+                                Загрузить файлы
+                            </h3>
+                            <button onClick={() => { setShowUploadModal(false); setUploadFiles([]); }} className="text-slate-400 hover:text-slate-600 transition-colors">
+                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div className="mb-6">
+                            <div
+                                className={`w-full relative border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-colors
+                                ${dragActive ? 'border-indigo-500 bg-indigo-50' : 'border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-slate-400'}`}
+                                onDragEnter={handleDrag}
+                                onDragLeave={handleDrag}
+                                onDragOver={handleDrag}
+                                onDrop={handleDrop}
+                            >
+                                <input
+                                    className="hidden"
+                                    id="file-upload"
+                                    type="file"
+                                    multiple
+                                    onChange={handleChange}
+                                />
+                                <DocumentIcon className={`w-12 h-12 mb-3 ${dragActive ? 'text-indigo-500' : 'text-slate-400'}`} />
+                                <p className="text-sm font-bold text-slate-700 mb-1 text-center">
+                                    Перетащите файлы сюда или
+                                </p>
+                                <label
+                                    htmlFor="file-upload"
+                                    className="cursor-pointer text-indigo-600 font-bold hover:text-indigo-800 text-sm hover:underline"
+                                >
+                                    выберите на компьютере
+                                </label>
+                                <p className="text-xs text-slate-400 mt-2 text-center">
+                                    Поддерживаются любые файлы. Макс. размер зависит от настроек сервера.
+                                </p>
+                            </div>
+
+                            {uploadFiles.length > 0 && (
+                                <div className="mt-4 border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                                    <div className="bg-slate-50 px-4 py-2 border-b border-slate-200">
+                                        <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider">Выбрано файлов: {uploadFiles.length}</h4>
+                                    </div>
+                                    <ul className="divide-y divide-slate-100 max-h-48 overflow-y-auto">
+                                        {uploadFiles.map((file, idx) => (
+                                            <li key={idx} className="flex justify-between items-center px-4 py-3 bg-white hover:bg-slate-50 transition-colors">
+                                                <div className="flex items-center truncate mr-2">
+                                                    <span className="text-xl mr-3">{getFileIcon(file.name.split('.').pop())}</span>
+                                                    <div className="truncate">
+                                                        <p className="text-sm font-medium text-slate-800 truncate" title={file.name}>{file.name}</p>
+                                                        <p className="text-xs text-slate-500">{formatFileSize(file.size)}</p>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={() => removeUploadFile(idx)}
+                                                    className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                                                    title="Удалить из списка"
+                                                    disabled={isUploading}
+                                                >
+                                                    <TrashIcon className="w-5 h-5" />
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex justify-end space-x-3">
+                            <button
+                                onClick={() => { setShowUploadModal(false); setUploadFiles([]); }}
+                                className="px-5 py-2.5 bg-white border border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 shadow-sm transition-colors active:scale-95 text-sm"
+                                disabled={isUploading}
+                            >
+                                Отмена
+                            </button>
+                            <button
+                                onClick={handleUploadSubmit}
+                                className={`flex items-center px-5 py-2.5 bg-indigo-600 text-white font-bold rounded-xl shadow-sm transition-all active:scale-95 text-sm
+                                ${uploadFiles.length === 0 || isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-700 hover:shadow-md'}`}
+                                disabled={uploadFiles.length === 0 || isUploading}
+                            >
+                                {isUploading ? (
+                                    <>
+                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Загрузка...
+                                    </>
+                                ) : (
+                                    'Загрузить'
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

@@ -213,6 +213,39 @@ export default function DocumentManagerIndex({ user, allowedFolders, canEdit }) 
         }
     };
 
+    const handleUploadFile = async (files) => {
+        try {
+            const formData = new FormData();
+            formData.append('currentPath', currentFolder);
+
+            // Если передан массив файлов (например, из Drag & Drop)
+            Array.from(files).forEach((file, index) => {
+                formData.append(`files[${index}]`, file);
+            });
+
+            const response = await fetch('/admin/documents/upload', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    // Важно: Content-Type не ставим, fetch сам установит multipart/form-data и границы
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Перезагружаем документы
+                loadDocuments(currentFolder);
+                return { success: true, message: data.message };
+            } else {
+                return { success: false, message: data.error || 'Ошибка при загрузке' };
+            }
+        } catch (err) {
+            return { success: false, message: 'Ошибка сети при загрузке' };
+        }
+    };
+
     return (
         <>
             <Head title="Менеджер файлов" />
@@ -270,6 +303,7 @@ export default function DocumentManagerIndex({ user, allowedFolders, canEdit }) 
                         onDelete={canEdit ? handleDelete : undefined}
                         onFolderChange={handleFolderChange}
                         onCreateFolder={canEdit ? handleCreateFolder : undefined}
+                        onUploadFile={canEdit ? handleUploadFile : undefined}
                         allowedFolders={allowedFolders}
                         onFiltersChange={handleFiltersChange}
                         filters={filters}
