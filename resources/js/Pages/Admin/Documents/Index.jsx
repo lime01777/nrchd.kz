@@ -1,321 +1,294 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Head } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import axios from 'axios';
-import { DEFAULT_MEDICINE_CATEGORIES, DEFAULT_MKB_OPTIONS } from '@/data/clinicalFilters';
+import DocumentBrowser from '@/Components/Admin/DocumentBrowser';
+import FilePreview from '@/Components/Admin/PDFPreview';
 
-export default function DocumentsIndex() {
-  const initialPath = 'documents/Клинические протоколы';
-  const [path, setPath] = useState(initialPath);
-  const [items, setItems] = useState([]);
-  const [parent, setParent] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [preview, setPreview] = useState(null); // {type, url, name}
-  const [metadata, setMetadata] = useState({});
-  const [medicineOptions, setMedicineOptions] = useState([]);
-  const [mkbOptions, setMkbOptions] = useState([]);
-  const [newCategoryInputs, setNewCategoryInputs] = useState({});
-  const [savingPath, setSavingPath] = useState(null);
+export default function DocumentManagerIndex({ user, allowedFolders, canEdit }) {
+    const defaultFolder = allowedFolders.length > 0 ? allowedFolders[0] : 'Клинические протоколы';
+    const [currentFolder, setCurrentFolder] = useState(defaultFolder);
+    const [documents, setDocuments] = useState([]);
+    const [directories, setDirectories] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [selectedDocument, setSelectedDocument] = useState(null);
+    const [showPreview, setShowPreview] = useState(false);
+    const [filters, setFilters] = useState({});
 
-  const fetchList = (p = '') => {
-    setLoading(true);
-    setError(null);
-    axios.get('/admin/storage/list', { params: { path: p } })
-      .then(res => {
-        setItems(res.data.items);
-        setPath(res.data.current);
-        setParent(res.data.parent);
-        const metaMap = {};
-        res.data.items.forEach((item) => {
-          if (item.type === 'file') {
-            metaMap[item.path] = {
-              medicineCategories: item.medicine_categories || [],
-              mkbCodes: item.mkb_codes || [],
-            };
-          }
-        });
-        setMetadata(metaMap);
-      })
-      .catch(e => setError(e.response?.data?.error || e.message))
-      .finally(() => setLoading(false));
-  };
+    // Загружаем документы при изменении папки или фильтров
+    useEffect(() => {
+        loadDocuments(currentFolder, filters);
+    }, [currentFolder, filters]);
 
-  useEffect(() => {
-    fetchList(initialPath);
-  }, []);
+    const loadDocuments = async (folder, currentFilters = {}) => {
+        setLoading(true);
+        setError(null);
 
-  useEffect(() => {
-    axios.get('/api/clinical-protocols/filters')
-      .then(({ data }) => {
-        setMedicineOptions(data.medicine_categories || []);
-        setMkbOptions(data.mkb_categories || []);
-      })
-      .catch(() => {
-        setMedicineOptions(DEFAULT_MEDICINE_CATEGORIES);
-        setMkbOptions(DEFAULT_MKB_OPTIONS);
-      });
-  }, []);
+        try {
+            // Строим URL с параметрами фильтрации
+            const params = new URLSearchParams();
+            params.append('folder', folder);
 
-  const handleOpenFolder = (folderPath) => {
-    fetchList(folderPath);
-  };
+            if (currentFilters.search) params.append('search', currentFilters.search);
+            if (currentFilters.medicine) params.append('medicine', currentFilters.medicine);
+            if (currentFilters.mkb) params.append('mkb', currentFilters.mkb);
+            if (currentFilters.year) params.append('year', currentFilters.year);
+            if (currentFilters.category) params.append('category', currentFilters.category);
 
-  const handleGoUp = () => {
-    if (parent !== null && parent !== '.') {
-      fetchList(parent === '' ? '' : parent);
-    }
-  };
+            const response = await fetch(`/admin/documents/list?${params.toString()}`);
+            const data = await response.json();
 
-  const handleDelete = (item) => {
-    if (window.confirm(`Удалить ${item.type === 'folder' ? 'папку' : 'файл'}: ${item.name}?`)) {
-      axios.delete('/admin/storage/delete', { params: { path: item.path } })
-        .then(() => fetchList(path))
-        .catch(e => alert('Ошибка удаления: ' + (e.response?.data?.error || e.message)));
-    }
-  };
-
-  const handleUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('path', path);
-    axios.post('/admin/storage/upload', formData)
-      .then(() => fetchList(path))
-      .catch(e => alert('Ошибка загрузки: ' + (e.response?.data?.error || e.message)));
-  };
-
-  const handlePreview = (item) => {
-    if (item.type === 'file') {
-      setPreview({
-        type: item.name.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? 'image' : item.name.match(/\.pdf$/i) ? 'pdf' : 'other',
-        url: item.url,
-        name: item.name,
-      });
-    }
-  };
-
-  const getMetadataFor = (itemPath) => {
-    return metadata[itemPath] || { medicineCategories: [], mkbCodes: [] };
-  };
-
-  const handleMedicineSelectChange = (itemPath, values) => {
-    setMetadata((prev) => ({
-      ...prev,
-      [itemPath]: {
-        medicineCategories: values,
-        mkbCodes: prev[itemPath]?.mkbCodes || [],
-      },
-    }));
-  };
-
-  const handleAddCategory = (itemPath) => {
-    const value = (newCategoryInputs[itemPath] || '').trim();
-    if (!value) {
-      return;
-    }
-    setMedicineOptions((prev) => (prev.includes(value) ? prev : [...prev, value]));
-    const existing = getMetadataFor(itemPath).medicineCategories;
-    handleMedicineSelectChange(itemPath, Array.from(new Set([...existing, value])));
-    setNewCategoryInputs((prev) => ({ ...prev, [itemPath]: '' }));
-  };
-
-  const handleMkbSelectChange = (itemPath, values) => {
-    setMetadata((prev) => ({
-      ...prev,
-      [itemPath]: {
-        medicineCategories: prev[itemPath]?.medicineCategories || [],
-        mkbCodes: values,
-      },
-    }));
-  };
-
-  const handleSaveMetadata = (itemPath) => {
-    const meta = getMetadataFor(itemPath);
-    setSavingPath(itemPath);
-    axios.post('/admin/storage/metadata', {
-      path: itemPath,
-      medicine_categories: meta.medicineCategories,
-      mkb_codes: meta.mkbCodes,
-    })
-      .then(({ data }) => {
-        setMetadata((prev) => ({
-          ...prev,
-          [itemPath]: {
-            medicineCategories: data.medicine_categories || [],
-            mkbCodes: data.mkb_codes || [],
-          },
-        }));
-        if (data.available_categories) {
-          setMedicineOptions(data.available_categories);
+            if (response.ok) {
+                setDocuments(data.documents || []);
+                setDirectories(data.directories || []);
+            } else {
+                setError(data.error || 'Ошибка при загрузке документов');
+            }
+        } catch (err) {
+            setError('Ошибка сети при загрузке документов');
+        } finally {
+            setLoading(false);
         }
-      })
-      .catch((e) => alert('Ошибка сохранения метаданных: ' + (e.response?.data?.error || e.message)))
-      .finally(() => setSavingPath(null));
-  };
+    };
 
-  const closePreview = () => setPreview(null);
+    const handleFolderChange = (folder) => {
+        setCurrentFolder(folder);
+    };
 
-  return (
-    <>
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-900">Файловый менеджер: public/storage</h2>
-      </div>
-      <div className="mb-4 flex items-center space-x-2">
-        <button
-          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
-          onClick={handleGoUp}
-          disabled={!parent || parent === '.'}
-        >
-          ⬆️ Вверх
-        </button>
-        <span className="text-gray-500">/{path}</span>
-        <label className="ml-auto px-3 py-1 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-700">
-          + Загрузить файл
-          <input type="file" className="hidden" onChange={handleUpload} />
-        </label>
-      </div>
-      {preview && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-white rounded shadow-lg p-6 max-w-2xl w-full relative">
-            <button onClick={closePreview} className="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-2xl">×</button>
-            <div className="mb-2 font-semibold">Предпросмотр: {preview.name}</div>
-            {preview.type === 'image' && (
-              <img src={preview.url} alt={preview.name} className="max-w-full max-h-[70vh] mx-auto" />
-            )}
-            {preview.type === 'pdf' && (
-              <iframe src={preview.url} title={preview.name} className="w-full h-[70vh]" />
-            )}
-            {preview.type === 'other' && (
-              <div className="text-gray-500">Нет предпросмотра для этого типа файла.</div>
-            )}
-          </div>
-        </div>
-      )}
-      {error && <div className="text-red-500 mb-4">Ошибка: {error}</div>}
-      {loading ? (
-        <div>Загрузка...</div>
-      ) : (
-        <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl border border-gray-100/50 p-6">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left py-2">Имя</th>
-                <th className="text-left py-2">Категории (медицина)</th>
-                <th className="text-left py-2">МКБ-10</th>
-                <th className="text-left py-2">Тип</th>
-                <th className="text-left py-2">Размер</th>
-                <th className="text-left py-2">Изменён</th>
-                <th className="text-left py-2">Действия</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.length === 0 && (
-                <tr><td colSpan={7} className="text-center text-gray-400 py-8">Папка пуста</td></tr>
-              )}
-              {items.map(item => (
-                <tr key={item.path} className="border-b hover:bg-gray-50/50">
-                  <td className="py-2">
-                    {item.type === 'folder' ? (
-                      <button className="text-blue-600 hover:underline" onClick={() => handleOpenFolder(item.path)}>
-                        📁 {item.name}
-                      </button>
-                    ) : (
-                      <span className="cursor-pointer" onClick={() => handlePreview(item)}>📄 {item.name}</span>
-                    )}
-                  </td>
-                  <td className="py-2 align-top">
-                    {item.type === 'file' ? (
-                      <div className="space-y-2">
-                        <select
-                          multiple
-                          className="w-full border rounded p-1 text-xs min-h-[80px]"
-                          value={getMetadataFor(item.path).medicineCategories}
-                          onChange={(e) =>
-                            handleMedicineSelectChange(
-                              item.path,
-                              Array.from(e.target.selectedOptions).map((option) => option.value)
-                            )
-                          }
-                        >
-                          {medicineOptions.map((name) => (
-                            <option key={name} value={name}>
-                              {name}
-                            </option>
-                          ))}
-                        </select>
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            className="flex-1 border rounded px-2 py-1 text-xs"
-                            placeholder="Новая категория"
-                            value={newCategoryInputs[item.path] || ''}
-                            onChange={(e) =>
-                              setNewCategoryInputs((prev) => ({ ...prev, [item.path]: e.target.value }))
-                            }
-                          />
-                          <button
-                            type="button"
-                            className="px-2 py-1 bg-blue-500 text-white text-xs rounded"
-                            onClick={() => handleAddCategory(item.path)}
-                          >
-                            Добавить
-                          </button>
+    const handleFiltersChange = (newFilters) => {
+        setFilters(newFilters);
+    };
+
+    const handleDocumentSelect = (document) => {
+        const previewableTypes = ['pdf', 'jpg', 'jpeg', 'png', 'gif'];
+        if (previewableTypes.includes(document.extension?.toLowerCase())) {
+            setSelectedDocument(document);
+            setShowPreview(true);
+        }
+    };
+
+    const handleRename = async (item, newName) => {
+        try {
+            const response = await fetch('/admin/documents/rename', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    currentPath: item.path,
+                    newName: newName,
+                    type: item.type
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Перезагружаем документы
+                loadDocuments(currentFolder);
+                return { success: true, message: data.message };
+            } else {
+                return { success: false, message: data.error };
+            }
+        } catch (err) {
+            return { success: false, message: 'Ошибка сети' };
+        }
+    };
+
+    const handleMove = async (item, newPath) => {
+        try {
+            const response = await fetch('/admin/documents/move', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    currentPath: item.path,
+                    newPath: newPath,
+                    type: item.type
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Перезагружаем документы
+                loadDocuments(currentFolder);
+                return { success: true, message: data.message };
+            } else {
+                return { success: false, message: data.error };
+            }
+        } catch (err) {
+            return { success: false, message: 'Ошибка сети' };
+        }
+    };
+
+    const handleBulkMove = async (items, newPath) => {
+        try {
+            const response = await fetch('/admin/documents/bulk-move', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    items: items,
+                    newPath: newPath
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok || response.status === 207) {
+                // Перезагружаем документы
+                loadDocuments(currentFolder);
+                return { success: true, message: data.message || data.error };
+            } else {
+                return { success: false, message: data.error };
+            }
+        } catch (err) {
+            return { success: false, message: 'Ошибка сети' };
+        }
+    };
+
+    const handleDelete = async (item) => {
+        if (!confirm(`Вы уверены, что хотите удалить ${item.name}?`)) {
+            return { success: false, message: 'Отменено пользователем' };
+        }
+
+        try {
+            const response = await fetch('/admin/documents/delete', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    path: item.path,
+                    type: item.type
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Перезагружаем документы
+                loadDocuments(currentFolder);
+                return { success: true, message: data.message };
+            } else {
+                return { success: false, message: data.error };
+            }
+        } catch (err) {
+            return { success: false, message: 'Ошибка сети' };
+        }
+    };
+
+    const handleCreateFolder = async (folderName) => {
+        try {
+            const response = await fetch('/admin/documents/create-folder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    currentPath: currentFolder,
+                    folderName: folderName
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Перезагружаем документы
+                loadDocuments(currentFolder);
+                return { success: true, message: data.message };
+            } else {
+                return { success: false, message: data.error };
+            }
+        } catch (err) {
+            return { success: false, message: 'Ошибка сети' };
+        }
+    };
+
+    return (
+        <>
+            <Head title="Менеджер файлов" />
+
+            <div className="py-8 min-h-screen">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+                        <div>
+                            <h1 className="text-2xl font-bold text-slate-800">
+                                Файловый менеджер (Документы)
+                            </h1>
+                            <p className="mt-1 text-sm text-slate-500">
+                                Управление файлами для: {user.name} ({user.email})
+                            </p>
                         </div>
-                      </div>
-                    ) : (
-                      '—'
+                    </div>
+
+                    {/* Navigation tabs */}
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div className="flex bg-slate-50 border-b border-slate-200 overflow-x-auto custom-scrollbar">
+                            {allowedFolders.map((folder) => (
+                                <button
+                                    key={folder}
+                                    onClick={() => handleFolderChange(folder)}
+                                    className={`px-6 py-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap ${currentFolder === folder
+                                        ? 'border-blue-500 text-blue-700 bg-white'
+                                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                                        }`}
+                                >
+                                    {folder}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Сообщение об ошибке */}
+                    {error && (
+                        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative">
+                            <strong className="font-bold">Ошибка!</strong>
+                            <span className="block sm:inline"> {error}</span>
+                        </div>
                     )}
-                  </td>
-                  <td className="py-2 align-top">
-                    {item.type === 'file' ? (
-                      <select
-                        multiple
-                        className="w-full border rounded p-1 text-xs min-h-[80px]"
-                        value={getMetadataFor(item.path).mkbCodes}
-                        onChange={(e) =>
-                          handleMkbSelectChange(
-                            item.path,
-                            Array.from(e.target.selectedOptions).map((option) => option.value)
-                          )
-                        }
-                      >
-                        {mkbOptions.map((option) => (
-                          <option key={option.code} value={option.code}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      '—'
-                    )}
-                  </td>
-                  <td className="py-2">{item.type === 'folder' ? 'Папка' : 'Файл'}</td>
-                  <td className="py-2">{item.type === 'file' ? (item.size / 1024).toFixed(1) + ' KB' : ''}</td>
-                  <td className="py-2">{item.type === 'file' ? new Date(item.modified * 1000).toLocaleString() : ''}</td>
-                  <td className="py-2 space-x-2">
-                    {item.type === 'file' && (
-                      <>
-                        <button
-                          onClick={() => handleSaveMetadata(item.path)}
-                          className="text-blue-600 hover:underline mr-2"
-                          disabled={savingPath === item.path}
-                        >
-                          {savingPath === item.path ? 'Сохранение…' : 'Сохранить'}
-                        </button>
-                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline mr-2">Скачать</a>
-                      </>
-                    )}
-                    <button onClick={() => handleDelete(item)} className="text-red-600 hover:underline">Удалить</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </>
-  );
+
+                    {/* Браузер документов */}
+                    <DocumentBrowser
+                        documents={documents}
+                        directories={directories}
+                        currentPath={currentFolder}
+                        loading={loading}
+                        onDocumentSelect={handleDocumentSelect}
+                        onRename={canEdit ? handleRename : undefined}
+                        onMove={canEdit ? handleMove : undefined}
+                        onBulkMove={canEdit ? handleBulkMove : undefined}
+                        onDelete={canEdit ? handleDelete : undefined}
+                        onFolderChange={handleFolderChange}
+                        onCreateFolder={canEdit ? handleCreateFolder : undefined}
+                        allowedFolders={allowedFolders}
+                        onFiltersChange={handleFiltersChange}
+                        filters={filters}
+                    />
+                </div>
+            </div>
+
+            {/* Модальное окно предпросмотра файлов */}
+            {showPreview && selectedDocument && (
+                <FilePreview
+                    document={selectedDocument}
+                    onClose={() => {
+                        setShowPreview(false);
+                        setSelectedDocument(null);
+                    }}
+                />
+            )}
+        </>
+    );
 }
 
-DocumentsIndex.layout = page => <AdminLayout title="Файловый менеджер: public/storage">{page}</AdminLayout>;
+DocumentManagerIndex.layout = page => <AdminLayout>{page}</AdminLayout>;

@@ -2,7 +2,7 @@ import React from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Link, useForm } from '@inertiajs/react';
 
-export default function UserEdit({ user = null, availableRoles = {}, availablePermissions = {} }) {
+export default function UserEdit({ user = null, availableRoles = {}, availablePermissions = {}, availableDocumentFolders = [] }) {
   const isEditing = !!user;
 
   const { data, setData, post, put, processing, errors } = useForm({
@@ -12,6 +12,7 @@ export default function UserEdit({ user = null, availableRoles = {}, availablePe
     password: '',
     password_confirmation: '',
     permissions: user?.permissions || [],
+    document_folders: user?.document_folders || [],
   });
 
   const handleSubmit = (e) => {
@@ -189,6 +190,49 @@ export default function UserEdit({ user = null, availableRoles = {}, availablePe
                   <p className="mt-2 text-sm text-red-600">{errors.permissions}</p>
                 )}
               </div>
+
+              {/* Права на папки документов */}
+              {(data.permissions.includes('documents') || data.role === 'admin' || data.role === 'document_manager') && availableDocumentFolders.length > 0 && (
+                <div className="sm:col-span-6 mt-4 p-5 bg-blue-50/50 rounded-xl border border-blue-100">
+                  <div className="mb-4 flex items-center justify-between">
+                    <h3 className="text-md font-bold leading-6 text-blue-900">Доступ к папкам документов</h3>
+                    {data.role === 'admin' && (
+                      <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2.5 py-1 rounded-full">
+                        Админ имеет доступ ко всем папкам
+                      </span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {availableDocumentFolders.map((folder) => (
+                      <div key={folder} className="relative flex items-start">
+                        <div className="flex h-5 items-center">
+                          <input
+                            id={`folder-${folder}`}
+                            name="document_folders[]"
+                            type="checkbox"
+                            className="h-4 w-4 rounded border-blue-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
+                            checked={data.document_folders.includes(folder) || data.role === 'admin'}
+                            disabled={data.role === 'admin'}
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              if (checked) {
+                                setData('document_folders', [...data.document_folders, folder]);
+                              } else {
+                                setData('document_folders', data.document_folders.filter(f => f !== folder));
+                              }
+                            }}
+                          />
+                        </div>
+                        <div className="ml-3 text-sm">
+                          <label htmlFor={`folder-${folder}`} className="font-medium text-blue-900">
+                            {folder}
+                          </label>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <div className="px-4 py-3 bg-gray-50/50 text-right sm:px-6">

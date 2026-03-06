@@ -37,8 +37,8 @@ class LogController extends Controller
                 'ip' => $log->properties['ip'] ?? null,
                 'params' => $log->properties['params'] ?? null,
                 'user' => $log->causer ? $log->causer->name : 'Система',
-                'created_at' => $log->created_at->format('d.m.Y H:i:s'),
-                'created_at_diff' => $log->created_at->diffForHumans(),
+                'created_at' => $log->created_at->timezone('Asia/Almaty')->format('d.m.Y H:i:s'),
+                'created_at_diff' => $log->created_at->timezone('Asia/Almaty')->diffForHumans(),
             ];
         });
 

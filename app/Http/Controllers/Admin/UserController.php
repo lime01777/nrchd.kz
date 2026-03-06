@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
@@ -39,6 +40,25 @@ class UserController extends Controller
         'settings' => 'Настройки',
         'glossary' => 'Глоссарий',
     ];
+
+    /**
+     * Возвращает список корневых папок документов.
+     */
+    private function getDocumentFolders(): array
+    {
+        $path = public_path('storage/documents');
+        if (!File::isDirectory($path)) {
+            return [];
+        }
+
+        $folders = [];
+        foreach (File::directories($path) as $dir) {
+            $folders[] = basename($dir);
+        }
+        
+        sort($folders);
+        return $folders;
+    }
 
     /**
      * Display a listing of the resource.
@@ -86,6 +106,7 @@ class UserController extends Controller
         return Inertia::render('Admin/Users/Edit', [
             'availableRoles' => self::ROLE_LABELS,
             'availablePermissions' => self::PERMISSIONS_MAP,
+            'availableDocumentFolders' => $this->getDocumentFolders(),
         ]);
     }
 
@@ -107,6 +128,7 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
             'permissions' => $request->input('permissions', []),
+            'document_folders' => $request->input('document_folders', []),
         ]);
 
         return redirect()->route('admin.users')->with('success', 'Пользователь успешно создан');
@@ -126,9 +148,11 @@ class UserController extends Controller
                 'email' => $user->email,
                 'role' => $user->role,
                 'permissions' => $user->permissions ?: [],
+                'document_folders' => $user->document_folders ?: [],
             ],
             'availableRoles' => self::ROLE_LABELS,
             'availablePermissions' => self::PERMISSIONS_MAP,
+            'availableDocumentFolders' => $this->getDocumentFolders(),
         ]);
     }
 
@@ -160,6 +184,7 @@ class UserController extends Controller
         }
 
         $user->permissions = $request->input('permissions', []);
+        $user->document_folders = $request->input('document_folders', []);
 
         $user->save();
 

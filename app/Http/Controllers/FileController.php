@@ -363,13 +363,76 @@ class FileController extends Controller
 
     public function getClinicalProtocolFilters()
     {
-        $medicineCategories = $this->fetchMedicineCategories();
+        $basePath = public_path('storage/documents/Клинические протоколы');
+        $medicineCategories = [];
+        $mkbCategories = [];
+        
+        if (\Illuminate\Support\Facades\File::isDirectory($basePath)) {
+            // Сканируем все папки внутри "Клинические протоколы" рекурсивно (до 2 уровня) 
+            // или просто все директории и поддиректории
+            $directories = \Illuminate\Support\Facades\File::directories($basePath);
+            
+            // Если есть папка "Поток клинические протоколы", сканируем ее глубоко
+            foreach ($directories as $dir) {
+                // Сканируем вложенные папки
+                $subdirs = \Illuminate\Support\Facades\File::directories($dir);
+                $allDirs = array_merge([$dir], $subdirs);
+                
+                foreach ($allDirs as $path) {
+                    $folderName = basename($path);
+                    
+                    // Игнорируем технические/системные папки
+                    if (in_array($folderName, ['Материалы для ОКК МЗ РК', 'Комиссия по клиническим протоколам', 'Поток клинические протоколы'])) {
+                        continue;
+                    }
+
+                    // Проверяем, является ли название МКБ-кодом
+                    // Например, A00-B99 Инфекционные... или C00-D48...
+                    if (preg_match('/^[A-Z]\d{2}(-[A-Z]\d{2})?\s+/', $folderName) || preg_match('/^[A-Z]\d{2}/i', $folderName)) {
+                        // Это категория МКБ
+                        // Извлекаем код (первое слово)
+                        $parts = explode(' ', $folderName, 2);
+                        $code = $parts[0];
+                        $mkbCategories[] = [
+                            'code' => $code,
+                            'label' => $folderName
+                        ];
+                    } else {
+                        // Это раздел медицины
+                        $medicineCategories[] = $folderName;
+                    }
+                }
+            }
+        }
+
+        // Удаляем дубликаты
+        $medicineCategories = array_values(array_unique($medicineCategories));
+        
+        // Для МКБ удаляем дубликаты по 'code'
+        $uniqueMkb = [];
+        foreach ($mkbCategories as $item) {
+            $uniqueMkb[$item['code']] = $item;
+        }
+        $mkbCategories = array_values($uniqueMkb);
+
+        // Если папки не нашлись, используем запасной старый вариант
         if (empty($medicineCategories)) {
-            $medicineCategories = $this->getDefaultMedicineCategories();
+            $medicineCategories = $this->fetchMedicineCategories();
+            if (empty($medicineCategories)) {
+                $medicineCategories = $this->getDefaultMedicineCategories();
+            }
         }
         
-        $mkbCategories = config('clinical_protocols.mkb_categories', []);
-        
+        if (empty($mkbCategories)) {
+            $mkbCategories = config('clinical_protocols.mkb_categories', []);
+        }
+
+        // Сортировка по алфавиту
+        sort($medicineCategories);
+        usort($mkbCategories, function ($a, $b) {
+            return strcmp($a['code'], $b['code']);
+        });
+
         return response()->json([
             'medicine_categories' => $medicineCategories,
             'mkb_categories' => $mkbCategories,

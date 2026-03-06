@@ -23,23 +23,87 @@ class DocumentManagerController extends Controller
         // Определяем доступные папки в зависимости от роли пользователя
         $allowedFolders = [];
         
-        if ($user->hasPermission('documents')) {
-            // Пользователь с правом 'documents' (или админ) имеет доступ ко всем папкам
+        if ($user->isAdmin()) {
+            $path = public_path('storage/documents');
+            if (File::isDirectory($path)) {
+                foreach (File::directories($path) as $dir) {
+                    $allowedFolders[] = basename($dir);
+                }
+            }
+        } elseif ($user->hasPermission('documents') && is_array($user->document_folders)) {
+            $allowedFolders = $user->document_folders;
+        } elseif ($user->hasPermission('okk_committee')) {
             $allowedFolders = [
-                'Клинические протоколы',
-                'Bioethics',
-                'Другие документы'
+                'Клинические протоколы/Комиссия по клиническим протоколам/Материалы для ОКК МЗ РК'
             ];
         }
 
-        return Inertia::render('Admin/DocumentManager/Index', [
+        return Inertia::render('Admin/Documents/Index', [
             'user' => $user,
-            'allowedFolders' => $allowedFolders
+            'allowedFolders' => $allowedFolders,
+            'canEdit' => $user->hasPermission('documents')
         ]);
     }
 
     /**
-     * Получить список документов в папке с фильтрацией
+     * Получить дерево папок для визуального пикера
+     */
+    public function getFolderTree(Request $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $rootFolders = [];
+        
+        if ($user->isAdmin()) {
+            $path = public_path('storage/documents');
+            if (File::isDirectory($path)) {
+                foreach (File::directories($path) as $dir) {
+                    $rootFolders[] = basename($dir);
+                }
+            }
+        } elseif ($user->hasPermission('documents') && is_array($user->document_folders)) {
+            $rootFolders = $user->document_folders;
+        } elseif ($user->hasPermission('okk_committee')) {
+            $rootFolders = ['Клинические протоколы/Комиссия по клиническим протоколам/Материалы для ОКК МЗ РК'];
+        }
+
+        $tree = [];
+        foreach ($rootFolders as $folder) {
+            $fullPath = public_path('storage/documents/' . $folder);
+            $tree[] = [
+                'name' => basename($folder),
+                'path' => $folder,
+                'children' => $this->buildFolderTree($fullPath, $folder)
+            ];
+        }
+
+        return response()->json(['tree' => $tree]);
+    }
+
+    /**
+     * Рекурсивное построение дерева папок (не более 3 уровней)
+     */
+    private function buildFolderTree(string $path, string $relativePath, int $depth = 0): array
+    {
+        if ($depth >= 5 || !File::isDirectory($path)) {
+            return [];
+        }
+        
+        $children = [];
+        foreach (File::directories($path) as $dir) {
+            $name = basename($dir);
+            $childRelPath = $relativePath . '/' . $name;
+            $children[] = [
+                'name' => $name,
+                'path' => $childRelPath,
+                'children' => $this->buildFolderTree($dir, $childRelPath, $depth + 1)
+            ];
+        }
+        return $children;
+    }
+
+    /**
+     * Показать главную страницу управления документами
      */
     public function getDocuments(Request $request)
     {
@@ -154,6 +218,51 @@ class DocumentManagerController extends Controller
             'currentPath' => $folderPath,
             'total' => count($documents)
         ]);
+    }
+
+    /**
+     * Создать новую папку
+     */
+    public function createFolder(Request $request)
+    {
+        $request->validate([
+            'currentPath' => 'required|string',
+            'folderName' => 'required|string|max:255'
+        ]);
+
+        /** @var User $user */
+        $user = Auth::user();
+        $currentPath = $request->input('currentPath');
+        $folderName = $request->input('folderName');
+
+        // Проверяем доступ к родительской папке
+        if (!$this->hasAccessToFolder($user, $currentPath)) {
+            return response()->json(['error' => 'Нет доступа к этой папке'], 403);
+        }
+
+        $fullPath = public_path('storage/documents/' . $currentPath . '/' . ltrim($folderName, '/'));
+
+        if (File::exists($fullPath)) {
+            return response()->json(['error' => 'Папка с таким именем уже существует'], 400);
+        }
+
+        try {
+            File::makeDirectory($fullPath, 0755, true);
+            
+            Log::info('Создана новая папка', [
+                'user_id' => $user->id,
+                'path' => $currentPath . '/' . $folderName
+            ]);
+
+            return response()->json(['message' => 'Папка успешно создана']);
+        } catch (\Exception $e) {
+            Log::error('Ошибка при создании папки', [
+                'error' => $e->getMessage(),
+                'path' => $fullPath
+            ]);
+            
+            return response()->json(['error' => 'Ошибка при создании папки'], 500);
+        }
     }
 
     /**
@@ -277,6 +386,91 @@ class DocumentManagerController extends Controller
     }
 
     /**
+     * Массовое перемещение документов и папок
+     */
+    public function bulkMove(Request $request)
+    {
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.path' => 'required|string',
+            'items.*.type' => 'required|in:file,directory',
+            'newPath' => 'required|string'
+        ]);
+
+        /** @var User $user */
+        $user = Auth::user();
+        $items = $request->input('items');
+        $newPath = $request->input('newPath');
+
+        // Проверяем доступ к целевой папке
+        if (!$this->hasAccessToFolder($user, $newPath)) {
+            return response()->json(['error' => 'Нет доступа к целевой папке'], 403);
+        }
+
+        $fullNewPath = public_path('storage/documents/' . $newPath);
+
+        try {
+            if (!File::exists($fullNewPath)) {
+                File::makeDirectory($fullNewPath, 0755, true);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Не удалось создать целевую папку'], 500);
+        }
+
+        $movedCount = 0;
+        $errors = [];
+
+        foreach ($items as $item) {
+            $currentPath = $item['path'];
+            $type = $item['type'];
+            $currentFolder = dirname($currentPath);
+
+            // Проверяем доступ к исходной папке
+            if (!$this->hasAccessToFolder($user, $currentFolder)) {
+                $errors[] = "Нет доступа к перемещению из: " . basename($currentFolder);
+                continue;
+            }
+
+            $fullCurrentPath = public_path('storage/documents/' . $currentPath);
+            $targetPath = $fullNewPath . DIRECTORY_SEPARATOR . basename($currentPath);
+
+            if (!File::exists($fullCurrentPath)) {
+                $errors[] = basename($currentPath) . " не найден";
+                continue;
+            }
+
+            if (File::exists($targetPath)) {
+                $errors[] = basename($currentPath) . " уже существует в целевой папке";
+                continue;
+            }
+
+            try {
+                File::move($fullCurrentPath, $targetPath);
+                $movedCount++;
+            } catch (\Exception $e) {
+                $errors[] = "Ошибка при перемещении " . basename($currentPath);
+            }
+        }
+
+        if ($movedCount > 0) {
+            Log::info('Массовое перемещение завершено', [
+                'user_id' => $user->id,
+                'moved_count' => $movedCount,
+                'new_path' => $newPath
+            ]);
+        }
+
+        if (count($errors) > 0) {
+            return response()->json([
+                'error' => "Перемещено: $movedCount. Ошибок: " . count($errors),
+                'details' => $errors
+            ], $movedCount == 0 ? 400 : 207);
+        }
+
+        return response()->json(['message' => "Успешно перемещено $movedCount элементов"]);
+    }
+
+    /**
      * Удалить документ или папку
      */
     public function delete(Request $request)
@@ -332,7 +526,23 @@ class DocumentManagerController extends Controller
      */
     private function hasAccessToFolder($user, $folderPath)
     {
-        return $user->hasPermission('documents');
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        if ($user->hasPermission('documents') && is_array($user->document_folders)) {
+            foreach ($user->document_folders as $allowedFolder) {
+                if ($folderPath === $allowedFolder || str_starts_with($folderPath, $allowedFolder . '/')) {
+                    return true;
+                }
+            }
+        }
+
+        if ($user->hasPermission('okk_committee')) {
+            return str_starts_with($folderPath, 'Клинические протоколы/Комиссия по клиническим протоколам/Материалы для ОКК МЗ РК');
+        }
+
+        return false;
     }
 
     /**

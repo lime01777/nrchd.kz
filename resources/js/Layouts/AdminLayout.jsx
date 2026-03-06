@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Transition } from '@headlessui/react';
+import { Transition, Disclosure } from '@headlessui/react';
 import ChangePasswordModal from '@/Components/Admin/ChangePasswordModal';
 
 export default function AdminLayout({ children, title }) {
@@ -162,16 +162,16 @@ export default function AdminLayout({ children, title }) {
             </Link>
           )}
 
-          {can('documents') && (
+          {(can('documents') || can('okk_committee')) && (
             <>
               <Link
                 href={route('admin.documents')}
                 className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.documents', 'admin.documents.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
               >
                 <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
                 </svg>
-                Документы
+                {can('okk_committee') && !can('documents') ? 'Материалы для ОКК' : 'Документы'}
               </Link>
             </>
           )}
@@ -198,6 +198,45 @@ export default function AdminLayout({ children, title }) {
               </svg>
               Платформа MedTech
             </Link>
+          )}
+
+          {/* ЗОЖ Dropdown */}
+          {(can('research_hub') || can('zozh_reports') || true) && (
+            <Disclosure as="div" className="mt-1" defaultOpen={isCurrent('admin.research-hub.*', 'admin.zozh-reports.*')}>
+              {({ open }) => (
+                <>
+                  <Disclosure.Button className={`group flex items-center justify-between w-full px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.research-hub.*', 'admin.zozh-reports.*') ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}>
+                    <div className="flex items-center">
+                      <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                      ЗОЖ
+                    </div>
+                    <svg className={`mr-2 h-4 w-4 transform transition-transform ${open ? 'rotate-180' : ''}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </Disclosure.Button>
+                  <Disclosure.Panel className="px-4 py-1 space-y-1">
+                    {(can('research_hub') || true) && (
+                      <Link
+                        href={route('admin.research-hub.index')}
+                        className={`group flex items-center pl-10 pr-2 py-2 text-sm leading-5 font-medium rounded-md ${isCurrent('admin.research-hub.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
+                      >
+                        Research Hub
+                      </Link>
+                    )}
+                    {(can('zozh_reports') || true) && (
+                      <Link
+                        href={route('admin.zozh-reports.index')}
+                        className={`group flex items-center pl-10 pr-2 py-2 text-sm leading-5 font-medium rounded-md ${isCurrent('admin.zozh-reports.*') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
+                      >
+                        Отчеты по ЗОЖ
+                      </Link>
+                    )}
+                  </Disclosure.Panel>
+                </>
+              )}
+            </Disclosure>
           )}
 
           {can('vacancies') && (
@@ -274,15 +313,26 @@ export default function AdminLayout({ children, title }) {
           )}
 
           {can('logs') && (
-            <Link
-              href={route('admin.logs.index')}
-              className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.logs.index') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
-            >
-              <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 17.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-              </svg>
-              Логи действий
-            </Link>
+            <>
+              <Link
+                href={route('admin.logs.index')}
+                className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.logs.index') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
+              >
+                <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 17.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                </svg>
+                Логи действий
+              </Link>
+              <Link
+                href={route('admin.okk-logs.index')}
+                className={`mt-1 group flex items-center px-2 py-2 text-base leading-6 font-medium rounded-md ${isCurrent('admin.okk-logs.index') ? 'text-white bg-blue-500' : 'text-gray-600 hover:bg-blue-100 hover:text-blue-600'}`}
+              >
+                <svg className="mr-4 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                </svg>
+                Логи Комитета ОКК
+              </Link>
+            </>
           )}
 
           {can('settings') && (

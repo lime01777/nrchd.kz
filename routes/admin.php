@@ -103,14 +103,16 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
         Route::delete('/otz-applications/{otzApplication}/delete-document', [App\Http\Controllers\Admin\OtzApplicationController::class, 'deleteDocument'])->name('otz-applications.delete-document');
     });
 
-    // Управление документами
-    Route::middleware('permission:documents')->group(function () {
-        Route::get('/documents', [App\Http\Controllers\Admin\DocumentController::class, 'index'])->name('documents');
-        Route::get('/documents/create', [App\Http\Controllers\Admin\DocumentController::class, 'create'])->name('documents.create');
-        Route::post('/documents', [App\Http\Controllers\Admin\DocumentController::class, 'store'])->name('documents.store');
-        Route::get('/documents/{id}/edit', [App\Http\Controllers\Admin\DocumentController::class, 'edit'])->name('documents.edit');
-        Route::put('/documents/{id}', [App\Http\Controllers\Admin\DocumentController::class, 'update'])->name('documents.update');
-        Route::delete('/documents/{id}', [App\Http\Controllers\Admin\DocumentController::class, 'destroy'])->name('documents.destroy');
+    // Управление документами (файловый менеджер)
+    Route::middleware(['permission:documents|okk_committee'])->group(function () {
+        Route::get('/documents', [App\Http\Controllers\DocumentManagerController::class, 'index'])->name('documents');
+        Route::get('/documents/list', [App\Http\Controllers\DocumentManagerController::class, 'getDocuments'])->name('documents.list');
+        Route::get('/documents/folder-tree', [App\Http\Controllers\DocumentManagerController::class, 'getFolderTree'])->name('documents.folder-tree');
+        Route::post('/documents/create-folder', [App\Http\Controllers\DocumentManagerController::class, 'createFolder'])->name('documents.create-folder');
+        Route::post('/documents/rename', [App\Http\Controllers\DocumentManagerController::class, 'rename'])->name('documents.rename');
+        Route::post('/documents/move', [App\Http\Controllers\DocumentManagerController::class, 'move'])->name('documents.move');
+        Route::post('/documents/bulk-move', [App\Http\Controllers\DocumentManagerController::class, 'bulkMove'])->name('documents.bulk-move');
+        Route::delete('/documents/delete', [App\Http\Controllers\DocumentManagerController::class, 'delete'])->name('documents.delete');
     });
 
     // Управление пользователями
@@ -127,6 +129,7 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
     // Логи действий
     Route::middleware('permission:logs')->group(function () {
         Route::get('/logs', [App\Http\Controllers\Admin\LogController::class, 'index'])->name('logs.index');
+        Route::get('/okk-audit-logs', [App\Http\Controllers\Admin\OkkAuditLogController::class, 'index'])->name('okk-logs.index');
     });
 
     // Настройки
@@ -189,21 +192,45 @@ Route::prefix('admin')->middleware(['auth', 'verified'])->name('admin.')->group(
         Route::post('glossary/import-employees', [GlossaryController::class, 'importEmployees'])->name('glossary.import-employees');
     });
 
-    // Управление документами (файловый менеджер)
-    Route::middleware(['permission:documents'])->group(function () {
-        Route::get('/document-manager', [App\Http\Controllers\DocumentManagerController::class, 'index'])->name('document-manager');
-        Route::get('/document-manager/documents', [App\Http\Controllers\DocumentManagerController::class, 'getDocuments'])->name('document-manager.documents');
-        Route::post('/document-manager/rename', [App\Http\Controllers\DocumentManagerController::class, 'rename'])->name('document-manager.rename');
-        Route::post('/document-manager/move', [App\Http\Controllers\DocumentManagerController::class, 'move'])->name('document-manager.move');
-        Route::delete('/document-manager/delete', [App\Http\Controllers\DocumentManagerController::class, 'delete'])->name('document-manager.delete');
+
+
+    // ЗОЖ - Research Hub
+    // Для простоты пока без middleware permission, или добавим permission:research_hub
+    Route::get('/research-hub', [App\Http\Controllers\Admin\ResearchHubController::class, 'index'])->name('research-hub.index');
+    Route::get('/research-hub/create', [App\Http\Controllers\Admin\ResearchHubController::class, 'create'])->name('research-hub.create');
+    Route::post('/research-hub', [App\Http\Controllers\Admin\ResearchHubController::class, 'store'])->name('research-hub.store');
+    Route::get('/research-hub/{research}', [App\Http\Controllers\Admin\ResearchHubController::class, 'show'])->name('research-hub.show');
+    Route::get('/research-hub/{research}/edit', [App\Http\Controllers\Admin\ResearchHubController::class, 'edit'])->name('research-hub.edit');
+    Route::put('/research-hub/{research}', [App\Http\Controllers\Admin\ResearchHubController::class, 'update'])->name('research-hub.update');
+    Route::delete('/research-hub/{research}', [App\Http\Controllers\Admin\ResearchHubController::class, 'destroy'])->name('research-hub.destroy');
+
+    // ЗОЖ - Отчеты
+    Route::get('/zozh-reports', [App\Http\Controllers\Admin\ZozhReportController::class, 'index'])->name('zozh-reports.index');
+});
+
+Route::prefix('admin/storage')->middleware(['auth'])->group(function () {
+    Route::get('list', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'list'])->middleware('permission:documents|news|okk_committee');
+    Route::middleware('permission:documents|news')->group(function () {
+        Route::delete('delete', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'delete']);
+        Route::post('upload', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'upload']);
+        Route::post('create-folder', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'createFolder']);
+        Route::post('metadata', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'updateMetadata']);
     });
 });
 
-Route::prefix('admin/storage')->middleware(['auth', 'permission:documents|news'])->group(function () {
-    Route::get('list', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'list']);
-    Route::delete('delete', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'delete']);
-    Route::post('upload', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'upload']);
-    Route::post('metadata', [\App\Http\Controllers\Admin\StorageBrowserController::class, 'updateMetadata']);
+// Управление проектами ОКК
+Route::prefix('admin/okk-projects')->middleware(['auth', 'permission:documents'])->group(function () {
+    Route::post('/', [\App\Http\Controllers\Admin\OkkProjectController::class, 'store'])->name('admin.okk-projects.store');
+    Route::put('/{project}/status', [\App\Http\Controllers\Admin\OkkProjectController::class, 'updateStatus'])->name('admin.okk-projects.update-status');
+    Route::get('/{project}/questions', [\App\Http\Controllers\Admin\OkkProjectController::class, 'getQuestions'])->name('admin.okk-projects.questions.get');
+    Route::post('/{project}/questions', [\App\Http\Controllers\Admin\OkkProjectController::class, 'saveQuestions'])->name('admin.okk-projects.questions.save');
+
+    // Модуль голосования
+    Route::get('/{project}/vote', [\App\Http\Controllers\Admin\OkkVoteController::class, 'showForm'])->name('admin.okk-projects.vote');
+    Route::post('/{project}/vote', [\App\Http\Controllers\Admin\OkkVoteController::class, 'store'])->name('admin.okk-projects.vote.store');
+
+    // Отчеты
+    Route::get('/{project}/report', [\App\Http\Controllers\Admin\OkkReportController::class, 'downloadProjectReport'])->name('admin.okk-projects.report');
 });
 
 // API для библиотеки изображений

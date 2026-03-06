@@ -111,11 +111,19 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
         documents: []
     });
 
+    const formatDateTime = (dateStr) => {
+        if (!dateStr) return '';
+        const normalized = dateStr.replace(' ', 'T');
+        return normalized.length > 16 ? normalized.substring(0, 16) : normalized;
+    };
+
     // Load initial data if editing (future proofing, though currently only used for Add)
     useMemo(() => {
         if (initialData) {
             setFormData({
                 ...initialData,
+                validationDate: formatDateTime(initialData.validationDate),
+                pilotingDate: formatDateTime(initialData.pilotingDate),
                 appOrgs: Array.isArray(initialData.appOrgs) ? initialData.appOrgs.join(', ') : initialData.appOrgs || '',
                 documents: initialData.documents || []
             });
@@ -283,12 +291,12 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Дата валидации</label>
-                                    <input type="date" name="validationDate" value={formData.validationDate} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm" />
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Время и дата валидации</label>
+                                    <input type="datetime-local" name="validationDate" value={formData.validationDate} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm" />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Дата пилотирования</label>
-                                    <input type="date" name="pilotingDate" value={formData.pilotingDate} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm" />
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Время и дата пилотирования</label>
+                                    <input type="datetime-local" name="pilotingDate" value={formData.pilotingDate} onChange={handleChange} className="w-full border-gray-200 rounded-xl text-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Дата ревалидации (Жизненный цикл)</label>
@@ -515,13 +523,19 @@ const AddRegistryModal = ({ isOpen, onClose, onSave, initialData = null }) => {
 // --- Компонент ---
 export default function RegistryIndex({ initialRegistryData = [] }) {
     // --- Helpers for Case Conversion ---
+    const formatDisplayDate = (dateStr) => {
+        if (!dateStr) return null;
+        const normalized = dateStr.replace('T', ' ');
+        return normalized.length > 16 ? normalized.substring(0, 16) : normalized;
+    };
+
     const mapToCamel = (data) => {
         if (!data || !Array.isArray(data)) return [];
         return data.map(item => ({
             id: item.id,
             registryCode: item.registry_code || item.registryCode,
-            validationDate: item.validation_date || item.validationDate,
-            pilotingDate: item.piloting_date || item.pilotingDate,
+            validationDate: formatDisplayDate(item.validation_date || item.validationDate),
+            pilotingDate: formatDisplayDate(item.piloting_date || item.pilotingDate),
             statusDate: item.status_date || item.statusDate,
             name: item.name,
             description: item.description,

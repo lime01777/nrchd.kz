@@ -7,6 +7,8 @@ import {
     ArrowRightIcon,
     EyeIcon
 } from '@heroicons/react/24/outline';
+import { Link } from '@inertiajs/react';
+import FolderTreePicker from '@/Components/Admin/FolderTreePicker';
 
 export default function DocumentBrowser({
     documents,
@@ -18,14 +20,23 @@ export default function DocumentBrowser({
     onMove,
     onDelete,
     onFolderChange,
+    onCreateFolder,
+    onBulkMove,
+    allowedFolders = [],
     onFiltersChange,
     filters = {}
 }) {
     const [editingItem, setEditingItem] = useState(null);
     const [newName, setNewName] = useState('');
     const [showMoveModal, setShowMoveModal] = useState(false);
+    const [showCreateFolderModal, setShowCreateFolderModal] = useState(false);
+    const [showBulkMoveModal, setShowBulkMoveModal] = useState(false);
+    const [bulkMoveTarget, setBulkMoveTarget] = useState('');
+    const [newFolderName, setNewFolderName] = useState('');
     const [moveTarget, setMoveTarget] = useState('');
     const [selectedItem, setSelectedItem] = useState(null);
+    // Множественный выбор: храним path и type
+    const [selectedItems, setSelectedItems] = useState([]);
 
     const handleRename = (item) => {
         setEditingItem(item);
@@ -72,6 +83,74 @@ export default function DocumentBrowser({
         }
     };
 
+    const handleCreateFolderSubmit = async () => {
+        if (!newFolderName.trim() || !onCreateFolder) return;
+
+        const result = await onCreateFolder(newFolderName.trim());
+        if (result.success) {
+            setShowCreateFolderModal(false);
+            setNewFolderName('');
+        } else {
+            alert(result.message);
+        }
+    };
+
+    const isRootFolder = allowedFolders.includes(currentPath);
+
+    const handleGoBack = () => {
+        if (isRootFolder) return;
+        const parts = currentPath.split('/');
+        parts.pop();
+        const parentPath = parts.join('/');
+        onFolderChange(parentPath || '');
+    };
+
+    // ---- Множественный выбор ----
+    const isSelected = (path) => selectedItems.some(i => i.path === path);
+
+    const toggleItem = (path, type) => {
+        setSelectedItems(prev =>
+            isSelected(path) ? prev.filter(i => i.path !== path) : [...prev, { path, type }]
+        );
+    };
+
+    const toggleAll = () => {
+        const allItems = [
+            ...directories.map(d => ({ path: d.path, type: 'directory' })),
+            ...documents.map(d => ({ path: d.path, type: 'file' }))
+        ];
+        if (selectedItems.length === allItems.length) {
+            setSelectedItems([]);
+        } else {
+            setSelectedItems(allItems);
+        }
+    };
+
+    const allSelected = (directories.length + documents.length) > 0 &&
+        selectedItems.length === (directories.length + documents.length);
+
+    const handleBulkMoveSubmit = async (targetPath) => {
+        if (!targetPath || !onBulkMove) return;
+
+        // item.path — это путь относительно currentPath (или просто имя файла).
+        // Нужно собрать полный путь от корня storage, добавляя currentPath как префикс.
+        const itemsWithFullPaths = selectedItems.map(item => ({
+            ...item,
+            // Если path уже содержит '/', значит он относительно currentPath (подпапка)
+            // Если нет — это файл в корне текущей папки
+            path: item.path.includes(currentPath)
+                ? item.path                              // уже полный
+                : currentPath + '/' + item.path         // добавляем текущий путь
+        }));
+
+        const result = await onBulkMove(itemsWithFullPaths, targetPath);
+        if (result.success) {
+            setShowBulkMoveModal(false);
+            setSelectedItems([]);
+        }
+        alert(result.message);
+    };
+
     const formatFileSize = (bytes) => {
         if (bytes === 0) return '0 Bytes';
         const k = 1024;
@@ -81,7 +160,7 @@ export default function DocumentBrowser({
     };
 
     const getFileIcon = (extension) => {
-        switch (extension.toLowerCase()) {
+        switch (extension?.toLowerCase()) {
             case 'pdf':
                 return '📄';
             case 'doc':
@@ -101,6 +180,19 @@ export default function DocumentBrowser({
             default:
                 return '📄';
         }
+    };
+
+    const getStatusBadge = (status) => {
+        if (!status) return null;
+        const map = {
+            'Ознакомление': 'bg-blue-100 text-blue-800 border-blue-200',
+            'Заседание': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+            'Доработка': 'bg-orange-100 text-orange-800 border-orange-200',
+            'Одобрен': 'bg-green-100 text-green-800 border-green-200',
+            'На публикацию': 'bg-purple-100 text-purple-800 border-purple-200',
+        };
+        const c = map[status] || 'bg-gray-100 text-gray-800 border-gray-200';
+        return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${c} ml-2 whitespace-nowrap`}>{status}</span>;
     };
 
     if (loading) {
@@ -181,10 +273,66 @@ export default function DocumentBrowser({
 
     return (
         <div className="space-y-6">
-            {/* Текущий путь (Breadcrumbs) */}
-            <div className="flex items-center text-sm bg-white border border-slate-200 shadow-sm rounded-lg px-4 py-3 text-slate-600">
-                <span className="font-medium mr-2 text-slate-400 border-r border-slate-200 pr-3">Путь</span>
-                <span className="font-bold text-slate-800 ml-1">{currentPath}</span>
+            {/* Текущий путь (Breadcrumbs) и Управление */}
+            <div className="flex items-center justify-between bg-white border border-slate-200 shadow-sm rounded-lg px-4 py-3">
+                <div className="flex items-center text-sm text-slate-600">
+                    {!isRootFolder && (
+                        <button
+                            onClick={handleGoBack}
+                            className="mr-3 p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-colors"
+                            title="Назад"
+                        >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                        </button>
+                    )}
+                    <span className="font-medium mr-2 text-slate-400 border-r border-slate-200 pr-3">Путь</span>
+                    <span className="font-bold text-slate-800 ml-1">{currentPath}</span>
+                </div>
+
+                {/* Панель массовых действий */}
+                {selectedItems.length > 0 && (
+                    <div className="flex items-center justify-between bg-indigo-50 border border-indigo-200 rounded-xl px-4 py-3">
+                        <div className="flex items-center space-x-3">
+                            <input
+                                type="checkbox"
+                                checked={allSelected}
+                                onChange={toggleAll}
+                                className="h-4 w-4 rounded text-indigo-600"
+                            />
+                            <span className="text-sm font-bold text-indigo-700">
+                                Выбрано: {selectedItems.length}
+                            </span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            {onBulkMove && (
+                                <button
+                                    onClick={() => setShowBulkMoveModal(true)}
+                                    className="flex items-center text-sm font-bold bg-indigo-600 text-white px-4 py-1.5 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+                                >
+                                    <ArrowRightIcon className="w-4 h-4 mr-1.5" />
+                                    Переместить
+                                </button>
+                            )}
+                            <button
+                                onClick={() => setSelectedItems([])}
+                                className="text-sm font-bold text-slate-600 hover:text-slate-800 px-3 py-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+                            >
+                                Отменить
+                            </button>
+                        </div>
+                    </div>
+                )}
+                {onCreateFolder && (
+                    <button
+                        onClick={() => setShowCreateFolderModal(true)}
+                        className="flex items-center text-sm font-bold bg-indigo-50 border border-indigo-200 text-indigo-700 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors shadow-sm"
+                    >
+                        <FolderIcon className="w-4 h-4 mr-1.5" />
+                        Новая папка
+                    </button>
+                )}
             </div>
 
             {/* Фильтры */}
@@ -268,19 +416,77 @@ export default function DocumentBrowser({
                         {directories.map((dir) => (
                             <div
                                 key={dir.path}
-                                className="flex items-center p-4 bg-white border border-slate-200 shadow-sm rounded-xl hover:shadow-md hover:border-indigo-300 transition-all cursor-pointer group active:scale-95"
+                                className={`relative flex items-center p-4 bg-white border shadow-sm rounded-xl hover:shadow-md transition-all group active:scale-95 cursor-pointer ${isSelected(dir.path)
+                                    ? 'border-indigo-400 bg-indigo-50'
+                                    : 'border-slate-200 hover:border-indigo-300'
+                                    }`}
                                 onClick={() => onFolderChange(currentPath + '/' + dir.name)}
                             >
-                                <div className="p-2.5 bg-indigo-50 text-indigo-500 rounded-lg group-hover:bg-indigo-500 group-hover:text-white transition-colors mr-4 shadow-sm">
+                                {/* Чекбокс выбора */}
+                                <div
+                                    className="absolute top-2 left-2 z-10"
+                                    onClick={(e) => { e.stopPropagation(); toggleItem(dir.path, 'directory'); }}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={isSelected(dir.path)}
+                                        onChange={() => { }}
+                                        className="h-4 w-4 rounded text-indigo-600 cursor-pointer"
+                                    />
+                                </div>
+                                <div className="p-2.5 bg-indigo-50 text-indigo-500 rounded-lg group-hover:bg-indigo-500 group-hover:text-white transition-colors mr-4 shadow-sm ml-5">
                                     <FolderIcon className="h-6 w-6" />
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-bold text-slate-800 truncate group-hover:text-indigo-600 transition-colors">
-                                        {dir.name}
-                                    </p>
-                                    <p className="text-xs text-slate-400 mt-1">
-                                        {new Date(dir.modified).toLocaleDateString()}
-                                    </p>
+                                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                    <div>
+                                        <div className="flex items-center">
+                                            <p className="text-sm font-bold text-slate-800 truncate group-hover:text-indigo-600 transition-colors">
+                                                {dir.name}
+                                            </p>
+                                            {dir.okk_status && getStatusBadge(dir.okk_status)}
+                                        </div>
+                                        <p className="text-xs text-slate-400 mt-1">
+                                            {new Date(dir.modified).toLocaleDateString()}
+                                        </p>
+                                    </div>
+                                    {dir.okk_status === 'Заседание' && dir.okk_project_id && (
+                                        <Link
+                                            href={`/admin/okk-projects/${dir.okk_project_id}/vote`}
+                                            className="mt-3 block text-center bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-1.5 px-3 rounded-lg shadow-sm transition-colors opacity-90 hover:opacity-100"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            Начать голосование
+                                        </Link>
+                                    )}
+                                </div>
+                                <div className="flex flex-col items-center space-y-1.5 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
+                                    {onRename && (
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handleRename(dir); }}
+                                            className="p-1.5 bg-white border border-slate-200 text-slate-600 hover:text-amber-600 hover:bg-amber-50 hover:border-amber-200 rounded-md shadow-sm transition-colors"
+                                            title="Переименовать"
+                                        >
+                                            <PencilIcon className="h-3.5 w-3.5" />
+                                        </button>
+                                    )}
+                                    {onMove && (
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handleMove(dir); }}
+                                            className="p-1.5 bg-white border border-slate-200 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 rounded-md shadow-sm transition-colors"
+                                            title="Переместить"
+                                        >
+                                            <ArrowRightIcon className="h-3.5 w-3.5" />
+                                        </button>
+                                    )}
+                                    {onDelete && (
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handleDelete(dir); }}
+                                            className="p-1.5 bg-white border border-rose-100 text-rose-500 hover:text-rose-700 hover:bg-rose-50 hover:border-rose-200 rounded-md shadow-sm transition-colors"
+                                            title="Удалить"
+                                        >
+                                            <TrashIcon className="h-3.5 w-3.5" />
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -295,9 +501,22 @@ export default function DocumentBrowser({
                     <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                         <ul className="divide-y divide-slate-100">
                             {documents.map((doc) => (
-                                <li key={doc.path} className="px-5 py-4 hover:bg-slate-50 transition-colors group">
+                                <li key={doc.path} className={`px-5 py-4 hover:bg-slate-50 transition-colors group ${isSelected(doc.path) ? 'bg-indigo-50' : ''
+                                    }`}>
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center flex-1 min-w-0 pr-4">
+                                            {/* Чекбокс */}
+                                            <div
+                                                className="flex-shrink-0 mr-3"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={isSelected(doc.path)}
+                                                    onChange={() => toggleItem(doc.path, 'file')}
+                                                    className="h-4 w-4 rounded text-indigo-600 cursor-pointer"
+                                                />
+                                            </div>
                                             <div className="text-2xl mr-4 flex-shrink-0 w-10 h-10 flex items-center justify-center bg-slate-100 rounded-lg shadow-sm border border-slate-200/60">
                                                 {getFileIcon(doc.extension)}
                                             </div>
@@ -369,27 +588,36 @@ export default function DocumentBrowser({
                                                     <EyeIcon className="h-4 w-4" />
                                                 </button>
                                             )}
-                                            <button
-                                                onClick={() => handleRename(doc)}
-                                                className="p-2 bg-white border border-slate-200 text-slate-600 hover:text-amber-600 hover:bg-amber-50 hover:border-amber-200 rounded-lg shadow-sm transition-colors"
-                                                title="Переименовать"
+                                            {/* Кнопка скачать — доступна для всех файлов */}
+                                            <a
+                                                href={doc.url}
+                                                download={doc.name}
+                                                className="p-2 bg-white border border-slate-200 text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 rounded-lg shadow-sm transition-colors"
+                                                title="Скачать"
+                                                onClick={(e) => e.stopPropagation()}
                                             >
-                                                <PencilIcon className="h-4 w-4" />
-                                            </button>
-                                            <button
-                                                onClick={() => handleMove(doc)}
-                                                className="p-2 bg-white border border-slate-200 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 rounded-lg shadow-sm transition-colors"
-                                                title="Переместить"
-                                            >
-                                                <ArrowRightIcon className="h-4 w-4" />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(doc)}
-                                                className="p-2 bg-white border border-rose-100 text-rose-500 hover:text-rose-700 hover:bg-rose-50 hover:border-rose-200 rounded-lg shadow-sm transition-colors"
-                                                title="Удалить"
-                                            >
-                                                <TrashIcon className="h-4 w-4" />
-                                            </button>
+                                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                                </svg>
+                                            </a>
+                                            {onRename && (
+                                                <button
+                                                    onClick={() => handleRename(doc)}
+                                                    className="p-2 bg-white border border-slate-200 text-slate-600 hover:text-amber-600 hover:bg-amber-50 hover:border-amber-200 rounded-lg shadow-sm transition-colors"
+                                                    title="Переименовать"
+                                                >
+                                                    <PencilIcon className="h-4 w-4" />
+                                                </button>
+                                            )}
+                                            {onDelete && (
+                                                <button
+                                                    onClick={() => handleDelete(doc)}
+                                                    className="p-2 bg-white border border-rose-100 text-rose-500 hover:text-rose-700 hover:bg-rose-50 hover:border-rose-200 rounded-lg shadow-sm transition-colors"
+                                                    title="Удалить"
+                                                >
+                                                    <TrashIcon className="h-4 w-4" />
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </li>
@@ -450,6 +678,62 @@ export default function DocumentBrowser({
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Модальное окно создания папки */}
+            {showCreateFolderModal && (
+                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+                    <div className="relative mx-auto border border-slate-200 w-full max-w-md shadow-2xl rounded-2xl bg-white p-6">
+                        <div className="mb-5">
+                            <h3 className="text-xl font-bold text-slate-800 mb-2">
+                                Создать новую папку
+                            </h3>
+                            <p className="text-sm text-slate-500">
+                                В текущей папке: <span className="font-bold">{currentPath}</span>
+                            </p>
+                        </div>
+                        <div className="mb-6">
+                            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                                Название папки
+                            </label>
+                            <input
+                                type="text"
+                                value={newFolderName}
+                                onChange={(e) => setNewFolderName(e.target.value)}
+                                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all shadow-inner"
+                                placeholder="Новая папка"
+                                onKeyPress={(e) => e.key === 'Enter' && handleCreateFolderSubmit()}
+                                autoFocus
+                            />
+                        </div>
+                        <div className="flex justify-end space-x-3">
+                            <button
+                                onClick={() => {
+                                    setShowCreateFolderModal(false);
+                                    setNewFolderName('');
+                                }}
+                                className="px-5 py-2.5 bg-white border border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 shadow-sm transition-colors active:scale-95"
+                            >
+                                Отмена
+                            </button>
+                            <button
+                                onClick={handleCreateFolderSubmit}
+                                className="px-5 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-sm transition-colors active:scale-95"
+                                disabled={!newFolderName.trim()}
+                            >
+                                Создать
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Дерево папок для массового перемещения */}
+            {showBulkMoveModal && (
+                <FolderTreePicker
+                    onConfirm={(path) => handleBulkMoveSubmit(path)}
+                    onClose={() => setShowBulkMoveModal(false)}
+                />
             )}
         </div>
     );

@@ -150,3 +150,25 @@ Route::get('/direction/center-prevention/infographics', function () {
 Route::get('/direction/center-prevention/videos', function () {
     return Inertia::render('Direction/CenterPrevention/Videos');
 })->name('direction.center_prevention.videos');
+
+// Маршруты для новых папок ЗОЖ: Законодательство, Подкасты, Инструменты
+Route::get('/direction/center-prevention/legislation', function () {
+    return Inertia::render('Direction/CenterPrevention/Legislation');
+})->name('direction.center_prevention.legislation');
+
+Route::get('/direction/center-prevention/podcasts', function () {
+    return Inertia::render('Direction/CenterPrevention/Podcasts');
+})->name('direction.center_prevention.podcasts');
+
+Route::get('/direction/center-prevention/tools', function () {
+    return Inertia::render('Direction/CenterPrevention/Tools');
+})->name('direction.center_prevention.tools');
+
+Route::get('/direction/center-prevention/zozh-reports', function () {
+    return Inertia::render('Direction/CenterPrevention/ZozhReports');
+})->name('direction.center_prevention.zozh_reports');
+
+// Research Hub routes
+Route::get('/research-hub', [\App\Http\Controllers\ResearchController::class, 'index'])->name('research_hub.index');
+Route::get('/research-hub/{slug}', [\App\Http\Controllers\ResearchController::class, 'show'])->name('research_hub.show');
+

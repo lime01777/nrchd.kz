@@ -54,5 +54,15 @@ class AppServiceProvider extends ServiceProvider
         
         // Регистрируем политики
         Gate::policy(News::class, NewsPolicy::class);
+
+        // Регистрация слушателей для логирования Комитета ОКК
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Auth\Events\Login::class,
+            [\App\Listeners\OkkAuditLogListener::class, 'handleLogin']
+        );
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Auth\Events\Logout::class,
+            [\App\Listeners\OkkAuditLogListener::class, 'handleLogout']
+        );
     }
 }

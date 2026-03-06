@@ -24,10 +24,17 @@ class StorageBrowserController extends Controller
         }
         $items = [];
         foreach (File::directories($dir) as $folder) {
+            $folderPath = trim($rel . '/' . basename($folder), '/');
+            
+            // Проверяем, является ли папка проектом ОКК
+            $okkProject = \App\Models\OkkProject::where('folder_path', $folderPath)->first();
+            
             $items[] = [
                 'type' => 'folder',
                 'name' => basename($folder),
-                'path' => trim($rel . '/' . basename($folder), '/'),
+                'path' => $folderPath,
+                'okk_status' => $okkProject ? $okkProject->status : null,
+                'okk_project_id' => $okkProject ? $okkProject->id : null,
             ];
         }
         foreach (File::files($dir) as $file) {
@@ -125,7 +132,55 @@ class StorageBrowserController extends Controller
         }
         $file = $request->file('file');
         $filename = $file->getClientOriginalName();
+        $targetPath = $dir . '/' . $filename;
+
+        // Логика версионирования
+        if (\Illuminate\Support\Facades\File::exists($targetPath)) {
+            $info = pathinfo($filename);
+            $name = $info['filename'];
+            $ext = isset($info['extension']) ? '.' . $info['extension'] : '';
+            $i = 1;
+            while (\Illuminate\Support\Facades\File::exists($dir . '/' . $name . '_v' . $i . $ext)) {
+                $i++;
+            }
+            // Переименовываем старый файл
+            \Illuminate\Support\Facades\File::move($targetPath, $dir . '/' . $name . '_v' . $i . $ext);
+        }
+
         $file->move($dir, $filename);
+        return response()->json(['success' => true]);
+    }
+
+    // Создать папку
+    public function createFolder(Request $request)
+    {
+        $base = public_path('storage');
+        $rel = $request->get('path', '');
+        $folderName = trim($request->get('name', ''));
+        
+        if (empty($folderName)) {
+            return response()->json(['error' => 'Имя папки пустo'], 400);
+        }
+
+        $dir = rtrim($base . '/' . ltrim($rel, '/'), '/');
+        $realBase = realpath($base);
+        // We use realpath on $dir if it exists, but createFolder will be called ON an existing dir, 
+        // to create a sub-directory in it.
+        $realDir = realpath($dir);
+        
+        if (!$realDir || !$realBase || !str_starts_with($realDir, $realBase)) {
+            return response()->json(['error' => 'Invalid path'], 400);
+        }
+
+        $folderName = basename($folderName); // Очистка имени от слэшей
+        $newDirPath = $dir . '/' . $folderName;
+
+        if (File::exists($newDirPath)) {
+            return response()->json(['error' => 'Папка уже существует'], 400);
+        }
+
+        File::makeDirectory($newDirPath, 0755, true);
+
         return response()->json(['success' => true]);
     }
 
